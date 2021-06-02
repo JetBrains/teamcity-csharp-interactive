@@ -7,7 +7,7 @@ namespace Teamcity.CSharpInteractive
 
     public class Program
     {
-        public static int Main(string[] args) => Composer.Resolve<Program>().Run();
+        public static int Main() => Composer.Resolve<Program>().Run();
 
         private readonly IInfo _info;
         private readonly ISettings _settings;

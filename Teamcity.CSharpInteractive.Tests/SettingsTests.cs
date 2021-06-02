@@ -1,7 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -37,7 +36,7 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.Title.ShouldNotBe(string.Empty);
             settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
             settings.InteractionMode.ShouldBe(InteractionMode.Script);
-            settings.CodeSources.ToArray().ShouldBe(new []{codeSource1, codeSource2});
+            settings.Sources.ToArray().ShouldBe(new []{codeSource1, codeSource2});
         }
         
         [Fact]
@@ -54,10 +53,10 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.Title.ShouldNotBe(string.Empty);
             settings.VerbosityLevel.ShouldBe(VerbosityLevel.Quit);
             settings.InteractionMode.ShouldBe(InteractionMode.Interactive);
-            settings.CodeSources.ToArray().ShouldBe(new []{_consoleCodeSource});
+            settings.Sources.ToArray().ShouldBe(new []{_consoleCodeSource});
         }
 
         private Settings CreateInstance() =>
-            new Settings(_environment.Object, _consoleCodeSource, _fileCodeSourceFactory.Object);
+            new(_environment.Object, _consoleCodeSource, _fileCodeSourceFactory.Object);
     }
 }

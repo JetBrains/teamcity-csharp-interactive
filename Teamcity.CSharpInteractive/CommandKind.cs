@@ -8,10 +8,8 @@ namespace Teamcity.CSharpInteractive
 
         Help,
 
-        AddReference,
-
-        LoadScript,
+        SetVerbosityLevel,
         
-        SetVerbosityLevel
+        AddPackageReference
     }
 }

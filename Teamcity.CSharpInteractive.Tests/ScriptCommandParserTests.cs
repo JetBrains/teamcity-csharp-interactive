@@ -11,11 +11,11 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             var scriptSubmissionAnalyzer = new Mock<IScriptSubmissionAnalyzer>();
-            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code", ScriptCommandParser.ParseOptions)).Returns(false);
-            var parser = new ScriptCommandParser(Mock.Of<ILog<ScriptCommandParser>>(), scriptSubmissionAnalyzer.Object);
+            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code", ScriptCommandFactory.ParseOptions)).Returns(false);
+            var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
-            var command = parser.Parse("origin", "code");
+            var command = parser.Create("origin", "code");
 
             // Then
             command.ShouldBe(CodeCommand.Shared); 
@@ -26,11 +26,11 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             var scriptSubmissionAnalyzer = new Mock<IScriptSubmissionAnalyzer>();
-            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code" + System.Environment.NewLine, ScriptCommandParser.ParseOptions)).Returns(true);
-            var parser = new ScriptCommandParser(Mock.Of<ILog<ScriptCommandParser>>(), scriptSubmissionAnalyzer.Object);
+            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
+            var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
-            var command = parser.Parse("origin", "code");
+            var command = parser.Create("origin", "code");
 
             // Then
             command.ShouldBe(new ScriptCommand("origin", "code" + System.Environment.NewLine)); 
@@ -41,15 +41,15 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             var scriptSubmissionAnalyzer = new Mock<IScriptSubmissionAnalyzer>();
-            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + System.Environment.NewLine, ScriptCommandParser.ParseOptions)).Returns(false);
-            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine, ScriptCommandParser.ParseOptions)).Returns(true);
-            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code2" + System.Environment.NewLine, ScriptCommandParser.ParseOptions)).Returns(true);
-            var parser = new ScriptCommandParser(Mock.Of<ILog<ScriptCommandParser>>(), scriptSubmissionAnalyzer.Object);
+            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(false);
+            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
+            scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code2" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
+            var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
-            parser.Parse("origin", "code1");
-            var command = parser.Parse("origin", "code2");
-            var command2 = parser.Parse("origin", "code2");
+            parser.Create("origin", "code1");
+            var command = parser.Create("origin", "code2");
+            var command2 = parser.Create("origin", "code2");
 
             // Then
             command.ShouldBe(new ScriptCommand("origin", "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine));

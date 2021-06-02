@@ -1,7 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using Moq;
     using Shouldly;

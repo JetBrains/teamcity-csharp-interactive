@@ -11,6 +11,7 @@ namespace Teamcity.CSharpInteractive
         private readonly IEnvironment _environment;
         private readonly ICodeSource _consoleCodeSource;
         private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
+        private readonly IList<ICodeSource> _sources = new List<ICodeSource>();
 
         public Settings(
             IEnvironment environment,
@@ -22,13 +23,13 @@ namespace Teamcity.CSharpInteractive
             _fileCodeSourceFactory = fileCodeSourceFactory;
         }
 
-        public string Title => $"TeamCity C# Interactive {Assembly.GetEntryAssembly()?.GetName().Version}";
+        public string Title => $"C# Interactive {Assembly.GetEntryAssembly()?.GetName().Version}";
 
         public VerbosityLevel VerbosityLevel { get; set; } = VerbosityLevel.Normal;
 
         public InteractionMode InteractionMode { get; private set; } = InteractionMode.Interactive;
-
-        public IEnumerable<ICodeSource> CodeSources { get; private set; } = Enumerable.Empty<ICodeSource>();
+        
+        public IEnumerable<ICodeSource> Sources => _sources;
 
         public void Load()
         {
@@ -37,13 +38,17 @@ namespace Teamcity.CSharpInteractive
             {
                 InteractionMode = InteractionMode.Interactive;
                 VerbosityLevel = VerbosityLevel.Quit;
-                CodeSources = new[] {_consoleCodeSource};
+                _sources.Add(_consoleCodeSource);
             }
             else
             {
                 InteractionMode = InteractionMode.Script;
                 VerbosityLevel = VerbosityLevel.Normal;
-                CodeSources = args.Skip(1).Select(i => _fileCodeSourceFactory.Create(i));
+                var sources = args.Skip(1).Select(i => _fileCodeSourceFactory.Create(i));
+                foreach (var source in sources)
+                {
+                    _sources.Add(source);
+                }
             }
         }
     }

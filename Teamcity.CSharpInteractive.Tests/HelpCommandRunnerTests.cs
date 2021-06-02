@@ -17,7 +17,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var actualResult = runner.TryRun(new HelpCommand());
 
             // Then
-            actualResult.ShouldBe(true);
+            actualResult.Success.ShouldBe(true);
             info.Verify(i => i.ShowReplHelp());
         }
         
@@ -32,7 +32,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var actualResult = runner.TryRun(Mock.Of<ICommand>());
 
             // Then
-            actualResult.ShouldBe(null);
+            actualResult.Success.ShouldBe(null);
             info.Verify(i => i.ShowReplHelp(), Times.Never);
         }
     }

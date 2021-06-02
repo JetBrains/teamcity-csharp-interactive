@@ -10,8 +10,8 @@ namespace Teamcity.CSharpInteractive
 
         InteractionMode InteractionMode { get; }
 
-        IEnumerable<ICodeSource> CodeSources { get; }
-
         void Load();
+        
+        IEnumerable<ICodeSource> Sources { get; }
     }
 }

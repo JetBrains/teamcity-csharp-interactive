@@ -1,4 +1,5 @@
 ﻿// ReSharper disable RedundantUsingDirective
+// ReSharper disable UnusedMember.Global
 namespace Teamcity.CSharpInteractive
 {
     using System;

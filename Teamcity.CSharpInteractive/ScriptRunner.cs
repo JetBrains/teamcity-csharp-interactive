@@ -2,24 +2,26 @@
 
 namespace Teamcity.CSharpInteractive
 {
+    using System.Linq;
+
     internal class ScriptRunner : IRunner
     {
         private readonly ILog<ScriptRunner> _log;
         private readonly ICommandSource _commandSource;
-        private readonly ICommandRunner[] _commandRunners;
+        private readonly ICommandsRunner _commandsRunner;
         private readonly IStatistics _statistics;
         private readonly IPresenter<IStatistics> _statisticsPresenter;
 
         public ScriptRunner(
             ILog<ScriptRunner> log,
             ICommandSource commandSource,
-            ICommandRunner[] commandRunners,
+            ICommandsRunner commandsRunner,
             IStatistics statistics,
             IPresenter<IStatistics> statisticsPresenter)
         {
             _log = log;
             _commandSource = commandSource;
-            _commandRunners = commandRunners;
+            _commandsRunner = commandsRunner;
             _statistics = statistics;
             _statisticsPresenter = statisticsPresenter;
         }
@@ -28,37 +30,38 @@ namespace Teamcity.CSharpInteractive
 
         public ExitCode Run()
         {
-            using (_statistics.Start())
+            var exitCode = ExitCode.Success;
+            try
             {
-                foreach (var command in _commandSource.GetCommands())
+                foreach (var result in _commandsRunner.Run(_commandSource.GetCommands().Where(i => i.Kind != CommandKind.Code)))
                 {
-                    using var blockToken = _log.Block(new[] {new Text(command.Name)});
-                    foreach (var runner in _commandRunners)
+                    if (result.Success.HasValue)
                     {
-                        var result = command.Kind switch
+                        if (!result.Success.Value)
                         {
-                            CommandKind.Code => true,
-                            _ => runner.TryRun(command)
-                        };
-
-                        if (result.HasValue)
-                        {
+                            exitCode = ExitCode.Fail;
                             break;
                         }
                     }
+                    else
+                    {
+                        _log.Error($"Not supported: {result.Command}.");
+                    }
                 }
-            }
 
-            if (_statistics.Errors.Count > 0)
+                if (exitCode == ExitCode.Fail || _statistics.Errors.Count > 0)
+                {
+                    _log.Info(Text.NewLine, new Text("Running FAILED.", Color.Error));
+                    return ExitCode.Fail;
+                }
+
+                _log.Info(Text.NewLine, new Text("Running succeeded.", Color.Success));
+                return exitCode;
+            }
+            finally
             {
-                _log.Info(new []{ Text.NewLine, new Text("Running FAILED.", Color.Error)});
                 _statisticsPresenter.Show(_statistics);
-                return ExitCode.Fail;
             }
-
-            _log.Info(new []{ Text.NewLine, new Text("Running succeeded.", Color.Success)});
-            _statisticsPresenter.Show(_statistics);
-            return ExitCode.Success;
         }
     }
 }

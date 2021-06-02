@@ -6,16 +6,15 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class ScriptCommand: ICommand
     {
-        private readonly string _originName;
         public readonly string Script;
 
         public ScriptCommand(string originName, string script)
         {
-            _originName = originName;
+            Name = originName;
             Script = script;
         }
 
-        public string Name => _originName;
+        public string Name { get; }
 
         public CommandKind Kind => CommandKind.Script;
 
@@ -23,11 +22,13 @@ namespace Teamcity.CSharpInteractive
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             ScriptCommand other = (ScriptCommand) obj;
-            return _originName == other._originName && Script == other.Script;
+            return Name == other.Name && Script == other.Script;
         }
 
-        public override int GetHashCode() => HashCode.Combine(_originName, Script);
+        public override int GetHashCode() => HashCode.Combine(Name, Script);
+        
+        public override string ToString() => Name;
     }
 }

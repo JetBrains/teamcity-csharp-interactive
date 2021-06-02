@@ -1,5 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
+    using System;
     using System.Collections.Generic;
     using Moq;
     using Shouldly;
@@ -9,33 +10,30 @@ namespace Teamcity.CSharpInteractive.Tests
     {
         [Theory]
         [MemberData(nameof(Data))]
-        internal void ShouldParse(string replCommand, bool expectedResult, ICommand? expectedCommand)
+        internal void ShouldHelp(string replCommand, ICommand[] expectedCommands)
         {
             // Given
             var stringService = new Mock<IStringService>();
             stringService.Setup(i => i.TrimAndUnquote(It.IsAny<string>())).Returns<string>(i => i);
-            var parser = new HelpCommandParser(Mock.Of<ILog<HelpCommandParser>>());
+            var parser = new HelpCommandFactory(Mock.Of<ILog<HelpCommandFactory>>());
             
             // When
-            var actualResult = parser.TryParse(replCommand, out var actualCommand);
+            var actualResult = parser.TryCreate(replCommand);
 
             // Then
-            actualResult.ShouldBe(expectedResult);
-            if (expectedResult)
-            {
-                actualCommand.ShouldBe(expectedCommand);
-            }
+            actualResult.ShouldBe(expectedCommands);
         }
         
-        public static IEnumerable<object?[]> Data => new List<object?[]> 
+        public static IEnumerable<object[]> Data => new List<object[]> 
         {
-            new object[] { "help", true, HelpCommand.Shared },
-            new object[] { "Help", true, HelpCommand.Shared },
-            new object[] { "help ", true, HelpCommand.Shared },
-            new object?[] { "  help", false, null },
-            new object?[] { "Abc", false, null },
-            new object?[] { "  ", false, null },
-            new object?[] { "", false, null },
+            new object[] { "#help", new [] { HelpCommand.Shared } },
+            new object[] { "#Help", new [] { HelpCommand.Shared } },
+            new object[] { "#help ", new [] { HelpCommand.Shared } },
+            new object[] { "#  help", Array.Empty<ICommand>() },
+            new object[] { "#Abc", Array.Empty<ICommand>() },
+            new object[] { "#  ", Array.Empty<ICommand>() },
+            new object[] { "#", Array.Empty<ICommand>() },
+            new object[] { "", Array.Empty<ICommand>() },
         };
     }
 }

@@ -7,15 +7,15 @@ namespace Teamcity.CSharpInteractive
 
         public HelpCommandRunner(IInfo info) => _info = info;
 
-        public bool? TryRun(ICommand command)
+        public CommandResult TryRun(ICommand command)
         {
             if (command.Kind != CommandKind.Help || command is not HelpCommand)
             {
-                return null;
+                return new CommandResult(command, default);
             }
-            
+
             _info.ShowReplHelp();
-            return true;
+            return new CommandResult(command, true);
         }
     }
 }

@@ -5,15 +5,15 @@ namespace Teamcity.CSharpInteractive
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
-    internal class ScriptCommandParser : IScriptCommandParser
+    internal class ScriptCommandFactory : IScriptCommandFactory
     {
-        internal static readonly CSharpParseOptions ParseOptions = new CSharpParseOptions(LanguageVersion.Latest, kind: SourceCodeKind.Script);
-        private readonly ILog<ScriptCommandParser> _log;
+        internal static readonly CSharpParseOptions ParseOptions = new(LanguageVersion.Latest, kind: SourceCodeKind.Script);
+        private readonly ILog<ScriptCommandFactory> _log;
         private readonly IScriptSubmissionAnalyzer _scriptSubmissionAnalyzer;
-        private readonly StringBuilder _scriptBuilder = new StringBuilder();
+        private readonly StringBuilder _scriptBuilder = new();
 
-        public ScriptCommandParser(
-            ILog<ScriptCommandParser> log,
+        public ScriptCommandFactory(
+            ILog<ScriptCommandFactory> log,
             IScriptSubmissionAnalyzer scriptSubmissionAnalyzer)
         {
             _log = log;
@@ -22,7 +22,7 @@ namespace Teamcity.CSharpInteractive
 
         public bool HasCode => _scriptBuilder.Length > 0;
 
-        public ICommand Parse(string originName, string code)
+        public ICommand Create(string originName, string code)
         {
             _scriptBuilder.AppendLine(code);
             var script = _scriptBuilder.ToString();
@@ -32,11 +32,9 @@ namespace Teamcity.CSharpInteractive
                 _scriptBuilder.Clear();
                 return new ScriptCommand(originName, script);
             }
-            else
-            {
-                _log.Trace(new []{new Text("Incomplete submission")});
-                return CodeCommand.Shared;
-            }
+
+            _log.Trace(new []{new Text("Incomplete submission")});
+            return CodeCommand.Shared;
         }
     }
 }

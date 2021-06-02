@@ -14,16 +14,16 @@ namespace Teamcity.CSharpInteractive
             _settings = settings;
         }
 
-        public bool? TryRun(ICommand command)
+        public CommandResult TryRun(ICommand command)
         {
             if (command.Kind != CommandKind.SetVerbosityLevel || command is not SetVerbosityLevelCommand setVerbosityLevelCommand)
             {
-                return null;
+                return new CommandResult(command, default);
             }
 
             _log.Trace(new []{new Text($"Change the verbosity level from {_settings.VerbosityLevel} to {setVerbosityLevelCommand.VerbosityLevel}.")});
             _settings.VerbosityLevel = setVerbosityLevelCommand.VerbosityLevel;
-            return true;
+            return new CommandResult(command, true);
         }
     }
 }

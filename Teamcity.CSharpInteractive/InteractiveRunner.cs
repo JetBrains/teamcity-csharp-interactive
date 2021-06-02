@@ -1,20 +1,20 @@
 // ReSharper disable ClassNeverInstantiated.Global
-
+// ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 namespace Teamcity.CSharpInteractive
 {
     internal class InteractiveRunner : IRunner
     {
         private readonly ICommandSource _commandSource;
-        private readonly ICommandRunner[] _commandRunners;
+        private readonly ICommandsRunner _commandsRunner;
         private readonly IStdOut _stdOut;
         
         public InteractiveRunner(
             ICommandSource commandSource,
-            ICommandRunner[] commandRunners,
+            ICommandsRunner commandsRunner,
             IStdOut stdOut)
         {
             _commandSource = commandSource;
-            _commandRunners = commandRunners;
+            _commandsRunner = commandsRunner;
             _stdOut = stdOut;
         }
 
@@ -22,37 +22,23 @@ namespace Teamcity.CSharpInteractive
 
         public ExitCode Run()
         {
-            _stdOut.Write(new Text("> "));
-            foreach (var command in _commandSource.GetCommands())
+            ShowCursor(true);
+            foreach (var result in _commandsRunner.Run(_commandSource.GetCommands()))
             {
-                foreach (var runner in _commandRunners)
+                if (result.Command.Kind == CommandKind.Code)
                 {
-                    bool? result;
-                    switch (command.Kind)
-                    {
-                        case CommandKind.Code:
-                            result = true;
-                            _stdOut.Write(new Text(". "));
-                            break;
-                    
-                        default:
-                            result = runner.TryRun(command);
-                            if (result != null)
-                            {
-                                _stdOut.Write(new Text("> "));
-                            }
-
-                            break;
-                    }
-
-                    if (result.HasValue)
-                    {
-                        break;
-                    }
+                    ShowCursor(false);
+                }
+                else
+                {
+                    ShowCursor(true);
                 }
             }
 
             return ExitCode.Success;
         }
+
+        private void ShowCursor(bool completed) =>
+            _stdOut.Write(new Text(completed ? "> " : ". "));
     }
 }

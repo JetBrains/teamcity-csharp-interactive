@@ -1,4 +1,5 @@
-﻿namespace Teamcity.CSharpInteractive
+﻿// ReSharper disable UnusedMember.Global
+namespace Teamcity.CSharpInteractive
 {
     using System;
 

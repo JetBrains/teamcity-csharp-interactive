@@ -3,13 +3,10 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
-    [ExcludeFromCodeCoverage]
     internal class CSharpScriptCommandRunner : ICommandRunner
     {
         private readonly ILog<CSharpScriptCommandRunner> _log;
@@ -30,36 +27,30 @@ namespace Teamcity.CSharpInteractive
             _diagnosticsPresenter = diagnosticsPresenter;
         }
 
-        public bool? TryRun(ICommand command)
+        public CommandResult TryRun(ICommand command)
         {
             if (command.Kind != CommandKind.Script || command is not ScriptCommand scriptCommand)
             {
-                return null;
+                return new CommandResult(command, default);
             }
-
+            
             var success = true;
             try
             {
-                Script<object>? script = _scriptState == null 
-                    ? CSharpScript.Create(scriptCommand.Script, Options)
-                    : _scriptState.Script.ContinueWith(scriptCommand.Script);
-
-                var compilation = script.GetCompilation();
-                var diagnostics = compilation.GetDiagnostics();
-                _diagnosticsPresenter.Show(diagnostics);
-                if (!diagnostics.All(i => i.Severity != DiagnosticSeverity.Error))
-                {
-                    return false;
-                }
-
-                _scriptState = script.RunAsync(
-                    null,
-                    exception =>
-                    {
-                        success = false;
-                        _log.Error(new[] {new Text(exception.ToString())});
-                        return true;
-                    }).Result;
+                _scriptState = 
+                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, Options).Result)
+                    .ContinueWithAsync(
+                        scriptCommand.Script, 
+                        Options,
+                        exception =>
+                        {
+                            success = false;
+                            _log.Error(new[] {new Text(exception.ToString())});
+                            return true;
+                        })
+                    .Result;
+                    
+                _diagnosticsPresenter.Show(_scriptState.Script.GetCompilation().GetDiagnostics());
             }
             catch (CompilationErrorException e)
             {
@@ -72,7 +63,7 @@ namespace Teamcity.CSharpInteractive
                 _scriptStatePresenter.Show(_scriptState);
             }
             
-            return success;
+            return new CommandResult(command, success);
         }
     }
 }

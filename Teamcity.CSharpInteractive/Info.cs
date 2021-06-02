@@ -22,7 +22,7 @@ namespace Teamcity.CSharpInteractive
         {
             _log.Info(new Text(_settings.Title, Color.Header));
             _log.Trace(new Text(RuntimeInformation.FrameworkDescription));
-            _log.Trace(new Text($"Default C# version {ScriptCommandParser.ParseOptions.LanguageVersion}"));
+            _log.Trace(new Text($"Default C# version {ScriptCommandFactory.ParseOptions.LanguageVersion}"));
         }
 
         public void ShowReplHelp()

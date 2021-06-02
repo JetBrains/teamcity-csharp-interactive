@@ -7,9 +7,9 @@ namespace Teamcity.CSharpInteractive
 
     internal class Statistics : IStatistics
     {
-        private readonly Stopwatch _stopwatch = new Stopwatch();
-        private readonly List<string> _errors = new List<string>();
-        private readonly List<string> _warnings = new List<string>();
+        private readonly Stopwatch _stopwatch = new();
+        private readonly List<string> _errors = new();
+        private readonly List<string> _warnings = new();
 
         public IReadOnlyCollection<string> Errors => _errors;
 

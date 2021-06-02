@@ -2,59 +2,79 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
     internal class CommandSource : ICommandSource
     {
         private readonly ILog<CommandSource> _log;
         private readonly ISettings _settings;
-        private readonly IReplCommandParser[] _replCommandParsers;
-        private readonly IScriptCommandParser _scriptCommandParser;
+        private readonly IReplCommandFactory[] _replCommandFactories;
+        private readonly IScriptCommandFactory _scriptCommandFactory;
 
         public CommandSource(
             ILog<CommandSource> log,
             ISettings settings,
-            IReplCommandParser[] replCommandParsers,
-            IScriptCommandParser scriptCommandParser)
+            IReplCommandFactory[] replCommandFactories,
+            IScriptCommandFactory scriptCommandFactory)
         {
             _log = log;
             _settings = settings;
-            _replCommandParsers = replCommandParsers;
-            _scriptCommandParser = scriptCommandParser;
+            _replCommandFactories = replCommandFactories;
+            _scriptCommandFactory = scriptCommandFactory;
         }
+        
+        public IEnumerable<ICommand> GetCommands() => _settings.Sources.SelectMany(GetCommands);
 
-        public IEnumerable<ICommand> GetCommands()
+        private IEnumerable<ICommand> GetCommands(ICodeSource codeSource)
         {
-            foreach (var codeSource in _settings.CodeSources)
+            using var sourceBlockToken = _log.Block(codeSource.Name);
+            foreach (var code in codeSource)
             {
-                foreach (var code in codeSource)
+                var sb = new StringBuilder();
+                foreach (var line in code.Split(System.Environment.NewLine))
                 {
-                    if (!_scriptCommandParser.HasCode)
+                    var trimmedLine = line.Trim();
+                    if (trimmedLine.StartsWith("#"))
                     {
-                        var trimmedCode = code.Trim();
-                        if (trimmedCode.StartsWith("#"))
+                        var hasReplCommand = false;
+                        foreach (var parser in _replCommandFactories)
                         {
-                            var replCommand = trimmedCode.Substring(1, trimmedCode.Length - 1).Trim();
-                            var parsed = false;
-                            foreach (var parser in _replCommandParsers)
+                            var commands = parser.TryCreate(trimmedLine).ToArray();
+                            if (!commands.Any())
                             {
-                                if (parser.TryParse(replCommand, out var command))
-                                {
-                                    parsed = true;
-                                    yield return command!;
-                                    break;
-                                }
+                                continue;
                             }
 
-                            if (!parsed)
+                            if (sb.Length > 0)
                             {
-                                _log.Error(new []{new Text($"Unknown REPL command {replCommand}. Type #help for help.")});
+                                yield return _scriptCommandFactory.Create(codeSource.Name, sb.ToString());
+                                sb.Clear();
                             }
-                            
-                            continue;
+
+                            hasReplCommand = true;
+                            foreach (var command in commands)
+                            {
+                                yield return command;
+                            }
+
+                            break;
+                        }
+
+                        if (!hasReplCommand)
+                        {
+                            sb.AppendLine(line);
                         }
                     }
-                    
-                    yield return _scriptCommandParser.Parse(codeSource.Name, code);
+                    else
+                    {
+                        sb.AppendLine(line);
+                    }
+                }
+
+                if (sb.Length > 0)
+                {
+                    yield return _scriptCommandFactory.Create(codeSource.Name, sb.ToString());
                 }
             }
         }

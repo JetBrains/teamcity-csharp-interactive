@@ -10,20 +10,18 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<IInfo> _info;
         private readonly Mock<ISettings> _settings;
         private readonly List<IRunner> _runners;
-        private readonly Mock<IRunner> _interactiveRunner;
-        private readonly Mock<IRunner> _scriptRunner;
 
         public ProgramTests()
         {
             _info = new Mock<IInfo>();
             _settings = new Mock<ISettings>();
             _settings.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Script);
-            _interactiveRunner = new Mock<IRunner>();
-            _interactiveRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Interactive);
-            _scriptRunner = new Mock<IRunner>();
-            _scriptRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Script);
-            _scriptRunner.Setup(i => i.Run()).Returns(ExitCode.Fail);
-            _runners = new List<IRunner> { _interactiveRunner.Object, _scriptRunner.Object};
+            Mock<IRunner> interactiveRunner = new Mock<IRunner>();
+            interactiveRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Interactive);
+            Mock<IRunner> scriptRunner = new Mock<IRunner>();
+            scriptRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Script);
+            scriptRunner.Setup(i => i.Run()).Returns(ExitCode.Fail);
+            _runners = new List<IRunner> { interactiveRunner.Object, scriptRunner.Object};
         }
 
         [Fact]

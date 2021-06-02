@@ -7,8 +7,10 @@ namespace Teamcity.CSharpInteractive
     {
         public static readonly ICommand Shared = new HelpCommand();
         
-        public string Name => $"Help";
+        public string Name => "Help";
 
         public CommandKind Kind => CommandKind.Help;
+        
+        public override string ToString() => Name;
     }
 }

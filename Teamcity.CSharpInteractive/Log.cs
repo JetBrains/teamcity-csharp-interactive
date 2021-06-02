@@ -9,7 +9,7 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class Log
     {
-        internal static int Tabs = 0;
+        internal static int Tabs;
     }
 
     [ExcludeFromCodeCoverage]
@@ -62,14 +62,15 @@ namespace Teamcity.CSharpInteractive
 
         public IDisposable Block(Text[] block)
         {
-            if (_settings.VerbosityLevel >= VerbosityLevel.Normal)
+            if (_settings.VerbosityLevel < VerbosityLevel.Normal)
             {
-                _stdOut.Write(GetMessage(block, Color.Header));
-                Log.Tabs++;
-                return Disposable.Create(() => Log.Tabs--);
+                return Disposable.Empty;
             }
-            
-            return Disposable.Empty;
+
+            _stdOut.Write(GetMessage(block, Color.Header));
+            Log.Tabs++;
+            return Disposable.Create(() => Log.Tabs--);
+
         }
 
         private static Text[] GetMessage(Text[] message, Color defaultColor)
