@@ -16,7 +16,23 @@ namespace Teamcity.CSharpInteractive
 
         public void LogWarningEvent(BuildWarningEventArgs e) => _log.Warning(new []{new Text(e.Message)});
 
-        public void LogMessageEvent(BuildMessageEventArgs e) => _log.Trace(new []{new Text(e.Message)});
+        public void LogMessageEvent(BuildMessageEventArgs e)
+        {
+            switch (e.Importance)
+            {
+                case MessageImportance.High:
+                    _log.Info(new[] {new Text(e.Message, Color.Header)});
+                    break;
+                
+                case MessageImportance.Normal:
+                    _log.Info(new[] {new Text(e.Message)});
+                    break;
+                
+                default:
+                    _log.Trace(new[] {new Text(e.Message)});
+                    break;
+            }
+        }
 
         public void LogCustomEvent(CustomBuildEventArgs e) => _log.Trace(new []{new Text(e.Message)});
 
@@ -25,9 +41,9 @@ namespace Teamcity.CSharpInteractive
 
         public bool ContinueOnError => true;
 
-        public int LineNumberOfTaskNode => 1;
+        public int LineNumberOfTaskNode => 0;
 
-        public int ColumnNumberOfTaskNode => 1;
+        public int ColumnNumberOfTaskNode => 0;
 
         public string ProjectFileOfTaskNode => "Restore";
     }

@@ -3,7 +3,6 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     internal class CommandSource : ICommandSource
     {

@@ -40,8 +40,9 @@ namespace Teamcity.CSharpInteractive
                 return new CommandResult(command, default);
             }
 
-            var outputPath = Path.Combine(_environment.TempDirectory, _uniqueNameGenerator.Generate());
-            var packagesPath = Path.Combine(_environment.TempDirectory, "Packages");
+            var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
+            var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
+            var packagesPath = Path.Combine(tempDirectory, ".nuget");
             var restoreResult = _nugetRestoreService.Restore(
                 addPackageReferenceCommand.PackageId,
                 addPackageReferenceCommand.Version,
@@ -63,16 +64,12 @@ namespace Teamcity.CSharpInteractive
 
             foreach (var result in _commandsRunnerFactory().Run(commands))
             {
-                if (result.Success.HasValue)
+                if (result.Success.HasValue && !result.Success.Value)
                 {
-                    if (!result.Success.Value)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
-
-
+            
             return new CommandResult(command, true);
         }
     }

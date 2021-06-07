@@ -3,6 +3,8 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
+    using System.Runtime.Versioning;
     using Microsoft.Build.Framework;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
@@ -14,6 +16,7 @@ namespace Teamcity.CSharpInteractive
     {
         static Composer() => DI.Setup()
             .Bind<Program>().As(Singleton).To<Program>()
+            .Bind<string>().As(Singleton).Tag("FrameworkName").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<ILog<TT>>().As(Singleton).To<Log<TT>>()
             .Bind<IEnvironment>().As(Singleton).To<Environment>()
             .Bind<IDotnetEnvironment>().As(Singleton).To<DotnetEnvironment>()

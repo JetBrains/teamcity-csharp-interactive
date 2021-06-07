@@ -5,8 +5,6 @@ namespace Teamcity.CSharpInteractive
 
     internal interface INugetEnvironment
     {
-        string StoreFolder { get; }
-
         IEnumerable<string> Sources { get; }
         
         IEnumerable<string> FallbackFolders { get; }

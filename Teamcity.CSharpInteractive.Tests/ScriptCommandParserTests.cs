@@ -1,3 +1,4 @@
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System.Linq;
@@ -34,7 +35,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var commands = parser.Create(new ScriptCommand("origin", "code")).ToArray();
 
             // Then
-            commands.ShouldBe(new []{new ScriptCommand("origin", "code" + System.Environment.NewLine)}); 
+            commands.ShouldBe(new ICommand[]{new ScriptCommand("origin", "code" + System.Environment.NewLine)}); 
         }
         
         [Fact]
@@ -53,8 +54,8 @@ namespace Teamcity.CSharpInteractive.Tests
             var commands2 = parser.Create(new ScriptCommand("origin", "code2")).ToArray();
 
             // Then
-            commands.ShouldBe(new []{new ScriptCommand("origin", "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine)});
-            commands2.ShouldBe(new []{new ScriptCommand("origin", "code2" + System.Environment.NewLine)});
+            commands.ShouldBe(new ICommand[]{new ScriptCommand("origin", "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine)});
+            commands2.ShouldBe(new ICommand[]{new ScriptCommand("origin", "code2" + System.Environment.NewLine)});
         }
     }
 }

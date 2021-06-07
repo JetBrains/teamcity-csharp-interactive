@@ -11,6 +11,6 @@ namespace Teamcity.CSharpInteractive
             
         IEnumerable<string> GetCommandLineArgs();
         
-        string TempDirectory { get; }
+        string GetPath(SpecialFolder specialFolder);
     }
 }
