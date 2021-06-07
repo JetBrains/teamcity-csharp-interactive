@@ -5,7 +5,7 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
-    internal class SetVerbosityLevelCommandFactory: IReplCommandFactory
+    internal class SetVerbosityLevelCommandFactory: ICommandFactory<string>
     {
         private static readonly Regex Regex = new(@"^#l\s+(.+)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly ILog<SetVerbosityLevelCommandFactory> _log;
@@ -19,7 +19,7 @@ namespace Teamcity.CSharpInteractive
             _stringService = stringService;
         }
 
-        public IEnumerable<ICommand> TryCreate(string replCommand)
+        public IEnumerable<ICommand> Create(string replCommand)
         {
             var loadMatch = Regex.Match(replCommand);
             if (!loadMatch.Success)

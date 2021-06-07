@@ -1,5 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
+    using System.Linq;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -15,10 +16,10 @@ namespace Teamcity.CSharpInteractive.Tests
             var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
-            var command = parser.Create("origin", "code");
+            var commands = parser.Create(new ScriptCommand("origin", "code")).ToArray();
 
             // Then
-            command.ShouldBe(CodeCommand.Shared); 
+            commands.ShouldBe(new []{CodeCommand.Shared}); 
         }
         
         [Fact]
@@ -30,10 +31,10 @@ namespace Teamcity.CSharpInteractive.Tests
             var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
-            var command = parser.Create("origin", "code");
+            var commands = parser.Create(new ScriptCommand("origin", "code")).ToArray();
 
             // Then
-            command.ShouldBe(new ScriptCommand("origin", "code" + System.Environment.NewLine)); 
+            commands.ShouldBe(new []{new ScriptCommand("origin", "code" + System.Environment.NewLine)}); 
         }
         
         [Fact]
@@ -47,13 +48,13 @@ namespace Teamcity.CSharpInteractive.Tests
             var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
-            parser.Create("origin", "code1");
-            var command = parser.Create("origin", "code2");
-            var command2 = parser.Create("origin", "code2");
+            parser.Create(new ScriptCommand("origin", "code1")).ToArray();
+            var commands = parser.Create(new ScriptCommand("origin", "code2")).ToArray();
+            var commands2 = parser.Create(new ScriptCommand("origin", "code2")).ToArray();
 
             // Then
-            command.ShouldBe(new ScriptCommand("origin", "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine));
-            command2.ShouldBe(new ScriptCommand("origin", "code2" + System.Environment.NewLine));
+            commands.ShouldBe(new []{new ScriptCommand("origin", "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine)});
+            commands2.ShouldBe(new []{new ScriptCommand("origin", "code2" + System.Environment.NewLine)});
         }
     }
 }

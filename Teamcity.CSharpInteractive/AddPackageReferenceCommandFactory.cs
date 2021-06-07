@@ -5,13 +5,13 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using NuGet.Versioning;
 
-    internal class AddPackageReferenceCommandFactory: IReplCommandFactory
+    internal class AddPackageReferenceCommandFactory: ICommandFactory<string>
     {
         private readonly ILog<AddPackageReferenceCommandFactory> _log;
 
         public AddPackageReferenceCommandFactory(ILog<AddPackageReferenceCommandFactory> log) => _log = log;
 
-        public IEnumerable<ICommand> TryCreate(string replCommand)
+        public IEnumerable<ICommand> Create(string replCommand)
         {
             if (!replCommand.StartsWith("#r", StringComparison.CurrentCultureIgnoreCase))
             {

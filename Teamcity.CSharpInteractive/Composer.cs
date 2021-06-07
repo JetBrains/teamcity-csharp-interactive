@@ -41,18 +41,15 @@ namespace Teamcity.CSharpInteractive
             .Bind<INugetAssetsReader>().As(Singleton).To<NugetAssetsReader>()
             .Bind<ICleaner>().As(Singleton).To<Cleaner>()
             .Bind<ICommandsRunner>().As(Singleton).To<CommandsRunner>()
-
-            .Bind<IScriptCommandFactory>().To<ScriptCommandFactory>()
+            .Bind<ICommandFactory<ICodeSource>>().As(Singleton).To<CodeSourceCommandFactory>()
+            .Bind<ICommandFactory<ScriptCommand>>().To<ScriptCommandFactory>()
             .Bind<IScriptSubmissionAnalyzer>().As(Singleton).To<ScriptSubmissionAnalyzer>()
             .Bind<ICommandRunner>().As(Singleton).Tag("CSharp").To<CSharpScriptCommandRunner>()
-
-            .Bind<IReplCommandFactory>().As(Singleton).Tag("REPL Help parser").To<HelpCommandFactory>()
+            .Bind<ICommandFactory<string>>().As(Singleton).Tag("REPL Help parser").To<HelpCommandFactory>()
             .Bind<ICommandRunner>().As(Singleton).Tag("REPL Help runner").To<HelpCommandRunner>()
-
-            .Bind<IReplCommandFactory>().As(Singleton).Tag("REPL Set verbosity level parser").To<SetVerbosityLevelCommandFactory>()
+            .Bind<ICommandFactory<string>>().As(Singleton).Tag("REPL Set verbosity level parser").To<SetVerbosityLevelCommandFactory>()
             .Bind<ICommandRunner>().As(Singleton).Tag("REPL Set verbosity level runner").To<SetVerbosityLevelCommandRunner>()
-
-            .Bind<IReplCommandFactory>().As(Singleton).Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
+            .Bind<ICommandFactory<string>>().As(Singleton).Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
             .Bind<ICommandRunner>().As(Singleton).Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>();
     }
 }

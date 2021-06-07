@@ -18,7 +18,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var parser = new HelpCommandFactory(Mock.Of<ILog<HelpCommandFactory>>());
             
             // When
-            var actualResult = parser.TryCreate(replCommand);
+            var actualResult = parser.Create(replCommand);
 
             // Then
             actualResult.ShouldBe(expectedCommands);

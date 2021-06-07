@@ -1,11 +1,12 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
+    using System.Collections.Generic;
     using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
-    internal class ScriptCommandFactory : IScriptCommandFactory
+    internal class ScriptCommandFactory : ICommandFactory<ScriptCommand>
     {
         internal static readonly CSharpParseOptions ParseOptions = new(LanguageVersion.Latest, kind: SourceCodeKind.Script);
         private readonly ILog<ScriptCommandFactory> _log;
@@ -22,19 +23,20 @@ namespace Teamcity.CSharpInteractive
 
         public bool HasCode => _scriptBuilder.Length > 0;
 
-        public ICommand Create(string originName, string code)
+        public IEnumerable<ICommand> Create(ScriptCommand scriptCommand)
         {
-            _scriptBuilder.AppendLine(code);
+            _scriptBuilder.AppendLine(scriptCommand.Script);
             var script = _scriptBuilder.ToString();
             if (_scriptSubmissionAnalyzer.IsCompleteSubmission(script, ParseOptions))
             {
                 _log.Trace(new []{new Text("Completed submission")});
                 _scriptBuilder.Clear();
-                return new ScriptCommand(originName, script);
+                yield return new ScriptCommand(scriptCommand.Name, script);
+                yield break;
             }
 
             _log.Trace(new []{new Text("Incomplete submission")});
-            return CodeCommand.Shared;
+            yield return CodeCommand.Shared;
         }
     }
 }
