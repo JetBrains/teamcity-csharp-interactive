@@ -4,10 +4,11 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using Microsoft.DotNet.PlatformAbstractions;
 
     [ExcludeFromCodeCoverage]
-    internal class Environment : IEnvironment
+    internal class Environment : IEnvironment, ITraceSource
     {
         public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
@@ -40,6 +41,19 @@ namespace Teamcity.CSharpInteractive
                 
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public IEnumerable<Text> GetTrace()
+        {
+            yield return Text.NewLine;
+            yield return new Text($"OperatingSystemPlatform: {OperatingSystemPlatform}");
+            yield return Text.NewLine;
+            yield return new Text($"ProcessArchitecture: {ProcessArchitecture}");
+            foreach (var specialFolder in Enum.GetValues(typeof(SpecialFolder)).OfType<SpecialFolder>())
+            {
+                yield return Text.NewLine;
+                yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
             }
         }
     }

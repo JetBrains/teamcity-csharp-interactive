@@ -6,6 +6,18 @@ namespace Teamcity.CSharpInteractive
 
     internal class Cleaner : ICleaner
     {
-        public IDisposable Track(string path) => Disposable.Create(() => Directory.Delete(path, true));
+        private readonly ILog<Cleaner> _log;
+
+        public Cleaner(ILog<Cleaner> log) => _log = log;
+
+        public IDisposable Track(string path)
+        {
+            _log.Trace($"Trace \"{path}\".");
+            return Disposable.Create(() =>
+            {
+                _log.Trace($"Delete \"{path}\".");
+                Directory.Delete(path, true);
+            });
+        }
     }
 }

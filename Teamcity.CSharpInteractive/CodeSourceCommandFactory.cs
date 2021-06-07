@@ -30,12 +30,14 @@ namespace Teamcity.CSharpInteractive
                 foreach (var line in code.Split(System.Environment.NewLine))
                 {
                     var trimmedLine = line.Trim();
+                    _log.Trace($"Line: \"{trimmedLine}\".");
                     if (trimmedLine.StartsWith("#"))
                     {
                         var hasReplCommand = false;
                         foreach (var parser in _replCommandFactories)
                         {
                             var commands = parser.Create(trimmedLine).ToArray();
+                            _log.Trace($"REPL commands count: {commands.Length}.");
                             if (!commands.Any())
                             {
                                 continue;
@@ -43,6 +45,7 @@ namespace Teamcity.CSharpInteractive
 
                             if (sb.Length > 0)
                             {
+                                _log.Trace($"Yield script commands before REPL commands.");
                                 foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString())))
                                 {
                                     yield return command;
@@ -73,6 +76,7 @@ namespace Teamcity.CSharpInteractive
 
                 if (sb.Length > 0)
                 {
+                    _log.Trace($"Finally yield script commands.");
                     foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString())))
                     {
                         yield return command;

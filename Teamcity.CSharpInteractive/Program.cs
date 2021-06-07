@@ -27,8 +27,15 @@ namespace Teamcity.CSharpInteractive
         {
             _settings.Load();
             _info.ShowHeader();
-            var runner = _runners.Single(i => i.InteractionMode == _settings.InteractionMode);
-            return (int)runner.Run();
+            try
+            {
+                var runner = _runners.Single(i => i.InteractionMode == _settings.InteractionMode);
+                return (int) runner.Run();
+            }
+            finally
+            {
+                _info.ShowFooter();
+            }
         }
     }
 }

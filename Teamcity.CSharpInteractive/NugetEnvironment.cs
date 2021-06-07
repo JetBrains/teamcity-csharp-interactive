@@ -4,7 +4,7 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using System.IO;
 
-    internal class NugetEnvironment : INugetEnvironment
+    internal class NugetEnvironment : INugetEnvironment, ITraceSource
     {
         private readonly IDotnetEnvironment _dotnetEnvironment;
 
@@ -21,5 +21,13 @@ namespace Teamcity.CSharpInteractive
         {
             Path.Combine(_dotnetEnvironment.Path, "sdk", "NuGetFallbackFolder")
         };
+
+        public IEnumerable<Text> GetTrace()
+        {
+            yield return Text.NewLine;
+            yield return new Text($"NugetSources: {string.Join(";", Sources)}");
+            yield return Text.NewLine;
+            yield return new Text($"NugetFallbackFolders: {string.Join(";", FallbackFolders)}");
+        }
     }
 }

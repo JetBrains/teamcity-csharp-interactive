@@ -5,5 +5,7 @@ namespace Teamcity.CSharpInteractive
         void ShowHeader();
 
         void ShowReplHelp();
+
+        void ShowFooter();
     }
 }

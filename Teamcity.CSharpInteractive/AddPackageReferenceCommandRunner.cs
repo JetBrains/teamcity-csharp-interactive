@@ -7,6 +7,7 @@ namespace Teamcity.CSharpInteractive
 
     internal class AddPackageReferenceCommandRunner: ICommandRunner
     {
+        private readonly ILog<AddPackageReferenceCommandRunner> _log;
         private readonly IEnvironment _environment;
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly INugetEnvironment _nugetEnvironment;
@@ -16,6 +17,7 @@ namespace Teamcity.CSharpInteractive
         private readonly ICleaner _cleaner;
 
         public AddPackageReferenceCommandRunner(
+            ILog<AddPackageReferenceCommandRunner> log,
             IEnvironment environment,
             IUniqueNameGenerator uniqueNameGenerator,
             INugetEnvironment nugetEnvironment,
@@ -24,6 +26,7 @@ namespace Teamcity.CSharpInteractive
             Func<ICommandsRunner> commandsRunnerFactory,
             ICleaner cleaner)
         {
+            _log = log;
             _environment = environment;
             _uniqueNameGenerator = uniqueNameGenerator;
             _nugetEnvironment = nugetEnvironment;
@@ -40,6 +43,7 @@ namespace Teamcity.CSharpInteractive
                 return new CommandResult(command, default);
             }
 
+            using var restoreToken = _log.Block($"Restore {addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.Version}");
             var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
             var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
             var packagesPath = Path.Combine(tempDirectory, ".nuget");
@@ -60,10 +64,12 @@ namespace Teamcity.CSharpInteractive
             var assetsFilePath = Path.Combine(outputPath, "project.assets.json");
             var commands =
                 from assembly in _nugetAssetsReader.ReadAssemblies(assetsFilePath)
-                select new ScriptCommand(string.Empty, $"#r \"{assembly.FilePath}\"");
+                select new ScriptCommand(assembly.Name, $"#r \"{assembly.FilePath}\"");
 
+            using var addRefsToken = _log.Block($"Add references");
             foreach (var result in _commandsRunnerFactory().Run(commands))
             {
+                _log.Info(result.Command.ToString()!);
                 if (result.Success.HasValue && !result.Success.Value)
                 {
                     break;

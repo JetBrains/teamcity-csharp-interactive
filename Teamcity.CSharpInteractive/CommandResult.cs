@@ -10,5 +10,11 @@ namespace Teamcity.CSharpInteractive
             Command = command;
             Success = success;
         }
+
+        public override string ToString()
+        {
+            var success = Success.HasValue ? Success.Value.ToString() : "empty";
+            return $"{Command.Name}: {success}";
+        }
     }
 }

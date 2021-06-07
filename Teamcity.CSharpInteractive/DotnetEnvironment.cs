@@ -3,10 +3,13 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.Collections.Generic;
+    using System.Runtime.InteropServices;
     using Microsoft.DotNet.PlatformAbstractions;
     using Pure.DI;
+    using RuntimeEnvironment = Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment;
 
-    internal class DotnetEnvironment : IDotnetEnvironment
+    internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
         private const string VersionPrefix = ",Version=v";
         private readonly string _frameworkName;
@@ -35,5 +38,23 @@ namespace Teamcity.CSharpInteractive
                 Platform.Darwin => $"osx-{_environment.ProcessArchitecture}",
                 _ => $"linux-{_environment.ProcessArchitecture}"
             };
+
+        public IEnumerable<Text> GetTrace()
+        {
+            yield return Text.NewLine;
+            yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
+            yield return Text.NewLine;
+            yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
+            yield return Text.NewLine;
+            yield return new Text($"DotnetPath: {Path}");
+            yield return Text.NewLine;
+            yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
+            yield return Text.NewLine;
+            yield return new Text($"Tfm: {Tfm}");
+            yield return Text.NewLine;
+            yield return new Text($"DotnetVersion: {Version}");
+            yield return Text.NewLine;
+            yield return new Text($"DotnetRuntimeIdentifier: {RuntimeIdentifier}");
+        }
     }
 }

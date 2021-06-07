@@ -56,7 +56,7 @@ namespace Teamcity.CSharpInteractive
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
-                _stdOut.Write(GetMessage(traceMessage, Color.Trace));
+                _stdOut.Write(GetMessage(new Text($"{typeof(T).Name, -40}") + traceMessage, Color.Trace));
             }
         }
 
@@ -76,7 +76,7 @@ namespace Teamcity.CSharpInteractive
         private static Text[] GetMessage(Text[] message, Color defaultColor)
         {
             var tabsStr = new string(' ', Log.Tabs * 2);
-            message = message.Select(i => new Text(i.Value.Replace("\n", "\n" + tabsStr), i.Color)) .ToArray();
+            message = message.Select(i => new Text(i.Value.Replace("\n", "\n"), i.Color)) .ToArray();
             message += Text.NewLine;
             message = new Text(tabsStr) + message;
             return message.WithDefaultColor(defaultColor);

@@ -1,28 +1,32 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.InteropServices;
 
     [ExcludeFromCodeCoverage]
     internal class Info : IInfo
     {
         private readonly ILog<Info> _log;
         private readonly ISettings _settings;
+        private readonly IPresenter<IEnumerable<ITraceSource>> _tracePresenter;
+        private readonly IEnumerable<ITraceSource> _traceSources;
 
         public Info(
             ILog<Info> log,
-            ISettings settings)
+            ISettings settings,
+            IPresenter<IEnumerable<ITraceSource>> tracePresenter,
+            IEnumerable<ITraceSource> traceSources)
         {
             _log = log;
             _settings = settings;
+            _tracePresenter = tracePresenter;
+            _traceSources = traceSources;
         }
         
         public void ShowHeader()
         {
             _log.Info(new Text(_settings.Title, Color.Header));
-            _log.Trace(new Text(RuntimeInformation.FrameworkDescription));
-            _log.Trace(new Text($"Default C# version {ScriptCommandFactory.ParseOptions.LanguageVersion}"));
         }
 
         public void ShowReplHelp()
@@ -42,5 +46,7 @@ namespace Teamcity.CSharpInteractive
                 new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. #load \"myScript.csx\".")
             );
         }
+
+        public void ShowFooter() => _tracePresenter.Show(_traceSources);
     }
 }
