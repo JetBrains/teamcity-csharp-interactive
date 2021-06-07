@@ -2,8 +2,10 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    [ExcludeFromCodeCoverage]
     internal static class LogExtensions
     {
         public static IDisposable Block<T>(this ILog<T> log, string blockName) => 

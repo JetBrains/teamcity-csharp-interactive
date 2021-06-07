@@ -2,9 +2,11 @@
 // ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 namespace Teamcity.CSharpInteractive
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using NuGet.Common;
 
+    [ExcludeFromCodeCoverage]
     internal class NugetLogger: ILogger
     {
         private readonly ILog<NugetLogger> _log;

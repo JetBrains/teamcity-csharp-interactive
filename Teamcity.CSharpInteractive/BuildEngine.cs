@@ -2,8 +2,10 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.Build.Framework;
 
+    [ExcludeFromCodeCoverage]
     internal class BuildEngine : IBuildEngine
     {
         private readonly ILog<BuildEngine> _log;
