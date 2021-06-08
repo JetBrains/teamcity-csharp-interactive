@@ -44,6 +44,8 @@ namespace Teamcity.CSharpInteractive
             }
         }
 
+        public void Exit(ExitCode exitCode) => System.Environment.Exit((int)exitCode);
+
         public IEnumerable<Text> GetTrace()
         {
             yield return Text.NewLine;

@@ -2,12 +2,14 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
     using NuGet.Build.Tasks;
     using NuGet.Versioning;
 
+    [ExcludeFromCodeCoverage]
     internal class NugetRestoreService : INugetRestoreService
     {
         private const string Project = "restore";

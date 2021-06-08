@@ -38,7 +38,7 @@ namespace Teamcity.CSharpInteractive
 
         public CommandResult TryRun(ICommand command)
         {
-            if (command.Kind != CommandKind.AddPackageReference || command is not AddPackageReferenceCommand addPackageReferenceCommand)
+            if (command is not AddPackageReferenceCommand addPackageReferenceCommand)
             {
                 return new CommandResult(command, default);
             }
@@ -70,10 +70,12 @@ namespace Teamcity.CSharpInteractive
             foreach (var result in _commandsRunnerFactory().Run(commands))
             {
                 _log.Info(result.Command.ToString()!);
-                if (result.Success.HasValue && !result.Success.Value)
+                if (result.Success.HasValue && result.Success.Value)
                 {
-                    break;
+                    continue;
                 }
+
+                return new CommandResult(command, false);
             }
             
             return new CommandResult(command, true);

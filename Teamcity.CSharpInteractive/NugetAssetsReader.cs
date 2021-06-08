@@ -4,12 +4,14 @@ namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using NuGet.Common;
     using NuGet.ProjectModel;
     using NuGet.Versioning;
 
+    [ExcludeFromCodeCoverage]
     internal class NugetAssetsReader : INugetAssetsReader
     {
         private readonly ILog<NugetAssetsReader> _log;

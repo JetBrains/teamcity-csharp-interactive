@@ -12,5 +12,7 @@ namespace Teamcity.CSharpInteractive
         IEnumerable<string> GetCommandLineArgs();
         
         string GetPath(SpecialFolder specialFolder);
+
+        void Exit(ExitCode exitCode);
     }
 }

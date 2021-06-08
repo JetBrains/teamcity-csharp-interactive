@@ -44,7 +44,7 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             var runner = CreateInstance();
-            _commandsRunner.Setup(i => i.Run(_commands)).Returns(results);
+            _commandsRunner.Setup(i => i.Run(It.IsAny<IEnumerable<ICommand>>())).Returns(results);
             _statistics.SetupGet(i => i.Errors).Returns(errors);
             _statistics.SetupGet(i => i.Warnings).Returns(warnings);
             
@@ -60,10 +60,45 @@ namespace Teamcity.CSharpInteractive.Tests
             // Success
             new object[]
             {
-                new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
-                new string[] {},
-                new string[] {},
+                new CommandResult[] { new(CodeCommand.Shared, true), new(CodeCommand.Shared, true), new(new ScriptCommand(string.Empty, string.Empty), true)},
+                System.Array.Empty<string>(),
+                System.Array.Empty<string>(),
                 ExitCode.Success
+            },
+            
+            new object[]
+            {
+                new CommandResult[] { new(CodeCommand.Shared, default), new(CodeCommand.Shared, default), new(new ScriptCommand(string.Empty, string.Empty), default)},
+                System.Array.Empty<string>(),
+                System.Array.Empty<string>(),
+                ExitCode.Success
+            },
+            
+            // Warnings
+            new object[]
+            {
+                new CommandResult[] { new(CodeCommand.Shared, default), new(CodeCommand.Shared, default), new(new ScriptCommand(string.Empty, string.Empty), true)},
+                System.Array.Empty<string>(),
+                new[] {"warn"},
+                ExitCode.Success
+            },
+            
+            // Errors
+            new object[]
+            {
+                new CommandResult[] { new(CodeCommand.Shared, null), new(CodeCommand.Shared, null), new(new ScriptCommand(string.Empty, string.Empty), true)},
+                new[] {"err"},
+                new[] {"warn"},
+                ExitCode.Fail
+            },
+            
+            // Failed
+            new object[]
+            {
+                new CommandResult[] { new(CodeCommand.Shared, null), new(CodeCommand.Shared, null), new(new ScriptCommand(string.Empty, string.Empty), false)},
+                System.Array.Empty<string>(),
+                System.Array.Empty<string>(),
+                ExitCode.Fail
             },
         };
 

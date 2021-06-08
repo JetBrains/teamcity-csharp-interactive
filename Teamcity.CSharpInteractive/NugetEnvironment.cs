@@ -2,6 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
     internal class NugetEnvironment : INugetEnvironment, ITraceSource
@@ -22,6 +23,7 @@ namespace Teamcity.CSharpInteractive
             Path.Combine(_dotnetEnvironment.Path, "sdk", "NuGetFallbackFolder")
         };
 
+        [ExcludeFromCodeCoverage]
         public IEnumerable<Text> GetTrace()
         {
             yield return Text.NewLine;

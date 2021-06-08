@@ -12,6 +12,8 @@
         
         Warning,
         
-        Error
+        Error,
+        
+        Details
     }
 }

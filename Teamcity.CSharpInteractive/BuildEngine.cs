@@ -25,7 +25,7 @@ namespace Teamcity.CSharpInteractive
                     break;
                 
                 case MessageImportance.Normal:
-                    _log.Info(new[] {new Text(e.Message)});
+                    _log.Info(new[] {new Text(e.Message, Color.Details)});
                     break;
                 
                 default:

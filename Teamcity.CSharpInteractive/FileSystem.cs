@@ -1,12 +1,12 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
 
     [ExcludeFromCodeCoverage]
-    internal class UniqueNameGenerator : IUniqueNameGenerator
+    internal class FileSystem : IFileSystem
     {
-        public string Generate() => Guid.NewGuid().ToString().Replace("-", string.Empty);
+        public void DeleteDirectory(string path, bool recursive) => Directory.Delete(path, recursive);
     }
 }

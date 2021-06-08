@@ -14,7 +14,5 @@ namespace Teamcity.CSharpInteractive
         }
         
         public string Name => $"Package {PackageId} {Version?.ToString() ?? "latest"}";
-
-        public CommandKind Kind => CommandKind.AddPackageReference;
     }
 }

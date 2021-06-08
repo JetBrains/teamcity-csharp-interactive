@@ -4,41 +4,33 @@ namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
-    using Microsoft.DotNet.PlatformAbstractions;
     using Pure.DI;
-    using RuntimeEnvironment = Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment;
 
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
         private const string VersionPrefix = ",Version=v";
-        private readonly string _frameworkName;
+        private readonly string _targetFrameworkMoniker;
         private readonly IEnvironment _environment;
 
         public DotnetEnvironment(
-            [Tag("FrameworkName")] string frameworkName,
+            [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
             IEnvironment environment)
         {
-            _frameworkName = frameworkName;
+            _targetFrameworkMoniker = targetFrameworkMoniker;
             _environment = environment;
         }
 
         public string Path => System.IO.Path.Combine(_environment.GetPath(SpecialFolder.ProgramFiles), "dotnet");
 
-        public string TargetFrameworkMoniker => _frameworkName;
+        public string TargetFrameworkMoniker => _targetFrameworkMoniker;
 
         public string Tfm => Version.Major >= 5 ? $"net{Version}" : $"netcoreapp{Version}";
 
-        public Version Version => Version.Parse(_frameworkName[(_frameworkName.IndexOf(VersionPrefix, StringComparison.Ordinal) + VersionPrefix.Length)..]);
+        public Version Version => Version.Parse(_targetFrameworkMoniker[(_targetFrameworkMoniker.IndexOf(VersionPrefix, StringComparison.Ordinal) + VersionPrefix.Length)..]);
 
-        public string RuntimeIdentifier =>
-            _environment.OperatingSystemPlatform switch
-            {
-                Platform.Windows => RuntimeEnvironment.GetRuntimeIdentifier(),
-                Platform.Darwin => $"osx-{_environment.ProcessArchitecture}",
-                _ => $"linux-{_environment.ProcessArchitecture}"
-            };
-
+        [ExcludeFromCodeCoverage]
         public IEnumerable<Text> GetTrace()
         {
             yield return Text.NewLine;
@@ -53,8 +45,6 @@ namespace Teamcity.CSharpInteractive
             yield return new Text($"Tfm: {Tfm}");
             yield return Text.NewLine;
             yield return new Text($"DotnetVersion: {Version}");
-            yield return Text.NewLine;
-            yield return new Text($"DotnetRuntimeIdentifier: {RuntimeIdentifier}");
         }
     }
 }

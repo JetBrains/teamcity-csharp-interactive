@@ -25,14 +25,7 @@ namespace Teamcity.CSharpInteractive
             ShowCursor(true);
             foreach (var result in _commandsRunner.Run(_commandSource.GetCommands()))
             {
-                if (result.Command.Kind == CommandKind.Code)
-                {
-                    ShowCursor(false);
-                }
-                else
-                {
-                    ShowCursor(true);
-                }
+                ShowCursor(result.Command is not CodeCommand);
             }
 
             return ExitCode.Success;

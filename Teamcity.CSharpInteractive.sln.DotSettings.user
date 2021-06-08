@@ -9,7 +9,7 @@
     &lt;TestId&gt;xUnit::D50DF30F-F84C-4292-9DA1-28D3649607A2::.NETCoreApp,Version=v3.1::Teamcity.CSharpInteractive.Tests.AddReferenceCommandParserTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4ca50dc7_002D4373_002D4fde_002Dab45_002D05b109f7c07a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldParse #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4ca50dc7_002D4373_002D4fde_002Dab45_002D05b109f7c07a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldParse #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Projects\TeamCity\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.Tests" Presentation="&amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=67240236_002D2c6d_002D42ad_002D85aa_002Ddfab70bcb97b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldParse" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
@@ -18,7 +18,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=854689dc_002D009d_002D47da_002D80f2_002D30b17aaaf295/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Projects\TeamCity\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.Tests" Presentation="&amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a5ed65fc_002Dd9cf_002D42b4_002D8397_002Dd21a9739a609/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Should" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a5ed65fc_002Dd9cf_002D42b4_002D8397_002Dd21a9739a609/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Should" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Projects\TeamCity\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.Tests" Presentation="&amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d6fc0c7e_002D711b_002D4ed8_002Da224_002Daa7b86098574/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt; #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;

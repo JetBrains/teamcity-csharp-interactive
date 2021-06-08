@@ -2,13 +2,17 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
-    using System.IO;
 
     internal class Cleaner : ICleaner
     {
         private readonly ILog<Cleaner> _log;
+        private readonly IFileSystem _fileSystem;
 
-        public Cleaner(ILog<Cleaner> log) => _log = log;
+        public Cleaner(ILog<Cleaner> log, IFileSystem fileSystem)
+        {
+            _log = log;
+            _fileSystem = fileSystem;
+        }
 
         public IDisposable Track(string path)
         {
@@ -16,7 +20,7 @@ namespace Teamcity.CSharpInteractive
             return Disposable.Create(() =>
             {
                 _log.Trace($"Delete \"{path}\".");
-                Directory.Delete(path, true);
+                _fileSystem.DeleteDirectory(path, true);
             });
         }
     }

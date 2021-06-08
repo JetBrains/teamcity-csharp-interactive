@@ -16,8 +16,6 @@ namespace Teamcity.CSharpInteractive
 
         public string Name { get; }
 
-        public CommandKind Kind => CommandKind.Script;
-
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;

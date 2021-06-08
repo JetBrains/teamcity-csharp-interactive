@@ -14,7 +14,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var runner = new HelpCommandRunner(info.Object);
 
             // When
-            var actualResult = runner.TryRun(new HelpCommand());
+            var actualResult = runner.TryRun(HelpCommand.Shared);
 
             // Then
             actualResult.Success.ShouldBe(true);

@@ -9,7 +9,7 @@ namespace Teamcity.CSharpInteractive
 
         public CommandResult TryRun(ICommand command)
         {
-            if (command.Kind != CommandKind.Help || command is not HelpCommand)
+            if (command is not HelpCommand)
             {
                 return new CommandResult(command, default);
             }

@@ -58,7 +58,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Success
             new object[]
             {
-                new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
+                new CommandResult[] { new(CodeCommand.Shared, null), new(CodeCommand.Shared, null), new(new ScriptCommand(string.Empty, string.Empty), null)},
                 ExitCode.Success,
                 new [] {"> ", ". ", ". ", "> "}
             },

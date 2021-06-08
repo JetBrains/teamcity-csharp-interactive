@@ -1,5 +1,8 @@
 namespace Teamcity.CSharpInteractive
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class ReferencingAssembly
     {
         public readonly string Name;

@@ -16,7 +16,7 @@ namespace Teamcity.CSharpInteractive
 
         public CommandResult TryRun(ICommand command)
         {
-            if (command.Kind != CommandKind.SetVerbosityLevel || command is not SetVerbosityLevelCommand setVerbosityLevelCommand)
+            if (command is not SetVerbosityLevelCommand setVerbosityLevelCommand)
             {
                 return new CommandResult(command, default);
             }

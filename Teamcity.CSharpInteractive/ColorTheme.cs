@@ -16,6 +16,7 @@
                 Color.Success => ConsoleColor.Green,
                 Color.Warning => ConsoleColor.Yellow,
                 Color.Error => ConsoleColor.Red,
+                Color.Details => ConsoleColor.DarkCyan,
                 _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)
             };
 
@@ -28,6 +29,7 @@
                 Color.Success => "32;1",
                 Color.Warning => "31;1",
                 Color.Error => "33;1",
+                Color.Details => "36",
                 _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)
             };
     }

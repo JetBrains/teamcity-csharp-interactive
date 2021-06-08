@@ -33,7 +33,7 @@ namespace Teamcity.CSharpInteractive
             var exitCode = ExitCode.Success;
             try
             {
-                foreach (var result in _commandsRunner.Run(_commandSource.GetCommands().Where(i => i.Kind != CommandKind.Code)))
+                foreach (var result in _commandsRunner.Run(_commandSource.GetCommands().Where(i => i is not CodeCommand)))
                 {
                     if (result.Success.HasValue)
                     {
@@ -45,7 +45,7 @@ namespace Teamcity.CSharpInteractive
                     }
                     else
                     {
-                        _log.Error($"Not supported: {result.Command}.");
+                        _log.Error($"{result.Command} is not supported.");
                     }
                 }
 

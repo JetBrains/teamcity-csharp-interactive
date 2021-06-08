@@ -11,21 +11,26 @@ namespace Teamcity.CSharpInteractive
 
         private readonly IInfo _info;
         private readonly ISettings _settings;
+        private readonly IExitTracker _exitTracker;
         private readonly IEnumerable<IRunner> _runners;
 
         internal Program(
             IInfo info,
             ISettings settings,
+            IExitTracker exitTracker,
             IEnumerable<IRunner> runners)
         {
             _info = info;
             _settings = settings;
+            _exitTracker = exitTracker;
             _runners = runners;
         }
         
         internal int Run()
         {
             _settings.Load();
+
+            using var exitToken = _exitTracker.Track();
             _info.ShowHeader();
             try
             {
