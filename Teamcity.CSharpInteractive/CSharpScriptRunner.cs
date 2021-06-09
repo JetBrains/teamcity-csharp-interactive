@@ -33,10 +33,10 @@ namespace Teamcity.CSharpInteractive
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                _scriptState = 
+                _scriptState =
                     (_scriptState ?? CSharpScript.RunAsync(string.Empty, Options).Result)
                     .ContinueWithAsync(
-                        script, 
+                        script,
                         Options,
                         exception =>
                         {
@@ -45,7 +45,7 @@ namespace Teamcity.CSharpInteractive
                             return true;
                         })
                     .Result;
-                    
+
                 stopwatch.Stop();
                 _log.Trace(new Text($"Time Elapsed {stopwatch.Elapsed:g}"));
                 _diagnosticsPresenter.Show(_scriptState.Script.GetCompilation().GetDiagnostics());
@@ -55,10 +55,12 @@ namespace Teamcity.CSharpInteractive
                 _diagnosticsPresenter.Show(e.Diagnostics);
                 success = false;
             }
-
-            if (_scriptState != null)
+            finally
             {
-                _scriptStatePresenter.Show(_scriptState);
+                if (_scriptState != null)
+                {
+                    _scriptStatePresenter.Show(_scriptState);
+                }                
             }
 
             return success;

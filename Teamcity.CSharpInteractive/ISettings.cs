@@ -9,9 +9,9 @@ namespace Teamcity.CSharpInteractive
         VerbosityLevel VerbosityLevel { get; set; }
 
         InteractionMode InteractionMode { get; }
-
-        void Load();
         
         IEnumerable<ICodeSource> Sources { get; }
+
+        void Load();
     }
 }

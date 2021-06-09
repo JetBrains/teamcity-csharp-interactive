@@ -13,6 +13,7 @@ namespace Teamcity.CSharpInteractive
 
         public IEnumerable<ICommand> Create(string replCommand)
         {
+            replCommand = replCommand.Trim();
             if (!replCommand.StartsWith("#r", StringComparison.CurrentCultureIgnoreCase))
             {
                 yield break;
@@ -25,11 +26,12 @@ namespace Teamcity.CSharpInteractive
             }
 
             var parts = replCommand.Split( ' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 1)
+            if (parts.Length is < 1 or > 2)
             {
+                _log.Error($"Invalid script directive \"{replCommand}\".");
                 yield break;
             }
-            
+
             var rawId = parts[0];
             NuGetVersion? version = null;
             if (parts.Length >= 2)
@@ -37,6 +39,11 @@ namespace Teamcity.CSharpInteractive
                 if (NuGetVersion.TryParse(parts[1], out var curVersion))
                 {
                     version = curVersion;
+                }
+                else
+                {
+                    _log.Error($"Cannot parse the package version \"{parts[1]}\".");
+                    yield break;
                 }
             }
                 

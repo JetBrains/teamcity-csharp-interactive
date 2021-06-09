@@ -12,14 +12,13 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<IStatistics> _statistics;
         private readonly Mock<IPresenter<IStatistics>> _statisticsPresenter;
         private readonly Mock<ILog<ScriptRunner>> _log;
-        private readonly IEnumerable<ICommand> _commands;
 
         public ScriptRunnerTests()
         {
             _log = new Mock<ILog<ScriptRunner>>();
-            _commands = Mock.Of<IEnumerable<ICommand>>();
+            IEnumerable<ICommand> commands = Mock.Of<IEnumerable<ICommand>>();
             _commandSource = new Mock<ICommandSource>();
-            _commandSource.Setup(i => i.GetCommands()).Returns(_commands);
+            _commandSource.Setup(i => i.GetCommands()).Returns(commands);
             _commandsRunner = new Mock<ICommandsRunner>();
             _statistics = new Mock<IStatistics>();
             _statisticsPresenter = new Mock<IPresenter<IStatistics>>();

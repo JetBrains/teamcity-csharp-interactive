@@ -10,7 +10,7 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class ConsoleInput : ICodeSource, IEnumerator<string>
     {
-        public ConsoleInput() => Console.CancelKeyPress += (sender, args) => System.Environment.Exit(0);
+        public ConsoleInput() => Console.CancelKeyPress += (_, _) => System.Environment.Exit(0);
 
         public string Name => "Console";
 
