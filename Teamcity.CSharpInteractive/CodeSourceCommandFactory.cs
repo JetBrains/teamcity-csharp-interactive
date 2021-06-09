@@ -24,6 +24,11 @@ namespace Teamcity.CSharpInteractive
         public IEnumerable<ICommand> Create(ICodeSource codeSource)
         {
             using var sourceBlockToken = _log.Block(codeSource.Name);
+            if (codeSource.ResetRequired)
+            {
+                yield return ResetCommand.Shared;
+            }
+
             foreach (var code in codeSource)
             {
                 var sb = new StringBuilder();
@@ -34,9 +39,9 @@ namespace Teamcity.CSharpInteractive
                     if (trimmedLine.StartsWith("#"))
                     {
                         var hasReplCommand = false;
-                        foreach (var parser in _replCommandFactories)
+                        foreach (var replCommandFactory in _replCommandFactories)
                         {
-                            var commands = parser.Create(trimmedLine).ToArray();
+                            var commands = replCommandFactory.Create(trimmedLine).ToArray();
                             _log.Trace($"REPL commands count: {commands.Length}.");
                             if (!commands.Any())
                             {

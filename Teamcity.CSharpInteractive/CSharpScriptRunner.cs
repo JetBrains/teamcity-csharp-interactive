@@ -2,6 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
@@ -30,6 +31,8 @@ namespace Teamcity.CSharpInteractive
             var success = true;
             try
             {
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
                 _scriptState = 
                     (_scriptState ?? CSharpScript.RunAsync(string.Empty, Options).Result)
                     .ContinueWithAsync(
@@ -43,6 +46,8 @@ namespace Teamcity.CSharpInteractive
                         })
                     .Result;
                     
+                stopwatch.Stop();
+                _log.Trace(new Text($"Time Elapsed {stopwatch.Elapsed:g}"));
                 _diagnosticsPresenter.Show(_scriptState.Script.GetCompilation().GetDiagnostics());
             }
             catch (CompilationErrorException e)
@@ -59,6 +64,10 @@ namespace Teamcity.CSharpInteractive
             return success;
         }
 
-        public void Reset() => _scriptState = default;
+        public void Reset()
+        {
+            _log.Trace("Reset state.");
+            _scriptState = default;
+        }
     }
 }

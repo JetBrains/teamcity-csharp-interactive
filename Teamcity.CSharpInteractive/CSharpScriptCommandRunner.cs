@@ -9,11 +9,20 @@ namespace Teamcity.CSharpInteractive
         public CSharpScriptCommandRunner(ICSharpScriptRunner scriptRunner) =>
             _scriptRunner = scriptRunner;
 
-        public CommandResult TryRun(ICommand command) =>
-            command switch
+        public CommandResult TryRun(ICommand command)
+        {
+            switch (command)
             {
-                ScriptCommand scriptCommand => new CommandResult(command, _scriptRunner.Run(scriptCommand.Script)),
-                _ => new CommandResult(command, default)
-            };
+                case ScriptCommand scriptCommand:
+                    return new CommandResult(command, _scriptRunner.Run(scriptCommand.Script));
+
+                case ResetCommand:
+                    _scriptRunner.Reset();
+                    return new CommandResult(command, true);
+
+                default:
+                    return new CommandResult(command, default);
+            }
+        }
     }
 }

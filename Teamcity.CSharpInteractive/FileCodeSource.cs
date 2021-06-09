@@ -22,6 +22,8 @@ namespace Teamcity.CSharpInteractive
 
         public string Name => Path.GetFileName(FileName);
 
+        public bool ResetRequired => true;
+
         public string FileName { get; set; } = "";
         
         public IEnumerator<string> GetEnumerator()
