@@ -46,14 +46,13 @@ namespace Teamcity.CSharpInteractive
             using var restoreToken = _log.Block($"Restore {addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.Version}");
             var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
             var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
-            var packagesPath = Path.Combine(tempDirectory, ".nuget");
             var restoreResult = _nugetRestoreService.Restore(
                 addPackageReferenceCommand.PackageId,
                 addPackageReferenceCommand.Version,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,
                 outputPath,
-                packagesPath);
+                _nugetEnvironment.PackagesPath);
 
             if (!restoreResult)
             {

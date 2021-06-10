@@ -26,7 +26,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private static readonly string[] Sources = new[] {"src"};
         private static readonly string[] FallbackFolders = new[] {"fallback"};
         private static readonly string OutputPath = Path.Combine(TempDir, UniqName); 
-        private static readonly string PackagesPath = Path.Combine(TempDir, ".nuget");
+        private static readonly string PackagesPath = "packages";
         private static readonly string AssetsFilePath = Path.Combine(OutputPath, "project.assets.json");
         private readonly ScriptCommand[] _commands;
 
@@ -46,6 +46,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _nugetEnv = new Mock<INugetEnvironment>();
             _nugetEnv.SetupGet(i => i.Sources).Returns(Sources);
             _nugetEnv.SetupGet(i => i.FallbackFolders).Returns(FallbackFolders);
+            _nugetEnv.SetupGet(i => i.PackagesPath).Returns(PackagesPath);
             
             _nugetRestoreService = new Mock<INugetRestoreService>();
             _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.Version, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(true);
