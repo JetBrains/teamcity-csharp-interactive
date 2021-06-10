@@ -23,7 +23,7 @@ namespace Teamcity.CSharpInteractive
 
         public void LogWarning(string data) => _log.Warning(new []{new Text(data)});
 
-        public void LogError(string data) => _log.Error(new []{new Text(data)});
+        public void LogError(string data) => _log.Error(ErrorId.Nuget, new []{new Text(data)});
 
         public void LogInformationSummary(string data) => _log.Trace(new []{new Text(data)});
 

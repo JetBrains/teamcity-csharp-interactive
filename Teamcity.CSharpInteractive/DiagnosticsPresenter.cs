@@ -32,7 +32,7 @@ namespace Teamcity.CSharpInteractive
                         break;
 
                     case DiagnosticSeverity.Error:
-                        _log.Error(new []{new Text(diagnostic.ToString())});
+                        _log.Error(new ErrorId(diagnostic.Id), new []{new Text(diagnostic.ToString())});
                         break;
                 }
             }

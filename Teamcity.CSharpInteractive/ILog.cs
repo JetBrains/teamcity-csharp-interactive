@@ -6,7 +6,7 @@ namespace Teamcity.CSharpInteractive
 
     internal interface ILog<T>
     {
-        void Error(params Text[] error);
+        void Error(ErrorId id, params Text[] error);
         
         void Warning(params Text[] warning);
         

@@ -44,7 +44,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
             // Then
             expectedResult.ShouldBeEmpty();
-            log.Verify(i => i.Error(It.IsAny<Text[]>()));
+            log.Verify(i => i.Error(ErrorId.File,It.IsAny<Text[]>()));
         }
     }
 }

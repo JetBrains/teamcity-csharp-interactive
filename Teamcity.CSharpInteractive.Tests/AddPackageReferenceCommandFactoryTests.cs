@@ -16,7 +16,7 @@ namespace Teamcity.CSharpInteractive.Tests
         public AddPackageReferenceCommandFactoryTests()
         {
             _log = new Mock<ILog<AddPackageReferenceCommandFactory>>();
-            _log.Setup(i => i.Error(It.IsAny<Text[]>())).Callback<Text[]>(text => _errors.AddRange(text));
+            _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
         }
 
         [Theory]

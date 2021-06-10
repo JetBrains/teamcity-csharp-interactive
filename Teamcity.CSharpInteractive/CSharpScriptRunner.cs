@@ -41,7 +41,7 @@ namespace Teamcity.CSharpInteractive
                         exception =>
                         {
                             success = false;
-                            _log.Error(new[] {new Text(exception.ToString())});
+                            _log.Error(ErrorId.Exception, new[] {new Text(exception.ToString())});
                             return true;
                         })
                     .Result;

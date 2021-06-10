@@ -13,6 +13,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly List<IRunner> _runners;
         private readonly Mock<IExitTracker> _exitTracker;
         private readonly Mock<IDisposable> _trackToken;
+        private readonly Mock<IFlushable> _flushable;
 
         public ProgramTests()
         {
@@ -28,6 +29,7 @@ namespace Teamcity.CSharpInteractive.Tests
             scriptRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Script);
             scriptRunner.Setup(i => i.Run()).Returns(ExitCode.Fail);
             _runners = new List<IRunner> { interactiveRunner.Object, scriptRunner.Object};
+            _flushable = new Mock<IFlushable>();
         }
 
         [Fact]
@@ -44,9 +46,10 @@ namespace Teamcity.CSharpInteractive.Tests
             _info.Verify(i => i.ShowHeader());
             actualResult.ShouldBe((int)ExitCode.Fail);
             _trackToken.Verify(i => i.Dispose());
+            _flushable.Verify(i => i.Flush());
         }
 
         private Program CreateInstance() =>
-            new Program(_info.Object, _settings.Object, _exitTracker.Object, _runners);
+            new Program(_info.Object, _settings.Object, _exitTracker.Object, _runners, _flushable.Object);
     }
 }

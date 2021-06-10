@@ -11,9 +11,9 @@ namespace Teamcity.CSharpInteractive
         public static IDisposable Block<T>(this ILog<T> log, string blockName) => 
             string.IsNullOrWhiteSpace(blockName) ? Disposable.Empty : log.Block(new[] {new Text(blockName)});
 
-        public static ILog<T> Error<T>(this ILog<T> log, params string[] error)
+        public static ILog<T> Error<T>(this ILog<T> log, ErrorId id, params string[] error)
         {
-            log.Error(error.Select(i => new Text(i)).ToArray());
+            log.Error(id, error.Select(i => new Text(i)).ToArray());
             return log;
         }
         

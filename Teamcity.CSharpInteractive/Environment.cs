@@ -16,6 +16,8 @@ namespace Teamcity.CSharpInteractive
 
         public IEnumerable<string> GetCommandLineArgs() => System.Environment.GetCommandLineArgs();
 
+        public string? GetEnvironmentVariable(string name) => System.Environment.GetEnvironmentVariable(name);
+
         public string GetPath(SpecialFolder specialFolder)
         {
             switch (OperatingSystemPlatform)

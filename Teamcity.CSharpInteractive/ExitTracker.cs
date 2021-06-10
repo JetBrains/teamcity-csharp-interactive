@@ -41,7 +41,7 @@ namespace Teamcity.CSharpInteractive
 
         private void CurrentDomainOnProcessExit(object? sender, EventArgs e)
         {
-            _log.Error("Abnormal program termination.");
+            _log.Error(ErrorId.AbnormalProgramTermination, "Abnormal program termination.");
             _settings.VerbosityLevel = VerbosityLevel.Trace;
             _info.ShowFooter();
         }

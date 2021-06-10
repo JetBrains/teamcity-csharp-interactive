@@ -8,6 +8,8 @@ namespace Teamcity.CSharpInteractive
         Platform OperatingSystemPlatform { get; }
         
         string ProcessArchitecture { get; }
+        
+        string? GetEnvironmentVariable(string name) => System.Environment.GetEnvironmentVariable(name);
             
         IEnumerable<string> GetCommandLineArgs();
         

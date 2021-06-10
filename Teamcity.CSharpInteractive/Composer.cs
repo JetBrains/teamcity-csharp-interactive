@@ -1,10 +1,16 @@
 // ReSharper disable PartialTypeWithSinglePart
+// ReSharper disable RedundantCast
 namespace Teamcity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Runtime.Versioning;
+    using JetBrains.TeamCity.ServiceMessages.Read;
+    using JetBrains.TeamCity.ServiceMessages.Write;
+    using JetBrains.TeamCity.ServiceMessages.Write.Special;
+    using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
     using Microsoft.Build.Framework;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
@@ -17,9 +23,13 @@ namespace Teamcity.CSharpInteractive
         static Composer() => DI.Setup()
             .Bind<Program>().As(Singleton).To<Program>()
             .Bind<string>().As(Singleton).Tag("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
-            .Bind<ILog<TT>>().As(Singleton).To<Log<TT>>()
+            .Bind<ILog<TT>>().As(Singleton).Tag("Default").To<Log<TT>>()
+            .Bind<ILog<TT>>().As(Singleton).Tag("TeamCity").To<TeamCityLog<TT>>()
+            .Bind<ILog<TT>>().As(Singleton).To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<ILog<TT>>("TeamCity") : ctx.Resolve<ILog<TT>>("Default"))
+            .Bind<IFlushableRegistry>().Bind<IFlushable>().As(Singleton).To<FlushableRegistry>()
             .Bind<IFileSystem>().As(Singleton).To<FileSystem>()
             .Bind<IEnvironment>().As(Singleton).To<Environment>()
+            .Bind<ITeamCitySettings>().As(Singleton).To<TeamCitySettings>()
             .Bind<IExitTracker>().As(Singleton).To<ExitTracker>()
             .Bind<ITraceSource>().Tag(typeof(IEnvironment)).To(ctx => ctx.Resolve<IEnvironment>())
             .Bind<IDotnetEnvironment>().As(Singleton).To<DotnetEnvironment>()
@@ -29,7 +39,10 @@ namespace Teamcity.CSharpInteractive
             .Bind<ISettings>().As(Singleton).To<Settings>()
             .Bind<IInfo>().As(Singleton).To<Info>()
             .Bind<IColorTheme>().As(Singleton).To<ColorTheme>()
-            .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).To<ConsoleOutput>()
+            .Bind<ITeamCityLineAcc>().To<TeamCityLineAcc>()
+            .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).Tag("Default").To<ConsoleOutput>()
+            .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).Tag("TeamCity").To<TeamCityOutput>()
+            .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IStdOut>("TeamCity") : ctx.Resolve<IStdOut>("Default"))
             .Bind<ICodeSource>().As(Singleton).To<ConsoleInput>()
             .Bind<FileCodeSource>().As(Singleton).To<FileCodeSource>()
             .Bind<IFileCodeSourceFactory>().As(Singleton).To<FileCodeSourceFactory>()
@@ -60,6 +73,18 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandFactory<string>>().As(Singleton).Tag("REPL Set verbosity level parser").To<SetVerbosityLevelCommandFactory>()
             .Bind<ICommandRunner>().As(Singleton).Tag("REPL Set verbosity level runner").To<SetVerbosityLevelCommandRunner>()
             .Bind<ICommandFactory<string>>().As(Singleton).Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
-            .Bind<ICommandRunner>().As(Singleton).Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>();
+            .Bind<ICommandRunner>().As(Singleton).Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>()
+        
+            // Service messages
+            .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().As(Singleton).To<HierarchicalTeamCityWriter>()
+            .Bind<ITeamCityServiceMessages>().As(Singleton).To<TeamCityServiceMessages>()
+            .Bind<IServiceMessageFormatter>().As(Singleton).To<ServiceMessageFormatter>()
+            .Bind<IFlowIdGenerator>().As(Singleton).To<FlowIdGenerator>()
+            .Bind<DateTime>().As(Singleton).To(_ => DateTime.Now)
+            .Bind<IServiceMessageUpdater>().As(Singleton).To<TimestampUpdater>()
+            .Bind<ITeamCityWriter>().Tag("Root").As(Singleton).To(
+                ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
+                    str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).Write(new Text(str + "\n"))))
+            .Bind<IServiceMessageParser>().As(Singleton).To<ServiceMessageParser>();
     }
 }

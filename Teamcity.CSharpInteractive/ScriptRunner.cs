@@ -45,7 +45,7 @@ namespace Teamcity.CSharpInteractive
                     }
                     else
                     {
-                        _log.Error($"{result.Command} is not supported.");
+                        _log.Error(ErrorId.NotSupported, $"{result.Command} is not supported.");
                     }
                 }
 

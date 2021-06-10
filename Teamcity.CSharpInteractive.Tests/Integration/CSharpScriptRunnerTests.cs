@@ -19,7 +19,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
         public CSharpScriptRunnerTests()
         {
             _log = new Mock<ILog<CSharpScriptRunner>>();
-            _log.Setup(i => i.Error(It.IsAny<Text[]>())).Callback<Text[]>(i => _errors.AddRange(i));
+            _log.Setup(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, i) => _errors.AddRange(i));
             _scriptStatePresenter = new Mock<IPresenter<ScriptState<object>>>();
             _diagnosticsPresenter = new Mock<IPresenter<IEnumerable<Diagnostic>>>();
             _diagnosticsPresenter.Setup(i => i.Show(It.IsAny<IEnumerable<Diagnostic>>())).Callback<IEnumerable<Diagnostic>>(i => _diagnostics.AddRange(i));

@@ -23,12 +23,12 @@
         public string GetAnsiColor(Color color) =>
             color switch
             {
-                Color.Default => "0;37;40",
-                Color.Header => "1;37",
+                Color.Default => "39",
+                Color.Header => "39",
                 Color.Trace => "30;1",
                 Color.Success => "32;1",
-                Color.Warning => "31;1",
-                Color.Error => "33;1",
+                Color.Warning => "33;1",
+                Color.Error => "31",
                 Color.Details => "36",
                 _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)
             };

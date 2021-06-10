@@ -34,7 +34,7 @@ namespace Teamcity.CSharpInteractive
             }
             catch (Exception e)
             {
-                _log.Error(new []{new Text(e.Message)});
+                _log.Error(ErrorId.File, new []{new Text(e.Message)});
                 return Enumerable.Empty<string>().GetEnumerator();
             }
         }

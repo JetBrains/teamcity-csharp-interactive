@@ -32,16 +32,22 @@ namespace Teamcity.CSharpInteractive
             _statistics = statistics;
         }
         
-        public void Error(params Text[] error)
+        public void Error(ErrorId id, params Text[] error)
         {
-            _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
-            _stdErr.Write(GetMessage(error, Color.Error));
+            if (error.Any())
+            {
+                _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
+                _stdErr.Write(GetMessage(error, Color.Error));
+            }
         }
         
         public void Warning(params Text[] warning)
         {
-            _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
-            _stdErr.Write(GetMessage(warning, Color.Warning));
+            if (warning.Any())
+            {
+                _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
+                _stdErr.Write(GetMessage(warning, Color.Warning));
+            }
         }
 
         public void Info(params Text[] message)
@@ -70,7 +76,6 @@ namespace Teamcity.CSharpInteractive
             _stdOut.Write(GetMessage(block, Color.Header));
             Log.Tabs++;
             return Disposable.Create(() => Log.Tabs--);
-
         }
 
         private static Text[] GetMessage(Text[] message, Color defaultColor)

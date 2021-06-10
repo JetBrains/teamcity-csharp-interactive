@@ -1,5 +1,7 @@
 ﻿// ReSharper disable RedundantUsingDirective
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable EmptyGeneralCatchClause
 namespace Teamcity.CSharpInteractive
 {
     using System;
@@ -38,7 +40,13 @@ namespace Teamcity.CSharpInteractive
             public void Dispose()
             {
                 if (Interlocked.Increment(ref _counter) != 1) return;
-                _action();
+                try
+                {
+                    _action();
+                }
+                catch
+                {
+                }
             }
 
             public override bool Equals(object? obj)
@@ -65,7 +73,13 @@ namespace Teamcity.CSharpInteractive
                 if (Interlocked.Increment(ref _counter) != 1) return;
                 foreach (var disposable in _disposables)
                 {
-                    disposable.Dispose();
+                    try
+                    {
+                        disposable.Dispose();
+                    }
+                    catch
+                    {
+                    }
                 }
             }
         }

@@ -7,23 +7,36 @@ namespace Teamcity.CSharpInteractive
 
     public class Program
     {
-        public static int Main() => Composer.Resolve<Program>().Run();
+        public static int Main()
+        {
+            try
+            {
+                return Composer.Resolve<Program>().Run();
+            }
+            finally
+            {
+                Composer.FinalDispose();
+            }
+        }
 
         private readonly IInfo _info;
         private readonly ISettings _settings;
         private readonly IExitTracker _exitTracker;
         private readonly IEnumerable<IRunner> _runners;
+        private readonly IFlushable _flushable;
 
         internal Program(
             IInfo info,
             ISettings settings,
             IExitTracker exitTracker,
-            IEnumerable<IRunner> runners)
+            IEnumerable<IRunner> runners,
+            IFlushable flushable)
         {
             _info = info;
             _settings = settings;
             _exitTracker = exitTracker;
             _runners = runners;
+            _flushable = flushable;
         }
         
         internal int Run()
@@ -40,6 +53,7 @@ namespace Teamcity.CSharpInteractive
             finally
             {
                 _info.ShowFooter();
+                _flushable.Flush();
             }
         }
     }

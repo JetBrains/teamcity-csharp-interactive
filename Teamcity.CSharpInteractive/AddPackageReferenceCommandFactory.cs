@@ -28,7 +28,7 @@ namespace Teamcity.CSharpInteractive
             var parts = replCommand.Split( ' ', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length is < 1 or > 2)
             {
-                _log.Error($"Invalid script directive \"{replCommand}\".");
+                _log.Error(ErrorId.InvalidScriptDirective, $"Invalid script directive \"{replCommand}\".");
                 yield break;
             }
 
@@ -42,7 +42,7 @@ namespace Teamcity.CSharpInteractive
                 }
                 else
                 {
-                    _log.Error($"Cannot parse the package version \"{parts[1]}\".");
+                    _log.Error(ErrorId.CannotParsePackageVersion, $"Cannot parse the package version \"{parts[1]}\".");
                     yield break;
                 }
             }

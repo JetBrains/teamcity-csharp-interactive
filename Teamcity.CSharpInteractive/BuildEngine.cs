@@ -12,7 +12,7 @@ namespace Teamcity.CSharpInteractive
 
         public BuildEngine(ILog<BuildEngine> log) => _log = log;
 
-        public void LogErrorEvent(BuildErrorEventArgs e) => _log.Error(new []{new Text(e.Message)});
+        public void LogErrorEvent(BuildErrorEventArgs e) => _log.Error(new ErrorId(e.Code), new []{new Text(e.Message)});
 
         public void LogWarningEvent(BuildWarningEventArgs e) => _log.Warning(new []{new Text(e.Message)});
 
