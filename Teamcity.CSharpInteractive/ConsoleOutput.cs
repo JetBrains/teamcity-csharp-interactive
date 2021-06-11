@@ -13,13 +13,21 @@
         public ConsoleOutput(IColorTheme colorTheme) =>
             _colorTheme = colorTheme ?? throw new ArgumentNullException(nameof(colorTheme));
 
-        void IStdErr.Write(params Text[] text) =>
-            WriteInternal(Console.Error, text);
+        void IStdErr.WriteLine(params Text[] line)
+        {
+            WriteText(Console.Error, line);
+            Console.Error.WriteLine();
+        }
 
-        void IStdOut.Write(params Text[] text) =>
-            WriteInternal(Console.Out, text);
+        public void Write(params Text[] text) => WriteText(Console.Out, text);
 
-        private void WriteInternal(TextWriter textWriter, params Text[] text)
+        void IStdOut.WriteLine(params Text[] line)
+        {
+            WriteText(Console.Out, line);
+            Console.Out.WriteLine();
+        }
+
+        private void WriteText(TextWriter textWriter, params Text[] text)
         {
             var foregroundColor = Console.ForegroundColor;
             try

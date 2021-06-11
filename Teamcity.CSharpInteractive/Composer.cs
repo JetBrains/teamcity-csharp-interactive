@@ -26,7 +26,6 @@ namespace Teamcity.CSharpInteractive
             .Bind<ILog<TT>>().As(Singleton).Tag("Default").To<Log<TT>>()
             .Bind<ILog<TT>>().As(Singleton).Tag("TeamCity").To<TeamCityLog<TT>>()
             .Bind<ILog<TT>>().As(Singleton).To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<ILog<TT>>("TeamCity") : ctx.Resolve<ILog<TT>>("Default"))
-            .Bind<IFlushableRegistry>().Bind<IFlushable>().As(Singleton).To<FlushableRegistry>()
             .Bind<IFileSystem>().As(Singleton).To<FileSystem>()
             .Bind<IEnvironment>().As(Singleton).To<Environment>()
             .Bind<ITeamCitySettings>().As(Singleton).To<TeamCitySettings>()
@@ -39,7 +38,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<ISettings>().As(Singleton).To<Settings>()
             .Bind<IInfo>().As(Singleton).To<Info>()
             .Bind<IColorTheme>().As(Singleton).To<ColorTheme>()
-            .Bind<ITeamCityLineAcc>().To<TeamCityLineAcc>()
+            .Bind<ITeamCityLineFormatter>().As(Singleton).To<TeamCityLineFormatter>()
             .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).Tag("Default").To<ConsoleOutput>()
             .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).Tag("TeamCity").To<TeamCityOutput>()
             .Bind<IStdOut>().Bind<IStdErr>().As(Singleton).To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IStdOut>("TeamCity") : ctx.Resolve<IStdOut>("Default"))
@@ -84,7 +83,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<IServiceMessageUpdater>().As(Singleton).To<TimestampUpdater>()
             .Bind<ITeamCityWriter>().Tag("Root").As(Singleton).To(
                 ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
-                    str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).Write(new Text(str + "\n"))))
+                    str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).WriteLine(new Text(str + "\n"))))
             .Bind<IServiceMessageParser>().As(Singleton).To<ServiceMessageParser>();
     }
 }

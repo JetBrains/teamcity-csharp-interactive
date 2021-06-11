@@ -33,17 +33,11 @@ namespace Teamcity.CSharpInteractive
         [ExcludeFromCodeCoverage]
         public IEnumerable<Text> GetTrace()
         {
-            yield return Text.NewLine;
             yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
-            yield return Text.NewLine;
             yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
-            yield return Text.NewLine;
             yield return new Text($"DotnetPath: {Path}");
-            yield return Text.NewLine;
             yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
-            yield return Text.NewLine;
             yield return new Text($"Tfm: {Tfm}");
-            yield return Text.NewLine;
             yield return new Text($"DotnetVersion: {Version}");
         }
     }

@@ -65,7 +65,7 @@ namespace Teamcity.CSharpInteractive
                 from assembly in _nugetAssetsReader.ReadAssemblies(assetsFilePath)
                 select new ScriptCommand(assembly.Name, $"#r \"{assembly.FilePath}\"");
 
-            using var addRefsToken = _log.Block($"Add references");
+            using var addRefsToken = _log.Block($"References");
             foreach (var result in _commandsRunnerFactory().Run(commands))
             {
                 _log.Info(result.Command.ToString()!);

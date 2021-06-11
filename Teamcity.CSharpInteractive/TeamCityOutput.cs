@@ -3,55 +3,23 @@ namespace Teamcity.CSharpInteractive
 {
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-    internal class TeamCityOutput : IStdOut, IStdErr, IFlushable
+    internal class TeamCityOutput : IStdOut, IStdErr
     {
-        private readonly ITeamCityLineAcc _stdOutAcc;
-        private readonly ITeamCityLineAcc _stdErrAcc;
+        private readonly ITeamCityLineFormatter _lineFormatter;
         private readonly ITeamCityMessageWriter _teamCityMessageWriter;
 
         public TeamCityOutput(
-            IFlushableRegistry flushableRegistry,
-            ITeamCityLineAcc stdOutAcc,
-            ITeamCityLineAcc stdErrAcc,
+            ITeamCityLineFormatter lineFormatter,
             ITeamCityMessageWriter teamCityMessageWriter)
         {
-            _stdOutAcc = stdOutAcc;
-            _stdErrAcc = stdErrAcc;
+            _lineFormatter = lineFormatter;
             _teamCityMessageWriter = teamCityMessageWriter;
-            flushableRegistry.Register(this);
         }
 
-        void IStdOut.Write(params Text[] text)
-        {
-            _stdOutAcc.Write(text);
-            TryWriteLines(_stdOutAcc, false, false);
-        }
+        public void Write(params Text[] text) => _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(text));
 
-        void IStdErr.Write(params Text[] error)
-        {
-            _stdErrAcc.Write(error);
-            TryWriteLines(_stdErrAcc, false, true);
-        }
+        void IStdOut.WriteLine(params Text[] line) => _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(line));
 
-        public void Flush()
-        {
-            TryWriteLines(_stdOutAcc, true, false);
-            TryWriteLines(_stdErrAcc, true, true);
-        }
-
-        private void TryWriteLines(ITeamCityLineAcc acc, bool force, bool error)
-        {
-            foreach (var line in acc.GetLines(force))
-            {
-                if (error)
-                {
-                    _teamCityMessageWriter.WriteError(line);
-                }
-                else
-                {
-                    _teamCityMessageWriter.WriteMessage(line);
-                }
-            }
-        }
+        void IStdErr.WriteLine(params Text[] errorLine) => _teamCityMessageWriter.WriteError(_lineFormatter.Format(errorLine));
     }
 }

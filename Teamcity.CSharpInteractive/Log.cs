@@ -37,7 +37,7 @@ namespace Teamcity.CSharpInteractive
             if (error.Any())
             {
                 _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
-                _stdErr.Write(GetMessage(error, Color.Error));
+                _stdErr.WriteLine(GetMessage(error, Color.Error));
             }
         }
         
@@ -46,7 +46,7 @@ namespace Teamcity.CSharpInteractive
             if (warning.Any())
             {
                 _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
-                _stdErr.Write(GetMessage(warning, Color.Warning));
+                _stdErr.WriteLine(GetMessage(warning, Color.Warning));
             }
         }
 
@@ -54,7 +54,7 @@ namespace Teamcity.CSharpInteractive
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Normal)
             {
-                _stdOut.Write(GetMessage(message, Color.Default));
+                _stdOut.WriteLine(GetMessage(message, Color.Default));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Teamcity.CSharpInteractive
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
-                _stdOut.Write(GetMessage(new Text($"{typeof(T).Name, -40}") + traceMessage, Color.Trace));
+                _stdOut.WriteLine(GetMessage(new Text($"{typeof(T).Name, -40}") + traceMessage, Color.Trace));
             }
         }
 
@@ -73,7 +73,7 @@ namespace Teamcity.CSharpInteractive
                 return Disposable.Empty;
             }
 
-            _stdOut.Write(GetMessage(block, Color.Header));
+            _stdOut.WriteLine(GetMessage(block, Color.Header));
             Log.Tabs++;
             return Disposable.Create(() => Log.Tabs--);
         }
@@ -82,7 +82,6 @@ namespace Teamcity.CSharpInteractive
         {
             var tabsStr = new string(' ', Log.Tabs * 2);
             message = message.Select(i => new Text(i.Value.Replace("\n", "\n"), i.Color)) .ToArray();
-            message += Text.NewLine;
             message = new Text(tabsStr) + message;
             return message.WithDefaultColor(defaultColor);
         }

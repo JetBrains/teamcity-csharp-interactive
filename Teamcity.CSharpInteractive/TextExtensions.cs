@@ -1,6 +1,8 @@
 namespace Teamcity.CSharpInteractive
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
 
     [ExcludeFromCodeCoverage]
     internal static class TextExtensions
@@ -16,5 +18,8 @@ namespace Teamcity.CSharpInteractive
 
             return newText;
         }
+
+        public static string ToSimpleString(this IEnumerable<Text> text) =>
+            string.Join("", text.Select(i => i.Value));
     }
 }

@@ -32,7 +32,7 @@ namespace Teamcity.CSharpInteractive
                 _log.Info(new []{new Text($"  {statistics.Errors.Count} Error(s)", Color.Error)});
             }
             
-            _log.Info(Text.NewLine, new Text($"Time Elapsed {statistics.TimeElapsed:g}"));
+            _log.Info(new Text($"Time Elapsed {statistics.TimeElapsed:g}"));
         }
     }
 }

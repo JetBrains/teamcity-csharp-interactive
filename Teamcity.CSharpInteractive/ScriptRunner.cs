@@ -51,11 +51,11 @@ namespace Teamcity.CSharpInteractive
 
                 if (exitCode == ExitCode.Fail || _statistics.Errors.Count > 0)
                 {
-                    _log.Info(Text.NewLine, new Text("Running FAILED.", Color.Error));
+                    _log.Info(new Text("Running FAILED.", Color.Error));
                     return ExitCode.Fail;
                 }
 
-                _log.Info(Text.NewLine, new Text("Running succeeded.", Color.Success));
+                _log.Info(new Text("Running succeeded.", Color.Success));
                 return exitCode;
             }
             finally

@@ -50,13 +50,10 @@ namespace Teamcity.CSharpInteractive
 
         public IEnumerable<Text> GetTrace()
         {
-            yield return Text.NewLine;
             yield return new Text($"OperatingSystemPlatform: {OperatingSystemPlatform}");
-            yield return Text.NewLine;
             yield return new Text($"ProcessArchitecture: {ProcessArchitecture}");
             foreach (var specialFolder in Enum.GetValues(typeof(SpecialFolder)).OfType<SpecialFolder>())
             {
-                yield return Text.NewLine;
                 yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
             }
         }

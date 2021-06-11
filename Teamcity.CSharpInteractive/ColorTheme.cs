@@ -25,7 +25,7 @@
             {
                 Color.Default => "39",
                 Color.Header => "39",
-                Color.Trace => "30;1",
+                Color.Trace => "90",
                 Color.Success => "32;1",
                 Color.Warning => "33;1",
                 Color.Error => "31",

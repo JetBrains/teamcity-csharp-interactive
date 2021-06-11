@@ -28,17 +28,16 @@ namespace Teamcity.CSharpInteractive
         
         public void ShowHeader()
         {
-            _stdOut.Write(new Text(_settings.Title, Color.Header), Text.NewLine);
+            _stdOut.WriteLine(new Text(_settings.Title, Color.Header));
             if (_settings.InteractionMode == InteractionMode.Interactive)
             {
-                _stdOut.Write(
-                    new Text("Ctrl-C - Exit the REPL.", Color.Details), Text.NewLine,
-                    new Text("#help  - Display help on available commands and key bindings.", Color.Details), Text.NewLine);
+                _stdOut.WriteLine(new Text("Ctrl-C - Exit the REPL.", Color.Details));
+                _stdOut.WriteLine(new Text("#help  - Display help on available commands and key bindings.", Color.Details));
             }
         }
 
         public void ShowReplHelp() =>
-            _stdOut.Write(
+            _stdOut.WriteLine(
                 new Text("Keyboard shortcuts:", Color.Header), Text.NewLine,
                 new Text("    Enter        ", Color.Header), new Text("If the current submission appears to be complete, evaluate it. Otherwise, insert a new line."), Text.NewLine,
                 new Text("    Escape       ", Color.Header), new Text("Clear the current submission."), Text.NewLine,
@@ -50,7 +49,7 @@ namespace Teamcity.CSharpInteractive
                 new Text("    #l           ", Color.Header), new Text($"Set verbosity level {string.Join(", ", Enum.GetValues(typeof(VerbosityLevel)).OfType<VerbosityLevel>().Select(i => i.ToString()))}, e.g. "), new Text("#l trace", Color.Details), new Text("."), Text.NewLine,
                 new Text("Script directives:", Color.Header), Text.NewLine,
                 new Text("    #r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r MyPackage 1.2.3", Color.Details), new Text(" or "), new Text("#r \"myLib.dll\"", Color.Details), new Text("."), Text.NewLine,
-                new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. "), new Text("#load \"myScript.csx\"", Color.Details), new Text("."), Text.NewLine
+                new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. "), new Text("#load \"myScript.csx\"", Color.Details), new Text(".")
             );
 
         public void ShowFooter() => _tracePresenter.Show(_traceSources);

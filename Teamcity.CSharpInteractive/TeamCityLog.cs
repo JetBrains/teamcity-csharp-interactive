@@ -2,13 +2,12 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
-    using System.Linq;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
     internal class TeamCityLog<T>: ILog<T>
     {
         private readonly ISettings _settings;
-        private readonly Func<ITeamCityLineAcc> _teamCityLineAccFactory;
+        private readonly ITeamCityLineFormatter _lineFormatter;
         private readonly ITeamCityBlockWriter<IDisposable> _blockWriter;
         private readonly ITeamCityMessageWriter _teamCityMessageWriter;
         private readonly ITeamCityBuildProblemWriter _teamCityBuildProblemWriter;
@@ -16,14 +15,14 @@ namespace Teamcity.CSharpInteractive
 
         public TeamCityLog(
             ISettings settings,
-            Func<ITeamCityLineAcc> teamCityLineAccFactory,
+            ITeamCityLineFormatter lineFormatter,
             ITeamCityBlockWriter<IDisposable> blockWriter,
             ITeamCityMessageWriter teamCityMessageWriter,
             ITeamCityBuildProblemWriter teamCityBuildProblemWriter,
             IStatistics statistics)
         {
             _settings = settings;
-            _teamCityLineAccFactory = teamCityLineAccFactory;
+            _lineFormatter = lineFormatter;
             _blockWriter = blockWriter;
             _teamCityMessageWriter = teamCityMessageWriter;
             _teamCityBuildProblemWriter = teamCityBuildProblemWriter;
@@ -32,21 +31,23 @@ namespace Teamcity.CSharpInteractive
 
         public void Error(ErrorId id, params Text[] error)
         {
-            _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
-            WriteLines(error, i => _teamCityBuildProblemWriter.WriteBuildProblem(id.Id,i));
+            var message = error.ToSimpleString();
+            _statistics.RegisterError(message);
+            _teamCityBuildProblemWriter.WriteBuildProblem(id.Id, message);
         }
 
         public void Warning(params Text[] warning)
         {
-            _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
-            WriteLines(warning, i => _teamCityMessageWriter.WriteWarning(i));
+            var message = warning.ToSimpleString();
+            _statistics.RegisterWarning(message);
+            _teamCityMessageWriter.WriteWarning(message);
         }
 
         public void Info(params Text[] message)
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Normal)
             {
-                WriteLines(message, i => _teamCityMessageWriter.WriteMessage(i));
+                _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(message));
             }
         }
 
@@ -54,25 +55,10 @@ namespace Teamcity.CSharpInteractive
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
-                WriteLines(traceMessage.WithDefaultColor(Color.Trace), i => _teamCityMessageWriter.WriteMessage(i));
+                _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(traceMessage.WithDefaultColor(Color.Trace)));
             }
         }
 
-        public IDisposable Block(Text[] block)
-        {
-            var acc = _teamCityLineAccFactory();
-            acc.Write(block);
-            return _blockWriter.OpenBlock(string.Join("", block.Select(i => i.Value)));
-        }
-        
-        private void WriteLines(Text[] text, Action<string> lineWriter)
-        {
-            var acc = _teamCityLineAccFactory();
-            acc.Write(text);
-            foreach (var line in acc.GetLines(true))
-            {
-                lineWriter(line);
-            }
-        }
+        public IDisposable Block(Text[] block) => _blockWriter.OpenBlock(block.ToSimpleString());
     }
 }

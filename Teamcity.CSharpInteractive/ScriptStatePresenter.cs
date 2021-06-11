@@ -1,7 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
@@ -16,23 +15,24 @@ namespace Teamcity.CSharpInteractive
 
         public void Show(ScriptState<object> data)
         {
-            var trace = new List<Text>();
             if (data.Variables.Any())
             {
-                trace.Add(new Text("Variables"));
+                _log.Trace("Variables:");
                 var variables = 
                     from variable in data.Variables
                     group variable by variable.Name
                     into gr
                     select gr.Last();
-                
-                trace.AddRange(variables.SelectMany(GetVariablyTrace));
-            }
 
-            _log.Trace(trace.ToArray());
+                _log.Trace(string.Join(System.Environment.NewLine, variables.Select(GetVariablyTrace)));
+            }
+            else
+            {
+                _log.Trace("No variables defined.");
+            }
         }
         
-        private static Text[] GetVariablyTrace(ScriptVariable variable)
+        private static string GetVariablyTrace(ScriptVariable variable)
         {
             var sb = new StringBuilder("  ");
             if (variable.IsReadOnly)
@@ -45,8 +45,7 @@ namespace Teamcity.CSharpInteractive
             sb.Append(variable.Name);
             sb.Append(" = ");
             sb.Append(variable.Value);
-
-            return new[] {Text.NewLine, new Text(sb.ToString())};
+            return sb.ToString();
         }
     }
 }

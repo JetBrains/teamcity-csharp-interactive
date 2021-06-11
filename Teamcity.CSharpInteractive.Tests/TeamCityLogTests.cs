@@ -9,22 +9,18 @@ namespace Teamcity.CSharpInteractive.Tests
     public class TeamCityLogTests
     {
         private readonly Mock<ISettings> _settings;
-        private readonly Mock<Func<ITeamCityLineAcc>> _teamCityLineAccFactory;
+        private readonly Mock<ITeamCityLineFormatter> _lineFormatter;
         private readonly Mock<ITeamCityBlockWriter<IDisposable>> _blockWriter;
         private readonly Mock<ITeamCityMessageWriter> _teamCityMessageWriter;
-        private readonly Mock<ITeamCityLineAcc> _teamCityLineAcc;
         private readonly Text[] _text = {new("line1"), new("line2")};
-        private readonly string[] _lines = {"line1", "line2"};
         private readonly Mock<IStatistics> _statistics;
         private readonly Mock<ITeamCityBuildProblemWriter> _teamCityBuildProblemWriter;
 
         public TeamCityLogTests()
         {
             _settings = new Mock<ISettings>();
-            _teamCityLineAccFactory = new Mock<Func<ITeamCityLineAcc>>();
-            _teamCityLineAcc = new Mock<ITeamCityLineAcc>();
-            _teamCityLineAcc.Setup(i => i.GetLines(true)).Returns(_lines);
-            _teamCityLineAccFactory.Setup(i => i()).Returns(_teamCityLineAcc.Object);
+            _lineFormatter = new Mock<ITeamCityLineFormatter>();
+            _lineFormatter.Setup(i => i.Format(It.IsAny<Text[]>())).Returns<Text[]>(i => "F_" + i.ToSimpleString());
             _blockWriter = new Mock<ITeamCityBlockWriter<IDisposable>>();
             _teamCityMessageWriter = new Mock<ITeamCityMessageWriter>();
             _teamCityBuildProblemWriter = new Mock<ITeamCityBuildProblemWriter>();
@@ -61,9 +57,7 @@ namespace Teamcity.CSharpInteractive.Tests
             log.Error(new ErrorId("id"), _text);
 
             // Then
-            _teamCityLineAcc.Verify(i => i.Write(_text));
-            _teamCityBuildProblemWriter.Verify(i => i.WriteBuildProblem("id", "line1"));
-            _teamCityBuildProblemWriter.Verify(i => i.WriteBuildProblem("id", "line2"));
+            _teamCityBuildProblemWriter.Verify(i => i.WriteBuildProblem("id", "line1line2"));
             _statistics.Verify(i => i.RegisterError("line1line2"));
         }
         
@@ -81,9 +75,7 @@ namespace Teamcity.CSharpInteractive.Tests
             log.Warning(_text);
 
             // Then
-            _teamCityLineAcc.Verify(i => i.Write(_text));
-            _teamCityMessageWriter.Verify(i => i.WriteWarning("line1"));
-            _teamCityMessageWriter.Verify(i => i.WriteWarning("line2"));
+            _teamCityMessageWriter.Verify(i => i.WriteWarning("line1line2"));
             _statistics.Verify(i => i.RegisterWarning("line1line2"));
         }
         
@@ -102,9 +94,7 @@ namespace Teamcity.CSharpInteractive.Tests
             log.Info(_text);
 
             // Then
-            _teamCityLineAcc.Verify(i => i.Write(_text), times);
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("line1"), times);
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("line2"), times);
+            _teamCityMessageWriter.Verify(i => i.WriteMessage("F_line1line2"), times);
         }
         
         [Theory]
@@ -122,15 +112,13 @@ namespace Teamcity.CSharpInteractive.Tests
             log.Trace(_text);
 
             // Then
-            _teamCityLineAcc.Verify(i => i.Write(It.IsAny<Text[]>()), times);
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("line1"), times);
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("line2"), times);
+            _teamCityMessageWriter.Verify(i => i.WriteMessage("F_line1line2"), times);
         }
 
         private TeamCityLog<string> CreateInstance() =>
             new(
                 _settings.Object,
-                _teamCityLineAccFactory.Object,
+                _lineFormatter.Object,
                 _blockWriter.Object,
                 _teamCityMessageWriter.Object,
                 _teamCityBuildProblemWriter.Object,
