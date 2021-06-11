@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-        <AssemblyName>csi</AssemblyName>
+        <AssemblyName>dotnet-csi</AssemblyName>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\DevTeam.snk</AssemblyOriginatorKeyFile>
@@ -11,15 +11,40 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageType>DotnetCliTool</PackageType>
+        <PackAsTool>true</PackAsTool>
+        <IsPackable>true</IsPackable>
+        <IncludeAssets>All</IncludeAssets>
+        <PackageId>dotnet-csi</PackageId>
+        <IncludeAssets>All</IncludeAssets>
+        <Title>C# Interactive .NET Tool</Title>
+        <Authors>NikolayP</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/NikolayPianikov/teamcity-csharp-interactive</PackageProjectUrl>
+        <PackageIcon>_common\icon.png</PackageIcon>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <Copyright>JetBrains</Copyright>
+        <Company>JetBrains</Company>
+        <Description>Runs a dotnet command under a specific account</Description>
+        <PackageTags>C# CSharp Interactive</PackageTags>
+    </PropertyGroup>
+
     <ItemGroup>
-      <PackageReference Include="Pure.DI" Version="1.0.0-beta67">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.9.0" />
-      <PackageReference Include="NuGet.Build.Tasks" Version="5.9.1" />
-      <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-      <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
+        <PackageReference Include="Pure.DI" Version="1.0.0-beta67">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.9.0"/>
+        <PackageReference Include="NuGet.Build.Tasks" Version="5.9.1"/>
+        <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6"/>
+        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="..\icon.png">
+            <PackagePath>_common</PackagePath>
+            <Pack>true</Pack>
+        </None>
+    </ItemGroup>
 </Project>
