@@ -2,7 +2,6 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     internal class TracePresenter: IPresenter<IEnumerable<ITraceSource>>
     {
@@ -11,7 +10,13 @@ namespace Teamcity.CSharpInteractive
         public TracePresenter(ILog<TracePresenter> log) =>
             _log = log;
 
-        public void Show(IEnumerable<ITraceSource> data) =>
-            _log.Trace(data.SelectMany(i => i.GetTrace()).ToArray());
+        public void Show(IEnumerable<ITraceSource> data)
+        {
+            foreach (var source in data)
+            foreach (var text in source.GetTrace())
+            {
+                _log.Trace(text);
+            }
+        }
     }
 }
