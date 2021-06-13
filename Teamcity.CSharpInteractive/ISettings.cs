@@ -11,7 +11,5 @@ namespace Teamcity.CSharpInteractive
         InteractionMode InteractionMode { get; }
         
         IEnumerable<ICodeSource> Sources { get; }
-
-        void Load();
     }
 }

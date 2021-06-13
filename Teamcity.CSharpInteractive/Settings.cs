@@ -6,7 +6,7 @@ namespace Teamcity.CSharpInteractive
     using System.Linq;
     using System.Reflection;
 
-    internal class Settings : ISettings
+    internal class Settings : ISettings, ISettingsManager
     {
         private readonly IEnvironment _environment;
         private readonly ICodeSource _consoleCodeSource;

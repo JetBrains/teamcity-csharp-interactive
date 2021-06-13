@@ -2,8 +2,7 @@
 
 namespace Teamcity.CSharpInteractive
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    using System;
 
     public class Program
     {
@@ -20,32 +19,30 @@ namespace Teamcity.CSharpInteractive
         }
 
         private readonly IInfo _info;
-        private readonly ISettings _settings;
+        private readonly ISettingsManager _settingsManager;
         private readonly IExitTracker _exitTracker;
-        private readonly IEnumerable<IRunner> _runners;
+        private readonly Func<IRunner> _runner;
 
         internal Program(
             IInfo info,
-            ISettings settings,
+            ISettingsManager settingsManager,
             IExitTracker exitTracker,
-            IEnumerable<IRunner> runners)
+            Func<IRunner> runner)
         {
             _info = info;
-            _settings = settings;
+            _settingsManager = settingsManager;
             _exitTracker = exitTracker;
-            _runners = runners;
+            _runner = runner;
         }
         
         internal int Run()
         {
-            _settings.Load();
-
+            _settingsManager.Load();
             using var exitToken = _exitTracker.Track();
             _info.ShowHeader();
             try
             {
-                var runner = _runners.Single(i => i.InteractionMode == _settings.InteractionMode);
-                return (int) runner.Run();
+                return (int)_runner().Run();
             }
             finally
             {

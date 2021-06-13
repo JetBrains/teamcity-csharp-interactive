@@ -1,7 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System;
-    using System.Collections.Generic;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -9,25 +8,20 @@ namespace Teamcity.CSharpInteractive.Tests
     public class ProgramTests
     {
         private readonly Mock<IInfo> _info;
-        private readonly Mock<ISettings> _settings;
-        private readonly List<IRunner> _runners;
+        private readonly Mock<ISettingsManager> _settingsManager;
         private readonly Mock<IExitTracker> _exitTracker;
         private readonly Mock<IDisposable> _trackToken;
+        private readonly Mock<IRunner> _runner;
 
         public ProgramTests()
         {
             _info = new Mock<IInfo>();
-            _settings = new Mock<ISettings>();
+            _settingsManager = new Mock<ISettingsManager>();
             _trackToken = new Mock<IDisposable>();
             _exitTracker = new Mock<IExitTracker>();
             _exitTracker.Setup(i => i.Track()).Returns(_trackToken.Object);
-            _settings.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Script);
-            Mock<IRunner> interactiveRunner = new Mock<IRunner>();
-            interactiveRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Interactive);
-            Mock<IRunner> scriptRunner = new Mock<IRunner>();
-            scriptRunner.SetupGet(i => i.InteractionMode).Returns(InteractionMode.Script);
-            scriptRunner.Setup(i => i.Run()).Returns(ExitCode.Fail);
-            _runners = new List<IRunner> { interactiveRunner.Object, scriptRunner.Object};
+            _runner = new Mock<IRunner>();
+            _runner.Setup(i => i.Run()).Returns(ExitCode.Fail);
         }
 
         [Fact]
@@ -40,13 +34,14 @@ namespace Teamcity.CSharpInteractive.Tests
             var actualResult = program.Run();
 
             // Then
-            _settings.Verify(i => i.Load());
+            _settingsManager.Verify(i => i.Load());
             _info.Verify(i => i.ShowHeader());
             actualResult.ShouldBe((int)ExitCode.Fail);
             _trackToken.Verify(i => i.Dispose());
+            _info.Verify(i => i.ShowFooter());
         }
 
         private Program CreateInstance() =>
-            new Program(_info.Object, _settings.Object, _exitTracker.Object, _runners);
+            new(_info.Object, _settingsManager.Object, _exitTracker.Object, () => _runner.Object);
     }
 }
