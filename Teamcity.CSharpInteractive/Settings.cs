@@ -44,7 +44,7 @@ namespace Teamcity.CSharpInteractive
             {
                 InteractionMode = InteractionMode.Script;
                 VerbosityLevel = VerbosityLevel.Normal;
-                _sources = args.Skip(1).Select(i => _fileCodeSourceFactory.Create(i));
+                _sources = args.Skip(1).Select(i => _fileCodeSourceFactory.Create(i, true));
             }
         }
     }

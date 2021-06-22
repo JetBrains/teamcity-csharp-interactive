@@ -25,8 +25,8 @@ namespace Teamcity.CSharpInteractive.Tests
             var settings = CreateInstance();
             var codeSource1 = Mock.Of<ICodeSource>();
             var codeSource2 = Mock.Of<ICodeSource>();
-            _fileCodeSourceFactory.Setup(i => i.Create("arg1")).Returns(codeSource1);
-            _fileCodeSourceFactory.Setup(i => i.Create("arg2")).Returns(codeSource2);
+            _fileCodeSourceFactory.Setup(i => i.Create("arg1", true)).Returns(codeSource1);
+            _fileCodeSourceFactory.Setup(i => i.Create("arg2", true)).Returns(codeSource2);
 
             // When
             _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0", "arg1", "arg2"});

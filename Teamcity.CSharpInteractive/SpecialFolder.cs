@@ -4,6 +4,8 @@ namespace Teamcity.CSharpInteractive
     {
         Temp,
         
-        ProgramFiles
+        ProgramFiles,
+        
+        WorkingDirectory
     }
 }

@@ -4,12 +4,15 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Linq;
     using Microsoft.DotNet.PlatformAbstractions;
 
     [ExcludeFromCodeCoverage]
-    internal class Environment : IEnvironment, ITraceSource
+    internal class Environment : IEnvironment, ITraceSource, IWorkingDirectoryContext
     {
+        private readonly LinkedList<string> _workingDirectories = new();
+        
         public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
         public string ProcessArchitecture => RuntimeEnvironment.RuntimeArchitecture;
@@ -27,6 +30,7 @@ namespace Teamcity.CSharpInteractive
                     {
                         SpecialFolder.Temp => System.Environment.GetEnvironmentVariable("TMP") ?? ".",
                         SpecialFolder.ProgramFiles => System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
+                        SpecialFolder.WorkingDirectory => GetWorkingDirectory(),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
 
@@ -38,6 +42,7 @@ namespace Teamcity.CSharpInteractive
                     {
                         SpecialFolder.Temp => System.Environment.GetEnvironmentVariable("TMP") ?? ".",
                         SpecialFolder.ProgramFiles => "usr/local/share",
+                        SpecialFolder.WorkingDirectory => GetWorkingDirectory(),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
                 
@@ -57,5 +62,19 @@ namespace Teamcity.CSharpInteractive
                 yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
             }
         }
+
+        public IDisposable OverrideWorkingDirectory(string? workingDirectory)
+        {
+            if (workingDirectory == null)
+            {
+                return Disposable.Empty;
+            }
+
+            _workingDirectories.AddLast(workingDirectory);
+            return Disposable.Create(() => _workingDirectories.Remove(workingDirectory));
+        }
+
+        private string GetWorkingDirectory() => 
+            _workingDirectories.Count > 0 ? _workingDirectories.Last!.Value : Directory.GetCurrentDirectory();
     }
 }

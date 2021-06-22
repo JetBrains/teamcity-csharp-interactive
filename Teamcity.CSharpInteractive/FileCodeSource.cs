@@ -11,26 +11,39 @@ namespace Teamcity.CSharpInteractive
     {
         private readonly ILog<FileCodeSource> _log;
         private readonly IFileTextReader _fileTextReader;
+        private readonly IEnvironment _environment;
+        private readonly IWorkingDirectoryContext _workingDirectoryContext;
+        private string _fileName = "";
 
         public FileCodeSource(
             ILog<FileCodeSource> log,
-            IFileTextReader fileTextReader)
+            IFileTextReader fileTextReader,
+            IEnvironment environment,
+            IWorkingDirectoryContext workingDirectoryContext)
         {
             _log = log;
             _fileTextReader = fileTextReader;
+            _environment = environment;
+            _workingDirectoryContext = workingDirectoryContext;
         }
 
         public string Name => Path.GetFileName(FileName);
 
-        public bool ResetRequired => true;
+        public bool ResetRequired { get; set; }
 
-        public string FileName { get; set; } = "";
-        
+        public string FileName
+        {
+            get => _fileName;
+            set => _fileName = Path.IsPathRooted(value) ? value : Path.Combine(_environment.GetPath(SpecialFolder.WorkingDirectory), value);
+        }
+
         public IEnumerator<string> GetEnumerator()
         {
+            var resource = _workingDirectoryContext.OverrideWorkingDirectory(Path.GetDirectoryName(FileName));
             try
             {
-                return Enumerable.Repeat(_fileTextReader.Read(FileName), 1).GetEnumerator();
+                _log.Trace($@"Read file ""{FileName}"".");
+                return new LinesEnumerator(_fileTextReader.ReadLines(FileName).GetEnumerator(), () => resource.Dispose());
             }
             catch (Exception e)
             {
@@ -40,5 +53,37 @@ namespace Teamcity.CSharpInteractive
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        
+        private class LinesEnumerator: IEnumerator<string>
+        {
+            private readonly IEnumerator<string> _baseEnumerator;
+            private readonly Action _onDispose;
+
+            public LinesEnumerator(IEnumerator<string> baseEnumerator, Action onDispose)
+            {
+                _baseEnumerator = baseEnumerator;
+                _onDispose = onDispose;
+            }
+
+            public bool MoveNext() => _baseEnumerator.MoveNext();
+
+            public void Reset() => _baseEnumerator.Reset();
+
+            public string Current => _baseEnumerator.Current;
+
+            object? IEnumerator.Current => ((IEnumerator) _baseEnumerator).Current;
+
+            public void Dispose()
+            {
+                try
+                {
+                    _baseEnumerator.Dispose();
+                }
+                finally
+                {
+                    _onDispose();
+                }
+            }
+        }
     }
 }

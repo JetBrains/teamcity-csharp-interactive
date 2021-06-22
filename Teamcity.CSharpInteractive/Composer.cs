@@ -28,7 +28,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<ILog<TT>>().Tag("TeamCity").To<TeamCityLog<TT>>()
             .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<ILog<TT>>("TeamCity") : ctx.Resolve<ILog<TT>>("Default"))
             .Bind<IFileSystem>().To<FileSystem>()
-            .Bind<IEnvironment>().To<Environment>()
+            .Bind<IEnvironment>().Bind<IWorkingDirectoryContext>().To<Environment>()
             .Bind<ITeamCitySettings>().To<TeamCitySettings>()
             .Bind<IExitTracker>().To<ExitTracker>()
             .Bind<ITraceSource>().Tag(typeof(IEnvironment)).As(Transient).To(ctx => ctx.Resolve<IEnvironment>())
@@ -75,7 +75,8 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandRunner>().Tag("REPL Set verbosity level runner").To<SetVerbosityLevelCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
             .Bind<ICommandRunner>().Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>()
-        
+            .Bind<ICommandFactory<string>>().Tag("REPL Load script").To<LoadCommandFactory>()
+
             // Service messages
             .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()
             .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
