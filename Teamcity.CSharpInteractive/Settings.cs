@@ -4,7 +4,6 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
 
     internal class Settings : ISettings, ISettingsManager
     {
@@ -22,8 +21,6 @@ namespace Teamcity.CSharpInteractive
             _consoleCodeSource = consoleCodeSource;
             _fileCodeSourceFactory = fileCodeSourceFactory;
         }
-
-        public string Title => $"C# Interactive {Assembly.GetEntryAssembly()?.GetName().Version}";
 
         public VerbosityLevel VerbosityLevel { get; set; } = VerbosityLevel.Normal;
 

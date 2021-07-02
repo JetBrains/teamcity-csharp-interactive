@@ -5,30 +5,37 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Pure.DI;
 
     [ExcludeFromCodeCoverage]
     internal class Info : IInfo
     {
+        private readonly Version _version;
         private readonly IStdOut _stdOut;
         private readonly ISettings _settings;
         private readonly IPresenter<IEnumerable<ITraceSource>> _tracePresenter;
         private readonly IEnumerable<ITraceSource> _traceSources;
+        private readonly IDotnetEnvironment _dotnetEnvironment;
 
         public Info(
+            [Tag("ToolVersion")] Version version,
             IStdOut stdOut,
             ISettings settings,
             IPresenter<IEnumerable<ITraceSource>> tracePresenter,
-            IEnumerable<ITraceSource> traceSources)
+            IEnumerable<ITraceSource> traceSources,
+            IDotnetEnvironment dotnetEnvironment)
         {
+            _version = version;
             _stdOut = stdOut;
             _settings = settings;
             _tracePresenter = tracePresenter;
             _traceSources = traceSources;
+            _dotnetEnvironment = dotnetEnvironment;
         }
         
         public void ShowHeader()
         {
-            _stdOut.WriteLine(new Text(_settings.Title, Color.Header));
+            _stdOut.WriteLine(new Text("C# Interactive", Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
             if (_settings.InteractionMode == InteractionMode.Interactive)
             {
                 _stdOut.WriteLine(new Text("Ctrl-C - Exit the REPL.", Color.Details));

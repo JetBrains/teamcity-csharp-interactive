@@ -43,8 +43,8 @@ namespace Teamcity.CSharpInteractive
                 // { "ConfigFilePaths", @"C:\Users\Nikol\AppData\Roaming\NuGet\NuGet.Config;C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.FallbackLocation.config;C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.Offline.config;C:\Program Files (x86)\NuGet\Config\Xamarin.Offline.config" }
                 CreateTaskItem(
                     "ProjectSpec",
-                    ( "ProjectName", Project ),
-                    ( "ProjectStyle", "PackageReference" ),
+                    ("ProjectName", Project ),
+                    ("ProjectStyle", "PackageReference"),
                     ("Sources", string.Join(";", sources)),
                     ("FallbackFolders", string.Join(";", fallbackFolders)),
                     ("OutputPath", outputPath),

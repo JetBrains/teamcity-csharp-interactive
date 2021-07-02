@@ -33,7 +33,6 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.Load();
 
             // Then
-            settings.Title.ShouldNotBe(string.Empty);
             settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
             settings.InteractionMode.ShouldBe(InteractionMode.Script);
             settings.Sources.ToArray().ShouldBe(new []{codeSource1, codeSource2});
@@ -50,7 +49,6 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.Load();
 
             // Then
-            settings.Title.ShouldNotBe(string.Empty);
             settings.VerbosityLevel.ShouldBe(VerbosityLevel.Quit);
             settings.InteractionMode.ShouldBe(InteractionMode.Interactive);
             settings.Sources.ToArray().ShouldBe(new []{_consoleCodeSource});

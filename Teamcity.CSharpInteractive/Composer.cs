@@ -20,9 +20,12 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal static partial class Composer
     {
+        private static readonly Version ToolVersion = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
+        
         static Composer() => DI.Setup()
             .Default(Singleton)
             .Bind<Program>().To<Program>()
+            .Bind<Version>().Tag("ToolVersion").To(_ => ToolVersion)
             .Bind<string>().Tag("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<ILog<TT>>().Tag("Default").To<Log<TT>>()
             .Bind<ILog<TT>>().Tag("TeamCity").To<TeamCityLog<TT>>()
