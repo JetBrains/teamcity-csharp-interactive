@@ -14,7 +14,7 @@ namespace Teamcity.CSharpInteractive
     {
         public static readonly IDisposable Empty = EmptyDisposable.Shared;
 
-        public static IDisposable Create([NotNull] Action action)
+        public static IDisposable Create(Action action)
         {
             return new DisposableAction(action);
         }
@@ -86,7 +86,7 @@ namespace Teamcity.CSharpInteractive
 
         private sealed class EmptyDisposable : IDisposable
         {
-            [NotNull] public static readonly IDisposable Shared = new EmptyDisposable();
+            public static readonly IDisposable Shared = new EmptyDisposable();
 
             private EmptyDisposable() { }
 

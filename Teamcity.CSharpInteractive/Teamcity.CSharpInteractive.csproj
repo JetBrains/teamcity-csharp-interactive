@@ -2,13 +2,14 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
         <AssemblyName>dotnet-csi</AssemblyName>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\DevTeam.snk</AssemblyOriginatorKeyFile>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <NoWarn>NU1605</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -36,15 +37,21 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.10.0" />
-        <PackageReference Include="NuGet.Build.Tasks" Version="5.9.1" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="5.10.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\icon.png">
+        <None Include="$(MSBuildProjectDirectory)\..\icon.png">
             <PackagePath>_common</PackagePath>
             <Pack>true</Pack>
         </None>
+
+        <Content Include="$(MSBuildProjectDirectory)\..\teamcity-plugin.xml">
+            <PackagePath>.</PackagePath>
+            <Pack>true</Pack>
+        </Content>
     </ItemGroup>
+    
 </Project>
