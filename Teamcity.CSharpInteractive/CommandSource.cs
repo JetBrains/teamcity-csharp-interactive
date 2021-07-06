@@ -19,7 +19,7 @@ namespace Teamcity.CSharpInteractive
         
         public IEnumerable<ICommand> GetCommands()
         {
-            foreach (var source in _settings.Sources)
+            foreach (var source in _settings.CodeSources)
             {
                 foreach (var command in _codeSourceCommandFactory.Create(source))
                 {

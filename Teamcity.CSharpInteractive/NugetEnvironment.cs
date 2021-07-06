@@ -64,6 +64,7 @@ namespace Teamcity.CSharpInteractive
         [ExcludeFromCodeCoverage]
         public IEnumerable<Text> GetTrace()
         {
+            yield return new Text($"PackagesPath: {PackagesPath}");
             yield return new Text($"NugetSources: {string.Join(";", Sources)}");
             yield return new Text($"NugetFallbackFolders: {string.Join(";", FallbackFolders)}");
         }

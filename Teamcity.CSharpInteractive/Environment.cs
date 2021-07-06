@@ -61,6 +61,18 @@ namespace Teamcity.CSharpInteractive
             {
                 yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
             }
+
+            yield return new Text($"Command line arguments:");
+            foreach (var arg in System.Environment.GetCommandLineArgs())
+            {
+                yield return new Text($"  {arg}");
+            }
+            
+            yield return new Text($"Environment variables:");
+            foreach (var key in System.Environment.GetEnvironmentVariables().Keys.OfType<string>().OrderBy(i => i).Where(string.IsNullOrWhiteSpace))
+            {
+                yield return new Text($"  {key}={System.Environment.GetEnvironmentVariable(key)}");
+            }
         }
 
         public IDisposable OverrideWorkingDirectory(string? workingDirectory)

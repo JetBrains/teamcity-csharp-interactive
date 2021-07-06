@@ -7,7 +7,15 @@ namespace Teamcity.CSharpInteractive
         VerbosityLevel VerbosityLevel { get; set; }
 
         InteractionMode InteractionMode { get; }
+
+        bool ShowHelpAndExit { get; }
         
-        IEnumerable<ICodeSource> Sources { get; }
+        bool ShowVersionAndExit { get; }
+        
+        IEnumerable<ICodeSource> CodeSources { get; }
+        
+        IEnumerable<string> ScriptArguments { get; }
+        
+        IEnumerable<string> NuGetSources { get; }
     }
 }

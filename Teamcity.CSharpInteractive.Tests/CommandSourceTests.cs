@@ -15,7 +15,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var codeSource2 = new Mock<ICodeSource>();
             
             var settings = new Mock<ISettings>();
-            settings.SetupGet(i => i.Sources).Returns(new []{codeSource1.Object, codeSource2.Object});
+            settings.SetupGet(i => i.CodeSources).Returns(new []{codeSource1.Object, codeSource2.Object});
             
             var factory = new Mock<ICommandFactory<ICodeSource>>();
             factory.Setup(i => i.Create(codeSource1.Object)).Returns(new[] {HelpCommand.Shared});

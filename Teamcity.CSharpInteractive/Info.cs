@@ -58,6 +58,24 @@ namespace Teamcity.CSharpInteractive
                 new Text("    #r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r MyPackage 1.2.3", Color.Details), new Text(" or "), new Text("#r \"myLib.dll\"", Color.Details), new Text("."), Text.NewLine,
                 new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. "), new Text("#load \"myScript.csx\"", Color.Details), new Text(".")
             );
+        
+        public void ShowHelp() =>
+            _stdOut.WriteLine(
+                Text.NewLine,
+                new Text("Usage: dotnet csi [option] ... [script-file.csx] [script-argument] ..."), Text.NewLine,
+                Text.NewLine,
+                new Text("Executes script-file.csx if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
+                Text.NewLine,
+                new Text("Options:"), Text.NewLine,
+                new Text("    --help       ", Color.Header), new Text("Display this usage message (alternative forms: /? -h /h /help)."), Text.NewLine,
+                new Text("    --version    ", Color.Header), new Text("Display the version and exit (alternative form: /version)."), Text.NewLine,
+                new Text("    --source     ", Color.Header), new Text("NuGet package source (URL, UNC/folder path or package source name) to use (alternative forms: -s /source --source)."), Text.NewLine,
+                new Text("    @<file>      ", Color.Header), new Text("Read response file for more options."), Text.NewLine,
+                new Text("    --           ", Color.Header), new Text("Indicates that the remaining arguments should not be treated as options."), Text.NewLine
+            );
+
+        public void ShowVersion() =>
+            _stdOut.WriteLine(new Text(_version.ToString()));
 
         public void ShowFooter() => _tracePresenter.Show(_traceSources);
     }

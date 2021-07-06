@@ -36,7 +36,7 @@ namespace Teamcity.CSharpInteractive.Tests
         
         [Theory]
         [MemberData(nameof(Data))]
-        internal void Should(bool resetRequired, IEnumerable<string> lines, ICommand[] expectedCommands)
+        internal void ShouldCreateCodeSource(bool resetRequired, IEnumerable<string> lines, ICommand[] expectedCommands)
         {
             // Given
             _codeSource.SetupGet(i => i.Name).Returns(SourceName);

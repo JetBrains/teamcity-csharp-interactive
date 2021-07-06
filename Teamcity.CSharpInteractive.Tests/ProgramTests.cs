@@ -9,6 +9,7 @@ namespace Teamcity.CSharpInteractive.Tests
     {
         private readonly Mock<IInfo> _info;
         private readonly Mock<ISettingsManager> _settingsManager;
+        private readonly Mock<ISettings> _settings;
         private readonly Mock<IExitTracker> _exitTracker;
         private readonly Mock<IDisposable> _trackToken;
         private readonly Mock<IRunner> _runner;
@@ -17,6 +18,7 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             _info = new Mock<IInfo>();
             _settingsManager = new Mock<ISettingsManager>();
+            _settings = new Mock<ISettings>();
             _trackToken = new Mock<IDisposable>();
             _exitTracker = new Mock<IExitTracker>();
             _exitTracker.Setup(i => i.Track()).Returns(_trackToken.Object);
@@ -40,8 +42,41 @@ namespace Teamcity.CSharpInteractive.Tests
             _trackToken.Verify(i => i.Dispose());
             _info.Verify(i => i.ShowFooter());
         }
+        
+        [Fact]
+        public void ShouldShowVersion()
+        {
+            // Given
+            var program = CreateInstance();
+
+            // When
+            _settings.SetupGet(i => i.ShowVersionAndExit).Returns(true);
+            var actualResult = program.Run();
+
+            // Then
+            _settingsManager.Verify(i => i.Load());
+            _info.Verify(i => i.ShowVersion());
+            actualResult.ShouldBe((int)ExitCode.Success);
+        }
+        
+        [Fact]
+        public void ShouldShowHelp()
+        {
+            // Given
+            var program = CreateInstance();
+
+            // When
+            _settings.SetupGet(i => i.ShowHelpAndExit).Returns(true);
+            var actualResult = program.Run();
+
+            // Then
+            _settingsManager.Verify(i => i.Load());
+            _info.Verify(i => i.ShowHeader());
+            _info.Verify(i => i.ShowHelp());
+            actualResult.ShouldBe((int)ExitCode.Success);
+        }
 
         private Program CreateInstance() =>
-            new(_info.Object, _settingsManager.Object, _exitTracker.Object, () => _runner.Object);
+            new(_info.Object, _settingsManager.Object, _settings.Object, _exitTracker.Object, () => _runner.Object);
     }
 }

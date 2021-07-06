@@ -40,6 +40,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<INugetEnvironment>().To<NugetEnvironment>()
             .Bind<ITraceSource>().Tag(typeof(INugetEnvironment)).As(Transient).To(ctx => ctx.Resolve<INugetEnvironment>())
             .Bind<ISettings>().Bind<ISettingsManager>().To<Settings>()
+            .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()
             .Bind<IColorTheme>().To<ColorTheme>()
             .Bind<ITeamCityLineFormatter>().To<TeamCityLineFormatter>()
