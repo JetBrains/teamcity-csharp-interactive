@@ -50,6 +50,8 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICodeSource>().To<ConsoleInput>()
             .Bind<FileCodeSource>().To<FileCodeSource>()
             .Bind<IFileCodeSourceFactory>().To<FileCodeSourceFactory>()
+            .Bind<InitialStateCodeSource>().To<InitialStateCodeSource>()
+            .Bind<IInitialStateCodeSourceFactory>().To<InitialStateCodeSourceFactory>()
             .Bind<IRunner>().Tag(InteractionMode.Interactive).To<InteractiveRunner>()
             .Bind<IRunner>().Tag(InteractionMode.Script).To<ScriptRunner>()
             .Bind<IRunner>().As(Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IRunner>(InteractionMode.Interactive) : ctx.Resolve<IRunner>(InteractionMode.Script))

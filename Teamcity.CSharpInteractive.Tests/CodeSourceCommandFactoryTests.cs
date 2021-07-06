@@ -36,11 +36,10 @@ namespace Teamcity.CSharpInteractive.Tests
         
         [Theory]
         [MemberData(nameof(Data))]
-        internal void ShouldCreateCodeSource(bool resetRequired, IEnumerable<string> lines, ICommand[] expectedCommands)
+        internal void ShouldCreateCodeSource(IEnumerable<string> lines, ICommand[] expectedCommands)
         {
             // Given
             _codeSource.SetupGet(i => i.Name).Returns(SourceName);
-            _codeSource.SetupGet(i => i.ResetRequired).Returns(resetRequired);
             _codeSource.Setup(i => i.GetEnumerator()).Returns(lines.GetEnumerator());
             var factory = CreateInstance();
 
@@ -55,19 +54,16 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             new object[]
             {
-                true,
                 new[] {"code1", "#help", "code2"},
-                new[] {ResetCommand.Shared, ScriptCommand11, ScriptCommand12, HelpCommand.Shared, ScriptCommand2}
+                new[] {ScriptCommand11, ScriptCommand12, HelpCommand.Shared, ScriptCommand2}
             },
             new object[]
             {
-                true,
                 new[] {"#code3", "#help", "code2"},
-                new[] {ResetCommand.Shared, ScriptCommand3, HelpCommand.Shared, ScriptCommand2}
+                new[] {ScriptCommand3, HelpCommand.Shared, ScriptCommand2}
             },
             new object[]
             {
-                false,
                 new[] {"code1", "#help", "code2"},
                 new[] {ScriptCommand11, ScriptCommand12, HelpCommand.Shared, ScriptCommand2}
             }

@@ -32,7 +32,7 @@ namespace Teamcity.CSharpInteractive
             }
 
             var path = loadMatch.Groups[1].Value;
-            var fileSource = _fileCodeSourceFactory.Create(path, false);
+            var fileSource = _fileCodeSourceFactory.Create(path);
             return _codeSourceCommandFactory().Create(fileSource);
         }
     }

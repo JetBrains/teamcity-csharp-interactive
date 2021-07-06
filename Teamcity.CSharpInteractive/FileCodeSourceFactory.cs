@@ -12,11 +12,10 @@ namespace Teamcity.CSharpInteractive
         public FileCodeSourceFactory(Func<FileCodeSource> fileCodeSourceFactory) => 
             _fileCodeSourceFactory = fileCodeSourceFactory;
 
-        public ICodeSource Create(string fileName, bool isRoot)
+        public ICodeSource Create(string fileName)
         {
             var fileCodeSource = _fileCodeSourceFactory();
             fileCodeSource.FileName = fileName;
-            fileCodeSource.ResetRequired = isRoot;
             return fileCodeSource;
         }
     }

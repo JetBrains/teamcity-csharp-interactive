@@ -10,6 +10,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<IEnvironment> _environment;
         private readonly Mock<ICommandLineParser> _commandLineParser;
         private readonly ICodeSource _consoleCodeSource;
+        private readonly Mock<IInitialStateCodeSourceFactory> _initialStateCodeSourceFactory;
         private readonly Mock<IFileCodeSourceFactory> _fileCodeSourceFactory;
 
         public SettingsTests()
@@ -17,6 +18,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _environment = new Mock<IEnvironment>();
             _commandLineParser = new Mock<ICommandLineParser>();
             _consoleCodeSource = Mock.Of<ICodeSource>();
+            _initialStateCodeSourceFactory = new Mock<IInitialStateCodeSourceFactory>();
             _fileCodeSourceFactory = new Mock<IFileCodeSourceFactory>();
         }
 
@@ -25,9 +27,11 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             var settings = CreateInstance();
+            var initialSource = Mock.Of<ICodeSource>();
             var codeSource = Mock.Of<ICodeSource>();
-            _fileCodeSourceFactory.Setup(i => i.Create("myScript", true)).Returns(codeSource);
-            
+            _initialStateCodeSourceFactory.Setup(i => i.Create(new[] { "Arg1", "Arg2"})).Returns(initialSource);
+            _fileCodeSourceFactory.Setup(i => i.Create("myScript")).Returns(codeSource);
+
             // When
             _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0", "arg1", "arg2"});
             _commandLineParser.Setup(i => i.Parse(new[] { "arg1", "arg2"})).Returns(
@@ -46,7 +50,7 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
             settings.InteractionMode.ShouldBe(InteractionMode.Script);
             settings.ShowVersionAndExit.ShouldBeTrue();
-            settings.CodeSources.ToArray().ShouldBe(new []{codeSource});
+            settings.CodeSources.ToArray().ShouldBe(new []{initialSource, codeSource});
             settings.NuGetSources.ToArray().ShouldBe(new []{"Src1", "Src2"});
             settings.ScriptArguments.ToArray().ShouldBe(new []{"Arg1", "Arg2"});
         }
@@ -68,6 +72,6 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         private Settings CreateInstance() =>
-            new(_environment.Object, _commandLineParser.Object, _consoleCodeSource, _fileCodeSourceFactory.Object);
+            new(_environment.Object, _commandLineParser.Object, _consoleCodeSource, _initialStateCodeSourceFactory.Object, _fileCodeSourceFactory.Object);
     }
 }

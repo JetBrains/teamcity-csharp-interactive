@@ -29,8 +29,6 @@ namespace Teamcity.CSharpInteractive
 
         public string Name => Path.GetFileName(FileName);
 
-        public bool ResetRequired { get; set; }
-
         public string FileName
         {
             get => _fileName;
