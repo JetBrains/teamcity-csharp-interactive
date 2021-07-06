@@ -13,6 +13,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<IEnvironment> _environment;
         private readonly Mock<IUniqueNameGenerator> _uniqueNameGenerator;
         private readonly Mock<ICleaner> _cleaner;
+        private readonly Mock<ISettings> _settings;
 
         public NugetEnvironmentTests()
         {
@@ -20,6 +21,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _uniqueNameGenerator = new Mock<IUniqueNameGenerator>();
             _cleaner = new Mock<ICleaner>();
             _dotnetEnvironment = new Mock<IDotnetEnvironment>();
+            _settings = new Mock<ISettings>();
         }
 
         [Fact]
@@ -87,12 +89,14 @@ namespace Teamcity.CSharpInteractive.Tests
             // Given
             var instance = CreateInstance();
             _dotnetEnvironment.SetupGet(i => i.Path).Returns("Abc");
+            var sources = new [] {"Src1", "Src2"};
 
             // When
+            _settings.SetupGet(i => i.NuGetSources).Returns(sources);
             var actualSources = instance.Sources.ToArray();
 
             // Then
-            actualSources.ShouldBe(new []{@"https://api.nuget.org/v3/index.json"});
+            actualSources.ShouldBe(new []{"Src1", "Src2", @"https://api.nuget.org/v3/index.json"});
         }
 
         private NugetEnvironment CreateInstance() =>
@@ -100,6 +104,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 _environment.Object,
                 _uniqueNameGenerator.Object,
                 _cleaner.Object,
-                _dotnetEnvironment.Object);
+                _dotnetEnvironment.Object,
+                _settings.Object);
     }
 }

@@ -13,6 +13,7 @@ namespace Teamcity.CSharpInteractive
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly ICleaner _cleaner;
         private readonly IDotnetEnvironment _dotnetEnvironment;
+        private readonly ISettings _settings;
         private string? _packagePath;
         private IDisposable _packagePathToken = Disposable.Empty;
 
@@ -20,18 +21,17 @@ namespace Teamcity.CSharpInteractive
             IEnvironment environment,
             IUniqueNameGenerator uniqueNameGenerator,
             ICleaner cleaner,
-            IDotnetEnvironment dotnetEnvironment)
+            IDotnetEnvironment dotnetEnvironment,
+            ISettings settings)
         {
             _environment = environment;
             _uniqueNameGenerator = uniqueNameGenerator;
             _cleaner = cleaner;
             _dotnetEnvironment = dotnetEnvironment;
+            _settings = settings;
         }
 
-        public IEnumerable<string> Sources => new[]
-        {
-            @"https://api.nuget.org/v3/index.json"
-        };
+        public IEnumerable<string> Sources => _settings.NuGetSources.Concat(new []{@"https://api.nuget.org/v3/index.json"});
 
         public IEnumerable<string> FallbackFolders => 
             new[] {Path.Combine(_dotnetEnvironment.Path, "sdk", "NuGetFallbackFolder")}
