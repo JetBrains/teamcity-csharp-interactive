@@ -11,6 +11,8 @@ namespace Teamcity.CSharpInteractive
 
         public string Name => "Help";
 
+        public bool Internal => false;
+
         public override string ToString() => Name;
     }
 }

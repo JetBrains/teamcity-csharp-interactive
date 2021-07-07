@@ -2,6 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using Host;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
     internal class TeamCityLog<T>: ILog<T>

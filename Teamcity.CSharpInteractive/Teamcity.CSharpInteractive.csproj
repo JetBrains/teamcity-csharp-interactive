@@ -32,14 +32,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pure.DI" Version="1.0.0-beta69">
+        <PackageReference Include="Pure.DI" Version="1.0.0-beta72">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.10.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
         <PackageReference Include="NuGet.Build.Tasks" Version="5.10.0" />
+        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
     </ItemGroup>
 
     <ItemGroup>
@@ -52,6 +52,10 @@
             <PackagePath>.</PackagePath>
             <Pack>true</Pack>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Teamcity.Host\Teamcity.Host.csproj" />
     </ItemGroup>
     
 </Project>

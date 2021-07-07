@@ -52,7 +52,7 @@ namespace Teamcity.CSharpInteractive.Tests
         public void ShouldSkipUnhandledCommand()
         {
             // Given
-            var command = CodeCommand.Shared;
+            var command = new CodeCommand();
             var commandRunner = CreateInstance();
 
             // When

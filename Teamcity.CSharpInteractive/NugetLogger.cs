@@ -4,6 +4,7 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
+    using Host;
     using NuGet.Common;
 
     [ExcludeFromCodeCoverage]

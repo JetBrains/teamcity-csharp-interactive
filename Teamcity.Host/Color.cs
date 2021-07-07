@@ -1,6 +1,6 @@
-﻿namespace Teamcity.CSharpInteractive
+﻿namespace Teamcity.Host
 {
-    internal enum Color
+    public enum Color
     {
         Default,
         

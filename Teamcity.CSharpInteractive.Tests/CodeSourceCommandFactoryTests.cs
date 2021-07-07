@@ -28,9 +28,9 @@ namespace Teamcity.CSharpInteractive.Tests
             _replCommandFactory2 = new Mock<ICommandFactory<string>>();
             _replCommandFactory2.Setup(i => i.Create("#help")).Returns(new [] {HelpCommand.Shared });
             _scriptCommandFactory = new Mock<ICommandFactory<ScriptCommand>>();
-            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine))).Returns(new[] {ScriptCommand11, ScriptCommand12});
-            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code2" + Environment.NewLine))).Returns(new[] {ScriptCommand2});
-            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "#code3" + Environment.NewLine))).Returns(new[] {ScriptCommand3});
+            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine, false))).Returns(new[] {ScriptCommand11, ScriptCommand12});
+            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code2" + Environment.NewLine, false))).Returns(new[] {ScriptCommand2});
+            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "#code3" + Environment.NewLine, false))).Returns(new[] {ScriptCommand3});
             _codeSource = new Mock<ICodeSource>();
         }
         

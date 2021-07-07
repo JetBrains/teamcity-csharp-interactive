@@ -2,6 +2,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
 {
     using System;
     using System.Collections.Generic;
+    using Host;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
     using Moq;

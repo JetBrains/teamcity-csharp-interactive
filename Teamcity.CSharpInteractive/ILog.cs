@@ -3,6 +3,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using Host;
 
     internal interface ILog<T>
     {

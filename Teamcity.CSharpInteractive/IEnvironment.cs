@@ -9,8 +9,6 @@ namespace Teamcity.CSharpInteractive
         
         string ProcessArchitecture { get; }
         
-        string? GetEnvironmentVariable(string name);
-            
         IEnumerable<string> GetCommandLineArgs();
         
         string GetPath(SpecialFolder specialFolder);

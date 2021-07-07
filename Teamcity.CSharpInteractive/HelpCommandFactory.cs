@@ -3,6 +3,7 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
+    using Host;
 
     internal class HelpCommandFactory: ICommandFactory<string>
     {

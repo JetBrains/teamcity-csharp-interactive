@@ -16,6 +16,8 @@ namespace Teamcity.CSharpInteractive
         
         public string Name => $"Package {PackageId} {Version?.ToString() ?? "latest"}";
 
+        public bool Internal => false;
+
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;

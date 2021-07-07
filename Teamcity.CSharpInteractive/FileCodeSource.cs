@@ -6,6 +6,7 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Host;
 
     internal class FileCodeSource: ICodeSource
     {
@@ -28,6 +29,8 @@ namespace Teamcity.CSharpInteractive
         }
 
         public string Name => Path.GetFileName(FileName);
+        
+        public bool Internal => false;
 
         public string FileName
         {

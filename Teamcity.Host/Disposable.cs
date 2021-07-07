@@ -2,7 +2,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable EmptyGeneralCatchClause
-namespace Teamcity.CSharpInteractive
+namespace Teamcity.Host
 {
     using System;
     using System.Collections.Generic;

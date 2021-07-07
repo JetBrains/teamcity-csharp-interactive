@@ -1,5 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
+    using Host;
     using Moq;
     using Shouldly;
     using Xunit;

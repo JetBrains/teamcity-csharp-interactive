@@ -6,6 +6,7 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
+    using Host;
     using Pure.DI;
 
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource

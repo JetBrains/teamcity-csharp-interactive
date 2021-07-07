@@ -14,6 +14,8 @@ namespace Teamcity.CSharpInteractive
 
         public string Name => "Console";
 
+        public bool Internal => false;
+
         public IEnumerator<string> GetEnumerator() => this;
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

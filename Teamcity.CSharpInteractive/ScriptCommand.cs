@@ -8,13 +8,16 @@ namespace Teamcity.CSharpInteractive
     {
         public readonly string Script;
 
-        public ScriptCommand(string originName, string script)
+        public ScriptCommand(string originName, string script, bool isInternal = false)
         {
             Name = originName;
             Script = script;
+            Internal = isInternal;
         }
 
         public string Name { get; }
+        
+        public bool Internal { get; }
 
         public override bool Equals(object? obj)
         {

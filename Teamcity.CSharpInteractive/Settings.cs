@@ -4,11 +4,13 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Pure.DI;
 
     internal class Settings : ISettings, ISettingsManager
     {
         private readonly IEnvironment _environment;
         private readonly ICommandLineParser _commandLineParser;
+        private readonly ICodeSource _hostCodeSource;
         private readonly ICodeSource _consoleCodeSource;
         private readonly IInitialStateCodeSourceFactory _initialStateCodeSourceFactory;
         private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
@@ -16,12 +18,14 @@ namespace Teamcity.CSharpInteractive
         public Settings(
             IEnvironment environment,
             ICommandLineParser commandLineParser,
+            [Tag("Host")] ICodeSource hostCodeSource,
             ICodeSource consoleCodeSource,
             IInitialStateCodeSourceFactory initialStateCodeSourceFactory,
             IFileCodeSourceFactory fileCodeSourceFactory)
         {
             _environment = environment;
             _commandLineParser = commandLineParser;
+            _hostCodeSource = hostCodeSource;
             _consoleCodeSource = consoleCodeSource;
             _initialStateCodeSourceFactory = initialStateCodeSourceFactory;
             _fileCodeSourceFactory = fileCodeSourceFactory;
@@ -50,7 +54,7 @@ namespace Teamcity.CSharpInteractive
             {
                 InteractionMode = InteractionMode.Interactive;
                 VerbosityLevel = VerbosityLevel.Quit;
-                CodeSources = new []{ _consoleCodeSource };
+                CodeSources = new []{ _hostCodeSource, _consoleCodeSource };
             }
             else
             {
@@ -68,7 +72,7 @@ namespace Teamcity.CSharpInteractive
 
                 NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);
                 CodeSources =
-                    new [] {_initialStateCodeSourceFactory.Create(ScriptArguments.ToArray(), ScriptProperties)}.Concat(
+                    new [] {_hostCodeSource, _initialStateCodeSourceFactory.Create(ScriptArguments.ToArray(), ScriptProperties)}.Concat(
                         args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value)));
             }
         }

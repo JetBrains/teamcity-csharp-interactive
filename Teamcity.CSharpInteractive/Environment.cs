@@ -6,6 +6,7 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using Host;
     using Microsoft.DotNet.PlatformAbstractions;
 
     [ExcludeFromCodeCoverage]
@@ -18,8 +19,6 @@ namespace Teamcity.CSharpInteractive
         public string ProcessArchitecture => RuntimeEnvironment.RuntimeArchitecture;
 
         public IEnumerable<string> GetCommandLineArgs() => System.Environment.GetCommandLineArgs();
-
-        public string? GetEnvironmentVariable(string name) => System.Environment.GetEnvironmentVariable(name);
 
         public string GetPath(SpecialFolder specialFolder)
         {

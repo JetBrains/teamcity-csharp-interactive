@@ -3,6 +3,7 @@ namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using Host;
     using NuGet.Versioning;
 
     internal class AddPackageReferenceCommandFactory: ICommandFactory<string>

@@ -3,6 +3,7 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Text;
+    using Host;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -31,12 +32,12 @@ namespace Teamcity.CSharpInteractive
             {
                 _log.Trace(new []{new Text("Completed submission")});
                 _scriptBuilder.Clear();
-                yield return new ScriptCommand(scriptCommand.Name, script);
+                yield return new ScriptCommand(scriptCommand.Name, script, scriptCommand.Internal);
                 yield break;
             }
 
             _log.Trace(new []{new Text("Incomplete submission")});
-            yield return CodeCommand.Shared;
+            yield return new CodeCommand(scriptCommand.Internal);
         }
     }
 }

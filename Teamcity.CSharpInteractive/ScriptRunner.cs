@@ -3,6 +3,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Linq;
+    using Host;
 
     internal class ScriptRunner : IRunner
     {

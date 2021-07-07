@@ -1,15 +1,16 @@
-namespace Teamcity.CSharpInteractive.Tests
+namespace Teamcity.Host.Tests
 {
     using System.Collections.Generic;
     using Moq;
     using Shouldly;
+    using Teamcity.Host;
     using Xunit;
 
-    public class TeamCityLineAccTests
+    public class TeamCityLineFormatterTests
     {
         private readonly Mock<IColorTheme> _colorTheme;
 
-        public TeamCityLineAccTests()
+        public TeamCityLineFormatterTests()
         {
             _colorTheme = new Mock<IColorTheme>();
             _colorTheme.Setup(i => i.GetAnsiColor(Color.Default)).Returns("D");

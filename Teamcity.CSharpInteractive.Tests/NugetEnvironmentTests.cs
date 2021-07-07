@@ -3,6 +3,7 @@ namespace Teamcity.CSharpInteractive.Tests
     using System;
     using System.IO;
     using System.Linq;
+    using Host;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -10,6 +11,7 @@ namespace Teamcity.CSharpInteractive.Tests
     public class NugetEnvironmentTests
     {
         private readonly Mock<IDotnetEnvironment> _dotnetEnvironment;
+        private readonly Mock<IHostEnvironment> _hostEnvironment;
         private readonly Mock<IEnvironment> _environment;
         private readonly Mock<IUniqueNameGenerator> _uniqueNameGenerator;
         private readonly Mock<ICleaner> _cleaner;
@@ -17,6 +19,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
         public NugetEnvironmentTests()
         {
+            _hostEnvironment = new Mock<IHostEnvironment>();
             _environment = new Mock<IEnvironment>();
             _uniqueNameGenerator = new Mock<IUniqueNameGenerator>();
             _cleaner = new Mock<ICleaner>();
@@ -43,7 +46,7 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             var instance = CreateInstance();
-            _environment.Setup(i => i.GetEnvironmentVariable("NUGET_FALLBACK_PACKAGES")).Returns(" path1; Path2");
+            _hostEnvironment.Setup(i => i.GetEnvironmentVariable("NUGET_FALLBACK_PACKAGES")).Returns(" path1; Path2");
             _dotnetEnvironment.SetupGet(i => i.Path).Returns("Abc");
 
             // When
@@ -66,7 +69,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var instance = CreateInstance();
             _environment.Setup(i => i.GetPath(SpecialFolder.Temp)).Returns("tmp");
             _uniqueNameGenerator.Setup(i => i.Generate()).Returns("abc");
-            _environment.Setup(i => i.GetEnvironmentVariable("NUGET_PACKAGES")).Returns(envVarValue);
+            _hostEnvironment.Setup(i => i.GetEnvironmentVariable("NUGET_PACKAGES")).Returns(envVarValue);
             var trackToken = new Mock<IDisposable>();
             var tracking = false;
             _cleaner.Setup(i => i.Track(expectedPackagesPath)).Callback(() => tracking = true).Returns(trackToken.Object);
@@ -102,6 +105,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private NugetEnvironment CreateInstance() =>
             new(
                 _environment.Object,
+                _hostEnvironment.Object,
                 _uniqueNameGenerator.Object,
                 _cleaner.Object,
                 _dotnetEnvironment.Object,

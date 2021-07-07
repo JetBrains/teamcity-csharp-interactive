@@ -7,6 +7,8 @@ namespace Teamcity.CSharpInteractive
         public SetVerbosityLevelCommand(VerbosityLevel verbosityLevel) => VerbosityLevel = verbosityLevel;
         
         public string Name => $"Set verbosity level to {VerbosityLevel}";
+        
+        public bool Internal => false;
 
         public override bool Equals(object? obj)
         {

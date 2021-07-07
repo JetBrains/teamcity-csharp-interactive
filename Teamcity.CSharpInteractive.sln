@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teamcity.CSharpInteractive"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teamcity.CSharpInteractive.Tests", "Teamcity.CSharpInteractive.Tests\Teamcity.CSharpInteractive.Tests.csproj", "{D50DF30F-F84C-4292-9DA1-28D3649607A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teamcity.Host", "Teamcity.Host\Teamcity.Host.csproj", "{C14B7ED5-2F84-452D-983F-FF5991385AA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teamcity.Host.Tests", "Teamcity.Host.Tests\Teamcity.Host.Tests.csproj", "{87EFB052-BC57-4DF3-A2AF-12B15CB73F14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{D50DF30F-F84C-4292-9DA1-28D3649607A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D50DF30F-F84C-4292-9DA1-28D3649607A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D50DF30F-F84C-4292-9DA1-28D3649607A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C14B7ED5-2F84-452D-983F-FF5991385AA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C14B7ED5-2F84-452D-983F-FF5991385AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C14B7ED5-2F84-452D-983F-FF5991385AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C14B7ED5-2F84-452D-983F-FF5991385AA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87EFB052-BC57-4DF3-A2AF-12B15CB73F14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87EFB052-BC57-4DF3-A2AF-12B15CB73F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87EFB052-BC57-4DF3-A2AF-12B15CB73F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87EFB052-BC57-4DF3-A2AF-12B15CB73F14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -5,11 +5,14 @@
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/SolBuilderDuo/UseMsbuildSolutionBuilder/@EntryValue">NewVersion</s:String>
 	
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Nikol\AppData\Local\JetBrains\Rider2021.1\resharper-host\temp\Rider\vAny\CoverageData\_Teamcity.CSharpInteractive.-288694209\Snapshot\snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=633fafea_002D6468_002D49c1_002D811e_002D80c8e9d36bc8/@EntryIndexedValue">&lt;SessionState ContinuousTestingIsOn="True" ContinuousTestingMode="1" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=633fafea_002D6468_002D49c1_002D811e_002D80c8e9d36bc8/@EntryIndexedValue">&lt;SessionState ContinuousTestingIsOn="True" ContinuousTestingMode="1" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6b922245_002D4dec_002D4823_002Db47b_002Dfabab9c05527/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldParseArguments" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Project Location="C:\Projects\TeamCity\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.Tests" Presentation="&amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt;" /&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6b922245_002D4dec_002D4823_002Db47b_002Dfabab9c05527/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldParseArguments" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="C:\Projects\TeamCity\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.Tests" Presentation="&amp;lt;Teamcity.CSharpInteractive.Tests&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="C:\Projects\TeamCity\Teamcity.CSharpInteractive\Teamcity.Host.Tests" Presentation="&amp;lt;Teamcity.Host.Tests&amp;gt;" /&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	

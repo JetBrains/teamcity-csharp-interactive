@@ -1,5 +1,5 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
-namespace Teamcity.CSharpInteractive
+namespace Teamcity.Host
 {
     using System;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;

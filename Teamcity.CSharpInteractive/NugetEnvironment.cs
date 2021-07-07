@@ -6,10 +6,12 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using Host;
 
     internal class NugetEnvironment : INugetEnvironment, ITraceSource, IDisposable
     {
         private readonly IEnvironment _environment;
+        private readonly IHostEnvironment _hostEnvironment;
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly ICleaner _cleaner;
         private readonly IDotnetEnvironment _dotnetEnvironment;
@@ -19,12 +21,14 @@ namespace Teamcity.CSharpInteractive
 
         public NugetEnvironment(
             IEnvironment environment,
+            IHostEnvironment hostEnvironment,
             IUniqueNameGenerator uniqueNameGenerator,
             ICleaner cleaner,
             IDotnetEnvironment dotnetEnvironment,
             ISettings settings)
         {
             _environment = environment;
+            _hostEnvironment = hostEnvironment;
             _uniqueNameGenerator = uniqueNameGenerator;
             _cleaner = cleaner;
             _dotnetEnvironment = dotnetEnvironment;
@@ -42,7 +46,7 @@ namespace Teamcity.CSharpInteractive
         {
             get
             {
-                var path = _environment.GetEnvironmentVariable("NUGET_PACKAGES")?.Trim();
+                var path = _hostEnvironment.GetEnvironmentVariable("NUGET_PACKAGES")?.Trim();
                 if (!string.IsNullOrEmpty(path))
                 {
                     return path;
@@ -69,7 +73,7 @@ namespace Teamcity.CSharpInteractive
             yield return new Text($"NugetFallbackFolders: {string.Join(";", FallbackFolders)}");
         }
 
-        private IEnumerable<string> FallbackFoldersFromEnv => _environment
+        private IEnumerable<string> FallbackFoldersFromEnv => _hostEnvironment
             .GetEnvironmentVariable("NUGET_FALLBACK_PACKAGES")
             ?.Split(';', StringSplitOptions.RemoveEmptyEntries)
             .Select(i => i.Trim()) ?? Enumerable.Empty<string>();

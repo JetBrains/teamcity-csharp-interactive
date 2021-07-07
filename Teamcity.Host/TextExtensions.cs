@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive
+namespace Teamcity.Host
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

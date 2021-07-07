@@ -59,7 +59,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Success
             new object[]
             {
-                new CommandResult[] { new(CodeCommand.Shared, true), new(CodeCommand.Shared, true), new(new ScriptCommand(string.Empty, string.Empty), true)},
+                new CommandResult[] { new(new CodeCommand(), true), new(new CodeCommand(), true), new(new ScriptCommand(string.Empty, string.Empty), true)},
                 System.Array.Empty<string>(),
                 System.Array.Empty<string>(),
                 ExitCode.Success
@@ -67,7 +67,7 @@ namespace Teamcity.CSharpInteractive.Tests
             
             new object[]
             {
-                new CommandResult[] { new(CodeCommand.Shared, default), new(CodeCommand.Shared, default), new(new ScriptCommand(string.Empty, string.Empty), default)},
+                new CommandResult[] { new(new CodeCommand(), default), new(new CodeCommand(), default), new(new ScriptCommand(string.Empty, string.Empty), default)},
                 System.Array.Empty<string>(),
                 System.Array.Empty<string>(),
                 ExitCode.Success
@@ -76,7 +76,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Warnings
             new object[]
             {
-                new CommandResult[] { new(CodeCommand.Shared, default), new(CodeCommand.Shared, default), new(new ScriptCommand(string.Empty, string.Empty), true)},
+                new CommandResult[] { new(new CodeCommand(), default), new(new CodeCommand(), default), new(new ScriptCommand(string.Empty, string.Empty), true)},
                 System.Array.Empty<string>(),
                 new[] {"warn"},
                 ExitCode.Success
@@ -85,7 +85,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Errors
             new object[]
             {
-                new CommandResult[] { new(CodeCommand.Shared, null), new(CodeCommand.Shared, null), new(new ScriptCommand(string.Empty, string.Empty), true)},
+                new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), true)},
                 new[] {"err"},
                 new[] {"warn"},
                 ExitCode.Fail
@@ -94,7 +94,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Failed
             new object[]
             {
-                new CommandResult[] { new(CodeCommand.Shared, null), new(CodeCommand.Shared, null), new(new ScriptCommand(string.Empty, string.Empty), false)},
+                new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), false)},
                 System.Array.Empty<string>(),
                 System.Array.Empty<string>(),
                 ExitCode.Fail

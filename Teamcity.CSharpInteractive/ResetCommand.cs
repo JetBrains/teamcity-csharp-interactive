@@ -10,5 +10,7 @@ namespace Teamcity.CSharpInteractive
         private ResetCommand() { }
         
         public string Name => "Reset";
+        
+        public bool Internal => false;
     }
 }

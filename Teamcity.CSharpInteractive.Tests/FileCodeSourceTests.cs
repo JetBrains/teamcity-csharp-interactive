@@ -3,6 +3,7 @@ namespace Teamcity.CSharpInteractive.Tests
     using System;
     using System.IO;
     using System.Linq;
+    using Host;
     using Moq;
     using Shouldly;
     using Xunit;

@@ -1,6 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
-namespace Teamcity.CSharpInteractive
+namespace Teamcity.Host
 {
     using System.Text;
 

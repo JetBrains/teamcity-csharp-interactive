@@ -19,11 +19,11 @@ namespace Teamcity.CSharpInteractive.Tests
             _commandRunner1 = new Mock<ICommandRunner>();
             _commandRunner1.Setup(i => i.TryRun(HelpCommand.Shared)).Returns(new CommandResult(HelpCommand.Shared, true));
             _commandRunner1.Setup(i => i.TryRun(ResetCommand.Shared)).Returns(new CommandResult(HelpCommand.Shared, default));
-            _commandRunner1.Setup(i => i.TryRun(CodeCommand.Shared)).Returns(new CommandResult(CodeCommand.Shared, default));
+            _commandRunner1.Setup(i => i.TryRun(new CodeCommand(false))).Returns(new CommandResult(new CodeCommand(), default));
             _commandRunner2 = new Mock<ICommandRunner>();
             _commandRunner2.Setup(i => i.TryRun(ResetCommand.Shared)).Returns(new CommandResult(ResetCommand.Shared, false));
             _commandRunner2.Setup(i => i.TryRun(HelpCommand.Shared)).Returns(new CommandResult(HelpCommand.Shared, default));
-            _commandRunner2.Setup(i => i.TryRun(CodeCommand.Shared)).Returns(new CommandResult(CodeCommand.Shared, default));
+            _commandRunner2.Setup(i => i.TryRun(new CodeCommand(false))).Returns(new CommandResult(new CodeCommand(), default));
             _statisticsToken = new Mock<IDisposable>();
             _statistics = new Mock<IStatistics>();
             _statistics.Setup(i => i.Start()).Returns(_statisticsToken.Object);
@@ -58,13 +58,13 @@ namespace Teamcity.CSharpInteractive.Tests
             },
             new object[]
             {
-                new [] { CodeCommand.Shared },
-                new [] { new CommandResult(CodeCommand.Shared, default)}
+                new [] { new CodeCommand() },
+                new [] { new CommandResult(new CodeCommand(), default)}
             },
             new object[]
             {
-                new [] { CodeCommand.Shared, HelpCommand.Shared, ResetCommand.Shared},
-                new [] { new CommandResult(CodeCommand.Shared, default), new CommandResult(HelpCommand.Shared, true), new CommandResult(ResetCommand.Shared, false)}
+                new [] { new CodeCommand(), HelpCommand.Shared, ResetCommand.Shared},
+                new [] { new CommandResult(new CodeCommand(), default), new CommandResult(HelpCommand.Shared, true), new CommandResult(ResetCommand.Shared, false)}
             },
         };
 

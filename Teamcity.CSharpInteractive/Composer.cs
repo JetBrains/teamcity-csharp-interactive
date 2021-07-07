@@ -7,10 +7,8 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Runtime.Versioning;
-    using JetBrains.TeamCity.ServiceMessages.Read;
-    using JetBrains.TeamCity.ServiceMessages.Write;
+    using Host;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
-    using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
     using Microsoft.Build.Framework;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
@@ -42,12 +40,8 @@ namespace Teamcity.CSharpInteractive
             .Bind<ISettings>().Bind<ISettingsManager>().To<Settings>()
             .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()
-            .Bind<IColorTheme>().To<ColorTheme>()
-            .Bind<ITeamCityLineFormatter>().To<TeamCityLineFormatter>()
-            .Bind<IStdOut>().Bind<IStdErr>().Tag("Default").To<ConsoleOutput>()
-            .Bind<IStdOut>().Bind<IStdErr>().Tag("TeamCity").To<TeamCityOutput>()
-            .Bind<IStdOut>().Bind<IStdErr>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IStdOut>("TeamCity") : ctx.Resolve<IStdOut>("Default"))
             .Bind<ICodeSource>().To<ConsoleInput>()
+            .Bind<ICodeSource>().Tag("Host").To<HostIntegrationCodeSource>()
             .Bind<FileCodeSource>().To<FileCodeSource>()
             .Bind<IFileCodeSourceFactory>().To<FileCodeSourceFactory>()
             .Bind<InitialStateCodeSource>().To<InitialStateCodeSource>()
@@ -82,17 +76,15 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandFactory<string>>().Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
             .Bind<ICommandRunner>().Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Load script").To<LoadCommandFactory>()
-
-            // Service messages
-            .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()
-            .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
-            .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
-            .Bind<IFlowIdGenerator>().To<FlowIdGenerator>()
-            .Bind<DateTime>().As(Transient).To(_ => DateTime.Now)
-            .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
-            .Bind<ITeamCityWriter>().Tag("Root").To(
-                ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
-                    str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).WriteLine(new Text(str + "\n"))))
-            .Bind<IServiceMessageParser>().To<ServiceMessageParser>();
+            
+            // Host
+            .Bind<IHostEnvironment>().To(_ => Teamcity.Host.Composer.Resolve<IHostEnvironment>())
+            .Bind<ITeamCitySettings>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCitySettings>())
+            .Bind<ITeamCityLineFormatter>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityLineFormatter>())
+            .Bind<ITeamCityBlockWriter<IDisposable>>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityBlockWriter<IDisposable>>())
+            .Bind<ITeamCityMessageWriter>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityMessageWriter>())
+            .Bind<ITeamCityBuildProblemWriter>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityBuildProblemWriter>())
+            .Bind<IStdOut>().To(_ => Teamcity.Host.Composer.Resolve<IStdOut>())
+            .Bind<IStdErr>().To(_ => Teamcity.Host.Composer.Resolve<IStdErr>());
     }
 }

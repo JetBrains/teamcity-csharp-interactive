@@ -20,7 +20,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var commands = parser.Create(new ScriptCommand("origin", "code")).ToArray();
 
             // Then
-            commands.ShouldBe(new []{CodeCommand.Shared}); 
+            commands.ShouldBe(new []{(ICommand)new CodeCommand()}); 
         }
         
         [Fact]

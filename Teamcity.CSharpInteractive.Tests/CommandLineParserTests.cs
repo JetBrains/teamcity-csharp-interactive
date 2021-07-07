@@ -32,68 +32,68 @@ namespace Teamcity.CSharpInteractive.Tests
             new object[]
             {
                 new[] {"--help"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             new object[]
             {
                 new[] {"--help", "--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             new object[]
             {
                 new[] {"--HelP", "--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             new object[]
             {
                 new[] {"-h", "--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             new object[]
             {
                 new[] {"/help", "--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             new object[]
             {
                 new[] {"/h", "--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             new object[]
             {
                 new[] {"/?", "--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Help)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
             },
             
             // version
             new object[]
             {
                 new[] {"--version"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Version)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
             },
             
             new object[]
             {
                 new[] {"--version", "-h"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Version)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
             },
             
             new object[]
             {
                 new[] {"--VerSion", "-h"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Version)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
             },
             
             new object[]
             {
                 new[] {"/version", "-h"},
-                new[] {new CommandLineArgument(CommandLineArgumentType.Version)},
+                new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
             },
             
             // nuget source
@@ -106,7 +106,7 @@ namespace Teamcity.CSharpInteractive.Tests
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src2"),
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src3"),
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src4")
-                },
+                }
             },
 
             // @file
@@ -119,7 +119,7 @@ namespace Teamcity.CSharpInteractive.Tests
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src2"),
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src3"),
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src4")
-                },
+                }
             },
             
             // Script
@@ -130,7 +130,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 {
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src1"),
                     new CommandLineArgument(CommandLineArgumentType.ScriptFile, "scriptFile")
-                },
+                }
             },
             
             // Script with arguments
@@ -143,7 +143,7 @@ namespace Teamcity.CSharpInteractive.Tests
                     new CommandLineArgument(CommandLineArgumentType.ScriptFile, "scriptFile"),
                     new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "-v"),
                     new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg 2")
-                },
+                }
             },
             
             // --
@@ -155,7 +155,7 @@ namespace Teamcity.CSharpInteractive.Tests
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src1"),
                     new CommandLineArgument(CommandLineArgumentType.ScriptFile, "-s"),
                     new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src2")
-                },
+                }
             },
             
             // script properties
@@ -164,8 +164,8 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"-p", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
-                },
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                }
             },
             
             new object[]
@@ -173,8 +173,8 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"--Property", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
-                },
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                }
             },
             
             new object[]
@@ -182,8 +182,8 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"/P", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
-                },
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                }
             },
             
             new object[]
@@ -191,8 +191,8 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"/property", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
-                },
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                }
             },
             
             new object[]
@@ -200,9 +200,9 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"-p", "Key1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1"),
-                },
-            },
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "", "Key1"),
+                }
+            }
         };
 
         private CommandLineParser CreateInstance() =>

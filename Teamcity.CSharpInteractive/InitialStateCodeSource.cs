@@ -12,6 +12,8 @@ namespace Teamcity.CSharpInteractive
     internal class InitialStateCodeSource: ICodeSource
     {
         public string Name => string.Empty;
+        
+        public bool Internal => true;
 
         public IReadOnlyCollection<string> ScriptArguments { get; set; } = Array.Empty<string>();
         

@@ -2,6 +2,8 @@
 // ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 namespace Teamcity.CSharpInteractive
 {
+    using Host;
+
     internal class InteractiveRunner : IRunner
     {
         private readonly ICommandSource _commandSource;
@@ -25,7 +27,10 @@ namespace Teamcity.CSharpInteractive
             ShowCursor(true);
             foreach (var result in _commandsRunner.Run(_commandSource.GetCommands()))
             {
-                ShowCursor(result.Command is not CodeCommand);
+                if (!result.Command.Internal)
+                {
+                    ShowCursor(result.Command is not CodeCommand);
+                }
             }
 
             return ExitCode.Success;

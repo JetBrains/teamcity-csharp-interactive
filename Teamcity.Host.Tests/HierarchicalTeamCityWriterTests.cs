@@ -1,8 +1,9 @@
-namespace Teamcity.CSharpInteractive.Tests
+namespace Teamcity.Host.Tests
 {
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Moq;
     using Shouldly;
+    using Teamcity.Host;
     using Xunit;
 
     public class HierarchicalTeamCityWriterTests

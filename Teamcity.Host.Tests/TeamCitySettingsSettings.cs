@@ -1,14 +1,16 @@
-namespace Teamcity.CSharpInteractive.Tests
+namespace Teamcity.Host.Tests
 {
+    using CSharpInteractive;
     using Moq;
     using Shouldly;
+    using Teamcity.Host;
     using Xunit;
 
     public class TeamCitySettingsSettings
     {
-        private readonly Mock<IEnvironment> _environment;
+        private readonly Mock<IHostEnvironment> _environment;
 
-        public TeamCitySettingsSettings() => _environment = new Mock<IEnvironment>();
+        public TeamCitySettingsSettings() => _environment = new Mock<IHostEnvironment>();
 
         [Theory]
         [InlineData("Abc", "1", true)]

@@ -4,6 +4,7 @@ namespace Teamcity.CSharpInteractive.Tests
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Host;
     using Moq;
     using NuGet.Versioning;
     using Shouldly;

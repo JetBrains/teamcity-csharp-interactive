@@ -63,7 +63,7 @@ namespace Teamcity.CSharpInteractive
             var assetsFilePath = Path.Combine(outputPath, "project.assets.json");
             var commands =
                 from assembly in _nugetAssetsReader.ReadAssemblies(assetsFilePath)
-                select new ScriptCommand(assembly.Name, $"#r \"{assembly.FilePath}\"");
+                select new ScriptCommand(assembly.Name, $"#r \"{assembly.FilePath}\"", true);
 
             using var addRefsToken = _log.Block($"References");
             foreach (var result in _commandsRunnerFactory().Run(commands))
