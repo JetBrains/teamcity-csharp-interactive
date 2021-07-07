@@ -68,12 +68,12 @@ namespace Teamcity.CSharpInteractive
                 new Text("Executes script-file.csx if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
                 Text.NewLine,
                 new Text("Options:"), Text.NewLine,
-                new Text("    --help                  ", Color.Header), new Text("Display this usage message (alternative forms: /? -h /h /help)."), Text.NewLine,
-                new Text("    --version               ", Color.Header), new Text("Display the version and exit (alternative form: /version)."), Text.NewLine,
-                new Text("    --source                ", Color.Header), new Text("NuGet package source (URL, UNC/folder path or package source name) to use (alternative forms: -s /source /s)."), Text.NewLine,
-                new Text("    --property <key=value>  ", Color.Header), new Text("Define a key=value pair for the global dictionary called Props accessible in scripts (alternative forms: -p /property /p)."), Text.NewLine,
-                new Text("    @<file>                 ", Color.Header), new Text("Read response file for more options."), Text.NewLine,
-                new Text("    --                      ", Color.Header), new Text("Indicates that the remaining arguments should not be treated as options."), Text.NewLine
+                new Text("    --help                           ", Color.Header), new Text("Display this usage message (alternative forms: /? -h /h /help)."), Text.NewLine,
+                new Text("    --version                        ", Color.Header), new Text("Display the version and exit (alternative form: /version)."), Text.NewLine,
+                new Text("    --source <NuGet package source>  ", Color.Header), new Text("NuGet package source (URL, UNC/folder path) to use (alternative forms: -s /source /s)."), Text.NewLine,
+                new Text("    --property <key=value>           ", Color.Header), new Text("Define a key=value pair for the global dictionary called Props accessible in scripts (alternative forms: -p /property /p)."), Text.NewLine,
+                new Text("    @<file>                          ", Color.Header), new Text("Read response file for more options."), Text.NewLine,
+                new Text("    --                               ", Color.Header), new Text("Indicates that the remaining arguments should not be treated as options."), Text.NewLine
             );
 
         public void ShowVersion() =>
