@@ -1,6 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
 
     internal class CommandLineParser : ICommandLineParser
@@ -44,6 +45,16 @@ namespace Teamcity.CSharpInteractive
                                 yield return new CommandLineArgument(CommandLineArgumentType.NuGetSource, argument);
                                 argumentType = null;
                                 continue;
+                            
+                            case CommandLineArgumentType.ScriptProperty:
+                                var parts = argument.Split('=', 2);
+                                if (parts.Length > 0)
+                                {
+                                    yield return new CommandLineArgument(CommandLineArgumentType.ScriptProperty, parts.Length > 1 ? parts[1] : string.Empty, parts[0]);
+                                }
+
+                                argumentType = null;
+                                continue;
                         }
                     }
                     else
@@ -74,6 +85,13 @@ namespace Teamcity.CSharpInteractive
                             case "-s":
                             case "/s":
                                 argumentType = CommandLineArgumentType.NuGetSource;
+                                continue;
+                            
+                            case "--property":
+                            case "/property":
+                            case "-p":
+                            case "/p":
+                                argumentType = CommandLineArgumentType.ScriptProperty;
                                 continue;
 
                             case "--":

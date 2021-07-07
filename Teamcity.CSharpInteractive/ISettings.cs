@@ -16,6 +16,8 @@ namespace Teamcity.CSharpInteractive
         
         IEnumerable<string> ScriptArguments { get; }
         
+        IReadOnlyDictionary<string, string> ScriptProperties { get; }
+        
         IEnumerable<string> NuGetSources { get; }
     }
 }

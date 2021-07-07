@@ -39,6 +39,8 @@ namespace Teamcity.CSharpInteractive
         
         public IEnumerable<string> ScriptArguments { get; private set; }  = Enumerable.Empty<string>();
 
+        public IReadOnlyDictionary<string, string> ScriptProperties { get; private set; } = new Dictionary<string, string>();
+
         public IEnumerable<string> NuGetSources { get; private set; }  = Enumerable.Empty<string>();
 
         public void Load()
@@ -57,9 +59,16 @@ namespace Teamcity.CSharpInteractive
                 ShowHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
                 ShowVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
                 ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value);
+                var props = new Dictionary<string, string>();
+                ScriptProperties = props;
+                foreach (var prop in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
+                {
+                    props[prop.Key] = prop.Value;
+                }
+
                 NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);
                 CodeSources =
-                    new [] {_initialStateCodeSourceFactory.Create(ScriptArguments.ToArray())}.Concat(
+                    new [] {_initialStateCodeSourceFactory.Create(ScriptArguments.ToArray(), ScriptProperties)}.Concat(
                         args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value)));
             }
         }

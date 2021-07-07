@@ -13,7 +13,7 @@ namespace Teamcity.CSharpInteractive
         private readonly IPresenter<ScriptState<object>> _scriptStatePresenter;
         private readonly IPresenter<IEnumerable<Diagnostic>> _diagnosticsPresenter;
         private ScriptState<object>? _scriptState;
-        private static readonly ScriptOptions Options = ScriptOptions.Default
+        internal static readonly ScriptOptions Options = ScriptOptions.Default
             .AddImports("System");
 
         public CSharpScriptRunner(

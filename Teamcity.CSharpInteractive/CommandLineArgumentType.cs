@@ -6,6 +6,8 @@ namespace Teamcity.CSharpInteractive
         
         ScriptArgument,
         
+        ScriptProperty,
+        
         Help,
         
         Version,

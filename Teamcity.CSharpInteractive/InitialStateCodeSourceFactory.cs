@@ -13,10 +13,11 @@ namespace Teamcity.CSharpInteractive
             _codeSourceFactory = codeSourceFactory;
         }
 
-        public ICodeSource Create(IReadOnlyCollection<string> scriptArguments)
+        public ICodeSource Create(IReadOnlyCollection<string> scriptArguments, IReadOnlyDictionary<string, string> scriptProperties)
         {
             var codeSource = _codeSourceFactory();
             codeSource.ScriptArguments = scriptArguments;
+            codeSource.ScriptProperties = scriptProperties;
             return codeSource;
         }
     }

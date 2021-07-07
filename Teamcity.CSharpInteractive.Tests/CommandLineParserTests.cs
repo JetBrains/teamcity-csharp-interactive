@@ -157,6 +157,52 @@ namespace Teamcity.CSharpInteractive.Tests
                     new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src2")
                 },
             },
+            
+            // script properties
+            new object[]
+            {
+                new[] {"-p", "Key1=Val1"},
+                new[]
+                {
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
+                },
+            },
+            
+            new object[]
+            {
+                new[] {"--Property", "Key1=Val1"},
+                new[]
+                {
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
+                },
+            },
+            
+            new object[]
+            {
+                new[] {"/P", "Key1=Val1"},
+                new[]
+                {
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
+                },
+            },
+            
+            new object[]
+            {
+                new[] {"/property", "Key1=Val1"},
+                new[]
+                {
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1", "Val1"),
+                },
+            },
+            
+            new object[]
+            {
+                new[] {"-p", "Key1"},
+                new[]
+                {
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Key1"),
+                },
+            },
         };
 
         private CommandLineParser CreateInstance() =>

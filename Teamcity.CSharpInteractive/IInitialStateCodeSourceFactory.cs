@@ -4,6 +4,6 @@ namespace Teamcity.CSharpInteractive
 
     internal interface IInitialStateCodeSourceFactory
     {
-        ICodeSource Create(IReadOnlyCollection<string> scriptArguments);
+        ICodeSource Create(IReadOnlyCollection<string> scriptArguments, IReadOnlyDictionary<string, string> scriptProperties);
     }
 }
