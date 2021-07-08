@@ -1,5 +1,5 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace Teamcity.Host
+namespace Teamcity.CSharpInteractive
 {
     internal class TeamCitySettings : ITeamCitySettings
     {

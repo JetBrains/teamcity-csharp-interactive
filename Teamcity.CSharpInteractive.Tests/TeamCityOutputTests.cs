@@ -1,8 +1,7 @@
-namespace Teamcity.Host.Tests
+namespace Teamcity.CSharpInteractive.Tests
 {
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Moq;
-    using Teamcity.Host;
     using Xunit;
 
     public class TeamCityOutputTests

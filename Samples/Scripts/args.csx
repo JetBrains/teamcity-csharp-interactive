@@ -1,2 +1,2 @@
-Console.WriteLine(Args[0]);
-Console.WriteLine(Props["aaa"]);
+WriteLine(Args[0]);
+WriteLine(Props["aaa"]);

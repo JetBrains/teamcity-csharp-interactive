@@ -1,4 +1,4 @@
-namespace Teamcity.Host
+namespace Teamcity.CSharpInteractive
 {
     internal interface IHostEnvironment
     {

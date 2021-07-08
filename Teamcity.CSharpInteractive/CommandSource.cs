@@ -17,15 +17,7 @@ namespace Teamcity.CSharpInteractive
             _codeSourceCommandFactory = codeSourceCommandFactory;
         }
         
-        public IEnumerable<ICommand> GetCommands()
-        {
-            foreach (var source in _settings.CodeSources)
-            {
-                foreach (var command in _codeSourceCommandFactory.Create(source))
-                {
-                    yield return command;
-                }
-            }
-        }
+        public IEnumerable<ICommand> GetCommands() => 
+            _settings.CodeSources.SelectMany(source => _codeSourceCommandFactory.Create(source));
     }
 }

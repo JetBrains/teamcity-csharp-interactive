@@ -23,7 +23,6 @@ namespace Teamcity.CSharpInteractive
 
         public IEnumerable<ICommand> Create(ICodeSource codeSource)
         {
-            using var sourceBlockToken = _log.Block(codeSource.Name);
             foreach (var code in codeSource)
             {
                 var sb = new StringBuilder();

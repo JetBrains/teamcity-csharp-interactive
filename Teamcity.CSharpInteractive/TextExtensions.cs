@@ -1,8 +1,9 @@
-namespace Teamcity.Host
+namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Host;
 
     [ExcludeFromCodeCoverage]
     internal static class TextExtensions

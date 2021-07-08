@@ -6,4 +6,4 @@ class Abc
 }
 
 int i=0;
-Console.WriteLine(10/i);
+WriteLine(10/i);

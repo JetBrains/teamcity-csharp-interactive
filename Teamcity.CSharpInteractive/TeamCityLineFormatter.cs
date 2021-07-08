@@ -1,8 +1,9 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
-namespace Teamcity.Host
+namespace Teamcity.CSharpInteractive
 {
     using System.Text;
+    using Host;
 
     internal class TeamCityLineFormatter : ITeamCityLineFormatter
     {

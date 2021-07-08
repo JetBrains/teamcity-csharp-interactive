@@ -7,8 +7,12 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Runtime.Versioning;
+    using System.Threading;
     using Host;
+    using JetBrains.TeamCity.ServiceMessages.Read;
+    using JetBrains.TeamCity.ServiceMessages.Write;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
+    using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
     using Microsoft.Build.Framework;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
@@ -25,6 +29,14 @@ namespace Teamcity.CSharpInteractive
             .Bind<Program>().To<Program>()
             .Bind<Version>().Tag("ToolVersion").To(_ => ToolVersion)
             .Bind<string>().Tag("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
+            .Bind<CancellationTokenSource>().To(_ => new CancellationTokenSource())
+            .Bind<IHostEnvironment>().To<HostEnvironment>()
+            .Bind<ITeamCitySettings>().To<TeamCitySettings>()
+            .Bind<IColorTheme>().To<ColorTheme>()
+            .Bind<ITeamCityLineFormatter>().To<TeamCityLineFormatter>()
+            .Bind<IStdOut>().Bind<IStdErr>().Tag("Default").To<ConsoleOutput>()
+            .Bind<IStdOut>().Bind<IStdErr>().Tag("TeamCity").To<TeamCityOutput>()
+            .Bind<IStdOut>().Bind<IStdErr>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IStdOut>("TeamCity") : ctx.Resolve<IStdOut>("Default"))
             .Bind<ILog<TT>>().Tag("Default").To<Log<TT>>()
             .Bind<ILog<TT>>().Tag("TeamCity").To<TeamCityLog<TT>>()
             .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<ILog<TT>>("TeamCity") : ctx.Resolve<ILog<TT>>("Default"))
@@ -76,15 +88,32 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandFactory<string>>().Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
             .Bind<ICommandRunner>().Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Load script").To<LoadCommandFactory>()
+
+            // Messages
+            .Bind<ISession>().As(Transient).To(_ => Teamcity.Host.Composer.Resolve<ISession>())
+            .Bind<IObservable<string>>().To<PipeObservable>()
+            .Bind<IActive>().Tag("Pipe").To(ctx => ctx.Resolve<IObservable<string>>())
+
+            .Bind<IObservable<SessionContent>>().To<MessageObservable<SessionContent>>()
+            .Bind<IObservable<ErrorContent>>().To<MessageObservable<ErrorContent>>()
+            .Bind<IObservable<WarningContent>>().To<MessageObservable<WarningContent>>()
+            .Bind<IObservable<InfoContent>>().To<MessageObservable<InfoContent>>()
+            .Bind<IObservable<TraceContent>>().To<MessageObservable<TraceContent>>()
+            .Bind<IActive>().Tag(nameof(LogMessageBroker)).To<LogMessageBroker>()
             
-            // Host
-            .Bind<IHostEnvironment>().To(_ => Teamcity.Host.Composer.Resolve<IHostEnvironment>())
-            .Bind<ITeamCitySettings>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCitySettings>())
-            .Bind<ITeamCityLineFormatter>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityLineFormatter>())
-            .Bind<ITeamCityBlockWriter<IDisposable>>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityBlockWriter<IDisposable>>())
-            .Bind<ITeamCityMessageWriter>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityMessageWriter>())
-            .Bind<ITeamCityBuildProblemWriter>().To(_ => Teamcity.Host.Composer.Resolve<ITeamCityBuildProblemWriter>())
-            .Bind<IStdOut>().To(_ => Teamcity.Host.Composer.Resolve<IStdOut>())
-            .Bind<IStdErr>().To(_ => Teamcity.Host.Composer.Resolve<IStdErr>());
+            .Bind<IObservable<StdOutContent>>().To<MessageObservable<StdOutContent>>()
+            .Bind<IActive>().Tag(nameof(OutputMessageBroker)).To<OutputMessageBroker>()
+
+            // Service messages
+            .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()
+            .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
+            .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
+            .Bind<IFlowIdGenerator>().To<FlowIdGenerator>()
+            .Bind<DateTime>().As(Transient).To(_ => DateTime.Now)
+            .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
+            .Bind<ITeamCityWriter>().Tag("Root").To(
+                ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
+                    str => ((IStdOut) ctx.Resolve<IStdOut>("Default")).WriteLine(new Text(str + "\n"))))
+            .Bind<IServiceMessageParser>().To<ServiceMessageParser>();
     }
 }

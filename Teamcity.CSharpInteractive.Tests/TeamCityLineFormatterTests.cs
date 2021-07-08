@@ -1,9 +1,9 @@
-namespace Teamcity.Host.Tests
+namespace Teamcity.CSharpInteractive.Tests
 {
     using System.Collections.Generic;
+    using Host;
     using Moq;
     using Shouldly;
-    using Teamcity.Host;
     using Xunit;
 
     public class TeamCityLineFormatterTests

@@ -10,10 +10,10 @@ namespace Teamcity.CSharpInteractive.Tests
     public class CodeSourceCommandFactoryTests
     {
         private const string SourceName = "Abc";
-        private static readonly ScriptCommand ScriptCommand11 = new ScriptCommand(SourceName, "code11");
-        private static readonly ScriptCommand ScriptCommand12 = new ScriptCommand(SourceName, "code12");
-        private static readonly ScriptCommand ScriptCommand2 = new ScriptCommand(SourceName, "code2");
-        private static readonly ScriptCommand ScriptCommand3 = new ScriptCommand(SourceName, "#code3");
+        private static readonly ScriptCommand ScriptCommand11 = new(SourceName, "code11");
+        private static readonly ScriptCommand ScriptCommand12 = new(SourceName, "code12");
+        private static readonly ScriptCommand ScriptCommand2 = new(SourceName, "code2");
+        private static readonly ScriptCommand ScriptCommand3 = new(SourceName, "#code3");
         private readonly Mock<ILog<CodeSourceCommandFactory>> _log;
         private readonly Mock<ICommandFactory<string>> _replCommandFactory1;
         private readonly Mock<ICommandFactory<string>> _replCommandFactory2;

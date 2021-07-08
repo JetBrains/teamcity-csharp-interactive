@@ -1,5 +1,7 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
+    using System;
+    using Host;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -7,10 +9,15 @@ namespace Teamcity.CSharpInteractive.Tests
     public class CSharpScriptCommandRunnerTests
     {
         private readonly Mock<ICSharpScriptRunner> _csharpScriptRunner;
+        private readonly Mock<IObservable<SessionContent>> _sessionsSource;
+        private readonly Mock<IDisposable> _subscriptionToken;
 
         public CSharpScriptCommandRunnerTests()
         {
             _csharpScriptRunner = new Mock<ICSharpScriptRunner>();
+            _subscriptionToken = new Mock<IDisposable>();
+            _sessionsSource = new Mock<IObservable<SessionContent>>();
+            _sessionsSource.Setup(i => i.Subscribe(It.IsAny<IObserver<SessionContent>>())).Returns(_subscriptionToken.Object);
         }
 
         [Theory]
@@ -28,6 +35,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
             // Then
             _csharpScriptRunner.Verify(i => i.Run("code"));
+            _subscriptionToken.Verify(i => i.Dispose());
             actualResult.Command.ShouldBe(command);
             actualResult.Success.ShouldBe(result);
         }
@@ -64,6 +72,6 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         private CSharpScriptCommandRunner CreateInstance() =>
-            new(_csharpScriptRunner.Object);
+            new(Mock.Of<ILog<CSharpScriptCommandRunner>>(), _csharpScriptRunner.Object, _sessionsSource.Object);
     }
 }

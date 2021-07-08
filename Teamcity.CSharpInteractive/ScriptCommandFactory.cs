@@ -22,8 +22,6 @@ namespace Teamcity.CSharpInteractive
             _scriptSubmissionAnalyzer = scriptSubmissionAnalyzer;
         }
 
-        public bool HasCode => _scriptBuilder.Length > 0;
-
         public IEnumerable<ICommand> Create(ScriptCommand scriptCommand)
         {
             _scriptBuilder.AppendLine(scriptCommand.Script);

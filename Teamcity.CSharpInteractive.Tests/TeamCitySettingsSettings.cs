@@ -1,9 +1,7 @@
-namespace Teamcity.Host.Tests
+namespace Teamcity.CSharpInteractive.Tests
 {
-    using CSharpInteractive;
     using Moq;
     using Shouldly;
-    using Teamcity.Host;
     using Xunit;
 
     public class TeamCitySettingsSettings

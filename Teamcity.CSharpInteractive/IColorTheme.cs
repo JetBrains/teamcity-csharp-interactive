@@ -1,7 +1,8 @@
 ﻿// ReSharper disable UnusedMember.Global
-namespace Teamcity.Host
+namespace Teamcity.CSharpInteractive
 {
     using System;
+    using Host;
 
     internal interface IColorTheme
     {

@@ -1,7 +1,8 @@
-﻿namespace Teamcity.Host
+﻿namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using Host;
 
     [ExcludeFromCodeCoverage]
     internal readonly struct Text

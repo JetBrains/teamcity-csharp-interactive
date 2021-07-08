@@ -1,7 +1,8 @@
-﻿namespace Teamcity.Host
+﻿namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using Host;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     [ExcludeFromCodeCoverage]
@@ -27,7 +28,7 @@
                 Color.Header => "39",
                 Color.Trace => "90",
                 Color.Success => "32;1",
-                Color.Warning => "33;1",
+                Color.Warning => "33",
                 Color.Error => "31",
                 Color.Details => "36",
                 _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)

@@ -3,6 +3,9 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Host;
 
     public class Program
     {
@@ -18,6 +21,7 @@ namespace Teamcity.CSharpInteractive
             }
         }
 
+        private readonly IEnumerable<IActive> _activeObjects;
         private readonly IInfo _info;
         private readonly ISettingsManager _settingsManager;
         private readonly ISettings _settings;
@@ -25,12 +29,14 @@ namespace Teamcity.CSharpInteractive
         private readonly Func<IRunner> _runner;
 
         internal Program(
+            IEnumerable<IActive> activeObjects,
             IInfo info,
             ISettingsManager settingsManager,
             ISettings settings,
             IExitTracker exitTracker,
             Func<IRunner> runner)
         {
+            _activeObjects = activeObjects;
             _info = info;
             _settingsManager = settingsManager;
             _settings = settings;
@@ -58,7 +64,10 @@ namespace Teamcity.CSharpInteractive
             using var exitToken = _exitTracker.Track();
             try
             {
-                return (int)_runner().Run();
+                using (Disposable.Create(_activeObjects.Select(i => i.Activate()).ToArray()))
+                {
+                    return (int)_runner().Run();
+                }
             }
             finally
             {

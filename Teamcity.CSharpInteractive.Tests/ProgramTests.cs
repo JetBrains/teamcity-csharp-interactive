@@ -13,6 +13,8 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<IExitTracker> _exitTracker;
         private readonly Mock<IDisposable> _trackToken;
         private readonly Mock<IRunner> _runner;
+        private readonly Mock<IActive> _active;
+        private readonly Mock<IDisposable> _activationToken;
 
         public ProgramTests()
         {
@@ -24,6 +26,9 @@ namespace Teamcity.CSharpInteractive.Tests
             _exitTracker.Setup(i => i.Track()).Returns(_trackToken.Object);
             _runner = new Mock<IRunner>();
             _runner.Setup(i => i.Run()).Returns(ExitCode.Fail);
+            _activationToken = new Mock<IDisposable>();
+            _active = new Mock<IActive>();
+            _active.Setup(i => i.Activate()).Returns(_activationToken.Object);
         }
 
         [Fact]
@@ -41,6 +46,8 @@ namespace Teamcity.CSharpInteractive.Tests
             actualResult.ShouldBe((int)ExitCode.Fail);
             _trackToken.Verify(i => i.Dispose());
             _info.Verify(i => i.ShowFooter());
+            _active.Verify(i => i.Activate());
+            _activationToken.Verify(i => i.Dispose());
         }
         
         [Fact]
@@ -77,6 +84,6 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         private Program CreateInstance() =>
-            new(_info.Object, _settingsManager.Object, _settings.Object, _exitTracker.Object, () => _runner.Object);
+            new(new []{_active.Object}, _info.Object, _settingsManager.Object, _settings.Object, _exitTracker.Object, () => _runner.Object);
     }
 }
