@@ -5,6 +5,6 @@ namespace Teamcity.Host
 
     internal class Session : ISession
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8);
+        public string Id { get; set; } = "csi" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8);
     }
 }

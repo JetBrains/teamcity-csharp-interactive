@@ -6,21 +6,21 @@ namespace Teamcity.Host
     internal class HostCompositionRoot
     {
         public readonly ISession Session;
-        public readonly IObserver<SessionContent> SessionObserver;
-        public readonly IObserver<StdOutContent> StdOutObserver;
-        public readonly IObserver<ErrorContent> ErrorObserver;
-        public readonly IObserver<WarningContent> WarningObserver;
-        public readonly IObserver<InfoContent> InfoObserver;
-        public readonly IObserver<TraceContent> TraceObserver;
+        public readonly IObserver<DtoSession> SessionObserver;
+        public readonly IObserver<DtoStdOut> StdOutObserver;
+        public readonly IObserver<DtoError> ErrorObserver;
+        public readonly IObserver<DtoWarning> WarningObserver;
+        public readonly IObserver<DtoInfo> InfoObserver;
+        public readonly IObserver<DtoTrace> TraceObserver;
 
         public HostCompositionRoot(
             ISession session,
-            IObserver<SessionContent> sessionObserver,
-            IObserver<StdOutContent> stdOutObserver,
-            IObserver<ErrorContent> errorObserver,
-            IObserver<WarningContent> warningObserver,
-            IObserver<InfoContent> infoObserver,
-            IObserver<TraceContent> traceObserver)
+            IObserver<DtoSession> sessionObserver,
+            IObserver<DtoStdOut> stdOutObserver,
+            IObserver<DtoError> errorObserver,
+            IObserver<DtoWarning> warningObserver,
+            IObserver<DtoInfo> infoObserver,
+            IObserver<DtoTrace> traceObserver)
         {
             Session = session;
             SessionObserver = sessionObserver;

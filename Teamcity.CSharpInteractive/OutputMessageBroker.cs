@@ -3,13 +3,13 @@ namespace Teamcity.CSharpInteractive
     using System;
     using Host;
 
-    internal class OutputMessageBroker: IActive, IObserver<StdOutContent>
+    internal class OutputMessageBroker: IActive, IObserver<DtoStdOut>
     {
-        private readonly IObservable<StdOutContent> _outputSource;
+        private readonly IObservable<DtoStdOut> _outputSource;
         private readonly IStdOut _stdOut;
 
         public OutputMessageBroker(
-            IObservable<StdOutContent> outputSource,
+            IObservable<DtoStdOut> outputSource,
             IStdOut stdOut)
         {
             _outputSource = outputSource;
@@ -19,11 +19,11 @@ namespace Teamcity.CSharpInteractive
         public IDisposable Activate() =>
         Disposable.Create(_outputSource.Subscribe(this));
 
-        void IObserver<StdOutContent>.OnNext(StdOutContent value) =>
+        void IObserver<DtoStdOut>.OnNext(DtoStdOut value) =>
             _stdOut.WriteLine(new []{new Text(value.Line, value.Color)});
 
-        void IObserver<StdOutContent>.OnError(Exception error) { }
+        void IObserver<DtoStdOut>.OnError(Exception error) { }
 
-        void IObserver<StdOutContent>.OnCompleted() { }
+        void IObserver<DtoStdOut>.OnCompleted() { }
     }
 }

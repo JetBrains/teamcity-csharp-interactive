@@ -25,7 +25,7 @@
             color switch
             {
                 Color.Default => "39",
-                Color.Header => "39",
+                Color.Header => "39;1",
                 Color.Trace => "90",
                 Color.Success => "32;1",
                 Color.Warning => "33",

@@ -1,6 +1,6 @@
 namespace Teamcity.Host
 {
-    internal struct ErrorContent
+    internal struct DtoError
     {
         public string ErrorId;
         public string Error;

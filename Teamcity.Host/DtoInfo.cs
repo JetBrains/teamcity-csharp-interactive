@@ -1,6 +1,6 @@
 namespace Teamcity.Host
 {
-    internal struct InfoContent
+    internal struct DtoInfo
     {
         public string Text;
     }

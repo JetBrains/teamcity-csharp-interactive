@@ -43,7 +43,7 @@ namespace Teamcity.CSharpInteractive
                 return new CommandResult(command, default);
             }
 
-            using var restoreToken = _log.Block($"Restore {addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.Version}");
+            using var restoreToken = _log.Block($"Restore {addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.Version}".Trim());
             var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
             var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
             var restoreResult = _nugetRestoreService.Restore(

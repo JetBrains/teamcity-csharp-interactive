@@ -1,6 +1,6 @@
 namespace Teamcity.Host
 {
-    public struct StdOutContent
+    public struct DtoStdOut
     {
         public string Line;
         public Color Color;

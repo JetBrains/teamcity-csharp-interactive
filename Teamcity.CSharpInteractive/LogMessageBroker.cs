@@ -4,19 +4,19 @@ namespace Teamcity.CSharpInteractive
     using System;
     using Host;
 
-    internal class LogMessageBroker: IActive, IObserver<ErrorContent>, IObserver<WarningContent>, IObserver<InfoContent>, IObserver<TraceContent>
+    internal class LogMessageBroker: IActive, IObserver<DtoError>, IObserver<DtoWarning>, IObserver<DtoInfo>, IObserver<DtoTrace>
     {
         private readonly ILog<LogMessageBroker> _log;
-        private readonly IObservable<ErrorContent> _errorsSource;
-        private readonly IObservable<WarningContent> _warningsSource;
-        private readonly IObservable<InfoContent> _infoSource;
-        private readonly IObservable<TraceContent> _traceSource;
+        private readonly IObservable<DtoError> _errorsSource;
+        private readonly IObservable<DtoWarning> _warningsSource;
+        private readonly IObservable<DtoInfo> _infoSource;
+        private readonly IObservable<DtoTrace> _traceSource;
 
         public LogMessageBroker(
-            IObservable<ErrorContent> errorsSource,
-            IObservable<WarningContent> warningsSource,
-            IObservable<InfoContent> infoSource,
-            IObservable<TraceContent> traceSource,
+            IObservable<DtoError> errorsSource,
+            IObservable<DtoWarning> warningsSource,
+            IObservable<DtoInfo> infoSource,
+            IObservable<DtoTrace> traceSource,
             ILog<LogMessageBroker> log)
         {
             _errorsSource = errorsSource;
@@ -33,32 +33,32 @@ namespace Teamcity.CSharpInteractive
                 _infoSource.Subscribe(this),
                 _traceSource.Subscribe(this));
         
-        void IObserver<TraceContent>.OnNext(TraceContent value) => 
+        void IObserver<DtoTrace>.OnNext(DtoTrace value) => 
             _log.Trace(new []{new Text(value.Trace)});
 
-        void IObserver<TraceContent>.OnError(Exception error) { }
+        void IObserver<DtoTrace>.OnError(Exception error) { }
 
-        void IObserver<TraceContent>.OnCompleted() { }
+        void IObserver<DtoTrace>.OnCompleted() { }
 
-        void IObserver<InfoContent>.OnNext(InfoContent value) =>
+        void IObserver<DtoInfo>.OnNext(DtoInfo value) =>
             _log.Info(new []{new Text(value.Text)});
 
-        void IObserver<InfoContent>.OnError(Exception error) { }
+        void IObserver<DtoInfo>.OnError(Exception error) { }
 
-        void IObserver<InfoContent>.OnCompleted() { }
+        void IObserver<DtoInfo>.OnCompleted() { }
         
-        void IObserver<WarningContent>.OnNext(WarningContent value) =>
+        void IObserver<DtoWarning>.OnNext(DtoWarning value) =>
             _log.Warning(new Text(value.Wraning));
 
-        void IObserver<WarningContent>.OnError(Exception error) { }
+        void IObserver<DtoWarning>.OnError(Exception error) { }
 
-        void IObserver<WarningContent>.OnCompleted() { }
+        void IObserver<DtoWarning>.OnCompleted() { }
 
-        void IObserver<ErrorContent>.OnNext(ErrorContent value) =>
+        void IObserver<DtoError>.OnNext(DtoError value) =>
             _log.Error(new ErrorId(value.ErrorId), new []{new Text(value.Error)});
 
-        void IObserver<ErrorContent>.OnError(Exception error) { }
+        void IObserver<DtoError>.OnError(Exception error) { }
 
-        void IObserver<ErrorContent>.OnCompleted() { }
+        void IObserver<DtoError>.OnCompleted() { }
     }
 }

@@ -1,6 +1,6 @@
 namespace Teamcity.Host
 {
-    internal struct WarningContent
+    internal struct DtoWarning
     {
         public string Wraning;
     }

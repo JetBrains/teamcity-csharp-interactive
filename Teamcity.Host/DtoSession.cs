@@ -1,6 +1,6 @@
 namespace Teamcity.Host
 {
-    internal struct SessionContent
+    internal struct DtoSession
     {
         public string SessionId;
     }

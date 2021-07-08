@@ -1,6 +1,6 @@
 namespace Teamcity.Host
 {
-    internal struct TraceContent
+    internal struct DtoTrace
     {
         public string Trace;
     }

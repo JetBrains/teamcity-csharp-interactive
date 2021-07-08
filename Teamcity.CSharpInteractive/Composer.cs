@@ -94,14 +94,14 @@ namespace Teamcity.CSharpInteractive
             .Bind<IObservable<string>>().To<PipeObservable>()
             .Bind<IActive>().Tag("Pipe").To(ctx => ctx.Resolve<IObservable<string>>())
 
-            .Bind<IObservable<SessionContent>>().To<MessageObservable<SessionContent>>()
-            .Bind<IObservable<ErrorContent>>().To<MessageObservable<ErrorContent>>()
-            .Bind<IObservable<WarningContent>>().To<MessageObservable<WarningContent>>()
-            .Bind<IObservable<InfoContent>>().To<MessageObservable<InfoContent>>()
-            .Bind<IObservable<TraceContent>>().To<MessageObservable<TraceContent>>()
+            .Bind<IObservable<DtoSession>>().To<MessageObservable<DtoSession>>()
+            .Bind<IObservable<DtoError>>().To<MessageObservable<DtoError>>()
+            .Bind<IObservable<DtoWarning>>().To<MessageObservable<DtoWarning>>()
+            .Bind<IObservable<DtoInfo>>().To<MessageObservable<DtoInfo>>()
+            .Bind<IObservable<DtoTrace>>().To<MessageObservable<DtoTrace>>()
             .Bind<IActive>().Tag(nameof(LogMessageBroker)).To<LogMessageBroker>()
             
-            .Bind<IObservable<StdOutContent>>().To<MessageObservable<StdOutContent>>()
+            .Bind<IObservable<DtoStdOut>>().To<MessageObservable<DtoStdOut>>()
             .Bind<IActive>().Tag(nameof(OutputMessageBroker)).To<OutputMessageBroker>()
 
             // Service messages
