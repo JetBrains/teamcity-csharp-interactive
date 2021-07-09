@@ -71,7 +71,7 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.Load();
 
             // Then
-            settings.VerbosityLevel.ShouldBe(VerbosityLevel.Quit);
+            settings.VerbosityLevel.ShouldBe(VerbosityLevel.Quiet);
             settings.InteractionMode.ShouldBe(InteractionMode.Interactive);
             settings.CodeSources.ToArray().ShouldBe(new []{_hostCodeSource, _consoleCodeSource});
         }

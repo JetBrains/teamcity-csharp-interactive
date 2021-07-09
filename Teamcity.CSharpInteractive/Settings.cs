@@ -53,7 +53,7 @@ namespace Teamcity.CSharpInteractive
             if (args.Length == 0)
             {
                 InteractionMode = InteractionMode.Interactive;
-                VerbosityLevel = VerbosityLevel.Quit;
+                VerbosityLevel = VerbosityLevel.Quiet;
                 CodeSources = new []{ _hostCodeSource, _consoleCodeSource };
             }
             else

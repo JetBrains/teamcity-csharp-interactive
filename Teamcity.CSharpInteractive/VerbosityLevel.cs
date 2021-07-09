@@ -2,7 +2,7 @@ namespace Teamcity.CSharpInteractive
 {
     internal enum VerbosityLevel
     {
-        Quit,
+        Quiet,
 
         Normal,
 
