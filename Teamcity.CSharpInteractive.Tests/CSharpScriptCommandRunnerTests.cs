@@ -17,7 +17,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _csharpScriptRunner = new Mock<ICSharpScriptRunner>();
             _subscriptionToken = new Mock<IDisposable>();
             _sessionsSource = new Mock<IObservable<DtoSession>>();
-            _sessionsSource.Setup(i => i.Subscribe(It.IsAny<IObserver<DtoSession>>())).Returns(_subscriptionToken.Object);
+            _sessionsSource.Setup(i => i.Subscribe(It.IsAny<IObserver<DtoSession>>())).Callback<IObserver<DtoSession>>(observer => observer.OnNext(new DtoSession())).Returns(_subscriptionToken.Object);
         }
 
         [Theory]

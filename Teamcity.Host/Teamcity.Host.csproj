@@ -12,7 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-        <PackageReference Include="Pure.DI" Version="1.0.0-beta72">
+        <PackageReference Include="Pure.DI" Version="1.0.0-beta73">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
