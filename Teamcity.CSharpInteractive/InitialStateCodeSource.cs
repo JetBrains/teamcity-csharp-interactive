@@ -23,49 +23,43 @@ namespace Teamcity.CSharpInteractive
         {
             var lines = new List<string>();
             var stringType = SyntaxFactory.ParseTypeName("System.String");
-            if (ScriptArguments.Any())
-            {
-                var argsType = SyntaxFactory.ArrayType(stringType).AddRankSpecifiers(SyntaxFactory.ArrayRankSpecifier());
-                var argsDeclarationStatement =
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(argsType)
-                            .AddVariables(
-                                SyntaxFactory.VariableDeclarator("Args")
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.ArrayCreationExpression(
-                                                argsType,
-                                                SyntaxFactory.InitializerExpression(SyntaxKind.ArrayInitializerExpression)
-                                                    .AddExpressions(
-                                                        ScriptArguments.Select(arg => (ExpressionSyntax)CreateStringSyntax(arg)).ToArray()))))));
+            var argsType = SyntaxFactory.ArrayType(stringType).AddRankSpecifiers(SyntaxFactory.ArrayRankSpecifier());
+            var argsDeclarationStatement =
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(argsType)
+                        .AddVariables(
+                            SyntaxFactory.VariableDeclarator("Args")
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ArrayCreationExpression(
+                                            argsType,
+                                            SyntaxFactory.InitializerExpression(SyntaxKind.ArrayInitializerExpression)
+                                                .AddExpressions(
+                                                    ScriptArguments.Select(arg => (ExpressionSyntax)CreateStringSyntax(arg)).ToArray()))))));
 
-                lines.Add(argsDeclarationStatement.NormalizeWhitespace().ToFullString());
-            }
+            lines.Add(argsDeclarationStatement.NormalizeWhitespace().ToFullString());
 
-            if (ScriptProperties.Any())
+            var propsType = SyntaxFactory.GenericName("System.Collections.Generic.Dictionary").AddTypeArgumentListArguments(stringType, stringType);
+            var propsDeclarationStatement =
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(propsType)
+                        .AddVariables(
+                            SyntaxFactory.VariableDeclarator("Props")
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(propsType).AddArgumentListArguments()))));
+            
+            lines.Add(propsDeclarationStatement.NormalizeWhitespace().ToFullString());
+            foreach (var (key, value) in ScriptProperties)
             {
-                var propsType = SyntaxFactory.GenericName("System.Collections.Generic.Dictionary").AddTypeArgumentListArguments(stringType, stringType);
-                var propsDeclarationStatement =
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(propsType)
-                            .AddVariables(
-                                SyntaxFactory.VariableDeclarator("Props")
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.ObjectCreationExpression(propsType).AddArgumentListArguments()))));
+                var propAssignmentStatement =
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression, 
+                            SyntaxFactory.ElementAccessExpression(SyntaxFactory.IdentifierName("Props"), SyntaxFactory.BracketedArgumentList().AddArguments(SyntaxFactory.Argument(CreateStringSyntax(key)))),
+                            CreateStringSyntax(value)));
                 
-                lines.Add(propsDeclarationStatement.NormalizeWhitespace().ToFullString());
-                foreach (var (key, value) in ScriptProperties)
-                {
-                    var propAssignmentStatement =
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression, 
-                                SyntaxFactory.ElementAccessExpression(SyntaxFactory.IdentifierName("Props"), SyntaxFactory.BracketedArgumentList().AddArguments(SyntaxFactory.Argument(CreateStringSyntax(key)))),
-                                CreateStringSyntax(value)));
-                    
-                    lines.Add(propAssignmentStatement.NormalizeWhitespace().ToFullString());
-                }
+                lines.Add(propAssignmentStatement.NormalizeWhitespace().ToFullString());
             }
 
             return lines.GetEnumerator();
