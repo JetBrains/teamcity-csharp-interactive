@@ -47,12 +47,12 @@ namespace Teamcity.CSharpInteractive
             {
                 return;
             }
-            
+
             lock (_observers)
             {
                 foreach (var observer in _observers)
                 {
-                    observer.OnNext(val);
+                    observer.OnNext(val!);
                 }
             }
         }

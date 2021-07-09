@@ -27,12 +27,12 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <Copyright>JetBrains</Copyright>
         <Company>JetBrains</Company>
-        <Description>Runs a dotnet command under a specific account</Description>
-        <PackageTags>C# CSharp Interactive</PackageTags>
+        <Description>C# script interactive tool</Description>
+        <PackageTags>C# csharp script interactive</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Pure.DI" Version="1.0.0-beta73">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
