@@ -37,7 +37,7 @@ namespace Teamcity.CSharpInteractive
 
         public IDisposable Activate()
         {
-            Run(_cancellationTokenSource.Token).ContinueWith(i => {});
+            Run(_cancellationTokenSource.Token).ContinueWith(_ => {});
             return Disposable.Create(() =>
             {
                 _cancellationTokenSource.Dispose();

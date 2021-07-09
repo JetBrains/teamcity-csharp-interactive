@@ -1,6 +1,5 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
-    using Host;
     using Moq;
     using Xunit;
 

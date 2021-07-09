@@ -1,8 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using Host;
-
     internal class SetVerbosityLevelCommandRunner: ICommandRunner
     {
         private readonly ILog<SetVerbosityLevelCommandRunner> _log;

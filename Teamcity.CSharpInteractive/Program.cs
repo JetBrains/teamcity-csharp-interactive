@@ -5,7 +5,6 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Host;
 
     public class Program
     {

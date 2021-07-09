@@ -3,7 +3,6 @@ namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
-    using Host;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Pure.DI;
 

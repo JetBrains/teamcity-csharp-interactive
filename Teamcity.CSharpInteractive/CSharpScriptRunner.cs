@@ -3,7 +3,6 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Host;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;

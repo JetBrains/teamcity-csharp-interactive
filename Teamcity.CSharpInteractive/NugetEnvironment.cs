@@ -6,7 +6,6 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using Host;
 
     internal class NugetEnvironment : INugetEnvironment, ITraceSource, IDisposable
     {

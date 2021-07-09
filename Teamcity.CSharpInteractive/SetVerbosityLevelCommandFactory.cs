@@ -4,7 +4,6 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
-    using Host;
 
     internal class SetVerbosityLevelCommandFactory: ICommandFactory<string>
     {

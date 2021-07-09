@@ -3,7 +3,6 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Text;
-    using Host;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 

@@ -4,7 +4,6 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Host;
 
     internal class Statistics : IStatistics
     {

@@ -5,13 +5,13 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal readonly struct ErrorId
     {
-        public static readonly ErrorId File = new ErrorId("CSI001");
-        public static readonly ErrorId Nuget = new ErrorId("CSI002");
-        public static readonly ErrorId InvalidScriptDirective = new ErrorId("CSI003");
-        public static readonly ErrorId CannotParsePackageVersion = new ErrorId("CSI004");
-        public static readonly ErrorId AbnormalProgramTermination = new ErrorId("CSI005");
-        public static readonly ErrorId NotSupported = new ErrorId("CSI006");
-        public static readonly ErrorId Exception = new ErrorId("CSI007");
+        public static readonly ErrorId File = new("CSI001");
+        public static readonly ErrorId Nuget = new("CSI002");
+        public static readonly ErrorId InvalidScriptDirective = new("CSI003");
+        public static readonly ErrorId CannotParsePackageVersion = new("CSI004");
+        public static readonly ErrorId AbnormalProgramTermination = new("CSI005");
+        public static readonly ErrorId NotSupported = new("CSI006");
+        public static readonly ErrorId Exception = new("CSI007");
 
         public readonly string Id;
 

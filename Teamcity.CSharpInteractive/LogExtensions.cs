@@ -4,7 +4,6 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Host;
 
     [ExcludeFromCodeCoverage]
     internal static class LogExtensions
