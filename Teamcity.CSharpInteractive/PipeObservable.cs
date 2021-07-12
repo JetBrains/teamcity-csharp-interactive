@@ -70,10 +70,10 @@ namespace Teamcity.CSharpInteractive
                 }
             }
         }
-        
+
         private async Task<string?> Receive(CancellationToken cancellationToken)
         {
-            await using NamedPipeServerStream namedPipeServer = new(_session.Id, PipeDirection.InOut, 1);
+            await using NamedPipeServerStream namedPipeServer = new(_session.Id, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.CurrentUserOnly | PipeOptions.WriteThrough);
             await namedPipeServer.WaitForConnectionAsync(cancellationToken);
             using var reader = new StreamReader(namedPipeServer);
             var line = await reader.ReadLineAsync();
