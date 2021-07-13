@@ -15,9 +15,10 @@
     <PropertyGroup>
         <PackageType>DotnetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
+        <ToolCommandName>csi</ToolCommandName>
         <IsPackable>true</IsPackable>
         <IncludeAssets>All</IncludeAssets>
-        <PackageId>dotnet-csi</PackageId>
+        <PackageId>TeamCity.csi</PackageId>
         <IncludeAssets>All</IncludeAssets>
         <Title>TeamCity C# script runner</Title>
         <Authors>NikolayP</Authors>
