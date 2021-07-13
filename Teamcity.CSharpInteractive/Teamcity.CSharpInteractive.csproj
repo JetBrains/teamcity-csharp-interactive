@@ -15,7 +15,7 @@
     <PropertyGroup>
         <PackageType>DotnetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>csi</ToolCommandName>
+        <ToolCommandName>dotnet-csi</ToolCommandName>
         <IsPackable>true</IsPackable>
         <IncludeAssets>All</IncludeAssets>
         <PackageId>TeamCity.csi</PackageId>
