@@ -3,52 +3,43 @@ namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using System.Text.RegularExpressions;
     using NuGet.Versioning;
 
     internal class AddPackageReferenceCommandFactory: ICommandFactory<string>
     {
+        private static readonly Regex Regex = new(@"^\s*#r\s+""nuget:\s*([^,\s]+?)(,\s*([^\s]+?)\s*|\s*)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly ILog<AddPackageReferenceCommandFactory> _log;
 
         public AddPackageReferenceCommandFactory(ILog<AddPackageReferenceCommandFactory> log) => _log = log;
 
         public IEnumerable<ICommand> Create(string replCommand)
         {
-            replCommand = replCommand.Trim();
-            if (!replCommand.StartsWith("#r", StringComparison.CurrentCultureIgnoreCase))
+            var match = Regex.Match(replCommand);
+            if (!match.Success)
             {
                 yield break;
             }
 
-            replCommand = replCommand[2..].Trim();
-            if (replCommand.StartsWith("\""))
-            {
-                yield break;
-            }
-
-            var parts = replCommand.Split( ' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length is < 1 or > 2)
-            {
-                _log.Error(ErrorId.InvalidScriptDirective, $"Invalid script directive \"{replCommand}\".");
-                yield break;
-            }
-
-            var rawId = parts[0];
+            var packageIdStr = match.Groups[1].Value;
+            var versionStr = match.Groups[3].Value;
+            
             NuGetVersion? version = null;
-            if (parts.Length >= 2)
+            if (!string.IsNullOrWhiteSpace(versionStr))
             {
-                if (NuGetVersion.TryParse(parts[1], out var curVersion))
+                if (NuGetVersion.TryParse(versionStr, out var curVersion))
                 {
                     version = curVersion;
                 }
                 else
                 {
-                    _log.Error(ErrorId.CannotParsePackageVersion, $"Cannot parse the package version \"{parts[1]}\".");
+                    _log.Error(ErrorId.CannotParsePackageVersion, $"Cannot parse the package version \"{versionStr}\".");
                     yield break;
                 }
             }
                 
-            _log.Trace(new []{new Text($"REPL #r {rawId} {version}")});
-            yield return new AddPackageReferenceCommand(rawId, version);
+            _log.Trace(new []{new Text($"REPL #r {packageIdStr} {version}")});
+            yield return new AddPackageReferenceCommand(packageIdStr, version);
         }
     }
 }

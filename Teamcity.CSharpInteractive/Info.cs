@@ -56,7 +56,7 @@ namespace Teamcity.CSharpInteractive
                 new Text("    #help        ", Color.Header), new Text("Display help on available commands and key bindings."), Text.NewLine,
                 new Text("    #l           ", Color.Header), new Text($"Set verbosity level {string.Join(", ", Enum.GetValues(typeof(VerbosityLevel)).OfType<VerbosityLevel>().Select(i => i.ToString()))}, e.g. "), new Text("#l trace", Color.Details), new Text("."), Text.NewLine,
                 new Text("Script directives:", Color.Header), Text.NewLine,
-                new Text("    #r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r MyPackage 1.2.3", Color.Details), new Text(" or "), new Text("#r \"myLib.dll\"", Color.Details), new Text("."), Text.NewLine,
+                new Text("    #r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r \"nuget:MyPackage, 1.2.3\"", Color.Details), new Text(" or "), new Text("#r \"nuget:MyPackage\"", Color.Details), new Text(" or "), new Text("#r \"myLib.dll\"", Color.Details), new Text("."), Text.NewLine,
                 new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. "), new Text("#load \"myScript.csx\"", Color.Details), new Text(".")
             );
         

@@ -68,52 +68,52 @@ namespace Teamcity.CSharpInteractive.Tests
             },
             new object[]
             {
-                "#r Abc 1.2.3",
+                "#r \"nuget:Abc, 1.2.3\"",
                 new [] {new AddPackageReferenceCommand("Abc", new NuGetVersion(1,2,3))},
                 false
             },
             new object[]
             {
-                "  #r  Abc    1.2.3 ",
+                "  #r  \"NuGet:  Abc,    1.2.3 \"",
                 new [] {new AddPackageReferenceCommand("Abc", new NuGetVersion(1,2,3))},
                 false
             },
             new object[]
             {
-                "#r Abc 1.2.3-beta1",
+                "#r \"nuget:Abc, 1.2.3-beta1\"",
                 new [] {new AddPackageReferenceCommand("Abc", new NuGetVersion(new Version(1,2,3), "beta1"))},
                 false
             },
             new object[]
             {
-                "#r Abc",
+                "#r \"nuget:Abc\"",
                 new [] {new AddPackageReferenceCommand("Abc", default)},
                 false
             },
             // Errors
             new object[]
             {
-                "#r Abc 1.2.3 xyz",
+                "#r \"nuget:Abc, 1.2.3 xyz\"",
                 Array.Empty<ICommand>(),
-                true
+                false
             },
             new object[]
             {
-                "#r Abc xyz",
+                "#r \":nuget:Abc, xyz\"",
                 Array.Empty<ICommand>(),
-                true
+                false
             },
             new object[]
             {
                 "#r   ",
                 Array.Empty<ICommand>(),
-                true
+                false
             },
             new object[]
             {
                 "#r",
                 Array.Empty<ICommand>(),
-                true
+                false
             },
         };
 
