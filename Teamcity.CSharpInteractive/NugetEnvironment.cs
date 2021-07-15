@@ -37,8 +37,7 @@ namespace Teamcity.CSharpInteractive
         public IEnumerable<string> Sources => _settings.NuGetSources.Concat(new []{@"https://api.nuget.org/v3/index.json"});
 
         public IEnumerable<string> FallbackFolders => 
-            new[] {Path.Combine(_dotnetEnvironment.Path, "sdk", "NuGetFallbackFolder")}
-            .Concat(FallbackFoldersFromEnv)
+            FallbackFoldersFromEnv
             .Distinct();
 
         public string PackagesPath

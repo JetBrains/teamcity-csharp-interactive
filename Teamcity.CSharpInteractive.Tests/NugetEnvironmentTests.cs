@@ -27,17 +27,16 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         [Fact]
-        public void ShouldProvideFallbackFolders()
+        public void ShouldProvideEmptyFallbackFoldersByDefault()
         {
             // Given
             var instance = CreateInstance();
-            _dotnetEnvironment.SetupGet(i => i.Path).Returns("Abc");
 
             // When
             var actualFallbackFolders = instance.FallbackFolders.ToArray();
 
             // Then
-            actualFallbackFolders.ShouldBe(new []{Path.Combine("Abc", "sdk", "NuGetFallbackFolder")});
+            actualFallbackFolders.ShouldBe(Array.Empty<string>());
         }
         
         [Fact]
@@ -46,13 +45,12 @@ namespace Teamcity.CSharpInteractive.Tests
             // Given
             var instance = CreateInstance();
             _hostEnvironment.Setup(i => i.GetEnvironmentVariable("NUGET_FALLBACK_PACKAGES")).Returns(" path1; Path2");
-            _dotnetEnvironment.SetupGet(i => i.Path).Returns("Abc");
 
             // When
             var actualFallbackFolders = instance.FallbackFolders.ToArray();
 
             // Then
-            actualFallbackFolders.ShouldBe(new []{Path.Combine("Abc", "sdk", "NuGetFallbackFolder"), "path1", "Path2"});
+            actualFallbackFolders.ShouldBe(new []{"path1", "Path2"});
         }
         
         [Theory]
