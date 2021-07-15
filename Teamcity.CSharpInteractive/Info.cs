@@ -36,7 +36,7 @@ namespace Teamcity.CSharpInteractive
         
         public void ShowHeader()
         {
-            _stdOut.WriteLine(new Text("C# Interactive", Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
+            _stdOut.WriteLine(new Text("TeamCity C# Interactive", Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
             if (_settings.InteractionMode == InteractionMode.Interactive)
             {
                 _stdOut.WriteLine(new Text("Ctrl-C - Exit the REPL.", Color.Details));
