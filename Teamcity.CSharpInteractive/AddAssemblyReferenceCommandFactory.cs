@@ -8,14 +8,14 @@ namespace Teamcity.CSharpInteractive
     {
         private static readonly Regex LibReferenceRegex = new(@"^\s*#r\s+""\s*(.+?)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly ILog<AddAssemblyReferenceCommandFactory> _log;
-        private readonly IAssemblyPathResolver _assemblyPathResolver;
+        private readonly IFilePathResolver _filePathResolver;
 
         public AddAssemblyReferenceCommandFactory(
             ILog<AddAssemblyReferenceCommandFactory> log,
-            IAssemblyPathResolver assemblyPathResolver)
+            IFilePathResolver filePathResolver)
         {
             _log = log;
-            _assemblyPathResolver = assemblyPathResolver;
+            _filePathResolver = filePathResolver;
         }
 
         public int Order => 1;
@@ -26,7 +26,7 @@ namespace Teamcity.CSharpInteractive
             if (match.Success)
             {
                 var assemblyPath = match.Groups[1].Value;
-                if (_assemblyPathResolver.TryResolve(assemblyPath, out var fullAssemblyPath))
+                if (_filePathResolver.TryResolve(assemblyPath, out var fullAssemblyPath))
                 {
                     _log.Trace(new []{new Text($"REPL #r \"{fullAssemblyPath}\"")});
                     yield return new ScriptCommand(assemblyPath, $"#r \"{fullAssemblyPath}\"");

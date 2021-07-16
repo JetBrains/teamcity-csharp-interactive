@@ -11,20 +11,20 @@ namespace Teamcity.CSharpInteractive
     {
         private readonly ILog<FileCodeSource> _log;
         private readonly IFileTextReader _fileTextReader;
-        private readonly IEnvironment _environment;
-        private readonly IWorkingDirectoryContext _workingDirectoryContext;
+        private readonly IFilePathResolver _filePathResolver;
+        private readonly IScriptContext _scriptContext;
         private string _fileName = "";
 
         public FileCodeSource(
             ILog<FileCodeSource> log,
             IFileTextReader fileTextReader,
-            IEnvironment environment,
-            IWorkingDirectoryContext workingDirectoryContext)
+            IFilePathResolver filePathResolver,
+            IScriptContext scriptContext)
         {
             _log = log;
             _fileTextReader = fileTextReader;
-            _environment = environment;
-            _workingDirectoryContext = workingDirectoryContext;
+            _filePathResolver = filePathResolver;
+            _scriptContext = scriptContext;
         }
 
         public string Name => Path.GetFileName(FileName);
@@ -34,12 +34,20 @@ namespace Teamcity.CSharpInteractive
         public string FileName
         {
             get => _fileName;
-            set => _fileName = Path.IsPathRooted(value) ? value : Path.Combine(_environment.GetPath(SpecialFolder.Working), value);
+            set
+            {
+                if (!_filePathResolver.TryResolve(value, out var fullFilePath))
+                {
+                    fullFilePath = value;
+                }
+                
+                _fileName = fullFilePath;
+            }
         }
 
         public IEnumerator<string> GetEnumerator()
         {
-            var resource = _workingDirectoryContext.OverrideWorkingDirectory(Path.GetDirectoryName(FileName));
+            var resource = _scriptContext.OverrideScriptDirectory(Path.GetDirectoryName(FileName));
             try
             {
                 _log.Trace($@"Read file ""{FileName}"".");

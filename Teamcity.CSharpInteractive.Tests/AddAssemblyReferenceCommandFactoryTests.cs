@@ -10,14 +10,14 @@ namespace Teamcity.CSharpInteractive.Tests
     public class AddAssemblyReferenceCommandFactoryTests
     {
         private readonly Mock<ILog<AddAssemblyReferenceCommandFactory>> _log;
-        private readonly Mock<IAssemblyPathResolver> _assemblyPathResolver;
+        private readonly Mock<IFilePathResolver> _assemblyPathResolver;
         private readonly List<Text> _errors = new();
 
         public AddAssemblyReferenceCommandFactoryTests()
         {
             _log = new Mock<ILog<AddAssemblyReferenceCommandFactory>>();
             _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
-            _assemblyPathResolver = new Mock<IAssemblyPathResolver>();
+            _assemblyPathResolver = new Mock<IFilePathResolver>();
             string fullAssemblyPath = "wd/Abc.dll";
             _assemblyPathResolver.Setup(i => i.TryResolve("Abc.dll", out fullAssemblyPath)).Returns(true);
         }

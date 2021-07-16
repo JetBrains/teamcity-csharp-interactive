@@ -28,7 +28,7 @@ namespace Teamcity.CSharpInteractive
         {
             var lines = new List<string>
             {
-                $"#r \"{Path.Combine(_environment.GetPath(SpecialFolder.Current), "Teamcity.Host.dll")}\"",
+                $"#r \"{Path.Combine(_environment.GetPath(SpecialFolder.Bin), "Teamcity.Host.dll")}\"",
                 UsingHost,
                 UsingStaticHost,
                 UsingStaticColor,

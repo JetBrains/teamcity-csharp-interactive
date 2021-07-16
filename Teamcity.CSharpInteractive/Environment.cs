@@ -9,9 +9,9 @@ namespace Teamcity.CSharpInteractive
     using Microsoft.DotNet.PlatformAbstractions;
 
     [ExcludeFromCodeCoverage]
-    internal class Environment : IEnvironment, ITraceSource, IWorkingDirectoryContext
+    internal class Environment : IEnvironment, ITraceSource, IScriptContext
     {
-        private readonly LinkedList<string> _workingDirectories = new();
+        private readonly LinkedList<string> _scriptDirectories = new();
         
         public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
@@ -26,9 +26,10 @@ namespace Teamcity.CSharpInteractive
                 case Platform.Windows:
                     return specialFolder switch
                     {
-                        SpecialFolder.Current => GetCurrentDirectory(),
+                        SpecialFolder.Bin => GetBinDirectory(),
                         SpecialFolder.Temp => System.Environment.GetEnvironmentVariable("TMP") ?? ".",
                         SpecialFolder.ProgramFiles => System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
+                        SpecialFolder.Script => GetScriptDirectory(),
                         SpecialFolder.Working => GetWorkingDirectory(),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
@@ -39,9 +40,10 @@ namespace Teamcity.CSharpInteractive
                 case Platform.FreeBSD:
                     return specialFolder switch
                     {
-                        SpecialFolder.Current => GetCurrentDirectory(),
+                        SpecialFolder.Bin => GetBinDirectory(),
                         SpecialFolder.Temp => System.Environment.GetEnvironmentVariable("TMP") ?? ".",
                         SpecialFolder.ProgramFiles => "usr/local/share",
+                        SpecialFolder.Script => GetScriptDirectory(),
                         SpecialFolder.Working => GetWorkingDirectory(),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
@@ -75,20 +77,21 @@ namespace Teamcity.CSharpInteractive
             }
         }
 
-        public IDisposable OverrideWorkingDirectory(string? workingDirectory)
+        public IDisposable OverrideScriptDirectory(string? scriptDirectory)
         {
-            if (workingDirectory == null)
+            if (scriptDirectory == null)
             {
                 return Disposable.Empty;
             }
 
-            _workingDirectories.AddLast(workingDirectory);
-            return Disposable.Create(() => _workingDirectories.Remove(workingDirectory));
+            _scriptDirectories.AddLast(scriptDirectory);
+            return Disposable.Create(() => _scriptDirectories.Remove(scriptDirectory));
         }
+        
+        private static string GetWorkingDirectory() =>  Directory.GetCurrentDirectory();
 
-        private string GetCurrentDirectory() => Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]) ?? GetWorkingDirectory();
+        private string GetBinDirectory() => Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]) ?? GetScriptDirectory();
 
-        private string GetWorkingDirectory() => 
-            _workingDirectories.Count > 0 ? _workingDirectories.Last!.Value : Directory.GetCurrentDirectory();
+        private string GetScriptDirectory() => _scriptDirectories.Count > 0 ? _scriptDirectories.Last!.Value : GetWorkingDirectory();
     }
 }
