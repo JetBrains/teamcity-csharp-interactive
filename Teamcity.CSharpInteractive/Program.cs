@@ -12,7 +12,7 @@ namespace Teamcity.CSharpInteractive
         {
             try
             {
-                return Composer.Resolve<Program>().Run();
+                return (int)Composer.Resolve<Program>().Run();
             }
             finally
             {
@@ -20,6 +20,7 @@ namespace Teamcity.CSharpInteractive
             }
         }
 
+        private readonly ILog<Program> _log;
         private readonly IEnumerable<IActive> _activeObjects;
         private readonly IInfo _info;
         private readonly ISettingsManager _settingsManager;
@@ -28,6 +29,7 @@ namespace Teamcity.CSharpInteractive
         private readonly Func<IRunner> _runner;
 
         internal Program(
+            ILog<Program> log,
             IEnumerable<IActive> activeObjects,
             IInfo info,
             ISettingsManager settingsManager,
@@ -35,6 +37,7 @@ namespace Teamcity.CSharpInteractive
             IExitTracker exitTracker,
             Func<IRunner> runner)
         {
+            _log = log;
             _activeObjects = activeObjects;
             _info = info;
             _settingsManager = settingsManager;
@@ -43,13 +46,13 @@ namespace Teamcity.CSharpInteractive
             _runner = runner;
         }
         
-        internal int Run()
+        internal ExitCode Run()
         {
             _settingsManager.Load();
             if (_settings.ShowVersionAndExit)
             {
                 _info.ShowVersion();
-                return 0;
+                return ExitCode.Success;
             }
 
             _info.ShowHeader();
@@ -57,7 +60,7 @@ namespace Teamcity.CSharpInteractive
             if (_settings.ShowHelpAndExit)
             {
                 _info.ShowHelp();
-                return 0;
+                return ExitCode.Success;
             }
             
             using var exitToken = _exitTracker.Track();
@@ -65,8 +68,13 @@ namespace Teamcity.CSharpInteractive
             {
                 using (Disposable.Create(_activeObjects.Select(i => i.Activate()).ToArray()))
                 {
-                    return (int)_runner().Run();
+                    return _runner().Run();
                 }
+            }
+            catch(Exception error)
+            {
+                _log.Error(ErrorId.Unhandled, error);
+                return ExitCode.Fail;
             }
             finally
             {

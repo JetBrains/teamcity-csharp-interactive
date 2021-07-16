@@ -17,6 +17,12 @@ namespace Teamcity.CSharpInteractive
             return log;
         }
         
+        public static ILog<T> Error<T>(this ILog<T> log, ErrorId id, Exception error)
+        {
+            log.Error(id, new Text(error.Message), Text.NewLine, new Text(error.StackTrace ?? "Empty stack trace."));
+            return log;
+        }
+        
         public static ILog<T> Info<T>(this ILog<T> log, params string[] message)
         {
             log.Info(message.Select(i => new Text(i)).ToArray());

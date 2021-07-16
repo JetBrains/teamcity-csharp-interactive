@@ -7,6 +7,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
     public class ProgramTests
     {
+        private readonly Mock<ILog<Program>> _log;
         private readonly Mock<IInfo> _info;
         private readonly Mock<ISettingsManager> _settingsManager;
         private readonly Mock<ISettings> _settings;
@@ -18,6 +19,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
         public ProgramTests()
         {
+            _log = new Mock<ILog<Program>>();
             _info = new Mock<IInfo>();
             _settingsManager = new Mock<ISettingsManager>();
             _settings = new Mock<ISettings>();
@@ -25,7 +27,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _exitTracker = new Mock<IExitTracker>();
             _exitTracker.Setup(i => i.Track()).Returns(_trackToken.Object);
             _runner = new Mock<IRunner>();
-            _runner.Setup(i => i.Run()).Returns(ExitCode.Fail);
+            _runner.Setup(i => i.Run()).Returns(ExitCode.Success);
             _activationToken = new Mock<IDisposable>();
             _active = new Mock<IActive>();
             _active.Setup(i => i.Activate()).Returns(_activationToken.Object);
@@ -43,11 +45,29 @@ namespace Teamcity.CSharpInteractive.Tests
             // Then
             _settingsManager.Verify(i => i.Load());
             _info.Verify(i => i.ShowHeader());
-            actualResult.ShouldBe((int)ExitCode.Fail);
+            actualResult.ShouldBe(ExitCode.Success);
             _trackToken.Verify(i => i.Dispose());
             _info.Verify(i => i.ShowFooter());
             _active.Verify(i => i.Activate());
             _activationToken.Verify(i => i.Dispose());
+        }
+        
+        [Fact]
+        public void ShouldRunLogUnhandledException()
+        {
+            // Given
+            var program = CreateInstance();
+
+            // When
+            _runner.Setup(i => i.Run()).Throws<Exception>();
+            var actualResult = program.Run();
+
+            // Then
+            actualResult.ShouldBe(ExitCode.Fail);
+            _trackToken.Verify(i => i.Dispose());
+            _info.Verify(i => i.ShowFooter());
+            _activationToken.Verify(i => i.Dispose());
+            _log.Verify(i => i.Error(ErrorId.Unhandled, It.IsAny<Text[]>()));
         }
         
         [Fact]
@@ -63,7 +83,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Then
             _settingsManager.Verify(i => i.Load());
             _info.Verify(i => i.ShowVersion());
-            actualResult.ShouldBe((int)ExitCode.Success);
+            actualResult.ShouldBe(ExitCode.Success);
         }
         
         [Fact]
@@ -80,10 +100,10 @@ namespace Teamcity.CSharpInteractive.Tests
             _settingsManager.Verify(i => i.Load());
             _info.Verify(i => i.ShowHeader());
             _info.Verify(i => i.ShowHelp());
-            actualResult.ShouldBe((int)ExitCode.Success);
+            actualResult.ShouldBe(ExitCode.Success);
         }
 
         private Program CreateInstance() =>
-            new(new []{_active.Object}, _info.Object, _settingsManager.Object, _settings.Object, _exitTracker.Object, () => _runner.Object);
+            new(_log.Object, new []{_active.Object}, _info.Object, _settingsManager.Object, _settings.Object, _exitTracker.Object, () => _runner.Object);
     }
 }

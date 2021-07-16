@@ -5,6 +5,7 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal readonly struct ErrorId
     {
+        public static readonly ErrorId Unhandled = new("CSI000");
         public static readonly ErrorId File = new("CSI001");
         public static readonly ErrorId Nuget = new("CSI002");
         public static readonly ErrorId CannotParsePackageVersion = new("CSI003");
