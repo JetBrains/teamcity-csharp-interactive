@@ -5,9 +5,9 @@ namespace Teamcity.CSharpInteractive
     using System.IO;
     using System.Linq;
 
-    internal class AddPackageReferenceCommandRunner: ICommandRunner
+    internal class AddNuGetReferenceCommandRunner: ICommandRunner
     {
-        private readonly ILog<AddPackageReferenceCommandRunner> _log;
+        private readonly ILog<AddNuGetReferenceCommandRunner> _log;
         private readonly IEnvironment _environment;
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly INugetEnvironment _nugetEnvironment;
@@ -16,8 +16,8 @@ namespace Teamcity.CSharpInteractive
         private readonly Func<ICommandsRunner> _commandsRunnerFactory;
         private readonly ICleaner _cleaner;
 
-        public AddPackageReferenceCommandRunner(
-            ILog<AddPackageReferenceCommandRunner> log,
+        public AddNuGetReferenceCommandRunner(
+            ILog<AddNuGetReferenceCommandRunner> log,
             IEnvironment environment,
             IUniqueNameGenerator uniqueNameGenerator,
             INugetEnvironment nugetEnvironment,
@@ -38,7 +38,7 @@ namespace Teamcity.CSharpInteractive
 
         public CommandResult TryRun(ICommand command)
         {
-            if (command is not AddPackageReferenceCommand addPackageReferenceCommand)
+            if (command is not AddNuGetReferenceCommand addPackageReferenceCommand)
             {
                 return new CommandResult(command, default);
             }

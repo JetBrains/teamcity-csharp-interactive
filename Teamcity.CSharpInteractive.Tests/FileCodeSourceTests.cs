@@ -20,7 +20,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _reader = new Mock<IFileTextReader>();
             _log = new Mock<ILog<FileCodeSource>>();
             _environment = new Mock<IEnvironment>();
-            _environment.Setup(i => i.GetPath(SpecialFolder.WorkingDirectory)).Returns("wd");
+            _environment.Setup(i => i.GetPath(SpecialFolder.Working)).Returns("wd");
             _workingDirectoryToken = new Mock<IDisposable>();
             _workingDirectoryContext = new Mock<IWorkingDirectoryContext>();
             _workingDirectoryContext.Setup(i => i.OverrideWorkingDirectory(It.IsAny<string>())).Returns(_workingDirectoryToken.Object);

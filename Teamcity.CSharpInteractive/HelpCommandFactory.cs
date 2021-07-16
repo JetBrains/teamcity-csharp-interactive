@@ -11,6 +11,8 @@ namespace Teamcity.CSharpInteractive
         private readonly ILog<HelpCommandFactory> _log;
 
         public HelpCommandFactory(ILog<HelpCommandFactory> log) => _log = log;
+        
+        public int Order => 0;
 
         public IEnumerable<ICommand> Create(string replCommand)
         {

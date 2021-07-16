@@ -85,8 +85,10 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandRunner>().Tag("REPL Help runner").To<HelpCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Set verbosity level parser").To<SetVerbosityLevelCommandFactory>()
             .Bind<ICommandRunner>().Tag("REPL Set verbosity level runner").To<SetVerbosityLevelCommandRunner>()
-            .Bind<ICommandFactory<string>>().Tag("REPL Add package reference parser").To<AddPackageReferenceCommandFactory>()
-            .Bind<ICommandRunner>().Tag("REPL Add package reference runner").To<AddPackageReferenceCommandRunner>()
+            .Bind<ICommandFactory<string>>().Tag("REPL Add NuGet reference parser").To<AddNuGetReferenceCommandFactory>()
+            .Bind<IAssemblyPathResolver>().To<AssemblyPathResolver>()
+            .Bind<ICommandFactory<string>>().Tag("REPL Add assembly reference parser").To<AddAssemblyReferenceCommandFactory>()
+            .Bind<ICommandRunner>().Tag("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Load script").To<LoadCommandFactory>()
 
             // Messages

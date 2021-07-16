@@ -25,8 +25,10 @@ namespace Teamcity.CSharpInteractive.Tests
             _log = new Mock<ILog<CodeSourceCommandFactory>>();
             _replCommandFactory1 = new Mock<ICommandFactory<string>>();
             _replCommandFactory1.Setup(i => i.Create(It.IsAny<string>())).Returns(Enumerable.Empty<ICommand>());
+            _replCommandFactory1.SetupGet(i => i.Order).Returns(1);
             _replCommandFactory2 = new Mock<ICommandFactory<string>>();
             _replCommandFactory2.Setup(i => i.Create("#help")).Returns(new [] {HelpCommand.Shared });
+            _replCommandFactory2.SetupGet(i => i.Order).Returns(2);
             _scriptCommandFactory = new Mock<ICommandFactory<ScriptCommand>>();
             _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine, false))).Returns(new[] {ScriptCommand11, ScriptCommand12});
             _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code2" + Environment.NewLine, false))).Returns(new[] {ScriptCommand2});
@@ -72,7 +74,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private CodeSourceCommandFactory CreateInstance() =>
             new(
                 _log.Object,
-                new[] {_replCommandFactory1.Object, _replCommandFactory2.Object},
+                new[] {_replCommandFactory2.Object, _replCommandFactory1.Object},
                 _scriptCommandFactory.Object);
     }
 }

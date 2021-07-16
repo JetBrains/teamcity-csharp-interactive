@@ -1,21 +1,23 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using NuGet.Versioning;
 
-    internal class AddPackageReferenceCommandFactory: ICommandFactory<string>
+    internal class AddNuGetReferenceCommandFactory: ICommandFactory<string>
     {
-        private static readonly Regex Regex = new(@"^\s*#r\s+""nuget:\s*([^,\s]+?)(,\s*([^\s]+?)\s*|\s*)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        private readonly ILog<AddPackageReferenceCommandFactory> _log;
+        private static readonly Regex NuGetReferenceRegex = new(@"^\s*#r\s+""nuget:\s*([^,\s]+?)(,\s*([^\s]+?)\s*|\s*)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        private readonly ILog<AddNuGetReferenceCommandFactory> _log;
 
-        public AddPackageReferenceCommandFactory(ILog<AddPackageReferenceCommandFactory> log) => _log = log;
+        public AddNuGetReferenceCommandFactory(ILog<AddNuGetReferenceCommandFactory> log) =>
+            _log = log;
+
+        public int Order => 0;
 
         public IEnumerable<ICommand> Create(string replCommand)
         {
-            var match = Regex.Match(replCommand);
+            var match = NuGetReferenceRegex.Match(replCommand);
             if (!match.Success)
             {
                 yield break;
@@ -38,8 +40,8 @@ namespace Teamcity.CSharpInteractive
                 }
             }
                 
-            _log.Trace(new []{new Text($"REPL #r {packageIdStr} {version}")});
-            yield return new AddPackageReferenceCommand(packageIdStr, version);
+            _log.Trace(new []{new Text($"REPL #r \"nuget:{packageIdStr}, {version}\"")});
+            yield return new AddNuGetReferenceCommand(packageIdStr, version);
         }
     }
 }

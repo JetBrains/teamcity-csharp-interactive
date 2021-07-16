@@ -13,13 +13,15 @@ namespace Teamcity.CSharpInteractive
 
         public CodeSourceCommandFactory(
             ILog<CodeSourceCommandFactory> log,
-            ICommandFactory<string>[] replCommandFactories,
+            IEnumerable<ICommandFactory<string>> replCommandFactories,
             ICommandFactory<ScriptCommand> scriptCommandFactory)
         {
             _log = log;
-            _replCommandFactories = replCommandFactories;
+            _replCommandFactories = replCommandFactories.OrderBy(i => i.Order).ToArray();
             _scriptCommandFactory = scriptCommandFactory;
         }
+
+        public int Order => 0;
 
         public IEnumerable<ICommand> Create(ICodeSource codeSource)
         {

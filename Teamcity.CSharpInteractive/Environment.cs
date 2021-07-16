@@ -26,9 +26,10 @@ namespace Teamcity.CSharpInteractive
                 case Platform.Windows:
                     return specialFolder switch
                     {
+                        SpecialFolder.Current => GetCurrentDirectory(),
                         SpecialFolder.Temp => System.Environment.GetEnvironmentVariable("TMP") ?? ".",
                         SpecialFolder.ProgramFiles => System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
-                        SpecialFolder.WorkingDirectory => GetWorkingDirectory(),
+                        SpecialFolder.Working => GetWorkingDirectory(),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
 
@@ -38,9 +39,10 @@ namespace Teamcity.CSharpInteractive
                 case Platform.FreeBSD:
                     return specialFolder switch
                     {
+                        SpecialFolder.Current => GetCurrentDirectory(),
                         SpecialFolder.Temp => System.Environment.GetEnvironmentVariable("TMP") ?? ".",
                         SpecialFolder.ProgramFiles => "usr/local/share",
-                        SpecialFolder.WorkingDirectory => GetWorkingDirectory(),
+                        SpecialFolder.Working => GetWorkingDirectory(),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
                 
@@ -83,6 +85,8 @@ namespace Teamcity.CSharpInteractive
             _workingDirectories.AddLast(workingDirectory);
             return Disposable.Create(() => _workingDirectories.Remove(workingDirectory));
         }
+
+        private string GetCurrentDirectory() => Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]) ?? GetWorkingDirectory();
 
         private string GetWorkingDirectory() => 
             _workingDirectories.Count > 0 ? _workingDirectories.Last!.Value : Directory.GetCurrentDirectory();

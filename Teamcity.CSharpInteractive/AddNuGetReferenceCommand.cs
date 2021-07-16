@@ -3,12 +3,12 @@ namespace Teamcity.CSharpInteractive
     using System;
     using NuGet.Versioning;
 
-    internal class AddPackageReferenceCommand: ICommand
+    internal class AddNuGetReferenceCommand: ICommand
     {
         public readonly string PackageId;
         public readonly NuGetVersion? Version;
 
-        public AddPackageReferenceCommand(string packageId, NuGetVersion? version)
+        public AddNuGetReferenceCommand(string packageId, NuGetVersion? version)
         {
             PackageId = packageId;
             Version = version;
@@ -23,7 +23,7 @@ namespace Teamcity.CSharpInteractive
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            AddPackageReferenceCommand other = (AddPackageReferenceCommand) obj;
+            AddNuGetReferenceCommand other = (AddNuGetReferenceCommand) obj;
             return PackageId == other.PackageId && Equals(Version?.ToString(), other.Version?.ToString());
         }
 

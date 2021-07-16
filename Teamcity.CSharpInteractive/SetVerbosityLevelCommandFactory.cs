@@ -18,6 +18,8 @@ namespace Teamcity.CSharpInteractive
             _log = log;
             _stringService = stringService;
         }
+        
+        public int Order => 0;
 
         public IEnumerable<ICommand> Create(string replCommand)
         {

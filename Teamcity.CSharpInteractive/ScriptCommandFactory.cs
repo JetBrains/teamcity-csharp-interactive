@@ -21,6 +21,8 @@ namespace Teamcity.CSharpInteractive
             _scriptSubmissionAnalyzer = scriptSubmissionAnalyzer;
         }
 
+        public int Order => 0;
+
         public IEnumerable<ICommand> Create(ScriptCommand scriptCommand)
         {
             _scriptBuilder.AppendLine(scriptCommand.Script);

@@ -34,7 +34,7 @@ namespace Teamcity.CSharpInteractive
         public string FileName
         {
             get => _fileName;
-            set => _fileName = Path.IsPathRooted(value) ? value : Path.Combine(_environment.GetPath(SpecialFolder.WorkingDirectory), value);
+            set => _fileName = Path.IsPathRooted(value) ? value : Path.Combine(_environment.GetPath(SpecialFolder.Working), value);
         }
 
         public IEnumerator<string> GetEnumerator()

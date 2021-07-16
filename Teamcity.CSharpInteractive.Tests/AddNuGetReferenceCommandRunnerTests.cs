@@ -9,9 +9,9 @@ namespace Teamcity.CSharpInteractive.Tests
     using Shouldly;
     using Xunit;
 
-    public class AddPackageReferenceCommandRunnerTests
+    public class AddNuGetReferenceCommandRunnerTests
     {
-        private readonly Mock<ILog<AddPackageReferenceCommandRunner>> _log;
+        private readonly Mock<ILog<AddNuGetReferenceCommandRunner>> _log;
         private readonly Mock<IEnvironment> _env;
         private readonly Mock<IUniqueNameGenerator> _uniqueNameGenerator;
         private readonly Mock<INugetEnvironment> _nugetEnv;
@@ -19,7 +19,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<INugetAssetsReader> _nugetAssetsReader;
         private readonly Mock<ICommandsRunner> _commandsRunner;
         private readonly Mock<ICleaner> _cleaner;
-        private readonly AddPackageReferenceCommand _command;
+        private readonly AddNuGetReferenceCommand _command;
         private readonly Mock<IDisposable> _trackToken;
         private const string TempDir = "Tmp";
         private const string UniqName = "123456";
@@ -30,11 +30,11 @@ namespace Teamcity.CSharpInteractive.Tests
         private static readonly string AssetsFilePath = Path.Combine(OutputPath, "project.assets.json");
         private readonly ScriptCommand[] _commands;
 
-        public AddPackageReferenceCommandRunnerTests()
+        public AddNuGetReferenceCommandRunnerTests()
         {
-            _command = new AddPackageReferenceCommand("Abc", new NuGetVersion(1, 2, 3));
+            _command = new AddNuGetReferenceCommand("Abc", new NuGetVersion(1, 2, 3));
             
-            _log = new Mock<ILog<AddPackageReferenceCommandRunner>>();
+            _log = new Mock<ILog<AddNuGetReferenceCommandRunner>>();
             _log.Setup(i => i.Block(It.IsAny<Text[]>())).Returns(Disposable.Empty);
             
             _env = new Mock<IEnvironment>();
@@ -181,7 +181,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _trackToken.Verify(i => i.Dispose());
         }
         
-        private AddPackageReferenceCommandRunner CreateInstance() =>
+        private AddNuGetReferenceCommandRunner CreateInstance() =>
             new(
                 _log.Object,
                 _env.Object,

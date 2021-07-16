@@ -3,17 +3,22 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.IO;
     using Host;
 
     internal class HostIntegrationCodeSource: ICodeSource
     {
+        private readonly IEnvironment _environment;
         private readonly ISession _session;
-        private const string LoadHost = "#r \"Teamcity.Host.dll\"";
         private const string UsingHost = "using Teamcity.Host;";
         private const string UsingStaticHost = "using static Teamcity.Host.Host;";
         private const string UsingStaticColor = "using static Teamcity.Host.Color;";
 
-        public HostIntegrationCodeSource(ISession session) => _session = session;
+        public HostIntegrationCodeSource(IEnvironment environment, ISession session)
+        {
+            _environment = environment;
+            _session = session;
+        }
 
         public string Name => string.Empty;
         
@@ -23,7 +28,7 @@ namespace Teamcity.CSharpInteractive
         {
             var lines = new List<string>
             {
-                LoadHost,
+                $"#r \"{Path.Combine(_environment.GetPath(SpecialFolder.Current), "Teamcity.Host.dll")}\"",
                 UsingHost,
                 UsingStaticHost,
                 UsingStaticColor,

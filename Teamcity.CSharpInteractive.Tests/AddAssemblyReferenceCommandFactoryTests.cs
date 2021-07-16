@@ -4,24 +4,39 @@ namespace Teamcity.CSharpInteractive.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Moq;
-    using NuGet.Versioning;
     using Shouldly;
     using Xunit;
 
-    public class AddPackageReferenceCommandFactoryTests
+    public class AddAssemblyReferenceCommandFactoryTests
     {
-        private readonly Mock<ILog<AddPackageReferenceCommandFactory>> _log;
+        private readonly Mock<ILog<AddAssemblyReferenceCommandFactory>> _log;
+        private readonly Mock<IAssemblyPathResolver> _assemblyPathResolver;
         private readonly List<Text> _errors = new();
 
-        public AddPackageReferenceCommandFactoryTests()
+        public AddAssemblyReferenceCommandFactoryTests()
         {
-            _log = new Mock<ILog<AddPackageReferenceCommandFactory>>();
+            _log = new Mock<ILog<AddAssemblyReferenceCommandFactory>>();
             _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
+            _assemblyPathResolver = new Mock<IAssemblyPathResolver>();
+            string fullAssemblyPath = "wd/Abc.dll";
+            _assemblyPathResolver.Setup(i => i.TryResolve("Abc.dll", out fullAssemblyPath)).Returns(true);
+        }
+        
+        [Fact]
+        public void ShouldProvideOrder()
+        {
+            // Given
+            var factory = CreateInstance();
+            
+            // When
+            
+            // Then
+            factory.Order.ShouldBe(1);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        internal void Should(string replCommand, ICommand[] expectedCommands, bool hasErrors)
+        internal void ShouldCreateCommands(string replCommand, ICommand[] expectedCommands, bool hasErrors)
         {
             // Given
             var factory = CreateInstance();
@@ -39,85 +54,68 @@ namespace Teamcity.CSharpInteractive.Tests
             new object[]
             {
                 "#r \"Abc.dll\"",
-                Array.Empty<ICommand>(),
+                new [] { new ScriptCommand("Abc.dll", "#r \"wd/Abc.dll\"") },
                 false
             },
+            
             new object[]
             {
-                "#",
-                Array.Empty<ICommand>(),
+                "#r   \"Abc.dll\"  ",
+                new [] { new ScriptCommand("Abc.dll", "#r \"wd/Abc.dll\"") },
                 false
             },
+
             new object[]
             {
-                "#   ",
+                "#r \"Xyz.dll\"",
                 Array.Empty<ICommand>(),
                 false
             },
+            
             new object[]
             {
-                "",
+                "#r Abc.dll",
                 Array.Empty<ICommand>(),
                 false
             },
+            
+            new object[]
+            {
+                "r \"Abc.dll\"",
+                Array.Empty<ICommand>(),
+                false
+            },
+            
+            new object[]
+            {
+                "\"Abc.dll\"",
+                Array.Empty<ICommand>(),
+                false
+            },
+            
+            new object[]
+            {
+                "Abc.dll",
+                Array.Empty<ICommand>(),
+                false
+            },
+            
             new object[]
             {
                 "   ",
                 Array.Empty<ICommand>(),
                 false
             },
+            
             new object[]
             {
-                "#r \"nuget:Abc, 1.2.3\"",
-                new [] {new AddPackageReferenceCommand("Abc", new NuGetVersion(1,2,3))},
-                false
-            },
-            new object[]
-            {
-                "  #r  \"NuGet:  Abc,    1.2.3 \"",
-                new [] {new AddPackageReferenceCommand("Abc", new NuGetVersion(1,2,3))},
-                false
-            },
-            new object[]
-            {
-                "#r \"nuget:Abc, 1.2.3-beta1\"",
-                new [] {new AddPackageReferenceCommand("Abc", new NuGetVersion(new Version(1,2,3), "beta1"))},
-                false
-            },
-            new object[]
-            {
-                "#r \"nuget:Abc\"",
-                new [] {new AddPackageReferenceCommand("Abc", default)},
-                false
-            },
-            // Errors
-            new object[]
-            {
-                "#r \"nuget:Abc, 1.2.3 xyz\"",
+                "",
                 Array.Empty<ICommand>(),
                 false
-            },
-            new object[]
-            {
-                "#r \":nuget:Abc, xyz\"",
-                Array.Empty<ICommand>(),
-                false
-            },
-            new object[]
-            {
-                "#r   ",
-                Array.Empty<ICommand>(),
-                false
-            },
-            new object[]
-            {
-                "#r",
-                Array.Empty<ICommand>(),
-                false
-            },
+            }
         };
 
-        private AddPackageReferenceCommandFactory CreateInstance() =>
-            new(_log.Object);
+        private AddAssemblyReferenceCommandFactory CreateInstance() =>
+            new(_log.Object, _assemblyPathResolver.Object);
     }
 }

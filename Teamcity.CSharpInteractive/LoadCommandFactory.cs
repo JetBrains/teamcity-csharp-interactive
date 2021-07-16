@@ -18,6 +18,8 @@ namespace Teamcity.CSharpInteractive
             _fileCodeSourceFactory = fileCodeSourceFactory;
             _codeSourceCommandFactory = codeSourceCommandFactory;
         }
+        
+        public int Order => 0;
 
         public IEnumerable<ICommand> Create(string replCommand)
         {
