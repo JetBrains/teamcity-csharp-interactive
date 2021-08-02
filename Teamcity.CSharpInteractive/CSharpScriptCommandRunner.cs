@@ -2,7 +2,6 @@
 
 namespace Teamcity.CSharpInteractive
 {
-    using System;
     using System.Threading;
     using Host;
 
@@ -10,16 +9,16 @@ namespace Teamcity.CSharpInteractive
     {
         private readonly ILog<CSharpScriptCommandRunner> _log;
         private readonly ICSharpScriptRunner _scriptRunner;
-        private readonly IObservable<DtoSession> _sessionsSource;
+        private readonly IFlow _flow;
 
         public CSharpScriptCommandRunner(
             ILog<CSharpScriptCommandRunner> log,
             ICSharpScriptRunner scriptRunner,
-            IObservable<DtoSession> sessionsSource)
+            IFlow flow)
         {
             _log = log;
             _scriptRunner = scriptRunner;
-            _sessionsSource = sessionsSource;
+            _flow = flow;
         }
 
         public CommandResult TryRun(ICommand command)
@@ -31,14 +30,19 @@ namespace Teamcity.CSharpInteractive
                     if (!command.Internal)
                     {
                         using var finisEvent = new ManualResetEvent(false);
-                        var sessionObserver = new SessionObserver(finisEvent);
-                        using (_sessionsSource.Subscribe(sessionObserver))
+                        void FlowOnOnCompleted()  {  finisEvent.Set(); }
+                        _flow.OnCompleted += FlowOnOnCompleted;
+                        try
                         {
                             _scriptRunner.Run($"{nameof(Host.ScriptInternal_FinishCommand)}();");
                             if (!finisEvent.WaitOne(10000))
                             {
                                 _log.Trace("Timeout while waiting for a finish of a command.");
                             }
+                        }
+                        finally
+                        {
+                            _flow.OnCompleted -= FlowOnOnCompleted;
                         }
                     }
 
@@ -51,19 +55,6 @@ namespace Teamcity.CSharpInteractive
                 default:
                     return new CommandResult(command, default);
             }
-        }
-        
-        private class SessionObserver: IObserver<DtoSession>
-        {
-            private readonly ManualResetEvent _resetEvent;
-
-            public SessionObserver(ManualResetEvent resetEvent) => _resetEvent = resetEvent;
-
-            public void OnNext(DtoSession value) => _resetEvent.Set();
-
-            public void OnError(Exception error) { }
-
-            public void OnCompleted() { }
         }
     }
 }

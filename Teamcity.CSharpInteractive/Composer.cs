@@ -18,6 +18,7 @@ namespace Teamcity.CSharpInteractive
     using Microsoft.CodeAnalysis.Scripting;
     using Pure.DI;
     using static Pure.DI.Lifetime;
+    using Console = Host.Console;
 
     [ExcludeFromCodeCoverage]
     internal static partial class Composer
@@ -93,18 +94,10 @@ namespace Teamcity.CSharpInteractive
 
             // Messages
             .Bind<ISession>().As(Transient).To(_ => Teamcity.Host.Composer.Resolve<ISession>())
-            .Bind<IObservable<string>>().To<PipeObservable>()
-            .Bind<IActive>().Tag("Pipe").To(ctx => ctx.Resolve<IObservable<string>>())
-
-            .Bind<IObservable<DtoSession>>().To<MessageObservable<DtoSession>>()
-            .Bind<IObservable<DtoError>>().To<MessageObservable<DtoError>>()
-            .Bind<IObservable<DtoWarning>>().To<MessageObservable<DtoWarning>>()
-            .Bind<IObservable<DtoInfo>>().To<MessageObservable<DtoInfo>>()
-            .Bind<IObservable<DtoTrace>>().To<MessageObservable<DtoTrace>>()
-            .Bind<IActive>().Tag(nameof(LogMessageBroker)).To<LogMessageBroker>()
-            
-            .Bind<IObservable<DtoStdOut>>().To<MessageObservable<DtoStdOut>>()
-            .Bind<IActive>().Tag(nameof(OutputMessageBroker)).To<OutputMessageBroker>()
+            .Bind<IActive>().To<ServicesHost>()
+            .Bind<Flow.FlowBase>().Bind<IFlow>().To<FlowService>()
+            .Bind<Console.ConsoleBase>().To<ConsoleService>()
+            .Bind<Teamcity.Host.Log.LogBase>().To<LogService>()
 
             // Service messages
             .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()

@@ -1,21 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <SignAssembly>True</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\DevTeam.snk</AssemblyOriginatorKeyFile>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <NoWarn>NU1605</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="Pure.DI" Version="1.0.1">
+        <Protobuf Include="Protos\csi.proto" GrpcServices="Both" />
+	    <PackageReference Include="Grpc.Tools" Version="2.38.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+		<PackageReference Include="GrpcDotNetNamedPipes" Version="1.4.2" />
+		<PackageReference Include="Pure.DI" Version="1.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
     </ItemGroup>
     
 </Project>

@@ -1,7 +1,8 @@
 namespace Teamcity.Host
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
+    using Grpc.Core;
+    using GrpcDotNetNamedPipes;
     using Pure.DI;
     using static Pure.DI.Lifetime;
 
@@ -10,8 +11,8 @@ namespace Teamcity.Host
     {
         static Composer() => DI.Setup()
             .Default(Singleton)
-            .Bind<HostCompositionRoot>().To<HostCompositionRoot>()
-            .Bind<IObserver<TT>>().To<PipeObserver<TT>>()
-            .Bind<ISession>().To<Session>();
+            .Bind<CompositionRoot>().To<CompositionRoot>()
+            .Bind<ISession>().To<Session>()
+            .Bind<CallInvoker>().To(ctx => new NamedPipeChannel(".", ctx.Resolve<ISession>().Id));
     }
 }

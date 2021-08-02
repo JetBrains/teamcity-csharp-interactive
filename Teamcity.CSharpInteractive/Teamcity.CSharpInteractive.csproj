@@ -1,18 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
         <AssemblyName>dotnet-csi</AssemblyName>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <SignAssembly>True</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\DevTeam.snk</AssemblyOriginatorKeyFile>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <NoWarn>NU1605</NoWarn>
     </PropertyGroup>
 
-    <PropertyGroup>
+    <PropertyGroup>                                                     
         <PackageType>DotnetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-csi</ToolCommandName>
@@ -33,8 +31,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="Pure.DI" Version="1.0.1">
+        <PackageReference Include="GrpcDotNetNamedPipes" Version="1.4.2" />
+        <PackageReference Include="Pure.DI" Version="1.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -42,6 +40,7 @@
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="5.10.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
+        <ProjectReference Include="..\Teamcity.Host\Teamcity.Host.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -56,8 +55,4 @@
         </Content>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Teamcity.Host\Teamcity.Host.csproj" />
-    </ItemGroup>
-    
 </Project>
