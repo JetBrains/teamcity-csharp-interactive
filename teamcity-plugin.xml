@@ -4,10 +4,7 @@
   <tool-deployment>
     <layout>
       <executable-files>
-	<include name='tools/net6.0/any/dotnet-csi.dll'/>
-        <include name='tools/net5.0/any/dotnet-csi.dll'/>
         <include name='tools/netcoreapp3.1/any/dotnet-csi.dll'/>
-        <include name='tools/net48/any/dotnet-csi.exe'/>
       </executable-files>
     </layout>
   </tool-deployment>
