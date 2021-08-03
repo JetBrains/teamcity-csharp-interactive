@@ -8,11 +8,12 @@ namespace Teamcity.CSharpInteractive
 
     internal class LoadCommandFactory: ICommandFactory<string>
     {
-        private static readonly Regex Regex = new(@"^#load\s+""(.+)""$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        private static readonly Regex Regex = new(@"^\s*#load\s+""(.+)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
         private readonly Func<ICommandFactory<ICodeSource>> _codeSourceCommandFactory;
 
-        public LoadCommandFactory(IFileCodeSourceFactory fileCodeSourceFactory,
+        public LoadCommandFactory(
+            IFileCodeSourceFactory fileCodeSourceFactory,
             Func<ICommandFactory<ICodeSource>> codeSourceCommandFactory)
         {
             _fileCodeSourceFactory = fileCodeSourceFactory;

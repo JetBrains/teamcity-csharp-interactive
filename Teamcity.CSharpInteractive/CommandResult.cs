@@ -1,5 +1,8 @@
 namespace Teamcity.CSharpInteractive
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal readonly struct CommandResult
     {
         public readonly ICommand Command;

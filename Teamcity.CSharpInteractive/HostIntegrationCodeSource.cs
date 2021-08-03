@@ -10,9 +10,9 @@ namespace Teamcity.CSharpInteractive
     {
         private readonly IEnvironment _environment;
         private readonly ISession _session;
-        private const string UsingHost = "using Teamcity.Host;";
-        private const string UsingStaticHost = "using static Teamcity.Host.Host;";
-        private const string UsingStaticColor = "using static Teamcity.Host.Color;";
+        internal const string UsingHost = "using Teamcity.Host;";
+        internal const string UsingStaticHost = "using static Teamcity.Host.Host;";
+        internal const string UsingStaticColor = "using static Teamcity.Host.Color;";
 
         public HostIntegrationCodeSource(IEnvironment environment, ISession session)
         {

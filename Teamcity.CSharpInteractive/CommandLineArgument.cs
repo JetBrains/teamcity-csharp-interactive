@@ -1,8 +1,10 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Text;
 
+    [ExcludeFromCodeCoverage]
     internal readonly struct CommandLineArgument
     {
         public readonly CommandLineArgumentType ArgumentType;

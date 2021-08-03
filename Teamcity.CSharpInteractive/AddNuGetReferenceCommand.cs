@@ -1,8 +1,10 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using NuGet.Versioning;
 
+    [ExcludeFromCodeCoverage]
     internal class AddNuGetReferenceCommand: ICommand
     {
         public readonly string PackageId;
