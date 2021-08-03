@@ -15,7 +15,7 @@ TeamCity.csi is available as a [NuGet package](https://www.nuget.org/packages/Te
 Install the tool on your OS:
 
 ```Shell
-dotnet tool install dotnet-csi -g --version 1.0.0
+dotnet tool install dotnet-csi -g --version <version>
 ```
 
 Uninstall the tool:
