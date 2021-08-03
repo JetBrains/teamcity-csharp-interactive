@@ -2,7 +2,7 @@
 
 [<img src="http://jb.gg/badges/official.svg"/>](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub) [![NuGet TeamCity.csi](https://buildstats.info/nuget/TeamCity.csi?includePreReleases=true)](https://www.nuget.org/packages/TeamCity.csi) ![GitHub](https://img.shields.io/github/license/jetbrains/teamcity-csharp-interactive) [<img src="http://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_TeamCityCScript_Build)/statusIcon.svg"/>](http://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_TeamCityCScript_Build&guest=1)
 
-This is a repository of TeamCity.csi which is an interactive tool for running C# scripts. It can be used as a TeamCity build runner or installed as a command-line tool on Windows, Linux, or macOS.
+This is a repository of TeamCity.csi which is an interactive tool for running C# scripts. It can be used as a [TeamCity build runner](https://github.com/JetBrains/teamcity-dotnet-plugin#c-script-runner) or installed as a command-line tool on Windows, Linux, or macOS.
 
 ## Prerequisites
 
