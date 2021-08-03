@@ -17,7 +17,7 @@ namespace Teamcity.CSharpInteractive
         }
 
         public override bool Equals(object? obj) => 
-            obj is CommandLineArgument other && (ArgumentType == other.ArgumentType && Value == other.Value && Key == other.Key);
+            obj is CommandLineArgument other && ArgumentType == other.ArgumentType && Value == other.Value && Key == other.Key;
 
         public override int GetHashCode() => HashCode.Combine((int) ArgumentType, Value, Key);
 

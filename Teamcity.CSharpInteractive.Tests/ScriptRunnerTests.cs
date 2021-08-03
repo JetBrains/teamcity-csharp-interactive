@@ -24,19 +24,6 @@ namespace Teamcity.CSharpInteractive.Tests
             _statisticsPresenter = new Mock<IPresenter<IStatistics>>();
         }
         
-        [Fact]
-        public void ShouldProvideMode()
-        {
-            // Given
-            var runner = CreateInstance();
-
-            // When
-            var mode = runner.InteractionMode;
-            
-            // Then
-            mode.ShouldBe(InteractionMode.Script);
-        }
-
         [Theory]
         [MemberData(nameof(Data))]
         internal void ShouldRun(CommandResult[] results, string[] errors, string[] warnings, ExitCode expectedExitCode)
@@ -98,7 +85,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 System.Array.Empty<string>(),
                 System.Array.Empty<string>(),
                 ExitCode.Fail
-            },
+            }
         };
 
         private ScriptRunner CreateInstance() =>

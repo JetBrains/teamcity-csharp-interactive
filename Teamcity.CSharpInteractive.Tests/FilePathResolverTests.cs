@@ -26,9 +26,9 @@ namespace Teamcity.CSharpInteractive.Tests
             _fileSystem.Setup(i => i.IsPathRooted("Rooted")).Returns(true);
             _environment.Setup(i => i.GetPath(SpecialFolder.Script)).Returns("sc");
             _environment.Setup(i => i.GetPath(SpecialFolder.Working)).Returns("wd");
-            _fileSystem.Setup(i => i.IsFileExist(It.Is<string>(i => i == "wd/Existing1".Replace('/', Path.DirectorySeparatorChar)))).Returns(true);
-            _fileSystem.Setup(i => i.IsFileExist(It.Is<string>(i => i == "sc/Existing2".Replace('/', Path.DirectorySeparatorChar)))).Returns(true);
-            _fileSystem.Setup(i => i.IsFileExist(It.Is<string>(i => i == "wd/NotExisting".Replace('/', Path.DirectorySeparatorChar)))).Returns(false);
+            _fileSystem.Setup(i => i.IsFileExist(It.Is<string>(j => j == "wd/Existing1".Replace('/', Path.DirectorySeparatorChar)))).Returns(true);
+            _fileSystem.Setup(i => i.IsFileExist(It.Is<string>(j => j == "sc/Existing2".Replace('/', Path.DirectorySeparatorChar)))).Returns(true);
+            _fileSystem.Setup(i => i.IsFileExist(It.Is<string>(j => j == "wd/NotExisting".Replace('/', Path.DirectorySeparatorChar)))).Returns(false);
         }
 
         [Theory]

@@ -1,7 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
 
     internal class CommandLineParser : ICommandLineParser
@@ -30,6 +29,7 @@ namespace Teamcity.CSharpInteractive
                     var argument = enumerator.Current;
                     if (argumentType != null)
                     {
+                        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
                         switch (argumentType)
                         {
                             case CommandLineArgumentType.ScriptFile:

@@ -2,10 +2,12 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using GrpcDotNetNamedPipes;
     using Host;
     using Console = Host.Console;
 
+    [ExcludeFromCodeCoverage]
     internal class ServicesHost: IActive
     {
         private readonly ILog<ServicesHost> _log;

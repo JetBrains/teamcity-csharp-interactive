@@ -1,5 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 
+// ReSharper disable InvertIf
 namespace Teamcity.CSharpInteractive
 {
     using System.Linq;
@@ -27,8 +28,6 @@ namespace Teamcity.CSharpInteractive
             _statisticsPresenter = statisticsPresenter;
         }
         
-        public InteractionMode InteractionMode => InteractionMode.Script;
-
         public ExitCode Run()
         {
             var exitCode = ExitCode.Success;

@@ -13,17 +13,14 @@ namespace Teamcity.CSharpInteractive
 
         public string NewFlowId()
         {
-            if (_isFirst)
+            if (!_isFirst)
             {
-                _isFirst = false;
-                var flowId = _teamCitySettings.FlowId;
-                if (!string.IsNullOrWhiteSpace(flowId))
-                {
-                    return flowId;
-                }
+                return Guid.NewGuid().ToString().Replace("-", string.Empty);
             }
-            
-            return Guid.NewGuid().ToString().Replace("-", string.Empty);
+
+            _isFirst = false;
+            var flowId = _teamCitySettings.FlowId;
+            return string.IsNullOrWhiteSpace(flowId) ? Guid.NewGuid().ToString().Replace("-", string.Empty) : flowId;
         }
     }
 }

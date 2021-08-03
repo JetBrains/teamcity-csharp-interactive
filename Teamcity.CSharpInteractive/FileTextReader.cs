@@ -8,8 +8,6 @@ namespace Teamcity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class FileTextReader : IFileTextReader
     {
-        public string Read(string fileName) => File.ReadAllText(fileName);
-        
         public IEnumerable<string> ReadLines(string fileName) => File.ReadLines(fileName);
     }
 }

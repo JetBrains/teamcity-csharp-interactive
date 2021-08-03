@@ -13,7 +13,6 @@ namespace Teamcity.CSharpInteractive
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly ICleaner _cleaner;
-        private readonly IDotnetEnvironment _dotnetEnvironment;
         private readonly ISettings _settings;
         private string? _packagePath;
         private IDisposable _packagePathToken = Disposable.Empty;
@@ -23,14 +22,12 @@ namespace Teamcity.CSharpInteractive
             IHostEnvironment hostEnvironment,
             IUniqueNameGenerator uniqueNameGenerator,
             ICleaner cleaner,
-            IDotnetEnvironment dotnetEnvironment,
             ISettings settings)
         {
             _environment = environment;
             _hostEnvironment = hostEnvironment;
             _uniqueNameGenerator = uniqueNameGenerator;
             _cleaner = cleaner;
-            _dotnetEnvironment = dotnetEnvironment;
             _settings = settings;
         }
 

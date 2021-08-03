@@ -62,6 +62,6 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         private FileCodeSource CreateInstance(string fileName) => 
-            new FileCodeSource(_log.Object, _reader.Object, _filePathResolver.Object, _workingDirectoryContext.Object) { FileName = fileName};
+            new(_log.Object, _reader.Object, _filePathResolver.Object, _workingDirectoryContext.Object) { FileName = fileName};
     }
 }

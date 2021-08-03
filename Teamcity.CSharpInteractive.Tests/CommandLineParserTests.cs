@@ -164,7 +164,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"-p", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
                 }
             },
             
@@ -173,7 +173,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"--Property", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
                 }
             },
             
@@ -182,7 +182,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"/P", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
                 }
             },
             
@@ -191,7 +191,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"/property", "Key1=Val1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
                 }
             },
             
@@ -200,7 +200,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new[] {"-p", "Key1"},
                 new[]
                 {
-                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "", "Key1"),
+                    new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "", "Key1")
                 }
             }
         };

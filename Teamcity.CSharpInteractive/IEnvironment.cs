@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMemberInSuper.Global
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;

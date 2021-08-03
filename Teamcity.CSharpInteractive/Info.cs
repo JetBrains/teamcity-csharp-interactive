@@ -37,11 +37,13 @@ namespace Teamcity.CSharpInteractive
         public void ShowHeader()
         {
             _stdOut.WriteLine(new Text("TeamCity C# Interactive", Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
-            if (_settings.InteractionMode == InteractionMode.Interactive)
+            if (_settings.InteractionMode != InteractionMode.Interactive)
             {
-                _stdOut.WriteLine(new Text("Ctrl-C - Exit the REPL.", Color.Details));
-                _stdOut.WriteLine(new Text("#help  - Display help on available commands and key bindings.", Color.Details));
+                return;
             }
+
+            _stdOut.WriteLine(new Text("Ctrl-C - Exit the REPL.", Color.Details));
+            _stdOut.WriteLine(new Text("#help  - Display help on available commands and key bindings.", Color.Details));
         }
 
         public void ShowReplHelp() =>

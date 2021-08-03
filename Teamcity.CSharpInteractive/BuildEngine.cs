@@ -19,6 +19,7 @@ namespace Teamcity.CSharpInteractive
 
         public void LogMessageEvent(BuildMessageEventArgs e)
         {
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (e.Importance)
             {
                 case MessageImportance.High:

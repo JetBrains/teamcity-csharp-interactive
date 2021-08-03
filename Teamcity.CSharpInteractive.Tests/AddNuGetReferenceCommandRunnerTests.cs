@@ -23,10 +23,10 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<IDisposable> _trackToken;
         private const string TempDir = "Tmp";
         private const string UniqName = "123456";
-        private static readonly string[] Sources = new[] {"src"};
-        private static readonly string[] FallbackFolders = new[] {"fallback"};
-        private static readonly string OutputPath = Path.Combine(TempDir, UniqName); 
-        private static readonly string PackagesPath = "packages";
+        private static readonly string[] Sources = {"src"};
+        private static readonly string[] FallbackFolders = {"fallback"};
+        private static readonly string OutputPath = Path.Combine(TempDir, UniqName);
+        private const string PackagesPath = "packages";
         private static readonly string AssetsFilePath = Path.Combine(OutputPath, "project.assets.json");
         private readonly ScriptCommand[] _commands;
 
@@ -51,8 +51,8 @@ namespace Teamcity.CSharpInteractive.Tests
             _nugetRestoreService = new Mock<INugetRestoreService>();
             _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.Version, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(true);
 
-            ReferencingAssembly referencingAssembly1 = new ReferencingAssembly("Abc1", "Abc1.dll");
-            ReferencingAssembly referencingAssembly2 = new ReferencingAssembly("Abc2", "Abc2.dll");
+            ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
+            ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
             
             _nugetAssetsReader = new Mock<INugetAssetsReader>();
             _nugetAssetsReader.Setup(i => i.ReadAssemblies(AssetsFilePath)).Returns(new [] {referencingAssembly1, referencingAssembly2});
@@ -63,10 +63,9 @@ namespace Teamcity.CSharpInteractive.Tests
                 new ScriptCommand(referencingAssembly2.Name, $"#r \"{referencingAssembly2.FilePath}\"")
             };
             
-            CommandResult[] results = new[]
-            {
-                new CommandResult(_commands[0], true),
-                new CommandResult(_commands[0], true)
+            CommandResult[] results = {
+                new(_commands[0], true),
+                new(_commands[0], true)
             };
             
             _commandsRunner = new Mock<ICommandsRunner>();

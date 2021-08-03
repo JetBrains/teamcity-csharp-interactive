@@ -105,7 +105,6 @@ namespace Teamcity.CSharpInteractive.Tests
                 _hostEnvironment.Object,
                 _uniqueNameGenerator.Object,
                 _cleaner.Object,
-                _dotnetEnvironment.Object,
                 _settings.Object);
     }
 }

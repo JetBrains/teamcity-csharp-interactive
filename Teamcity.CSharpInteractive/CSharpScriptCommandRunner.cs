@@ -1,5 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 
+// ReSharper disable InvertIf
 namespace Teamcity.CSharpInteractive
 {
     using System.Threading;
@@ -30,6 +31,7 @@ namespace Teamcity.CSharpInteractive
                     if (!command.Internal)
                     {
                         using var finisEvent = new ManualResetEvent(false);
+                        // ReSharper disable once AccessToDisposedClosure
                         void FlowOnOnCompleted()  {  finisEvent.Set(); }
                         _flow.OnCompleted += FlowOnOnCompleted;
                         try

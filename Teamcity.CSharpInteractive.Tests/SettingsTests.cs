@@ -46,7 +46,7 @@ namespace Teamcity.CSharpInteractive.Tests
                     new CommandLineArgument(CommandLineArgumentType.ScriptFile, "myScript"),
                     new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg1"),
                     new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src2"),
-                    new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg2"),
+                    new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg2")
                 });
             settings.Load();
 

@@ -23,15 +23,19 @@ namespace Teamcity.CSharpInteractive
         public IEnumerable<ICommand> Create(string replCommand)
         {
             var match = LibReferenceRegex.Match(replCommand);
-            if (match.Success)
+            if (!match.Success)
             {
-                var assemblyPath = match.Groups[1].Value;
-                if (_filePathResolver.TryResolve(assemblyPath, out var fullAssemblyPath))
-                {
-                    _log.Trace(new []{new Text($"REPL #r \"{fullAssemblyPath}\"")});
-                    yield return new ScriptCommand(assemblyPath, $"#r \"{fullAssemblyPath}\"");
-                }
+                yield break;
             }
+
+            var assemblyPath = match.Groups[1].Value;
+            if (!_filePathResolver.TryResolve(assemblyPath, out var fullAssemblyPath))
+            {
+                yield break;
+            }
+
+            _log.Trace(new []{new Text($"REPL #r \"{fullAssemblyPath}\"")});
+            yield return new ScriptCommand(assemblyPath, $"#r \"{fullAssemblyPath}\"");
         }
     }
 }

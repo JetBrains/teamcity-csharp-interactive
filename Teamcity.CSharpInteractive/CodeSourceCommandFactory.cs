@@ -1,4 +1,5 @@
 // ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InvertIf
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace Teamcity.CSharpInteractive
 
                             if (sb.Length > 0)
                             {
-                                _log.Trace($"Yield script commands before REPL commands.");
+                                _log.Trace("Yield script commands before REPL commands.");
                                 foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
                                 {
                                     yield return command;
@@ -77,7 +78,7 @@ namespace Teamcity.CSharpInteractive
 
                 if (sb.Length > 0)
                 {
-                    _log.Trace($"Finally yield script commands.");
+                    _log.Trace("Finally yield script commands.");
                     foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
                     {
                         yield return command;

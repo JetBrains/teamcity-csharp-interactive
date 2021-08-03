@@ -35,20 +35,24 @@ namespace Teamcity.CSharpInteractive
         
         public void Error(ErrorId id, params Text[] error)
         {
-            if (error.Any())
+            if (!error.Any())
             {
-                _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
-                _stdErr.WriteLine(GetMessage(error, Color.Error));
+                return;
             }
+
+            _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
+            _stdErr.WriteLine(GetMessage(error, Color.Error));
         }
         
         public void Warning(params Text[] warning)
         {
-            if (warning.Any())
+            if (!warning.Any())
             {
-                _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
-                _stdErr.WriteLine(GetMessage(warning, Color.Warning));
+                return;
             }
+
+            _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
+            _stdErr.WriteLine(GetMessage(warning, Color.Warning));
         }
 
         public void Info(params Text[] message)

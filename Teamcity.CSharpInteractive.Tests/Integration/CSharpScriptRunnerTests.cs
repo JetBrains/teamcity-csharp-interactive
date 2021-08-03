@@ -2,7 +2,6 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
 {
     using System;
     using System.Collections.Generic;
-    using Host;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
     using Moq;
@@ -14,8 +13,8 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
         private readonly Mock<ILog<CSharpScriptRunner>> _log;
         private readonly Mock<IPresenter<ScriptState<object>>> _scriptStatePresenter;
         private readonly Mock<IPresenter<IEnumerable<Diagnostic>>> _diagnosticsPresenter;
-        private readonly List<Text> _errors = new List<Text>();
-        private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
+        private readonly List<Text> _errors = new();
+        private readonly List<Diagnostic> _diagnostics = new();
 
         public CSharpScriptRunnerTests()
         {

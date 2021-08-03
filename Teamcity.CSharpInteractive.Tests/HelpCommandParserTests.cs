@@ -33,7 +33,7 @@ namespace Teamcity.CSharpInteractive.Tests
             new object[] { "#Abc", Array.Empty<ICommand>() },
             new object[] { "#  ", Array.Empty<ICommand>() },
             new object[] { "#", Array.Empty<ICommand>() },
-            new object[] { "", Array.Empty<ICommand>() },
+            new object[] { "", Array.Empty<ICommand>() }
         };
     }
 }

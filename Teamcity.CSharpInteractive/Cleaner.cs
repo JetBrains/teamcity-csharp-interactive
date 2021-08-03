@@ -2,7 +2,6 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
-    using Host;
 
     internal class Cleaner : ICleaner
     {

@@ -68,6 +68,6 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         private FlowIdGenerator CreateInstance() =>
-            new FlowIdGenerator(_teamCitySettings.Object);
+            new(_teamCitySettings.Object);
     }
 }

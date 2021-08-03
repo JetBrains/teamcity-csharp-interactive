@@ -39,30 +39,30 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             new object[]
             {
                 Array.Empty<string>(),
-                new Dictionary<string, string>() { {"Key1", "Val1"}, {"key2", "Val2"} },
+                new Dictionary<string, string>{ {"Key1", "Val1"}, {"key2", "Val2"} },
                 new[] { "Console.WriteLine(Props[\"Key1\"]);", "Console.WriteLine(Props[\"key2\"]);" }
             },
             
             new object[]
             {
                 new [] { "Abc" },
-                new Dictionary<string, string>() { {"Key1", "Val1"} },
+                new Dictionary<string, string>{ {"Key1", "Val1"} },
                 new[] { "Console.WriteLine(Args[0]);", "Console.WriteLine(Props[\"Key1\"]);" }
             }
         };
 
         private static void RunScript(IEnumerable<string> lines)
         {
-            ScriptState<object>? _scriptState = null;
+            ScriptState<object>? scriptState = null;
             foreach (var line in lines)
             {
                 var result = true;
-                _scriptState =
-                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, CSharpScriptRunner.Options).Result)
+                scriptState =
+                    (scriptState ?? CSharpScript.RunAsync(string.Empty, CSharpScriptRunner.Options).Result)
                     .ContinueWithAsync(
                         line,
                         CSharpScriptRunner.Options,
-                        exception =>
+                        _ =>
                         {
                             result = false;
                             return true;

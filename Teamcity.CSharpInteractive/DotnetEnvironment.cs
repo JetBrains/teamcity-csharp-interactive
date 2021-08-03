@@ -11,24 +11,23 @@ namespace Teamcity.CSharpInteractive
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
         private const string VersionPrefix = ",Version=v";
-        private readonly string _targetFrameworkMoniker;
         private readonly IEnvironment _environment;
 
         public DotnetEnvironment(
             [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
             IEnvironment environment)
         {
-            _targetFrameworkMoniker = targetFrameworkMoniker;
+            TargetFrameworkMoniker = targetFrameworkMoniker;
             _environment = environment;
         }
 
         public string Path => System.IO.Path.Combine(_environment.GetPath(SpecialFolder.ProgramFiles), "dotnet");
 
-        public string TargetFrameworkMoniker => _targetFrameworkMoniker;
+        public string TargetFrameworkMoniker { get; }
 
         public string Tfm => Version.Major >= 5 ? $"net{Version}" : $"netcoreapp{Version}";
 
-        public Version Version => Version.Parse(_targetFrameworkMoniker[(_targetFrameworkMoniker.IndexOf(VersionPrefix, StringComparison.Ordinal) + VersionPrefix.Length)..]);
+        public Version Version => Version.Parse(TargetFrameworkMoniker[(TargetFrameworkMoniker.IndexOf(VersionPrefix, StringComparison.Ordinal) + VersionPrefix.Length)..]);
 
         [ExcludeFromCodeCoverage]
         public IEnumerable<Text> GetTrace()

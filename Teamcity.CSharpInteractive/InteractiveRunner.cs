@@ -18,8 +18,6 @@ namespace Teamcity.CSharpInteractive
             _stdOut = stdOut;
         }
 
-        public InteractionMode InteractionMode => InteractionMode.Interactive;
-
         public ExitCode Run()
         {
             ShowCursor(true);

@@ -1,11 +1,13 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Google.Protobuf.WellKnownTypes;
     using Grpc.Core;
     using Host;
 
+    [ExcludeFromCodeCoverage]
     internal class ConsoleService: Console.ConsoleBase
     {
         private readonly IStdOut _stdOut;

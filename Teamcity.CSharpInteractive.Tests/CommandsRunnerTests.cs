@@ -65,10 +65,10 @@ namespace Teamcity.CSharpInteractive.Tests
             {
                 new [] { new CodeCommand(), HelpCommand.Shared, ResetCommand.Shared},
                 new [] { new CommandResult(new CodeCommand(), default), new CommandResult(HelpCommand.Shared, true), new CommandResult(ResetCommand.Shared, false)}
-            },
+            }
         };
 
         private CommandsRunner CreateInstance() => 
-            new CommandsRunner(new [] {_commandRunner1.Object, _commandRunner2.Object}, _statistics.Object);
+            new(new [] {_commandRunner1.Object, _commandRunner2.Object}, _statistics.Object);
     }
 }

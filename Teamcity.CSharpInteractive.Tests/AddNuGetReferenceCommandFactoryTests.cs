@@ -126,7 +126,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 "#r",
                 Array.Empty<ICommand>(),
                 false
-            },
+            }
         };
 
         private AddNuGetReferenceCommandFactory CreateInstance() =>

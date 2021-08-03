@@ -29,10 +29,7 @@ namespace Teamcity.CSharpInteractive
             var lines = new List<string>
             {
                 $"#r \"{Path.Combine(_environment.GetPath(SpecialFolder.Bin), "Teamcity.Host.dll")}\"",
-                UsingHost,
-                UsingStaticHost,
-                UsingStaticColor,
-                $"{nameof(Host.ScriptInternal_SetSessionId)}(\"{_session.Id}\");"
+                UsingHost + UsingStaticHost + UsingStaticColor + $"{nameof(Host.ScriptInternal_SetSessionId)}(\"{_session.Id}\");"
             };
             return lines.GetEnumerator();
         }

@@ -24,19 +24,6 @@ namespace Teamcity.CSharpInteractive.Tests
             _stdOut.Setup(i => i.Write(It.IsAny<Text[]>())).Callback<Text[]>(text => _out.Add(string.Join(string.Empty, text.Select(i => i.Value))));
         }
 
-        [Fact]
-        public void ShouldProvideMode()
-        {
-            // Given
-            var runner = CreateInstance();
-
-            // When
-            var mode = runner.InteractionMode;
-            
-            // Then
-            mode.ShouldBe(InteractionMode.Interactive);
-        }
-
         [Theory]
         [MemberData(nameof(Data))]
         internal void ShouldRun(CommandResult[] results, ExitCode expectedExitCode, string[] expectedOut)
@@ -69,7 +56,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new CommandResult[] { new(new CodeCommand(true), null), new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
                 ExitCode.Success,
                 new [] {"> ", ". ", ". ", "> "}
-            },
+            }
         };
 
         private InteractiveRunner CreateInstance() =>

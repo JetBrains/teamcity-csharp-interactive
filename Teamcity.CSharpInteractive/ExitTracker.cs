@@ -30,12 +30,12 @@ namespace Teamcity.CSharpInteractive
             switch (_settings.InteractionMode)
             {
                 case InteractionMode.Interactive:
-                    Console.CancelKeyPress += ConsoleOnCancelKeyPress!;
-                    return Disposable.Create(() => Console.CancelKeyPress -= ConsoleOnCancelKeyPress!);
+                    Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+                    return Disposable.Create(() => Console.CancelKeyPress -= ConsoleOnCancelKeyPress);
 
                 default:
                     AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnProcessExit;
-                    return Disposable.Create(() => AppDomain.CurrentDomain.ProcessExit -= CurrentDomainOnProcessExit!);
+                    return Disposable.Create(() => AppDomain.CurrentDomain.ProcessExit -= CurrentDomainOnProcessExit);
             }
         }
 
