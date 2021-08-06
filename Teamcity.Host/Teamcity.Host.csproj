@@ -9,16 +9,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\csi.proto" GrpcServices="Both" />
-	    <PackageReference Include="Grpc.Tools" Version="2.38.1">
+        <!--Grpc-->
+        <PackageReference Include="Grpc" Version="2.38.1" />
+        <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+        <PackageReference Include="Grpc.Tools" Version="2.38.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-		<PackageReference Include="GrpcDotNetNamedPipes" Version="1.4.2" />
-		<PackageReference Include="Pure.DI" Version="1.0.3">
+        <Protobuf Include="Protos\csi.proto" GrpcServices="Both" />
+        
+        <PackageReference Include="Pure.DI" Version="1.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
     </ItemGroup>
-    
 </Project>

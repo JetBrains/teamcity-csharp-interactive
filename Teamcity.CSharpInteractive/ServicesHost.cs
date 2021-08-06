@@ -3,8 +3,9 @@ namespace Teamcity.CSharpInteractive
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using GrpcDotNetNamedPipes;
+    using System.Linq;
     using Host;
+    using Grpc.Core;
     using Console = Host.Console;
 
     [ExcludeFromCodeCoverage]
@@ -32,23 +33,30 @@ namespace Teamcity.CSharpInteractive
 
         public IDisposable Activate()
         {
-            var server = new NamedPipeServer(_session.Id);
+            var server = new Server
+            {
+                Services =
+                {
+                    Flow.BindService(_flowService),
+                    Console.BindService(_consoleService),
+                    Teamcity.Host.Log.BindService(_logService)
+                },
+                Ports =
+                {
+                    new ServerPort("localhost",0, ServerCredentials.Insecure)
+                }
+            };
             
-            _log.Trace($"gRPC \"{Flow.Descriptor.FullName}\"");
-            Flow.BindService(server.ServiceBinder, _flowService);
-            
-            _log.Trace($"gRPC \"{Console.Descriptor.FullName}\"");
-            Console.BindService(server.ServiceBinder, _consoleService);
-            
-            _log.Trace($"gRPC \"{Teamcity.Host.Log.Descriptor.FullName}\"");
-            Teamcity.Host.Log.BindService(server.ServiceBinder, _logService);
-            
-            _log.Trace($"Starting gRPC on pipe \"{_session.Id}\".");
             server.Start();
+            var boundPort = server.Ports.Single().BoundPort;
+            _session.Port = boundPort;
+            _log.Trace($"Starting gRPC on port \"{boundPort}\".");
+
             return Disposable.Create(() =>
             {
-                server.Dispose();
-                _log.Trace($"Stopped gRPC on pipe \"{_session.Id}\".");
+                _log.Trace($"Stopping gRPC on port \"{boundPort}\".");
+                server.ShutdownAsync().Wait();
+                _log.Trace($"Stopped gRPC on port \"{boundPort}\".");
             });
         }
     }

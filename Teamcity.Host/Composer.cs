@@ -2,7 +2,6 @@ namespace Teamcity.Host
 {
     using System.Diagnostics.CodeAnalysis;
     using Grpc.Core;
-    using GrpcDotNetNamedPipes;
     using Pure.DI;
     using static Pure.DI.Lifetime;
 
@@ -13,6 +12,6 @@ namespace Teamcity.Host
             .Default(Singleton)
             .Bind<CompositionRoot>().To<CompositionRoot>()
             .Bind<ISession>().To<Session>()
-            .Bind<CallInvoker>().To(ctx => new NamedPipeChannel(".", ctx.Resolve<ISession>().Id));
+            .Bind<ChannelBase>().To(ctx => new Channel("localhost", ctx.Resolve<ISession>().Port, ChannelCredentials.Insecure));
     }
 }

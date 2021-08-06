@@ -24,7 +24,7 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             _environment.Setup(i => i.GetPath(SpecialFolder.Bin)).Returns("Bin");
-            _session.SetupGet(i => i.Id).Returns("someId");
+            _session.Setup(i => i.Port).Returns(123);
             var instance = CreateInstance();
 
             // When
@@ -35,7 +35,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new List<string>
                 {
                     $"#r \"{Path.Combine("Bin", "Teamcity.Host.dll")}\"",
-                    HostIntegrationCodeSource.UsingHost + HostIntegrationCodeSource.UsingStaticHost + HostIntegrationCodeSource.UsingStaticColor + $"{nameof(Host.ScriptInternal_SetSessionId)}(\"someId\");"
+                    HostIntegrationCodeSource.UsingHost + HostIntegrationCodeSource.UsingStaticHost + HostIntegrationCodeSource.UsingStaticColor + $"{nameof(Host.ScriptInternal_SetPort)}(123);"
                 });
         }
 

@@ -8,8 +8,7 @@ namespace Teamcity.Host
     {
         private static readonly CompositionRoot Root = Composer.Resolve<CompositionRoot>();
         
-        public static void ScriptInternal_SetSessionId(string sessionId) =>
-            Root.Session.Id = sessionId;
+        public static void ScriptInternal_SetPort(int port) => Root.Session.Port = port;
 
         public static void ScriptInternal_FinishCommand() =>
             Root.Flow.Completed(new Empty());
