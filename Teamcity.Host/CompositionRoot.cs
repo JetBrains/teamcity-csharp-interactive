@@ -4,15 +4,15 @@ namespace Teamcity.Host
     internal class CompositionRoot
     {
         public readonly ISession Session;
-        public readonly Flow.FlowClient Flow;
-        public readonly Console.ConsoleClient Console;
-        public readonly Log.LogClient Log;
+        public readonly FlowService.FlowServiceClient Flow;
+        public readonly ConsoleService.ConsoleServiceClient Console;
+        public readonly LogService.LogServiceClient Log;
         
         public CompositionRoot(
             ISession session,
-            Flow.FlowClient flow,
-            Console.ConsoleClient console,
-            Log.LogClient log)
+            FlowService.FlowServiceClient flow,
+            ConsoleService.ConsoleServiceClient console,
+            LogService.LogServiceClient log)
         {
             Session = session;
             Flow = flow;

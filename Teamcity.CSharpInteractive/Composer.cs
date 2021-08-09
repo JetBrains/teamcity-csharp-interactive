@@ -18,7 +18,7 @@ namespace Teamcity.CSharpInteractive
     using Microsoft.CodeAnalysis.Scripting;
     using Pure.DI;
     using static Pure.DI.Lifetime;
-    using Console = Host.Console;
+    using Console = Host.ConsoleService;
 
     [ExcludeFromCodeCoverage]
     internal static partial class Composer
@@ -95,9 +95,9 @@ namespace Teamcity.CSharpInteractive
             // Messages
             .Bind<ISession>().As(Transient).To(_ => Teamcity.Host.Composer.Resolve<ISession>())
             .Bind<IActive>().To<ServicesHost>()
-            .Bind<Flow.FlowBase>().Bind<IFlow>().To<FlowService>()
-            .Bind<Console.ConsoleBase>().To<ConsoleService>()
-            .Bind<Teamcity.Host.Log.LogBase>().To<LogService>()
+            .Bind<FlowService.FlowServiceBase>().Bind<IFlow>().To<FlowServiceImpl>()
+            .Bind<ConsoleService.ConsoleServiceBase>().To<ConsoleServiceImpl>()
+            .Bind<Teamcity.Host.LogService.LogServiceBase>().To<LogServiceImpl>()
 
             // Service messages
             .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()

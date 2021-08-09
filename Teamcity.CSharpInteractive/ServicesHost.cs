@@ -6,23 +6,23 @@ namespace Teamcity.CSharpInteractive
     using System.Linq;
     using Host;
     using Grpc.Core;
-    using Console = Host.Console;
+    using Console = Host.ConsoleService;
 
     [ExcludeFromCodeCoverage]
     internal class ServicesHost: IActive
     {
         private readonly ILog<ServicesHost> _log;
         private readonly ISession _session;
-        private readonly Flow.FlowBase _flowService;
-        private readonly Console.ConsoleBase _consoleService;
-        private readonly Teamcity.Host.Log.LogBase _logService;
+        private readonly FlowService.FlowServiceBase _flowService;
+        private readonly ConsoleService.ConsoleServiceBase _consoleService;
+        private readonly Teamcity.Host.LogService.LogServiceBase _logService;
 
         public ServicesHost(
             ILog<ServicesHost> log,
             ISession session,
-            Flow.FlowBase flowService,
-            Console.ConsoleBase consoleService,
-            Teamcity.Host.Log.LogBase logService)
+            FlowService.FlowServiceBase flowService,
+            ConsoleService.ConsoleServiceBase consoleService,
+            Teamcity.Host.LogService.LogServiceBase logService)
         {
             _log = log;
             _session = session;
@@ -37,9 +37,9 @@ namespace Teamcity.CSharpInteractive
             {
                 Services =
                 {
-                    Flow.BindService(_flowService),
-                    Console.BindService(_consoleService),
-                    Teamcity.Host.Log.BindService(_logService)
+                    FlowService.BindService(_flowService),
+                    ConsoleService.BindService(_consoleService),
+                    Teamcity.Host.LogService.BindService(_logService)
                 },
                 Ports =
                 {

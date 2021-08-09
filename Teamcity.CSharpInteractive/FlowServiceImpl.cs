@@ -9,7 +9,7 @@ namespace Teamcity.CSharpInteractive
     using Host;
 
     [ExcludeFromCodeCoverage]
-    internal class FlowService: Flow.FlowBase, IFlow
+    internal class FlowServiceImpl: FlowService.FlowServiceBase, IFlow
     {
         public event Action? OnCompleted;
 
