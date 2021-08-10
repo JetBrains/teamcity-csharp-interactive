@@ -35,7 +35,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new List<string>
                 {
                     $"#r \"{Path.Combine("Bin", "Teamcity.Host.dll")}\"",
-                    HostIntegrationCodeSource.UsingSystem + HostIntegrationCodeSource.UsingHost + HostIntegrationCodeSource.UsingStaticHost + HostIntegrationCodeSource.UsingStaticColor + $"{nameof(Host.ScriptInternal_SetPort)}(123);"
+                    HostIntegrationCodeSource.UsingSystem + HostIntegrationCodeSource.UsingStaticHost + HostIntegrationCodeSource.UsingStaticColor + $"{nameof(Host.ScriptInternal_SetPort)}(123);"
                 });
         }
 

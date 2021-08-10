@@ -8,11 +8,11 @@ namespace Teamcity.CSharpInteractive
     using Host;
 
     [ExcludeFromCodeCoverage]
-    internal class ConsoleServiceImpl: ConsoleService.ConsoleServiceBase
+    internal class ConsoleService: Console.ConsoleBase
     {
         private readonly IStdOut _stdOut;
 
-        public ConsoleServiceImpl(IStdOut stdOut) => _stdOut = stdOut;
+        public ConsoleService(IStdOut stdOut) => _stdOut = stdOut;
 
         public override Task<Empty> WriteLine(WriteLineRequest request, ServerCallContext context)
         {

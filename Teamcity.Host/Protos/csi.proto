@@ -6,11 +6,11 @@ option csharp_namespace = "Teamcity.Host";
 
 package csi;
 
-service FlowService {
+service Flow {
   rpc Completed (google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
-service ConsoleService {
+service Console {
   rpc WriteLine (WriteLineRequest) returns (google.protobuf.Empty);
 }
 
@@ -29,7 +29,7 @@ message WriteLineRequest {
   Color color = 2; 
 }
 
-service LogService {
+service Log {
   rpc Error (ErrorRequest) returns (google.protobuf.Empty);
   rpc Warning (WarningRequest) returns (google.protobuf.Empty);
   rpc Info (InfoRequest) returns (google.protobuf.Empty);

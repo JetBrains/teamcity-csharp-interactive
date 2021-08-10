@@ -8,11 +8,11 @@ namespace Teamcity.CSharpInteractive
     using Host;
 
     [ExcludeFromCodeCoverage]
-    internal class LogServiceImpl: Teamcity.Host.LogService.LogServiceBase
+    internal class LogService: Teamcity.Host.Log.LogBase
     {
-        private readonly ILog<LogServiceImpl> _log;
+        private readonly ILog<LogService> _log;
 
-        public LogServiceImpl(ILog<LogServiceImpl> log) => _log = log;
+        public LogService(ILog<LogService> log) => _log = log;
 
         public override Task<Empty> Error(ErrorRequest request, ServerCallContext context)
         {
