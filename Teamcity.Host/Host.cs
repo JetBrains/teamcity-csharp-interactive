@@ -14,7 +14,7 @@ namespace Teamcity.Host
             Root.Flow.Completed(new Empty());
         
         public static void WriteLine() =>
-            Root.Console.WriteLine(new WriteLineRequest { Line = Environment.NewLine, Color = Color.Default});
+            Root.Console.WriteLine(new WriteLineRequest { Line = string.Empty, Color = Color.Default});
 
         public static void WriteLine<T>(T line, Color color = Color.Default) =>
             Root.Console.WriteLine(new WriteLineRequest { Line = line?.ToString(), Color = color});

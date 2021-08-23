@@ -1,31 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\common.props"/>
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
         <AssemblyName>dotnet-csi</AssemblyName>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
         <NoWarn>NU1605</NoWarn>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
-    <PropertyGroup>                                                     
+    <PropertyGroup>
         <PackageType>DotnetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-csi</ToolCommandName>
-        <IsPackable>true</IsPackable>
         <IncludeAssets>All</IncludeAssets>
         <PackageId>TeamCity.csi</PackageId>
         <IncludeAssets>All</IncludeAssets>
         <Title>TeamCity C# script runner</Title>
-        <Authors>NikolayP</Authors>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/NikolayPianikov/teamcity-csharp-interactive</PackageProjectUrl>
         <PackageIcon>_common\icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <Copyright>JetBrains</Copyright>
-        <Company>JetBrains</Company>
         <Description>TeamCity C# script runner</Description>
         <PackageTags>C# csharp script interactive TeamCity</PackageTags>
     </PropertyGroup>

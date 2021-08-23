@@ -2,9 +2,6 @@
 
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 

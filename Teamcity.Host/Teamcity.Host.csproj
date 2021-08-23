@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\common.props"/>
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
         <NoWarn>NU1605</NoWarn>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

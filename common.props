@@ -1,0 +1,16 @@
+﻿<Project>
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Authors>NikolayP</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/NikolayPianikov/teamcity-csharp-interactive</PackageProjectUrl>
+        <Copyright>JetBrains</Copyright>
+        <Company>JetBrains</Company>
+    </PropertyGroup>
+</Project>
+

@@ -17,6 +17,7 @@ namespace Teamcity.CSharpInteractive
         private readonly IPresenter<IEnumerable<ITraceSource>> _tracePresenter;
         private readonly IEnumerable<ITraceSource> _traceSources;
         private readonly IDotnetEnvironment _dotnetEnvironment;
+        internal const string Header = "TeamCity C# Interactive";
 
         public Info(
             [Tag("ToolVersion")] Version version,
@@ -36,7 +37,7 @@ namespace Teamcity.CSharpInteractive
         
         public void ShowHeader()
         {
-            _stdOut.WriteLine(new Text("TeamCity C# Interactive", Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
+            _stdOut.WriteLine(new Text(Header, Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
             if (_settings.InteractionMode != InteractionMode.Interactive)
             {
                 return;
