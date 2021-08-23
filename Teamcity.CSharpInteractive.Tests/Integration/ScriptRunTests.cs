@@ -1,7 +1,7 @@
 namespace Teamcity.CSharpInteractive.Tests.Integration
 {
     using System;
-    using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Core;
     using Shouldly;
@@ -17,7 +17,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run();
+            var result = TestTool.Run();
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -31,7 +31,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(@"Console.WriteLine(""Hello"");");
+            var result = TestTool.Run(@"Console.WriteLine(""Hello"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -49,7 +49,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(@$"WriteLine({writeLineArg});");
+            var result = TestTool.Run(@$"WriteLine({writeLineArg});");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -64,7 +64,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run("WriteLine();");
+            var result = TestTool.Run("WriteLine();");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -79,7 +79,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(
+            var result = TestTool.Run(
                 Array.Empty<string>(),
                 new []{"Abc", "Xyz"},
                 @"WriteLine($""Args: {Args.Length}, {Args[0]}, {Args[1]}"");"
@@ -97,7 +97,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(
+            var result = TestTool.Run(
                 new []
                 {
                     "--property", "Val1=Abc",
@@ -121,7 +121,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(@$"Error(""My error"");");
+            var result = TestTool.Run(@$"Error(""My error"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(1);
@@ -136,7 +136,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(@$"Warning(""My warning"");");
+            var result = TestTool.Run(@$"Warning(""My warning"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -151,7 +151,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(@$"Info(""My info"");");
+            var result = TestTool.Run(@$"Info(""My info"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -170,7 +170,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = Run(
+            var result = TestTool.Run(
                 @$"#r ""{package}""",
                 "using IoC;",
                 "WriteLine(Container.Create());");
@@ -181,25 +181,55 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.StdOut.Any(i => i.Trim() == "Installed:").ShouldBeTrue();
             result.StdOut.Contains(name).ShouldBeTrue();
         }
-
-        private static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, params string[] lines)
+        
+        [Fact]
+        public void ShouldSupportLoad()
         {
+            // Given
             var fileSystem = Composer.Resolve<IFileSystem>();
-            var scriptFile = fileSystem.CreateTempFilePath();
+            var refScriptFile = fileSystem.CreateTempFilePath();
             try
             {
-                fileSystem.AppendAllLines(scriptFile, lines);
-                var allArgs = new List<string>(args) { scriptFile };
-                allArgs.AddRange(scriptArgs);
-                return Composer.Resolve<IProcessRunner>().Run(allArgs.Select(i => new CommandLineArgument(i)), Array.Empty<EnvironmentVariable>());
+                fileSystem.AppendAllLines(refScriptFile, new []{ @"Console.WriteLine(""Hello"");" });
+                
+                // When
+                var result = TestTool.Run(@$"#load ""{refScriptFile}""");
+                
+                // Then
+                result.ExitCode.Value.ShouldBe(0);
+                result.StdErr.ShouldBeEmpty();
+                result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
+                result.StdOut.Contains("Hello").ShouldBeTrue();
             }
             finally
             {
-                fileSystem.DeleteFile(scriptFile);
+                fileSystem.DeleteFile(refScriptFile);
             }
         }
         
-        private static IProcessResult Run(params string[] lines) =>
-            Run(Array.Empty<string>(), Array.Empty<string>(), lines);
+        [Fact]
+        public void ShouldSupportLoadWhenRelativePath()
+        {
+            // Given
+            var fileSystem = Composer.Resolve<IFileSystem>();
+            var refScriptFile = fileSystem.CreateTempFilePath();
+            try
+            {
+                fileSystem.AppendAllLines(refScriptFile, new []{ @"Console.WriteLine(""Hello"");" });
+                
+                // When
+                var result = TestTool.Run(@$"#load ""{Path.GetFileName(refScriptFile)}""");
+                
+                // Then
+                result.ExitCode.Value.ShouldBe(0);
+                result.StdErr.ShouldBeEmpty();
+                result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
+                result.StdOut.Contains("Hello").ShouldBeTrue();
+            }
+            finally
+            {
+                fileSystem.DeleteFile(refScriptFile);
+            }
+        }
     }
 }
