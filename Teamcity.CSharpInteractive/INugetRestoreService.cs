@@ -7,7 +7,7 @@ namespace Teamcity.CSharpInteractive
     {
         bool Restore(
             string packageId,
-            NuGetVersion? version,
+            VersionRange? versionRange,
             IEnumerable<string> sources,
             IEnumerable<string> fallbackFolders,
             string outputPath,

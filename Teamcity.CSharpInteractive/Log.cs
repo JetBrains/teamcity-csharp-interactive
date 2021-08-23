@@ -52,7 +52,7 @@ namespace Teamcity.CSharpInteractive
             }
 
             _statistics.RegisterWarning(string.Join("", warning.Select(i => i.Value)));
-            _stdErr.WriteLine(GetMessage(warning, Color.Warning));
+            _stdOut.WriteLine(GetMessage(warning, Color.Warning));
         }
 
         public void Info(params Text[] message)

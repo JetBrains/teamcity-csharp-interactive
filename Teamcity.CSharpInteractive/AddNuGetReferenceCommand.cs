@@ -8,15 +8,15 @@ namespace Teamcity.CSharpInteractive
     internal class AddNuGetReferenceCommand: ICommand
     {
         public readonly string PackageId;
-        public readonly NuGetVersion? Version;
+        public readonly VersionRange? VersionRange;
 
-        public AddNuGetReferenceCommand(string packageId, NuGetVersion? version)
+        public AddNuGetReferenceCommand(string packageId, VersionRange? versionRange)
         {
             PackageId = packageId;
-            Version = version;
+            VersionRange = versionRange;
         }
         
-        public string Name => $"Package {PackageId} {Version?.ToString() ?? "latest"}";
+        public string Name => $"Package {PackageId} {VersionRange?.ToString() ?? "latest"}";
 
         public bool Internal => false;
 
@@ -26,9 +26,9 @@ namespace Teamcity.CSharpInteractive
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
             AddNuGetReferenceCommand other = (AddNuGetReferenceCommand) obj;
-            return PackageId == other.PackageId && Equals(Version?.ToString(), other.Version?.ToString());
+            return PackageId == other.PackageId && Equals(VersionRange?.ToString(), other.VersionRange?.ToString());
         }
 
-        public override int GetHashCode() => HashCode.Combine(PackageId, Version?.ToString());
+        public override int GetHashCode() => HashCode.Combine(PackageId, VersionRange?.ToString());
     }
 }

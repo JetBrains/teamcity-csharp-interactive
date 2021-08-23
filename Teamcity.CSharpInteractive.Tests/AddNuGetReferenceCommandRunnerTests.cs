@@ -32,7 +32,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
         public AddNuGetReferenceCommandRunnerTests()
         {
-            _command = new AddNuGetReferenceCommand("Abc", new NuGetVersion(1, 2, 3));
+            _command = new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)));
             
             _log = new Mock<ILog<AddNuGetReferenceCommandRunner>>();
             _log.Setup(i => i.Block(It.IsAny<Text[]>())).Returns(Disposable.Empty);
@@ -49,7 +49,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _nugetEnv.SetupGet(i => i.PackagesPath).Returns(PackagesPath);
             
             _nugetRestoreService = new Mock<INugetRestoreService>();
-            _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.Version, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(true);
+            _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(true);
 
             ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
             ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
@@ -112,7 +112,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.Version, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(false);
+            _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(false);
             var result = runner.TryRun(_command);
 
             // Then

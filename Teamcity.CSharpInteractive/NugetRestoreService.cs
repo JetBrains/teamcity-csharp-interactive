@@ -29,13 +29,13 @@ namespace Teamcity.CSharpInteractive
 
         public bool Restore(
             string packageId,
-            NuGetVersion? version,
+            VersionRange? versionRange,
             IEnumerable<string> sources,
             IEnumerable<string> fallbackFolders,
             string outputPath,
             string packagesPath)
         {
-            _log.Trace($"Restore nuget package {packageId} {version} to \"{outputPath}\" and \"{packagesPath}\".");
+            _log.Trace($"Restore nuget package {packageId} {versionRange} to \"{outputPath}\" and \"{packagesPath}\".");
             var restoreGraphItems = new[]
             {
                 CreateTaskItem("RestoreSpec"),
@@ -54,7 +54,7 @@ namespace Teamcity.CSharpInteractive
                     "Dependency",
                     ("TargetFrameworks", _dotnetEnvironment.Tfm),
                     ("Id", packageId),
-                    ("VersionRange", version?.ToString())),
+                    ("VersionRange", versionRange?.ToString())),
 
                 CreateTaskItem(
                     "TargetFrameworkInformation",

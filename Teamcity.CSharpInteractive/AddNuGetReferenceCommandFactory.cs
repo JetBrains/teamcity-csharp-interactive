@@ -7,7 +7,7 @@ namespace Teamcity.CSharpInteractive
 
     internal class AddNuGetReferenceCommandFactory: ICommandFactory<string>
     {
-        private static readonly Regex NuGetReferenceRegex = new(@"^\s*#r\s+""nuget:\s*([^,\s]+?)(,\s*([^\s]+?)\s*|\s*)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        private static readonly Regex NuGetReferenceRegex = new(@"^\s*#r\s+""nuget:\s*([^,\s]+?)(,(.+?)|\s*)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly ILog<AddNuGetReferenceCommandFactory> _log;
 
         public AddNuGetReferenceCommandFactory(ILog<AddNuGetReferenceCommandFactory> log) =>
@@ -24,24 +24,24 @@ namespace Teamcity.CSharpInteractive
             }
 
             var packageIdStr = match.Groups[1].Value;
-            var versionStr = match.Groups[3].Value;
+            var versionRangeStr = match.Groups[3].Value.Trim();
             
-            NuGetVersion? version = null;
-            if (!string.IsNullOrWhiteSpace(versionStr))
+            VersionRange? versionRange = null;
+            if (!string.IsNullOrWhiteSpace(versionRangeStr))
             {
-                if (NuGetVersion.TryParse(versionStr, out var curVersion))
+                if (VersionRange.TryParse(versionRangeStr, out var curVersionRange))
                 {
-                    version = curVersion;
+                    versionRange = curVersionRange;
                 }
                 else
                 {
-                    _log.Error(ErrorId.CannotParsePackageVersion, $"Cannot parse the package version \"{versionStr}\".");
+                    _log.Error(ErrorId.CannotParsePackageVersion, $"Cannot parse the package version range \"{versionRangeStr}\".");
                     yield break;
                 }
             }
                 
-            _log.Trace(new []{new Text($"REPL #r \"nuget:{packageIdStr}, {version}\"")});
-            yield return new AddNuGetReferenceCommand(packageIdStr, version);
+            _log.Trace(new []{new Text($"REPL #r \"nuget:{packageIdStr}, {versionRange}\"")});
+            yield return new AddNuGetReferenceCommand(packageIdStr, versionRange);
         }
     }
 }

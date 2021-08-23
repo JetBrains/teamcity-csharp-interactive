@@ -37,7 +37,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Any(i => i == "Hello").ShouldBeTrue();
+            result.StdOut.Contains("Hello").ShouldBeTrue();
         }
         
         [Theory]
@@ -55,7 +55,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Any(i => i == expectedOutput).ShouldBeTrue();
+            result.StdOut.Contains(expectedOutput).ShouldBeTrue();
         }
         
         [Fact]
@@ -70,7 +70,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Any(i => i == "").ShouldBeTrue();
+            result.StdOut.Contains(string.Empty).ShouldBeTrue();
         }
         
         [Fact]
@@ -88,7 +88,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Then
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
-            result.StdOut.Any(i => i == "Args: 2, Abc, Xyz").ShouldBeTrue();
+            result.StdOut.Contains("Args: 2, Abc, Xyz").ShouldBeTrue();
         }
         
         [Fact]
@@ -112,7 +112,74 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Then
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
-            result.StdOut.Any(i => i == "AbcXyzASD_4").ShouldBeTrue();
+            result.StdOut.Contains("AbcXyzASD_4").ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void ShouldSupportError()
+        {
+            // Given
+
+            // When
+            var result = Run(@$"Error(""My error"");");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(1);
+            result.StdErr.ShouldBe(new []{ "My error" });
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 2);
+            result.StdOut.Contains("My error").ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void ShouldSupportWarning()
+        {
+            // Given
+
+            // When
+            var result = Run(@$"Warning(""My warning"");");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty();
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 3);
+            result.StdOut.Contains("My warning").ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void ShouldSupportInfo()
+        {
+            // Given
+
+            // When
+            var result = Run(@$"Info(""My info"");");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty();
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
+            result.StdOut.Contains("My info").ShouldBeTrue();
+        }
+        
+        [Theory()]
+        [InlineData("nuget: IoC.Container, 1.3.6", "//1")]
+        [InlineData("nuget:IoC.Container,1.3.6", "//1")]
+        [InlineData("nuget: IoC.Container, [1.3.6, 2)", "//1")]
+        [InlineData("nuget: IoC.Container", "container://1")]
+        public void ShouldSupportNuGetRestore(string package, string name)
+        {
+            // Given
+
+            // When
+            var result = Run(
+                @$"#r ""{package}""",
+                "using IoC;",
+                "WriteLine(Container.Create());");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty();
+            result.StdOut.Any(i => i.Trim() == "Installed:").ShouldBeTrue();
+            result.StdOut.Contains(name).ShouldBeTrue();
         }
 
         private static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, params string[] lines)

@@ -2,6 +2,7 @@ namespace Teamcity.CSharpInteractive.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Moq;
     using NuGet.Versioning;
@@ -81,19 +82,25 @@ namespace Teamcity.CSharpInteractive.Tests
             new object[]
             {
                 "#r \"nuget:Abc, 1.2.3\"",
-                new [] {new AddNuGetReferenceCommand("Abc", new NuGetVersion(1,2,3))},
+                new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1,2,3)))},
+                false
+            },
+            new object[]
+            {
+                "#r \"nuget:Abc, [1.2.3, 1.4)\"",
+                new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1,2,3), true, new NuGetVersion(1,4, 0), false))},
                 false
             },
             new object[]
             {
                 "  #r  \"NuGet:  Abc,    1.2.3 \"",
-                new [] {new AddNuGetReferenceCommand("Abc", new NuGetVersion(1,2,3))},
+                new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1,2,3)))},
                 false
             },
             new object[]
             {
                 "#r \"nuget:Abc, 1.2.3-beta1\"",
-                new [] {new AddNuGetReferenceCommand("Abc", new NuGetVersion(new Version(1,2,3), "beta1"))},
+                new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(new Version(1,2,3), "beta1")))},
                 false
             },
             new object[]
@@ -107,7 +114,7 @@ namespace Teamcity.CSharpInteractive.Tests
             {
                 "#r \"nuget:Abc, 1.2.3 xyz\"",
                 Array.Empty<ICommand>(),
-                false
+                true
             },
             new object[]
             {
