@@ -160,7 +160,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.StdOut.Contains("My info").ShouldBeTrue();
         }
         
-        [Theory()]
+        [Theory]
         [InlineData("nuget: IoC.Container, 1.3.6", "//1")]
         [InlineData("nuget:IoC.Container,1.3.6", "//1")]
         [InlineData("nuget: IoC.Container, [1.3.6, 2)", "//1")]
@@ -230,6 +230,35 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             {
                 fileSystem.DeleteFile(refScriptFile);
             }
+        }
+        
+        [Fact]
+        public void ShouldProcessCompilationError()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run("i = 10;");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(1);
+            result.StdErr.Any(i => i.Contains("CS0103")).ShouldBeTrue();
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 2);
+            result.StdOut.Any(i => i.Contains("CS0103")).ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void ShouldProcessRuntimeException()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(@"throw new Exception(""Test"");");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(1);
+            result.StdErr.Any(i => i.Contains("System.Exception: Test")).ShouldBeTrue();
+            result.StdOut.Any(i => i.Contains("System.Exception: Test")).ShouldBeTrue();
         }
     }
 }
