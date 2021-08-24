@@ -23,13 +23,13 @@ namespace Teamcity.CSharpInteractive.Tests
             // Given
             var command = new ScriptCommand("abc", "code");
             var commandRunner = CreateInstance();
-            _csharpScriptRunner.Setup(i => i.Run("code")).Returns(result);
+            _csharpScriptRunner.Setup(i => i.Run(command, "code")).Returns(result);
 
             // When
             var actualResult = commandRunner.TryRun(command);
 
             // Then
-            _csharpScriptRunner.Verify(i => i.Run("code"));
+            _csharpScriptRunner.Verify(i => i.Run(command, "code"));
             actualResult.Command.ShouldBe(command);
             actualResult.Success.ShouldBe(result);
         }

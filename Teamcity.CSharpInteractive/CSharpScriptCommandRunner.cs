@@ -27,7 +27,7 @@ namespace Teamcity.CSharpInteractive
             switch (command)
             {
                 case ScriptCommand scriptCommand:
-                    var result = new CommandResult(command, _scriptRunner.Run(scriptCommand.Script));
+                    var result = new CommandResult(command, _scriptRunner.Run(command, scriptCommand.Script));
                     if (!command.Internal)
                     {
                         using var finisEvent = new ManualResetEvent(false);
@@ -36,7 +36,7 @@ namespace Teamcity.CSharpInteractive
                         _flow.OnCompleted += FlowOnOnCompleted;
                         try
                         {
-                            _scriptRunner.Run($"{nameof(Host.ScriptInternal_FinishCommand)}();");
+                            _scriptRunner.Run(command, $"{nameof(Host.ScriptInternal_FinishCommand)}();");
                             if (!finisEvent.WaitOne(10000))
                             {
                                 _log.Trace("Timeout while waiting for a finish of a command.");

@@ -68,7 +68,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<IFileTextReader>().To<FileTextReader>()
             .Bind<IPresenter<IEnumerable<ITraceSource>>>().To<TracePresenter>()
             .Bind<IPresenter<IStatistics>>().To<StatisticsPresenter>()
-            .Bind<IPresenter<IEnumerable<Diagnostic>>>().To<DiagnosticsPresenter>()
+            .Bind<IPresenter<CompilationDiagnostics>>().To<DiagnosticsPresenter>()
             .Bind<IPresenter<ScriptState<object>>>().To<ScriptStatePresenter>()
             .Bind<IBuildEngine>().To<BuildEngine>()
             .Bind<INugetRestoreService>().To<NugetRestoreService>()

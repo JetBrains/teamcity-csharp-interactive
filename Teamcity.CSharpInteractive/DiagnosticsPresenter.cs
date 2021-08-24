@@ -2,20 +2,20 @@
 // ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 namespace Teamcity.CSharpInteractive
 {
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using Microsoft.CodeAnalysis;
 
     [ExcludeFromCodeCoverage]
-    internal class DiagnosticsPresenter: IPresenter<IEnumerable<Diagnostic>>
+    internal class DiagnosticsPresenter: IPresenter<CompilationDiagnostics>
     {
         private readonly ILog<DiagnosticsPresenter> _log;
 
         public DiagnosticsPresenter(ILog<DiagnosticsPresenter> log) => _log = log;
 
-        public void Show(IEnumerable<Diagnostic> data)
+        public void Show(CompilationDiagnostics data)
         {
-            foreach (var diagnostic in data)
+            foreach (var diagnostic in data.Diagnostics)
             {
                 switch (diagnostic.Severity)
                 {
@@ -32,10 +32,27 @@ namespace Teamcity.CSharpInteractive
                         break;
 
                     case DiagnosticSeverity.Error:
-                        _log.Error(new ErrorId(diagnostic.Id), new []{new Text(diagnostic.ToString())});
+                        var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(data.SourceCommand.Name))}";
+                        _log.Error(new ErrorId(errorId), new []{new Text(diagnostic.ToString())});
                         break;
                 }
             }
+        }
+        
+        private static string GetProperty(string? value, string prefix = ",") =>
+            string.IsNullOrWhiteSpace(value) ? string.Empty : $"{prefix}{value}";
+
+        private static string GetFileName(string file)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(file))
+                {
+                    return Path.GetFileName(file);
+                }
+            }
+            catch { }
+            return string.Empty;
         }
     }
 }

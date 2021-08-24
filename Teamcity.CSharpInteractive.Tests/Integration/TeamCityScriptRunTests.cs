@@ -52,7 +52,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
-            messages.ShouldContainBuildProblem(i => i == "My error", "errId");
+            messages.ShouldContainBuildProblem(i => i == "My error", i => i == "errId");
         }
         
         [Fact]
@@ -98,7 +98,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
-            messages.ShouldContainBuildProblem(i => i.Contains("error CS0103"), "CS0103");
+            messages.ShouldContainBuildProblem(i => i.Contains("error CS0103"), i => i.StartsWith("CS0103,0,1"));
         }
         
         [Fact]
@@ -113,7 +113,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
-            messages.ShouldContainBuildProblem(i => i.Contains("System.Exception: Test"), "CSI006");
+            messages.ShouldContainBuildProblem(i => i.Contains("System.Exception: Test"), i => i == "CSI006");
         }
     }
 }

@@ -47,10 +47,10 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
                     && textMatcher(i.GetValue("text")))
                 .ShouldBe(1);
 
-        public static void ShouldContainBuildProblem(this IEnumerable<IServiceMessage> messages, Predicate<string> errorMatcher, string errorId = "Unknown") =>
+        public static void ShouldContainBuildProblem(this IEnumerable<IServiceMessage> messages, Predicate<string> errorMatcher, Predicate<string> errorIdMatcher) =>
             messages.Count(i => 
                     i.Name == "buildProblem"
-                    && i.GetValue("identity") == errorId
+                    && errorIdMatcher(i.GetValue("identity"))
                     && errorMatcher(i.GetValue("description")))
                 .ShouldBe(1);
         

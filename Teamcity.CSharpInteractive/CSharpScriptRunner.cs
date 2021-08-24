@@ -1,9 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using Microsoft.CodeAnalysis;
+    using System.Linq;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
@@ -11,7 +10,7 @@ namespace Teamcity.CSharpInteractive
     {
         private readonly ILog<CSharpScriptRunner> _log;
         private readonly IPresenter<ScriptState<object>> _scriptStatePresenter;
-        private readonly IPresenter<IEnumerable<Diagnostic>> _diagnosticsPresenter;
+        private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
         private ScriptState<object>? _scriptState;
         internal static readonly ScriptOptions Options = ScriptOptions.Default
             .AddImports("System");
@@ -19,14 +18,14 @@ namespace Teamcity.CSharpInteractive
         public CSharpScriptRunner(
             ILog<CSharpScriptRunner> log,
             IPresenter<ScriptState<object>> scriptStatePresenter,
-            IPresenter<IEnumerable<Diagnostic>> diagnosticsPresenter)
+            IPresenter<CompilationDiagnostics> diagnosticsPresenter)
         {
             _log = log;
             _scriptStatePresenter = scriptStatePresenter;
             _diagnosticsPresenter = diagnosticsPresenter;
         }
 
-        public bool Run(string script)
+        public bool Run(ICommand sourceCommand, string script)
         {
             var success = true;
             try
@@ -48,11 +47,11 @@ namespace Teamcity.CSharpInteractive
 
                 stopwatch.Stop();
                 _log.Trace(new Text($"Time Elapsed {stopwatch.Elapsed:g}"));
-                _diagnosticsPresenter.Show(_scriptState.Script.GetCompilation().GetDiagnostics());
+                _diagnosticsPresenter.Show(new CompilationDiagnostics(sourceCommand, _scriptState.Script.GetCompilation().GetDiagnostics().ToList().AsReadOnly()));
             }
             catch (CompilationErrorException e)
             {
-                _diagnosticsPresenter.Show(e.Diagnostics);
+                _diagnosticsPresenter.Show(new CompilationDiagnostics(sourceCommand, e.Diagnostics.ToList().AsReadOnly()));
                 success = false;
             }
             finally

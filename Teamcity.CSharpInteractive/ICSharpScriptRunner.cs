@@ -2,7 +2,7 @@ namespace Teamcity.CSharpInteractive
 {
     internal interface ICSharpScriptRunner
     {
-        bool Run(string script);
+        bool Run(ICommand sourceCommand, string script);
 
         void Reset();
     }

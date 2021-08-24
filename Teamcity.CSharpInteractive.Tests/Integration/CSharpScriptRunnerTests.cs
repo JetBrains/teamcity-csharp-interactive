@@ -12,7 +12,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
     {
         private readonly Mock<ILog<CSharpScriptRunner>> _log;
         private readonly Mock<IPresenter<ScriptState<object>>> _scriptStatePresenter;
-        private readonly Mock<IPresenter<IEnumerable<Diagnostic>>> _diagnosticsPresenter;
+        private readonly Mock<IPresenter<CompilationDiagnostics>> _diagnosticsPresenter;
         private readonly List<Text> _errors = new();
         private readonly List<Diagnostic> _diagnostics = new();
 
@@ -21,8 +21,8 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             _log = new Mock<ILog<CSharpScriptRunner>>();
             _log.Setup(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, i) => _errors.AddRange(i));
             _scriptStatePresenter = new Mock<IPresenter<ScriptState<object>>>();
-            _diagnosticsPresenter = new Mock<IPresenter<IEnumerable<Diagnostic>>>();
-            _diagnosticsPresenter.Setup(i => i.Show(It.IsAny<IEnumerable<Diagnostic>>())).Callback<IEnumerable<Diagnostic>>(i => _diagnostics.AddRange(i));
+            _diagnosticsPresenter = new Mock<IPresenter<CompilationDiagnostics>>();
+            _diagnosticsPresenter.Setup(i => i.Show(It.IsAny<CompilationDiagnostics>())).Callback<CompilationDiagnostics>(i => _diagnostics.AddRange(i.Diagnostics));
         }
 
         [Theory]
@@ -33,13 +33,13 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = CreateInstance();
             
             // When
-            var result = runner.Run(script);
+            var result = runner.Run(Mock.Of<ICommand>(), script);
 
             // Then
             result.ShouldBeTrue();
             _errors.Count.ShouldBe(0);
             _diagnostics.Count.ShouldBe(0);
-            _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<IEnumerable<Diagnostic>>()));
+            _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<CompilationDiagnostics>()));
             _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
         }
 
@@ -59,14 +59,14 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = CreateInstance();
             
             // When
-            runner.Run("int i=10;");
-            var result = runner.Run("Console.WriteLine(i);");
+            runner.Run(Mock.Of<ICommand>(), "int i=10;");
+            var result = runner.Run(Mock.Of<ICommand>(), "Console.WriteLine(i);");
 
             // Then
             result.ShouldBeTrue();
             _errors.Count.ShouldBe(0);
             _diagnostics.Count.ShouldBe(0);
-            _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<IEnumerable<Diagnostic>>()));
+            _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<CompilationDiagnostics>()));
             _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
         }
         
@@ -77,9 +77,9 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = CreateInstance();
             
             // When
-            runner.Run("int i=10;");
+            runner.Run(Mock.Of<ICommand>(), "int i=10;");
             runner.Reset();
-            var result = runner.Run("Console.WriteLine(i);");
+            var result = runner.Run(Mock.Of<ICommand>(), "Console.WriteLine(i);");
 
             // Then
             result.ShouldBeFalse();
@@ -94,7 +94,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = CreateInstance();
             
             // When
-            var result = runner.Run("string i=10;");
+            var result = runner.Run(Mock.Of<ICommand>(), "string i=10;");
 
             // Then
             result.ShouldBeFalse();
@@ -110,8 +110,8 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = CreateInstance();
             
             // When
-            runner.Run("int j=10;");
-            var result = runner.Run("string i=10;");
+            runner.Run(Mock.Of<ICommand>(), "int j=10;");
+            var result = runner.Run(Mock.Of<ICommand>(), "string i=10;");
 
             // Then
             result.ShouldBeFalse();
@@ -127,7 +127,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = CreateInstance();
             
             // When
-            var result = runner.Run("throw new Exception();");
+            var result = runner.Run(Mock.Of<ICommand>(), "throw new Exception();");
 
             // Then
             result.ShouldBeFalse();
