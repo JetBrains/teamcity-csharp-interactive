@@ -82,6 +82,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(
                 Array.Empty<string>(),
                 new []{"Abc", "Xyz"},
+                Array.Empty<EnvironmentVariable>(),
                 @"WriteLine($""Args: {Args.Length}, {Args[0]}, {Args[1]}"");"
             );
             
@@ -106,6 +107,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
                     "/p", "4=_"
                 },
                 Array.Empty<string>(),
+                Array.Empty<EnvironmentVariable>(),
                 @"WriteLine(Props[""Val1""] + Props[""val2""] + Props[""val3""] + Props[""4""] + Props.Count);"
             );
             
@@ -178,7 +180,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Then
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
-            result.StdOut.Any(i => i.Trim() == "Installed:").ShouldBeTrue();
+            result.StdOut.Count(i => i.Trim() == "Installed:").ShouldBe(1);
             result.StdOut.Contains(name).ShouldBeTrue();
         }
         
@@ -242,9 +244,9 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             
             // Then
             result.ExitCode.Value.ShouldBe(1);
-            result.StdErr.Any(i => i.Contains("CS0103")).ShouldBeTrue();
+            result.StdErr.Count(i => i.Contains("CS0103")).ShouldBe(1);
             result.StdOut.Count.ShouldBe(InitialLinesCount + 2);
-            result.StdOut.Any(i => i.Contains("CS0103")).ShouldBeTrue();
+            result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(1);
         }
         
         [Fact]
@@ -257,8 +259,8 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             
             // Then
             result.ExitCode.Value.ShouldBe(1);
-            result.StdErr.Any(i => i.Contains("System.Exception: Test")).ShouldBeTrue();
-            result.StdOut.Any(i => i.Contains("System.Exception: Test")).ShouldBeTrue();
+            result.StdErr.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
+            result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
         }
     }
 }

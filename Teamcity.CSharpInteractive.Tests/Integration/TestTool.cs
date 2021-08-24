@@ -4,22 +4,22 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
     using System.Collections.Generic;
     using System.Linq;
     using Core;
-    using CommandLineArgument = CSharpInteractive.CommandLineArgument;
-    using Composer = CSharpInteractive.Composer;
-    using IFileSystem = CSharpInteractive.IFileSystem;
+    using JetBrains.TeamCity.ServiceMessages;
+    using JetBrains.TeamCity.ServiceMessages.Read;
+    using Shouldly;
 
     internal static class TestTool
     {
-        public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, params string[] lines)
+        public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<EnvironmentVariable> vars, params string[] lines)
         {
-            var fileSystem = Core.Composer.Resolve<Core.IFileSystem>();
+            var fileSystem = Composer.Resolve<IFileSystem>();
             var scriptFile = fileSystem.CreateTempFilePath();
             try
             {
                 fileSystem.AppendAllLines(scriptFile, lines);
                 var allArgs = new List<string>(args) { scriptFile };
                 allArgs.AddRange(scriptArgs);
-                return Core.Composer.Resolve<IProcessRunner>().Run(allArgs.Select(i => new Core.CommandLineArgument(i)), Array.Empty<EnvironmentVariable>());
+                return Composer.Resolve<IProcessRunner>().Run(allArgs.Select(i => new CommandLineArgument(i)), vars);
             }
             finally
             {
@@ -28,6 +28,45 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
         }
         
         public static IProcessResult Run(params string[] lines) =>
-            Run(Array.Empty<string>(), Array.Empty<string>(), lines);
+            Run(Array.Empty<string>(), Array.Empty<string>(), Array.Empty<EnvironmentVariable>(), lines);
+        
+        public static IProcessResult RunUnderTeamCity(params string[] lines) =>
+            Run(Array.Empty<string>(), Array.Empty<string>(),  new []{new EnvironmentVariable("TEAMCITY_VERSION", "2021.2")}, lines);
+
+        public static void ShouldContainNormalTextMessage(this IEnumerable<IServiceMessage> messages, Predicate<string> textMatcher) =>
+            messages.Count(i => 
+                    i.Name == "message"
+                    && i.GetValue("status") == "NORMAL"
+                    && textMatcher(i.GetValue("text")))
+                .ShouldBe(1);
+        
+        public static void ShouldContainWarningTextMessage(this IEnumerable<IServiceMessage> messages, Predicate<string> textMatcher) =>
+            messages.Count(i => 
+                    i.Name == "message"
+                    && i.GetValue("status") == "WARNING"
+                    && textMatcher(i.GetValue("text")))
+                .ShouldBe(1);
+
+        public static void ShouldContainBuildProblem(this IEnumerable<IServiceMessage> messages, Predicate<string> errorMatcher, string errorId = "Unknown") =>
+            messages.Count(i => 
+                    i.Name == "buildProblem"
+                    && i.GetValue("identity") == errorId
+                    && errorMatcher(i.GetValue("description")))
+                .ShouldBe(1);
+        
+        public static IReadOnlyCollection<IServiceMessage> ParseMessages(this IEnumerable<string> lines) =>
+            lines.ParseMessagesInternal().ToList().AsReadOnly();
+
+        private static IEnumerable<IServiceMessage> ParseMessagesInternal(this IEnumerable<string> lines)
+        {
+            var parser = Composer.Resolve<IServiceMessageParser>();
+            foreach (var line in lines)
+            {
+                foreach (var message in parser.ParseServiceMessages(line))
+                {
+                    yield return message;
+                }
+            }
+        }
     }
 }
