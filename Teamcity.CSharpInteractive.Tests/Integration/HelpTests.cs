@@ -21,7 +21,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var runner = Composer.Resolve<IProcessRunner>();
             
             // When
-            var result = runner.Run(arg);
+            var result = runner.Run(new []{new CommandLineArgument(arg)}, TestTool.DefaultVars);
             
             // Then
             result.ExitCode.Value.ShouldBe(0);

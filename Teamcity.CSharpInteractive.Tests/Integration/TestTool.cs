@@ -10,6 +10,16 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
 
     internal static class TestTool
     {
+        public static readonly EnvironmentVariable[] DefaultVars = {
+            new EnvironmentVariable("TEAMCITY_VERSION", string.Empty),
+            new EnvironmentVariable("TEAMCITY_PROJECT_NAME", string.Empty)
+        };
+
+        private static readonly EnvironmentVariable[] TeamCityVars = {
+            new EnvironmentVariable("TEAMCITY_VERSION", "2021.2"),
+            new EnvironmentVariable("TEAMCITY_PROJECT_NAME", "Test")
+        };
+
         public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<EnvironmentVariable> vars, params string[] lines)
         {
             var fileSystem = Composer.Resolve<IFileSystem>();
@@ -28,10 +38,10 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
         }
         
         public static IProcessResult Run(params string[] lines) =>
-            Run(Array.Empty<string>(), Array.Empty<string>(), Array.Empty<EnvironmentVariable>(), lines);
+            Run(Array.Empty<string>(), Array.Empty<string>(), DefaultVars, lines);
         
         public static IProcessResult RunUnderTeamCity(params string[] lines) =>
-            Run(Array.Empty<string>(), Array.Empty<string>(),  new []{new EnvironmentVariable("TEAMCITY_VERSION", "2021.2")}, lines);
+            Run(Array.Empty<string>(), Array.Empty<string>(), TeamCityVars, lines);
 
         public static void ShouldContainNormalTextMessage(this IEnumerable<IServiceMessage> messages, Predicate<string> textMatcher) =>
             messages.Count(i => 

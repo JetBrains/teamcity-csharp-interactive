@@ -82,7 +82,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(
                 Array.Empty<string>(),
                 new []{"Abc", "Xyz"},
-                Array.Empty<EnvironmentVariable>(),
+                TestTool.DefaultVars,
                 @"WriteLine($""Args: {Args.Length}, {Args[0]}, {Args[1]}"");"
             );
             
@@ -107,7 +107,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
                     "/p", "4=_"
                 },
                 Array.Empty<string>(),
-                Array.Empty<EnvironmentVariable>(),
+                TestTool.DefaultVars,
                 @"WriteLine(Props[""Val1""] + Props[""val2""] + Props[""val3""] + Props[""4""] + Props.Count);"
             );
             
