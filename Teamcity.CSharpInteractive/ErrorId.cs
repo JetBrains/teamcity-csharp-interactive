@@ -12,6 +12,7 @@ namespace Teamcity.CSharpInteractive
         public static readonly ErrorId AbnormalProgramTermination = new("CSI004");
         public static readonly ErrorId NotSupported = new("CSI005");
         public static readonly ErrorId Exception = new("CSI006");
+        public static readonly ErrorId UncompletedScript = new("CSI007");
 
         public readonly string Id;
 

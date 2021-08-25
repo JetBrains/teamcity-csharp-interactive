@@ -1,6 +1,7 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -87,6 +88,24 @@ namespace Teamcity.CSharpInteractive.Tests
                 ExitCode.Fail
             }
         };
+        
+        [Fact]
+        public void ShouldShowErrorWhenScriptIsUncompleted()
+        {
+            // Given
+            var runner = CreateInstance();
+            //_log.Setup(i => i.Error(ErrorId.UncompletedScript, It.IsAny<string>()));
+            _commandSource.Setup(i => i.GetCommands()).Returns(new ICommand[] {new ScriptCommand(string.Empty, string.Empty), new CodeCommand()});
+            _statistics.Setup(i => i.Errors).Returns(new List<string>());
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            _commandsRunner.Setup(i => i.Run(It.IsAny<IEnumerable<ICommand>>())).Callback<IEnumerable<ICommand>>(i => i.Count()).Returns(new CommandResult[] { new(new ScriptCommand(string.Empty, string.Empty), true) });
+            
+            // When
+            var actualExitCode = runner.Run();
+
+            // Then
+            _log.Verify(i => i.Error(ErrorId.UncompletedScript, It.IsAny<Text[]>()));
+        }
 
         private ScriptRunner CreateInstance() =>
             new(

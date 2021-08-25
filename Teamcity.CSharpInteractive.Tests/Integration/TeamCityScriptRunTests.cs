@@ -115,5 +115,20 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             var messages = result.StdOut.ParseMessages();
             messages.ShouldContainBuildProblem(i => i.Contains("System.Exception: Test"), i => i == "CSI006");
         }
+        
+        [Fact]
+        public void ShouldSendBuildProblemWhenScripIsUncompleted()
+        {
+            // Given
+
+            // When
+            var result = TestTool.RunUnderTeamCity(@"var i=10");
+
+            // Then
+            result.ExitCode.Value.ShouldBe(1);
+            result.StdErr.ShouldBeEmpty();
+            var messages = result.StdOut.ParseMessages();
+            messages.ShouldContainBuildProblem(i => i.Contains("Script is uncompleted."), i => i == "CSI007");
+        }
     }
 }

@@ -1,9 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
-
 // ReSharper disable InvertIf
 namespace Teamcity.CSharpInteractive
 {
-    using System.Linq;
+    using System.Collections.Generic;
     using Host;
 
     internal class ScriptRunner : IRunner
@@ -33,7 +32,7 @@ namespace Teamcity.CSharpInteractive
             var exitCode = ExitCode.Success;
             try
             {
-                foreach (var result in _commandsRunner.Run(_commandSource.GetCommands().Where(i => i is not CodeCommand)))
+                foreach (var result in _commandsRunner.Run(GetCommands()))
                 {
                     if (result.Success.HasValue)
                     {
@@ -61,6 +60,24 @@ namespace Teamcity.CSharpInteractive
             finally
             {
                 _statisticsPresenter.Show(_statistics);
+            }
+        }
+
+        private IEnumerable<ICommand> GetCommands()
+        {
+            CodeCommand? codeCommand = null;
+            foreach (var command in _commandSource.GetCommands())
+            {
+                codeCommand = command as CodeCommand;
+                if (codeCommand == null)
+                {
+                    yield return command;
+                }
+            }
+            
+            if (codeCommand != null)
+            {
+                _log.Error(ErrorId.UncompletedScript, "Script is uncompleted.");
             }
         }
     }
