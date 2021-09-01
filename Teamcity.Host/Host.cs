@@ -1,7 +1,6 @@
 // ReSharper disable UnusedMember.Global
 namespace Teamcity.Host
 {
-    using System;
     using Google.Protobuf.WellKnownTypes;
     
     public static class Host

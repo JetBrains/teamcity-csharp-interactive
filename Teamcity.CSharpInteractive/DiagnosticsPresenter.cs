@@ -51,7 +51,11 @@ namespace Teamcity.CSharpInteractive
                     return Path.GetFileName(file);
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
+
             return string.Empty;
         }
     }

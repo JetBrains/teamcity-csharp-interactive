@@ -4,6 +4,7 @@
 
     internal interface IProcessListener
     {
+        // ReSharper disable once UnusedParameter.Global
         void OnStart(ProcessStartInfo startInfo);
 
         void OnStdOut(string? line);

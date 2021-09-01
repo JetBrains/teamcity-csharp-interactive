@@ -101,7 +101,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _commandsRunner.Setup(i => i.Run(It.IsAny<IEnumerable<ICommand>>())).Callback<IEnumerable<ICommand>>(i => i.Count()).Returns(new CommandResult[] { new(new ScriptCommand(string.Empty, string.Empty), true) });
             
             // When
-            var actualExitCode = runner.Run();
+            runner.Run();
 
             // Then
             _log.Verify(i => i.Error(ErrorId.UncompletedScript, It.IsAny<Text[]>()));

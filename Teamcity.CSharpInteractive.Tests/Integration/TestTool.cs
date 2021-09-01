@@ -11,13 +11,13 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
     internal static class TestTool
     {
         public static readonly EnvironmentVariable[] DefaultVars = {
-            new EnvironmentVariable("TEAMCITY_VERSION", string.Empty),
-            new EnvironmentVariable("TEAMCITY_PROJECT_NAME", string.Empty)
+            new("TEAMCITY_VERSION", string.Empty),
+            new("TEAMCITY_PROJECT_NAME", string.Empty)
         };
 
         private static readonly EnvironmentVariable[] TeamCityVars = {
-            new EnvironmentVariable("TEAMCITY_VERSION", "2021.2"),
-            new EnvironmentVariable("TEAMCITY_PROJECT_NAME", "Test")
+            new("TEAMCITY_VERSION", "2021.2"),
+            new("TEAMCITY_PROJECT_NAME", "Test")
         };
 
         public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<EnvironmentVariable> vars, params string[] lines)

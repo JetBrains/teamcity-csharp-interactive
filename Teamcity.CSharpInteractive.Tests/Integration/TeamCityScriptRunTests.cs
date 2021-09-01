@@ -30,7 +30,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.RunUnderTeamCity(@$"WriteLine(99);");
+            var result = TestTool.RunUnderTeamCity(@"WriteLine(99);");
 
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -46,7 +46,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.RunUnderTeamCity(@$"Error(""My error"", ""errId"");");
+            var result = TestTool.RunUnderTeamCity(@"Error(""My error"", ""errId"");");
 
             // Then
             result.ExitCode.Value.ShouldBe(1);
@@ -61,7 +61,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.RunUnderTeamCity(@$"Warning(""My warning"");");
+            var result = TestTool.RunUnderTeamCity(@"Warning(""My warning"");");
 
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -76,7 +76,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.RunUnderTeamCity(@$"Info(""My info"");");
+            var result = TestTool.RunUnderTeamCity(@"Info(""My info"");");
 
             // Then
             result.ExitCode.Value.ShouldBe(0);

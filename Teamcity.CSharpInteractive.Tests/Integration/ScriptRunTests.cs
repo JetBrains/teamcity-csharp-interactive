@@ -123,7 +123,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.Run(@$"Error(""My error"");");
+            var result = TestTool.Run(@"Error(""My error"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(1);
@@ -138,7 +138,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.Run(@$"Warning(""My warning"");");
+            var result = TestTool.Run(@"Warning(""My warning"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);
@@ -153,7 +153,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Given
 
             // When
-            var result = TestTool.Run(@$"Info(""My info"");");
+            var result = TestTool.Run(@"Info(""My info"");");
             
             // Then
             result.ExitCode.Value.ShouldBe(0);

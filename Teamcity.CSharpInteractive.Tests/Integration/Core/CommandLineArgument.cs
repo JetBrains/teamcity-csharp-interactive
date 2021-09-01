@@ -4,6 +4,7 @@
 
     internal readonly struct CommandLineArgument
     {
+        // ReSharper disable once MemberCanBePrivate.Global
         public readonly string Value;
 
         public CommandLineArgument(string value)

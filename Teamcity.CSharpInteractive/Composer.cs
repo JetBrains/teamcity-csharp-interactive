@@ -14,7 +14,6 @@ namespace Teamcity.CSharpInteractive
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
     using Microsoft.Build.Framework;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
     using Pure.DI;
     using static Pure.DI.Lifetime;

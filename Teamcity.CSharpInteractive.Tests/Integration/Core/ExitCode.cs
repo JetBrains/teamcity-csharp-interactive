@@ -4,9 +4,10 @@
     {
         public readonly int Value;
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public ExitCode(int value) => Value = value;
 
-        public static implicit operator ExitCode(int exitCode) => new ExitCode(exitCode);
+        public static implicit operator ExitCode(int exitCode) => new(exitCode);
 
         public override string ToString() => Value.ToString();
     }
