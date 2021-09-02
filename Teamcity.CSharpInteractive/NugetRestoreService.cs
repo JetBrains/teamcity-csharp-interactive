@@ -64,7 +64,13 @@ namespace Teamcity.CSharpInteractive
 
             return new RestoreTask
             {
-                RestoreIgnoreFailedSources = true,
+                RestoreDisableParallel = false,
+                RestoreIgnoreFailedSources = false,
+                HideWarningsAndErrors = false,
+                RestoreForceEvaluate = false,
+                RestorePackagesConfig = true,
+                RestoreRecursive = true,
+                Interactive = false,
                 RestoreGraphItems = restoreGraphItems,
                 BuildEngine = _buildEngine
             }.Execute();
