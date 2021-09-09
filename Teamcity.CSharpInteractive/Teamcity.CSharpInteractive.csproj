@@ -22,14 +22,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc" Version="2.39.1" />
-        <PackageReference Include="Pure.DI" Version="1.0.4">
+        <PackageReference Include="Grpc" Version="2.40.0" />
+        <PackageReference Include="Pure.DI" Version="1.0.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.8.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.11.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-        <PackageReference Include="NuGet.Build.Tasks" Version="5.10.0" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="5.11.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
         <ProjectReference Include="..\Teamcity.Host\Teamcity.Host.csproj" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

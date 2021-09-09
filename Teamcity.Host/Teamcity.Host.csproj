@@ -7,14 +7,14 @@
 
     <ItemGroup>
         <!--Grpc-->
-        <PackageReference Include="Grpc" Version="2.39.1" />
+        <PackageReference Include="Grpc" Version="2.40.0" />
         <PackageReference Include="Google.Protobuf" Version="3.17.3" />
-        <PackageReference Include="Grpc.Tools" Version="2.39.1">
+        <PackageReference Include="Grpc.Tools" Version="2.40.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <Protobuf Include="Protos\csi.proto" GrpcServices="Both" />
-        <PackageReference Include="Pure.DI" Version="1.0.4">
+        <PackageReference Include="Pure.DI" Version="1.0.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
