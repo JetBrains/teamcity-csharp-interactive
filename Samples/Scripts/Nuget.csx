@@ -1,5 +1,6 @@
-#l trace
-#r "nuget:IoC.Container, 1.3.4"
+#r "nuget:IoC.Container, 1.3.6"
 using IoC;
-#load "abc.csx"
+
+var container = Container.Create();
+
 WriteLine($"Result: {container}");

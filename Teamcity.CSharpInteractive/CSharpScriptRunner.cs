@@ -3,6 +3,8 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Diagnostics;
     using System.Linq;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
@@ -13,7 +15,9 @@ namespace Teamcity.CSharpInteractive
         private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
         private ScriptState<object>? _scriptState;
         internal static readonly ScriptOptions Options = ScriptOptions.Default
-            .AddImports("System");
+            .AddImports("System")
+            .WithLanguageVersion(LanguageVersion.Latest)
+            .WithOptimizationLevel(OptimizationLevel.Release);
 
         public CSharpScriptRunner(
             ILog<CSharpScriptRunner> log,
