@@ -37,8 +37,8 @@ service Log {
 }
 
 message ErrorRequest {
-  string errorId = 1;
-  string error = 2;
+  string error = 1;
+  optional string errorId = 2;
 }
 
 message WarningRequest {
@@ -51,4 +51,5 @@ message InfoRequest {
 
 message TraceRequest {
   string trace = 1;
+  optional string origin = 2;
 }

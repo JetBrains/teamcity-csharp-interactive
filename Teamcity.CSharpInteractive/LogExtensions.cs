@@ -36,9 +36,21 @@ namespace Teamcity.CSharpInteractive
             return log;
         }
         
+        public static ILog<T> Trace<T>(this ILog<T> log, params Text[] traceMessage)
+        {
+            log.Trace(string.Empty, traceMessage);
+            return log;
+        }
+        
+        public static ILog<T> Trace<T>(this ILog<T> log, string origin, params string[] traceMessage)
+        {
+            log.Trace(origin, traceMessage.Select(i => new Text(i)).ToArray());
+            return log;
+        }
+        
         public static ILog<T> Trace<T>(this ILog<T> log, params string[] traceMessage)
         {
-            log.Trace(traceMessage.Select(i => new Text(i)).ToArray());
+            log.Trace(string.Empty, traceMessage);
             return log;
         }
     }

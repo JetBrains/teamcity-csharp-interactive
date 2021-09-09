@@ -34,7 +34,7 @@ namespace Teamcity.CSharpInteractive
 
         public override Task<Empty> Trace(TraceRequest request, ServerCallContext context)
         {
-            _log.Trace(request.Trace);
+            _log.Trace(request.Origin, request.Trace);
             return Task.FromResult(new Empty());
         }
     }

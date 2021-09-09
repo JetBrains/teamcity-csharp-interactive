@@ -23,9 +23,9 @@ namespace Teamcity.CSharpInteractive.Tests
             presenter.Show(new []{src1.Object, src2.Object});
 
             // Then
-            log.Verify(i => i.Trace(new []{text11}));
-            log.Verify(i => i.Trace(new []{text12}));
-            log.Verify(i => i.Trace(new []{text2}));
+            log.Verify(i => i.Trace(string.Empty, new []{text11}));
+            log.Verify(i => i.Trace(string.Empty, new []{text12}));
+            log.Verify(i => i.Trace(string.Empty, new []{text2}));
         }
     }
 }

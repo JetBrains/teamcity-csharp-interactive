@@ -12,7 +12,7 @@ namespace Teamcity.CSharpInteractive
         
         void Info(params Text[] message);
 
-        void Trace(params Text[] traceMessage);
+        void Trace(string origin, params Text[] traceMessage);
 
         IDisposable Block(Text[] block);
     }

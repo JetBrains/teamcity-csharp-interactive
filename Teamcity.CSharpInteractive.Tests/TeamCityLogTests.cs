@@ -109,10 +109,10 @@ namespace Teamcity.CSharpInteractive.Tests
             _settings.SetupGet(i => i.VerbosityLevel).Returns(verbosityLevel);
             
             // When
-            log.Trace(_text);
+            log.Trace("Orig", _text);
 
             // Then
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("F_line1line2"), times);
+            _teamCityMessageWriter.Verify(i => i.WriteMessage($"F_{"Orig", -40}line1line2"), times);
         }
 
         private TeamCityLog<string> CreateInstance() =>

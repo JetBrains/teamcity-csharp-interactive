@@ -63,11 +63,12 @@ namespace Teamcity.CSharpInteractive
             }
         }
 
-        public void Trace(params Text[] traceMessage)
+        public void Trace(string origin, params Text[] traceMessage)
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
-                _stdOut.WriteLine(GetMessage(new Text($"{typeof(T).Name, -40}") + traceMessage, Color.Trace));
+                origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
+                _stdOut.WriteLine(GetMessage(new Text($"{origin, -40}") + traceMessage, Color.Trace));
             }
         }
 
@@ -86,7 +87,7 @@ namespace Teamcity.CSharpInteractive
         private static Text[] GetMessage(Text[] message, Color defaultColor)
         {
             var tabsStr = new string(' ', Log.Tabs * 2);
-            message = message.Select(i => new Text(i.Value.Replace("\n", "\n"), i.Color)) .ToArray();
+            message = message.Select(i => new Text(i.Value, i.Color)) .ToArray();
             message = new Text(tabsStr) + message;
             return message.WithDefaultColor(defaultColor);
         }

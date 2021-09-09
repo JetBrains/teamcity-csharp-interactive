@@ -27,7 +27,7 @@ namespace Teamcity.Host
         public static void Info(string text) =>
             Root.Log.Info(new InfoRequest { Text = text });
 
-        public static void Trace(string trace) =>
-            Root.Log.Trace(new TraceRequest { Trace = trace });
+        public static void Trace(string trace, string origin = "") =>
+            Root.Log.Trace(new TraceRequest { Trace = trace, Origin = origin});
     }
 }

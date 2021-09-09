@@ -52,11 +52,12 @@ namespace Teamcity.CSharpInteractive
             }
         }
 
-        public void Trace(params Text[] traceMessage)
+        public void Trace(string origin, params Text[] traceMessage)
         {
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
-                _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(traceMessage.WithDefaultColor(Color.Trace)));
+                origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
+                _teamCityMessageWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin, -40}") + traceMessage).WithDefaultColor(Color.Trace)));
             }
         }
 
