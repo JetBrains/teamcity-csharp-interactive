@@ -24,4 +24,11 @@
       <ProjectReference Include="..\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Integration\Resources\csinetstandard11.1.0.0.nupkg" />
+      <Content Include="Integration\Resources\csinetstandard11.1.0.0.nupkg">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

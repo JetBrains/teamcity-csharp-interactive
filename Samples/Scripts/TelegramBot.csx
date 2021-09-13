@@ -12,6 +12,7 @@ if(!Props.TryGetValue("telegram.bot.poll.timeout", out var timeoutStr) || !int.T
 #r "nuget: Telegram.Bot.Extensions.Polling, 0.2.0"
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -22,15 +23,15 @@ using Telegram.Bot.Types.Enums;
 
 static class Bot
 {
-    public static PollAnswer Run(string token, string messageToSend, TimeSpan timeout, string question, params string[] options)
+    public static IEnumerable<PollAnswer> Run(string token, string messageToSend, TimeSpan timeout, string question, params string[] options)
     {
         var start = DateTime.Now.ToUniversalTime();
-        var pollMessages = new List<Message>();
-        PollAnswer pollAnswer = default;
+        var pollAnswers = new List<PollAnswer>();
+        var usersCount = 0;
         using var finish = new ManualResetEvent(false);
         new TelegramBotClient(token).StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync));
         finish.WaitOne(timeout);
-        return pollAnswer;
+        return pollAnswers;
 
         async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
@@ -61,7 +62,8 @@ static class Bot
                                     parseMode: ParseMode.Html,
                                     disableNotification: true,
                                     cancellationToken: cancellationToken);
-                                var pollMessage = await botClient.SendPollAsync(
+
+                                await botClient.SendPollAsync(
                                     chatId:update.Message.Chat.Id,
                                     question: question,
                                     options: options,
@@ -71,7 +73,7 @@ static class Bot
                                     closeDate: (start + timeout).ToUniversalTime(),
                                     cancellationToken: cancellationToken);
 
-                                pollMessages.Add(pollMessage);
+                                usersCount++;
                                 break;
                         }
                     }
@@ -79,34 +81,38 @@ static class Bot
                     break;
 
                 case UpdateType.PollAnswer:
-                    if (pollMessages.Count > 0)
+                    pollAnswers.Add(update.PollAnswer);
+                    if (pollAnswers.Count == usersCount)
                     {
-                        foreach (var message in pollMessages)
-                        {
-                            await botClient.StopPollAsync(message.Chat.Id, message.MessageId, cancellationToken: cancellationToken);
-                        }
-
-                        pollAnswer = update.PollAnswer;
-                        pollMessages.Clear();
                         finish.Set();
                     }
 
                     break;
             }
         }
-    }
+    }    
 }
 
-var result = Bot.Run(token, $"The <a href='{Args[0]}'>build #{Props["build.number"]} \"{Props["teamcity.buildConfName"]}\"</a> has been almost completed.", TimeSpan.FromMinutes(timeout), "We are ready to deploy?", "Yes, deploy.", "No, abort this build.");
+var answers = Bot.Run(token, $"The <a href='{Args[0]}'>build #{Props["build.number"]} \"{Props["teamcity.buildConfName"]}\"</a> has been almost completed.", TimeSpan.FromMinutes(timeout), "We are ready to deploy?", "Yes, deploy.", "No, abort this build.")
+    .Where(i => i.OptionIds.Length == 1)
+    .Select(i => (approved: i.OptionIds[0] == 0, user: $"{i.User.FirstName} {i.User.LastName}"))
+    .ToList();
 
-switch (result?.OptionIds?.Length == 1 ? result.OptionIds[0] : int.MaxValue)
+var approvingUsers = answers.Where(i => i.approved).Select(i => i.user).ToList();
+var cancelingUsers = answers.Where(i => !i.approved).Select(i => i.user).ToList();
+
+if (cancelingUsers.Any())
 {
-    case 0: WriteLine($"Approved by {result.User.FirstName} {result.User.LastName}. Deploy starting ...", Success);
-        break;
-    
-    case 1: Error($"Aborted by {result.User.FirstName} {result.User.LastName}. Deploy is canceled.", "Bot_Aborted");
-        break;
-    
-    default: Error("Has no answer. Deploy is canceled.", "Bot_NoAnswer");
-        break;
+    Error($"Aborted by {string.Join(",", cancelingUsers)}. Deploy is canceled.", "Bot");
+}
+else
+{
+    if (approvingUsers.Any())
+    {
+        WriteLine($"Approved by {string.Join(",", approvingUsers)}. Deploy starting ...");
+    }
+    else
+    {
+        Error("Has no answer. Deploy is canceled.", "Bot");
+    }
 }

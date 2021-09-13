@@ -262,5 +262,27 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.StdErr.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
             result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
         }
+        
+        [Fact]
+        public void ShouldNotAddAlreadyAddedReferencesWhenRestore()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                new []{"-s", Path.Combine(Directory.GetCurrentDirectory(), "Integration", "Resources")},
+                Array.Empty<string>(),
+                Array.Empty<EnvironmentVariable>(),
+                @$"#r ""nuget: csinetstandard11, 1.0.0""",
+                "using System.Collections.Generic;",
+                "using System.Linq;",
+                "var list = new List<int>{1, 2};",
+                "var list2 = list.Where(i => i == 1).ToList();",
+                "WriteLine(list2.Count);");
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty();
+        }
     }
 }
