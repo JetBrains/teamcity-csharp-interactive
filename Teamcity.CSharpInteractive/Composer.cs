@@ -14,6 +14,7 @@ namespace Teamcity.CSharpInteractive
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
     using Microsoft.Build.Framework;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Scripting;
     using Pure.DI;
@@ -81,10 +82,18 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandFactory<ICodeSource>>().To<CodeSourceCommandFactory>()
             .Bind<ICommandFactory<ScriptCommand>>().As(Transient).To<ScriptCommandFactory>()
             .Bind<ICSharpScriptRunner>().To<CSharpScriptRunner>()
+
+            // Script options factory
+            .Bind<IScriptOptionsFactory>().Bind<IReferenceRegistry>().Bind<ISettingSetter<LanguageVersion>>().Bind<ISettingSetter<OptimizationLevel>>().To<ScriptOptionsFactory>()
+            
             .Bind<ICommandFactory<string>>().Tag("REPL Set a C# language version parser").To<SettingCommandFactory<LanguageVersion>>()
             .Bind<ICommandRunner>().Tag("REPL Set a C# language version").To<SettingCommandRunner<LanguageVersion>>()
-            .Bind<IScriptOptionsFactory>().Bind<IReferenceRegistry>().Bind<ISettingSetter<LanguageVersion>>().To<ScriptOptionsFactory>()
             .Bind<ISettingDescription>().Tag(typeof(LanguageVersion)).To<LanguageVersionSettingDescription>()
+            
+            .Bind<ICommandFactory<string>>().Tag("REPL Set an optimization level parser").To<SettingCommandFactory<OptimizationLevel>>()
+            .Bind<ICommandRunner>().Tag("REPL Set an optimization level").To<SettingCommandRunner<OptimizationLevel>>()
+            .Bind<ISettingDescription>().Tag(typeof(OptimizationLevel)).To<OptimizationLevelSettingDescription>()
+            
             .Bind<IScriptSubmissionAnalyzer>().To<ScriptSubmissionAnalyzer>()
             .Bind<ICommandRunner>().Tag("CSharp").To<CSharpScriptCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Help parser").To<HelpCommandFactory>()
