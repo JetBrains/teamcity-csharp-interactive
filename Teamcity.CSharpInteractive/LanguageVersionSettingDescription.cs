@@ -1,3 +1,4 @@
+// ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
     using System;

@@ -8,9 +8,9 @@ namespace Teamcity.CSharpInteractive
     using System.Threading.Tasks;
 
     [ExcludeFromCodeCoverage]
-    internal class ConsoleInput : ICodeSource, IEnumerator<string?>
+    internal class ConsoleSource : ICodeSource, IEnumerator<string?>
     {
-        public ConsoleInput() => Console.CancelKeyPress += (_, _) => System.Environment.Exit(0);
+        public ConsoleSource() => Console.CancelKeyPress += (_, _) => System.Environment.Exit(0);
 
         public string Name => "Console";
 

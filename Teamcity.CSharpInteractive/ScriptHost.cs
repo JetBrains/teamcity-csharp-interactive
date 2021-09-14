@@ -1,4 +1,5 @@
 // ReSharper disable UnusedMember.Global
+// ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
     using Contracts;

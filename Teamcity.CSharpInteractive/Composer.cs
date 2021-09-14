@@ -55,7 +55,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<ISettingDescription>().Tag(typeof(VerbosityLevel)).To<VerbosityLevelSettingDescription>()
             .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()
-            .Bind<ICodeSource>().To<ConsoleInput>()
+            .Bind<ICodeSource>().To<ConsoleSource>()
             .Bind<ICodeSource>().Tag("Host").To<HostIntegrationCodeSource>()
             .Bind<FileCodeSource>().To<FileCodeSource>()
             .Bind<IFileCodeSourceFactory>().To<FileCodeSourceFactory>()
