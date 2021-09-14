@@ -1,7 +1,6 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using Moq;
@@ -28,7 +27,6 @@ namespace Teamcity.CSharpInteractive.Tests
         private static readonly string OutputPath = Path.Combine(TempDir, UniqName);
         private const string PackagesPath = "packages";
         private static readonly string AssetsFilePath = Path.Combine(OutputPath, "project.assets.json");
-        private readonly ScriptCommand[] _commands;
 
         public AddNuGetReferenceCommandRunnerTests()
         {
@@ -56,12 +54,6 @@ namespace Teamcity.CSharpInteractive.Tests
             
             _nugetAssetsReader = new Mock<INugetAssetsReader>();
             _nugetAssetsReader.Setup(i => i.ReadAssemblies(AssetsFilePath)).Returns(new [] {referencingAssembly1, referencingAssembly2});
-
-            _commands = new[]
-            {
-                new ScriptCommand(referencingAssembly1.Name, $"#r \"{referencingAssembly1.FilePath}\""),
-                new ScriptCommand(referencingAssembly2.Name, $"#r \"{referencingAssembly2.FilePath}\"")
-            };
             
             _trackToken = new Mock<IDisposable>();
             _cleaner = new Mock<ICleaner>();

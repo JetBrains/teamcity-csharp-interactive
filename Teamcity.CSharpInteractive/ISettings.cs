@@ -4,7 +4,7 @@ namespace Teamcity.CSharpInteractive
 
     internal interface ISettings
     {
-        VerbosityLevel VerbosityLevel { get; set; }
+        VerbosityLevel VerbosityLevel { get; }
 
         InteractionMode InteractionMode { get; }
 

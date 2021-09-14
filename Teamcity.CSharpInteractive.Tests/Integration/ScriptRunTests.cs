@@ -274,7 +274,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
                 new []{"-s", Path.Combine(Directory.GetCurrentDirectory(), "Integration", "Resources")},
                 Array.Empty<string>(),
                 Array.Empty<EnvironmentVariable>(),
-                @$"#r ""nuget: csinetstandard11, 1.0.0""",
+                @"#r ""nuget: csinetstandard11, 1.0.0""",
                 "using System.Collections.Generic;",
                 "using System.Linq;",
                 "var list = new List<int>{1, 2};",
@@ -312,7 +312,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             // Then
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
-            result.StdOut.Contains("Abc");
+            result.StdOut.Contains("Abc").ShouldBeTrue();
         }
         
         [Fact]

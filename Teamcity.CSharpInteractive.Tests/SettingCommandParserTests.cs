@@ -7,7 +7,7 @@ namespace Teamcity.CSharpInteractive.Tests
     using Shouldly;
     using Xunit;
 
-    public class SetVerbosityLevelCommandParserTests
+    public class SettingCommandParserTests
     {
         [Theory]
         [MemberData(nameof(Data))]
@@ -16,7 +16,7 @@ namespace Teamcity.CSharpInteractive.Tests
             // Given
             var stringService = new Mock<IStringService>();
             stringService.Setup(i => i.TrimAndUnquote(It.IsAny<string>())).Returns<string>(i => i);
-            var parser = new SetVerbosityLevelCommandFactory(Mock.Of<ILog<SetVerbosityLevelCommandFactory>>(),  stringService.Object);
+            var parser = new SettingCommandFactory<VerbosityLevel>(Mock.Of<ILog<SettingCommandFactory<VerbosityLevel>>>(),  stringService.Object, new [] {new VerbosityLevelSettingDescription()});
             
             // When
             var actualResult = parser.Create(replCommand);
@@ -27,9 +27,9 @@ namespace Teamcity.CSharpInteractive.Tests
         
         public static IEnumerable<object[]> Data => new List<object[]> 
         {
-            new object[] { "#l trace", new [] { new SetVerbosityLevelCommand(VerbosityLevel.Trace) } },
-            new object[] { "#l   Trace", new [] { new SetVerbosityLevelCommand(VerbosityLevel.Trace) } },
-            new object[] { "#L Trace", new [] { new SetVerbosityLevelCommand(VerbosityLevel.Trace) } },
+            new object[] { "#l trace", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace) } },
+            new object[] { "#l   Trace", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace) } },
+            new object[] { "#L Trace", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace) } },
             new object[] { "#  l   Trace", Array.Empty<ICommand>() },
             new object[] { "#lTrace", Array.Empty<ICommand>() },
             new object[] { "#l ", Array.Empty<ICommand>() },

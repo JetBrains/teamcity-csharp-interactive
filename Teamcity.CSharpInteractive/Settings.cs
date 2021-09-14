@@ -6,7 +6,7 @@ namespace Teamcity.CSharpInteractive
     using System.Linq;
     using Pure.DI;
 
-    internal class Settings : ISettings, ISettingsManager
+    internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityLevel>
     {
         private readonly IEnvironment _environment;
         private readonly ICommandLineParser _commandLineParser;
@@ -31,7 +31,7 @@ namespace Teamcity.CSharpInteractive
             _fileCodeSourceFactory = fileCodeSourceFactory;
         }
 
-        public VerbosityLevel VerbosityLevel { get; set; } = VerbosityLevel.Normal;
+        public VerbosityLevel VerbosityLevel { get; private set; } = VerbosityLevel.Normal;
 
         public InteractionMode InteractionMode { get; private set; } = InteractionMode.Interactive;
 
@@ -75,6 +75,13 @@ namespace Teamcity.CSharpInteractive
                     new [] {_hostCodeSource, _initialStateCodeSourceFactory.Create(ScriptArguments.ToArray(), ScriptProperties)}.Concat(
                         args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value)));
             }
+        }
+
+        VerbosityLevel? ISettingSetter<VerbosityLevel>.SetSetting(VerbosityLevel value)
+        {
+            var prevVerbosityLevel = VerbosityLevel;
+            VerbosityLevel = value;
+            return prevVerbosityLevel;
         }
     }
 }
