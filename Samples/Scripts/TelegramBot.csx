@@ -110,16 +110,16 @@ var cancelingUsers = answers.Where(i => !i.approved).Select(i => i.user).ToList(
 
 if (cancelingUsers.Any())
 {
-    Host.Error($"Canceled by {string.Join(",", cancelingUsers)}.", "Bot");
+    Error($"Canceled by {string.Join(",", cancelingUsers)}.", "Bot");
 }
 else
 {
     if (approvingUsers.Any())
     {
-        Host.WriteLine($"Approved by {string.Join(",", approvingUsers)}.");
+        WriteLine($"Approved by {string.Join(",", approvingUsers)}.", Success);
     }
     else
     {
-        Host.Error("Has no answer, canceled.", "Bot");
+        Error("Has no answer, canceled.", "Bot");
     }
 }
