@@ -285,5 +285,54 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
         }
+        
+        [Fact]
+        public void ShouldSupportHostFromLocalFunctions()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                "class Abc",
+                "{",
+                "  private readonly IHost _host;",
+                "  public Abc(IHost host) => _host = host;",
+                "  public void Fun()",
+                "  {",
+                "    void LocalFun()",
+                "    {",
+                @"      _host.Info(""Abc"");",
+                "    }",
+                "    LocalFun();",
+                "  }",
+                "}",
+                "new Abc(Host).Fun();"
+                );
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty();
+            result.StdOut.Contains("Abc");
+        }
+        
+        [Fact]
+        public void ShouldSupportComplexStatements()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                "if(true)",
+                "{",
+                "}",
+                "else",
+                "{",
+                "}"
+            );
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty();
+        }
     }
 }

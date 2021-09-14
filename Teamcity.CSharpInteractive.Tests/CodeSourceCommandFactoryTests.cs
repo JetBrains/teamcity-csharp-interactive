@@ -14,6 +14,7 @@ namespace Teamcity.CSharpInteractive.Tests
         private static readonly ScriptCommand ScriptCommand12 = new(SourceName, "code12");
         private static readonly ScriptCommand ScriptCommand2 = new(SourceName, "code2");
         private static readonly ScriptCommand ScriptCommand3 = new(SourceName, "#code3");
+        private static readonly ScriptCommand ScriptCommand4 = new(SourceName, "code1 + code2");
         private readonly Mock<ILog<CodeSourceCommandFactory>> _log;
         private readonly Mock<ICommandFactory<string>> _replCommandFactory1;
         private readonly Mock<ICommandFactory<string>> _replCommandFactory2;
@@ -33,6 +34,7 @@ namespace Teamcity.CSharpInteractive.Tests
             _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine, false))).Returns(new[] {ScriptCommand11, ScriptCommand12});
             _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code2" + Environment.NewLine, false))).Returns(new[] {ScriptCommand2});
             _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "#code3" + Environment.NewLine, false))).Returns(new[] {ScriptCommand3});
+            _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine + "code2" + Environment.NewLine, false))).Returns(new[] {ScriptCommand4});
             _codeSource = new Mock<ICodeSource>();
         }
         
@@ -68,6 +70,11 @@ namespace Teamcity.CSharpInteractive.Tests
             {
                 new[] {"code1", "#help", "code2"},
                 new[] {ScriptCommand11, ScriptCommand12, HelpCommand.Shared, ScriptCommand2}
+            },
+            new object[]
+            {
+                new[] {"code1", "code2"},
+                new[] {ScriptCommand4}
             }
         };
 

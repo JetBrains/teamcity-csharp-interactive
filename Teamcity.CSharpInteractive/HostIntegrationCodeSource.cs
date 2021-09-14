@@ -8,7 +8,7 @@ namespace Teamcity.CSharpInteractive
     internal class HostIntegrationCodeSource: ICodeSource
     {
         private readonly IEnvironment _environment;
-        internal const string UsingStaticColor = "using static Teamcity.CSharpInteractive.Contracts.Color;";
+        internal const string UsingStatic = "using static Teamcity.CSharpInteractive.Contracts.Color; using IHost=Teamcity.CSharpInteractive.Contracts.IHost;";
 
         public HostIntegrationCodeSource(IEnvironment environment)
         {
@@ -24,7 +24,7 @@ namespace Teamcity.CSharpInteractive
             var lines = new List<string>
             {
                 $"#r \"{Path.Combine(_environment.GetPath(SpecialFolder.Bin), "Teamcity.CSharpInteractive.Contracts.dll")}\"",
-                UsingStaticColor
+                UsingStatic
             };
             return lines.GetEnumerator();
         }

@@ -16,6 +16,8 @@ namespace Teamcity.CSharpInteractive
             _stdOut = stdOut;
         }
 
+        public IHost Host => this;
+
         public void WriteLine() => _stdOut.WriteLine();
 
         public void WriteLine<T>(T line, Color color = Color.Default) => _stdOut.WriteLine(new Text(line?.ToString() ?? string.Empty, color));

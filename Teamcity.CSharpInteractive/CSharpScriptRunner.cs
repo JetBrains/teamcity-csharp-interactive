@@ -4,8 +4,6 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics;
     using System.Linq;
     using Contracts;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 

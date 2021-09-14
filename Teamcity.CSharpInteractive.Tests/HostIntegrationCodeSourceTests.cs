@@ -31,7 +31,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 new List<string>
                 {
                     $"#r \"{Path.Combine("Bin", "Teamcity.CSharpInteractive.Contracts.dll")}\"",
-                    HostIntegrationCodeSource.UsingStaticColor
+                    HostIntegrationCodeSource.UsingStatic
                 });
         }
 

@@ -26,9 +26,9 @@ namespace Teamcity.CSharpInteractive
 
         public IEnumerable<ICommand> Create(ICodeSource codeSource)
         {
+            var sb = new StringBuilder();
             foreach (var code in codeSource)
             {
-                var sb = new StringBuilder();
                 foreach (var line in code.Split(System.Environment.NewLine))
                 {
                     var trimmedLine = line.Trim();
@@ -75,14 +75,14 @@ namespace Teamcity.CSharpInteractive
                         sb.AppendLine(line);
                     }
                 }
-
-                if (sb.Length > 0)
+            }
+            
+            if (sb.Length > 0)
+            {
+                _log.Trace("Finally yield script commands.");
+                foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
                 {
-                    _log.Trace("Finally yield script commands.");
-                    foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
-                    {
-                        yield return command;
-                    }
+                    yield return command;
                 }
             }
         }

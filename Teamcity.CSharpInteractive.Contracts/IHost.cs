@@ -3,6 +3,8 @@ namespace Teamcity.CSharpInteractive.Contracts
 {
     public interface IHost
     {
+        IHost Host { get; }
+
         void WriteLine();
         
         void WriteLine<T>(T line, Color color = Color.Default);

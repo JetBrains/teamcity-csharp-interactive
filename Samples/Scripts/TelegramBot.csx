@@ -23,7 +23,7 @@ using Telegram.Bot.Types.Enums;
 
 static class Bot
 {
-    public static IEnumerable<PollAnswer> Run(string token, string messageToSend, TimeSpan timeout, string question, params string[] options)
+    public static IEnumerable<PollAnswer> Run(IHost host, string token, string messageToSend, TimeSpan timeout, string question, params string[] options)
     {
         var start = DateTime.Now.ToUniversalTime();
         var pollAnswers = new List<PollAnswer>();
@@ -37,10 +37,10 @@ static class Bot
         {
             switch (exception)
             {
-                case ApiRequestException apiRequestException: Error(apiRequestException.Message, $"Bot{apiRequestException.ErrorCode}");
+                case ApiRequestException apiRequestException: host.Error(apiRequestException.Message, $"Bot{apiRequestException.ErrorCode}");
                     break;
 
-                default: Error(exception.ToString(), "Bot");
+                default: host.Error(exception.ToString(), "Bot");
                     break;
             }
         }
@@ -93,7 +93,14 @@ static class Bot
     }    
 }
 
-var answers = Bot.Run(token, $"The <a href='{Args[0]}'>build #{Props["build.number"]} \"{Props["teamcity.buildConfName"]}\"</a> has been almost completed.", TimeSpan.FromMinutes(timeout), "We are ready to deploy?", "Yes, deploy.", "No, abort this build.")
+var answers = Bot.Run(
+    Host,
+    token,
+    $"The <a href='{Args[0]}'>build #{Props["build.number"]} \"{Props["teamcity.buildConfName"]}\"</a> has been almost completed.",
+    TimeSpan.FromMinutes(timeout),
+    "We are ready to deploy?",
+    "Yes, deploy.",
+    "No, abort this build.")
     .Where(i => i.OptionIds.Length == 1)
     .Select(i => (approved: i.OptionIds[0] == 0, user: $"{i.User.FirstName} {i.User.LastName}"))
     .ToList();
@@ -103,16 +110,16 @@ var cancelingUsers = answers.Where(i => !i.approved).Select(i => i.user).ToList(
 
 if (cancelingUsers.Any())
 {
-    Error($"Aborted by {string.Join(",", cancelingUsers)}. Deploy is canceled.", "Bot");
+    Host.Error($"Canceled by {string.Join(",", cancelingUsers)}.", "Bot");
 }
 else
 {
     if (approvingUsers.Any())
     {
-        WriteLine($"Approved by {string.Join(",", approvingUsers)}. Deploy starting ...");
+        Host.WriteLine($"Approved by {string.Join(",", approvingUsers)}.");
     }
     else
     {
-        Error("Has no answer. Deploy is canceled.", "Bot");
+        Host.Error("Has no answer, canceled.", "Bot");
     }
 }
