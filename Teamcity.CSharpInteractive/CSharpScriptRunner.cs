@@ -14,22 +14,21 @@ namespace Teamcity.CSharpInteractive
         private readonly ILog<CSharpScriptRunner> _log;
         private readonly IPresenter<ScriptState<object>> _scriptStatePresenter;
         private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
+        private readonly IScriptOptionsFactory _scriptOptionsFactory;
         private readonly IHost _host;
         private ScriptState<object>? _scriptState;
-        internal static readonly ScriptOptions Options = ScriptOptions.Default
-            .AddImports("System")
-            .WithLanguageVersion(LanguageVersion.Latest)
-            .WithOptimizationLevel(OptimizationLevel.Release);
-
+        
         public CSharpScriptRunner(
             ILog<CSharpScriptRunner> log,
             IPresenter<ScriptState<object>> scriptStatePresenter,
             IPresenter<CompilationDiagnostics> diagnosticsPresenter,
+            IScriptOptionsFactory scriptOptionsFactory,
             IHost host)
         {
             _log = log;
             _scriptStatePresenter = scriptStatePresenter;
             _diagnosticsPresenter = diagnosticsPresenter;
+            _scriptOptionsFactory = scriptOptionsFactory;
             _host = host;
         }
 
@@ -41,10 +40,10 @@ namespace Teamcity.CSharpInteractive
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
                 _scriptState =
-                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, Options, _host, typeof(IHost)).Result)
+                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, _scriptOptionsFactory.Create(), _host, typeof(IHost)).Result)
                     .ContinueWithAsync(
                         script,
-                        Options,
+                        _scriptOptionsFactory.Create(),
                         exception =>
                         {
                             success = false;

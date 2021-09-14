@@ -58,10 +58,10 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             {
                 var result = true;
                 scriptState =
-                    (scriptState ?? CSharpScript.RunAsync(string.Empty, CSharpScriptRunner.Options).Result)
+                    (scriptState ?? CSharpScript.RunAsync(string.Empty, ScriptOptionsFactory.Default).Result)
                     .ContinueWithAsync(
                         line,
-                        CSharpScriptRunner.Options,
+                        ScriptOptionsFactory.Default,
                         _ =>
                         {
                             result = false;
