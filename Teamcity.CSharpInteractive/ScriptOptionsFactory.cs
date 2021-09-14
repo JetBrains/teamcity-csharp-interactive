@@ -6,7 +6,7 @@ namespace Teamcity.CSharpInteractive
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
-    internal class ScriptOptionsFactory : IScriptOptionsFactory, IReferenceRegistry
+    internal class ScriptOptionsFactory : IScriptOptionsFactory, IReferenceRegistry, ISettingSetter<LanguageVersion>
     {
         private readonly ILog<ScriptOptionsFactory> _log;
         internal static readonly ScriptOptions Default =
@@ -38,6 +38,12 @@ namespace Teamcity.CSharpInteractive
             }
 
             return false;
+        }
+
+        LanguageVersion? ISettingSetter<LanguageVersion>.SetSetting(LanguageVersion value)
+        {
+            _options = _options.WithLanguageVersion(value);
+            return default;
         }
     }
 }

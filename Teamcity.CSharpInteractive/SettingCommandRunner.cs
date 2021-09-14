@@ -23,7 +23,8 @@ namespace Teamcity.CSharpInteractive
             }
 
             var previousValue = _settingSetter.SetSetting(settingCommand.Value);
-            _log.Trace(new []{new Text($"Change the {typeof(TOption).Name} from {previousValue} to {settingCommand.Value}.")});
+            var prevValueStr = previousValue.HasValue ? $" from {previousValue}" : string.Empty;
+            _log.Trace(new []{new Text($"Change the {typeof(TOption).Name}{prevValueStr} to {settingCommand.Value}.")});
             return new CommandResult(command, true);
         }
     }

@@ -66,14 +66,12 @@ namespace Teamcity.CSharpInteractive
             };
 
             var settingLines = 
-                from type in Assembly.GetAssembly(GetType())?.GetTypes() ?? Enumerable.Empty<Type>()
-                join setting in _settingDescriptions on type equals setting.SettingType  
-                where setting != null
+                from setting in _settingDescriptions  
                 select new []
                 {
                     new Text($"    #{setting.Key.PadRight(12, ' ')}", Color.Header),
-                    new Text($"{setting.Description} {string.Join(", ", Enum.GetValues(type).OfType<Enum>().Select(i => i.ToString()))}, e.g. "),
-                    new Text($"#{setting.Key} {Enum.GetValues(type).OfType<Enum>().LastOrDefault()}", Color.Details),
+                    new Text($"{setting.Description} {string.Join(", ", Enum.GetValues(setting.SettingType).OfType<Enum>().Select(i => i.ToString()))}, e.g. "),
+                    new Text($"#{setting.Key} {Enum.GetValues(setting.SettingType).OfType<Enum>().LastOrDefault()}", Color.Details),
                     new Text("."),
                     Text.NewLine
                 };
