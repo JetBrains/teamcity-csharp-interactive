@@ -17,8 +17,8 @@ namespace Teamcity.CSharpInteractive.Tests
         private readonly Mock<INugetEnvironment> _nugetEnv;
         private readonly Mock<INugetRestoreService> _nugetRestoreService;
         private readonly Mock<INugetAssetsReader> _nugetAssetsReader;
-        private readonly Mock<ICommandsRunner> _commandsRunner;
         private readonly Mock<ICleaner> _cleaner;
+        private readonly Mock<IReferenceRegistry> _referenceRegistry;
         private readonly AddNuGetReferenceCommand _command;
         private readonly Mock<IDisposable> _trackToken;
         private const string TempDir = "Tmp";
@@ -63,17 +63,16 @@ namespace Teamcity.CSharpInteractive.Tests
                 new ScriptCommand(referencingAssembly2.Name, $"#r \"{referencingAssembly2.FilePath}\"")
             };
             
-            CommandResult[] results = {
-                new(_commands[0], true),
-                new(_commands[0], true)
-            };
-            
-            _commandsRunner = new Mock<ICommandsRunner>();
-            _commandsRunner.Setup(i => i.Run(It.Is<IEnumerable<ICommand>>(j => j.SequenceEqual(_commands)))).Returns(results);
-
             _trackToken = new Mock<IDisposable>();
             _cleaner = new Mock<ICleaner>();
             _cleaner.Setup(i => i.Track(OutputPath)).Returns(_trackToken.Object);
+
+            _referenceRegistry = new Mock<IReferenceRegistry>();
+            var referencingAssembly1Description = referencingAssembly1.Name;
+            _referenceRegistry.Setup(i => i.TryRegisterAssembly(referencingAssembly1.FilePath, out referencingAssembly1Description)).Returns(true);
+            
+            var referencingAssembly2Description = referencingAssembly2.Name;
+            _referenceRegistry.Setup(i => i.TryRegisterAssembly(referencingAssembly2.FilePath, out referencingAssembly2Description)).Returns(true);
         }
         
         [Fact]
@@ -127,8 +126,8 @@ namespace Teamcity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            var result = runner.TryRun(_command);
             _nugetAssetsReader.Setup(i => i.ReadAssemblies(AssetsFilePath)).Returns(Enumerable.Empty<ReferencingAssembly>());
+            var result = runner.TryRun(_command);
 
             // Then
             result.Command.ShouldBe(_command);
@@ -143,13 +142,9 @@ namespace Teamcity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            var results = new[]
-            {
-                new CommandResult(_commands[0], true),
-                new CommandResult(_commands[0], false)
-            };
+            var referencingAssembly2Description = "Error";
+            _referenceRegistry.Setup(i => i.TryRegisterAssembly("Abc2.dll", out referencingAssembly2Description)).Returns(false);
             
-            _commandsRunner.Setup(i => i.Run(It.Is<IEnumerable<ICommand>>(j => j.SequenceEqual(_commands)))).Returns(results);
             var result = runner.TryRun(_command);
 
             // Then
@@ -157,29 +152,7 @@ namespace Teamcity.CSharpInteractive.Tests
             result.Success.ShouldBe(false);
             _trackToken.Verify(i => i.Dispose());
         }
-        
-        [Fact]
-        public void ShouldFailWhenCannotRunAddRef()
-        {
-            // Given
-            var runner = CreateInstance();
 
-            // When
-            var results = new[]
-            {
-                new CommandResult(_commands[0], true),
-                new CommandResult(_commands[0], null)
-            };
-            
-            _commandsRunner.Setup(i => i.Run(It.Is<IEnumerable<ICommand>>(j => j.SequenceEqual(_commands)))).Returns(results);
-            var result = runner.TryRun(_command);
-
-            // Then
-            result.Command.ShouldBe(_command);
-            result.Success.ShouldBe(false);
-            _trackToken.Verify(i => i.Dispose());
-        }
-        
         private AddNuGetReferenceCommandRunner CreateInstance() =>
             new(
                 _log.Object,
@@ -188,7 +161,7 @@ namespace Teamcity.CSharpInteractive.Tests
                 _nugetEnv.Object,
                 _nugetRestoreService.Object,
                 _nugetAssetsReader.Object,
-                () => _commandsRunner.Object,
-                _cleaner.Object);
+                _cleaner.Object,
+                _referenceRegistry.Object);
     }
 }

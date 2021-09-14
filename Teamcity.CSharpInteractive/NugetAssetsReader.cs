@@ -3,12 +3,10 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using NuGet.Common;
     using NuGet.ProjectModel;
     using NuGet.Versioning;
@@ -38,12 +36,6 @@ namespace Teamcity.CSharpInteractive
                 _log.Warning($"Cannot process the lock file \"{assetsFilePath}\".");
                 yield break;
             }
-            
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Select(i => (name: i.GetName().Name, assembly: i))
-                .GroupBy(i => i.name)
-                .Select(i => i.First())
-                .ToDictionary(i => i.name, i=> i.assembly);
             
             var librariesDict = lockFile.Libraries.ToDictionary(i => new LibraryKey(i.Name, i.Version), i => i);
 
@@ -84,28 +76,6 @@ namespace Teamcity.CSharpInteractive
                             var ext = Path.GetExtension(fullAssemblyPath).ToLowerInvariant();
                             if (ext == ".dll")
                             {
-                                _log.Trace($"Load assembly \"{fullAssemblyPath}\".");
-                                try
-                                {
-                                    var newAssembly = Assembly.LoadFile(fullAssemblyPath);
-                                    var newAssemblyName = newAssembly.GetName();
-                                    if (assemblies.TryGetValue(newAssemblyName.Name, out var existingAssembly))
-                                    {
-                                        var existingAssemblyName = existingAssembly.GetName();
-                                        if (
-                                            StructuralComparisons.StructuralEqualityComparer.Equals(newAssemblyName.GetPublicKey(), existingAssemblyName.GetPublicKey())
-                                            && Equals(newAssemblyName.CultureInfo, existingAssemblyName.CultureInfo))
-                                        {
-                                            _log.Trace($"{existingAssembly} is already loaded. Skip loading {newAssemblyName}.");
-                                            continue;
-                                        }
-                                    }
-                                }
-                                catch(Exception ex)
-                                {
-                                    _log.Trace($"Cannot load \"{fullAssemblyPath}\": {ex.Message}");
-                                }
-
                                 _log.Trace($"Add reference to \"{fullAssemblyPath}\".");
                                 yield return new ReferencingAssembly($"{Path.GetFileNameWithoutExtension(fullAssemblyPath)}", fullAssemblyPath);
                             }

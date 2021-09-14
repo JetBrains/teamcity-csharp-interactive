@@ -1,9 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
-    using System;
     using System.IO;
-    using System.Linq;
 
     internal class AddNuGetReferenceCommandRunner: ICommandRunner
     {
@@ -13,8 +11,8 @@ namespace Teamcity.CSharpInteractive
         private readonly INugetEnvironment _nugetEnvironment;
         private readonly INugetRestoreService _nugetRestoreService;
         private readonly INugetAssetsReader _nugetAssetsReader;
-        private readonly Func<ICommandsRunner> _commandsRunnerFactory;
         private readonly ICleaner _cleaner;
+        private readonly IReferenceRegistry _referenceRegistry;
 
         public AddNuGetReferenceCommandRunner(
             ILog<AddNuGetReferenceCommandRunner> log,
@@ -23,8 +21,8 @@ namespace Teamcity.CSharpInteractive
             INugetEnvironment nugetEnvironment,
             INugetRestoreService nugetRestoreService,
             INugetAssetsReader nugetAssetsReader,
-            Func<ICommandsRunner> commandsRunnerFactory,
-            ICleaner cleaner)
+            ICleaner cleaner,
+            IReferenceRegistry referenceRegistry)
         {
             _log = log;
             _environment = environment;
@@ -32,8 +30,8 @@ namespace Teamcity.CSharpInteractive
             _nugetEnvironment = nugetEnvironment;
             _nugetRestoreService = nugetRestoreService;
             _nugetAssetsReader = nugetAssetsReader;
-            _commandsRunnerFactory = commandsRunnerFactory;
             _cleaner = cleaner;
+            _referenceRegistry = referenceRegistry;
         }
 
         public CommandResult TryRun(ICommand command)
@@ -60,24 +58,23 @@ namespace Teamcity.CSharpInteractive
             }
 
             using var outputPathToken = _cleaner.Track(outputPath);
-            var assetsFilePath = Path.Combine(outputPath, "project.assets.json");
-            var commands =
-                from assembly in _nugetAssetsReader.ReadAssemblies(assetsFilePath)
-                select new ScriptCommand(assembly.Name, $"#r \"{assembly.FilePath}\"", true);
-
             using var addRefsToken = _log.Block("References");
-            foreach (var result in _commandsRunnerFactory().Run(commands))
+            var assetsFilePath = Path.Combine(outputPath, "project.assets.json");
+            var success = true;
+            foreach (var assembly in _nugetAssetsReader.ReadAssemblies(assetsFilePath))
             {
-                _log.Info(result.Command.ToString()!);
-                if (result.Success.HasValue && result.Success.Value)
+                if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
                 {
-                    continue;
+                    _log.Info(assembly.Name);
                 }
-
-                return new CommandResult(command, false);
+                else
+                {
+                    _log.Error(ErrorId.Nuget, $"Cannot add the reference \"{assembly.Name}\": {description}");
+                    success = false;
+                }
             }
             
-            return new CommandResult(command, true);
+            return new CommandResult(command, success);
         }
     }
 }

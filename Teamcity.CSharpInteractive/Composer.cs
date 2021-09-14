@@ -79,7 +79,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandFactory<ICodeSource>>().To<CodeSourceCommandFactory>()
             .Bind<ICommandFactory<ScriptCommand>>().As(Transient).To<ScriptCommandFactory>()
             .Bind<ICSharpScriptRunner>().To<CSharpScriptRunner>()
-            .Bind<IScriptOptionsFactory>().To<ScriptOptionsFactory>()
+            .Bind<IScriptOptionsFactory>().Bind<IReferenceRegistry>().To<ScriptOptionsFactory>()
             .Bind<IScriptSubmissionAnalyzer>().To<ScriptSubmissionAnalyzer>()
             .Bind<ICommandRunner>().Tag("CSharp").To<CSharpScriptCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Help parser").To<HelpCommandFactory>()
