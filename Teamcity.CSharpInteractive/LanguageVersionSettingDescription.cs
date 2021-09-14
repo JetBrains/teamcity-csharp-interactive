@@ -5,6 +5,8 @@ namespace Teamcity.CSharpInteractive
 
     internal class LanguageVersionSettingDescription : ISettingDescription
     {
+        public bool IsVisible => false;
+
         public Type SettingType => typeof(LanguageVersion);
 
         public string Key => "lv";

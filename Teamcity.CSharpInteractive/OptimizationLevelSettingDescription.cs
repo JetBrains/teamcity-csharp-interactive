@@ -1,3 +1,4 @@
+// ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
     using System;
@@ -5,6 +6,8 @@ namespace Teamcity.CSharpInteractive
 
     internal class OptimizationLevelSettingDescription : ISettingDescription
     {
+        public bool IsVisible => false;
+
         public Type SettingType => typeof(OptimizationLevel);
 
         public string Key => "ol";

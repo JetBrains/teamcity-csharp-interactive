@@ -66,7 +66,8 @@ namespace Teamcity.CSharpInteractive
             };
 
             var settingLines = 
-                from setting in _settingDescriptions  
+                from setting in _settingDescriptions
+                where setting.IsVisible
                 select new []
                 {
                     new Text($"    #{setting.Key.PadRight(12, ' ')}", Color.Header),

@@ -4,6 +4,8 @@ namespace Teamcity.CSharpInteractive
 
     internal class VerbosityLevelSettingDescription : ISettingDescription
     {
+        public bool IsVisible => true;
+
         public Type SettingType => typeof(VerbosityLevel);
 
         public string Key => "l";
