@@ -8,7 +8,7 @@ namespace Teamcity.CSharpInteractive
     using System.Reflection;
     using System.Runtime.Versioning;
     using System.Threading;
-    using Host;
+    using Contracts;
     using JetBrains.TeamCity.ServiceMessages.Read;
     using JetBrains.TeamCity.ServiceMessages.Write;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
@@ -17,7 +17,6 @@ namespace Teamcity.CSharpInteractive
     using Microsoft.CodeAnalysis.Scripting;
     using Pure.DI;
     using static Pure.DI.Lifetime;
-    using Console = Host.Console;
 
     [ExcludeFromCodeCoverage]
     internal static partial class Composer
@@ -27,6 +26,7 @@ namespace Teamcity.CSharpInteractive
         static Composer() => DI.Setup()
             .Default(Singleton)
             .Bind<Program>().To<Program>()
+            .Bind<IHost>().To<ScriptHost>()
             .Bind<Version>().Tag("ToolVersion").To(_ => ToolVersion)
             .Bind<string>().Tag("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<CancellationTokenSource>().To(_ => new CancellationTokenSource())
@@ -90,14 +90,7 @@ namespace Teamcity.CSharpInteractive
             .Bind<ICommandFactory<string>>().Tag("REPL Add assembly reference parser").To<AddAssemblyReferenceCommandFactory>()
             .Bind<ICommandRunner>().Tag("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>()
             .Bind<ICommandFactory<string>>().Tag("REPL Load script").To<LoadCommandFactory>()
-
-            // Messages
-            .Bind<ISession>().As(Transient).To(_ => Teamcity.Host.Composer.Resolve<ISession>())
-            .Bind<IActive>().To<ServicesHost>()
-            .Bind<Flow.FlowBase>().Bind<IFlow>().To<FlowService>()
-            .Bind<Console.ConsoleBase>().To<ConsoleService>()
-            .Bind<Teamcity.Host.Log.LogBase>().To<LogService>()
-
+            
             // Service messages
             .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()
             .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()

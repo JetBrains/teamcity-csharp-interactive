@@ -2,7 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using Host;
+    using Contracts;
 
     [ExcludeFromCodeCoverage]
     internal readonly struct Text

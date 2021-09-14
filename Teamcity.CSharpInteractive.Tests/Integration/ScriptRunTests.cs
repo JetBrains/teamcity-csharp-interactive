@@ -1,3 +1,4 @@
+// ReSharper disable StringLiteralTypo
 namespace Teamcity.CSharpInteractive.Tests.Integration
 {
     using System;

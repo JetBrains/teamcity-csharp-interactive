@@ -3,6 +3,7 @@ namespace Teamcity.CSharpInteractive
 {
     using System.Diagnostics;
     using System.Linq;
+    using Contracts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -13,6 +14,7 @@ namespace Teamcity.CSharpInteractive
         private readonly ILog<CSharpScriptRunner> _log;
         private readonly IPresenter<ScriptState<object>> _scriptStatePresenter;
         private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
+        private readonly IHost _host;
         private ScriptState<object>? _scriptState;
         internal static readonly ScriptOptions Options = ScriptOptions.Default
             .AddImports("System")
@@ -22,11 +24,13 @@ namespace Teamcity.CSharpInteractive
         public CSharpScriptRunner(
             ILog<CSharpScriptRunner> log,
             IPresenter<ScriptState<object>> scriptStatePresenter,
-            IPresenter<CompilationDiagnostics> diagnosticsPresenter)
+            IPresenter<CompilationDiagnostics> diagnosticsPresenter,
+            IHost host)
         {
             _log = log;
             _scriptStatePresenter = scriptStatePresenter;
             _diagnosticsPresenter = diagnosticsPresenter;
+            _host = host;
         }
 
         public bool Run(ICommand sourceCommand, string script)
@@ -37,7 +41,7 @@ namespace Teamcity.CSharpInteractive
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
                 _scriptState =
-                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, Options).Result)
+                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, Options, _host, typeof(IHost)).Result)
                     .ContinueWithAsync(
                         script,
                         Options,

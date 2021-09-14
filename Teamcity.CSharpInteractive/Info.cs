@@ -5,7 +5,7 @@ namespace Teamcity.CSharpInteractive
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Host;
+    using Contracts;
     using Pure.DI;
 
     [ExcludeFromCodeCoverage]

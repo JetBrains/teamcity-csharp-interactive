@@ -3,7 +3,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Collections.Generic;
-    using Host;
+    using Contracts;
 
     internal class ScriptRunner : IRunner
     {

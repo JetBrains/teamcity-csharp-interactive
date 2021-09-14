@@ -2,7 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using Host;
+    using Contracts;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     [ExcludeFromCodeCoverage]

@@ -2,6 +2,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
 {
     using System;
     using System.Collections.Generic;
+    using Contracts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
     using Moq;
@@ -13,6 +14,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
         private readonly Mock<ILog<CSharpScriptRunner>> _log;
         private readonly Mock<IPresenter<ScriptState<object>>> _scriptStatePresenter;
         private readonly Mock<IPresenter<CompilationDiagnostics>> _diagnosticsPresenter;
+        private readonly Mock<IHost> _host;
         private readonly List<Text> _errors = new();
         private readonly List<Diagnostic> _diagnostics = new();
 
@@ -23,6 +25,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             _scriptStatePresenter = new Mock<IPresenter<ScriptState<object>>>();
             _diagnosticsPresenter = new Mock<IPresenter<CompilationDiagnostics>>();
             _diagnosticsPresenter.Setup(i => i.Show(It.IsAny<CompilationDiagnostics>())).Callback<CompilationDiagnostics>(i => _diagnostics.AddRange(i.Diagnostics));
+            _host = new Mock<IHost>();
         }
 
         [Theory]
@@ -137,6 +140,6 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
         }
 
         private CSharpScriptRunner CreateInstance() =>
-            new(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object);
+            new(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, _host.Object);
     }
 }

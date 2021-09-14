@@ -5,7 +5,7 @@ namespace Teamcity.CSharpInteractive
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Host;
+    using Contracts;
 
     [ExcludeFromCodeCoverage]
     internal class Log
@@ -65,6 +65,7 @@ namespace Teamcity.CSharpInteractive
 
         public void Trace(string origin, params Text[] traceMessage)
         {
+            // ReSharper disable once InvertIf
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
                 origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();

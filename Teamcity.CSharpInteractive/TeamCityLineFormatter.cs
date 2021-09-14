@@ -3,7 +3,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Text;
-    using Host;
+    using Contracts;
 
     internal class TeamCityLineFormatter : ITeamCityLineFormatter
     {

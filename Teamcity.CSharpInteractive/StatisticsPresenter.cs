@@ -2,7 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System.Diagnostics.CodeAnalysis;
-    using Host;
+    using Contracts;
 
     [ExcludeFromCodeCoverage]
     internal class StatisticsPresenter : IPresenter<IStatistics>

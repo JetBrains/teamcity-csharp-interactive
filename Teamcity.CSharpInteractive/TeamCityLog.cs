@@ -2,7 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
-    using Host;
+    using Contracts;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
     internal class TeamCityLog<T>: ILog<T>
@@ -54,6 +54,7 @@ namespace Teamcity.CSharpInteractive
 
         public void Trace(string origin, params Text[] traceMessage)
         {
+            // ReSharper disable once InvertIf
             if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
             {
                 origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();

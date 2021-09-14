@@ -2,7 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
-    using Host;
+    using Contracts;
 
     internal interface IColorTheme
     {

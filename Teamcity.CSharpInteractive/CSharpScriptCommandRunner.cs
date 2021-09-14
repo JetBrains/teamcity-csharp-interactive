@@ -3,52 +3,18 @@
 // ReSharper disable InvertIf
 namespace Teamcity.CSharpInteractive
 {
-    using System.Threading;
-    using Host;
-
     internal class CSharpScriptCommandRunner : ICommandRunner
     {
-        private readonly ILog<CSharpScriptCommandRunner> _log;
         private readonly ICSharpScriptRunner _scriptRunner;
-        private readonly IFlow _flow;
-
-        public CSharpScriptCommandRunner(
-            ILog<CSharpScriptCommandRunner> log,
-            ICSharpScriptRunner scriptRunner,
-            IFlow flow)
-        {
-            _log = log;
-            _scriptRunner = scriptRunner;
-            _flow = flow;
-        }
+        
+        public CSharpScriptCommandRunner(ICSharpScriptRunner scriptRunner) => _scriptRunner = scriptRunner;
 
         public CommandResult TryRun(ICommand command)
         {
             switch (command)
             {
                 case ScriptCommand scriptCommand:
-                    var result = new CommandResult(command, _scriptRunner.Run(command, scriptCommand.Script));
-                    if (!command.Internal)
-                    {
-                        using var finisEvent = new ManualResetEvent(false);
-                        // ReSharper disable once AccessToDisposedClosure
-                        void FlowOnOnCompleted()  {  finisEvent.Set(); }
-                        _flow.OnCompleted += FlowOnOnCompleted;
-                        try
-                        {
-                            _scriptRunner.Run(command, $"{nameof(Host.ScriptInternal_FinishCommand)}();");
-                            if (!finisEvent.WaitOne(10000))
-                            {
-                                _log.Trace("Timeout while waiting for a finish of a command.");
-                            }
-                        }
-                        finally
-                        {
-                            _flow.OnCompleted -= FlowOnOnCompleted;
-                        }
-                    }
-
-                    return result;
+                    return new CommandResult(command, _scriptRunner.Run(command, scriptCommand.Script));
 
                 case ResetCommand:
                     _scriptRunner.Reset();

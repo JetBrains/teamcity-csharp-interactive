@@ -1,7 +1,7 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
     using System.Collections.Generic;
-    using Host;
+    using Contracts;
     using Moq;
     using Shouldly;
     using Xunit;

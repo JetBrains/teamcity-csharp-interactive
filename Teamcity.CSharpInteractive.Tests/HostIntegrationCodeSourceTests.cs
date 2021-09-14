@@ -3,7 +3,6 @@ namespace Teamcity.CSharpInteractive.Tests
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Host;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -11,12 +10,10 @@ namespace Teamcity.CSharpInteractive.Tests
     public class HostIntegrationCodeSourceTests
     {
         private readonly Mock<IEnvironment> _environment;
-        private readonly Mock<ISession> _session;
 
         public HostIntegrationCodeSourceTests()
         {
             _environment = new Mock<IEnvironment>();
-            _session = new Mock<ISession>();
         }
 
         [Fact]
@@ -24,7 +21,6 @@ namespace Teamcity.CSharpInteractive.Tests
         {
             // Given
             _environment.Setup(i => i.GetPath(SpecialFolder.Bin)).Returns("Bin");
-            _session.Setup(i => i.Port).Returns(123);
             var instance = CreateInstance();
 
             // When
@@ -34,12 +30,12 @@ namespace Teamcity.CSharpInteractive.Tests
             actualCode.ShouldBe(
                 new List<string>
                 {
-                    $"#r \"{Path.Combine("Bin", "Teamcity.Host.dll")}\"",
-                    HostIntegrationCodeSource.UsingSystem + HostIntegrationCodeSource.UsingStaticHost + HostIntegrationCodeSource.UsingStaticColor + $"{nameof(Host.ScriptInternal_SetPort)}(123);"
+                    $"#r \"{Path.Combine("Bin", "Teamcity.CSharpInteractive.Contracts.dll")}\"",
+                    HostIntegrationCodeSource.UsingSystem + HostIntegrationCodeSource.UsingStaticColor
                 });
         }
 
         private HostIntegrationCodeSource CreateInstance() =>
-            new(_environment.Object, _session.Object);
+            new(_environment.Object);
     }
 }

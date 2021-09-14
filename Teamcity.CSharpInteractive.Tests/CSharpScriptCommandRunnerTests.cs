@@ -7,12 +7,10 @@ namespace Teamcity.CSharpInteractive.Tests
     public class CSharpScriptCommandRunnerTests
     {
         private readonly Mock<ICSharpScriptRunner> _csharpScriptRunner;
-        private readonly Mock<IFlow> _flow;
-        
+
         public CSharpScriptCommandRunnerTests()
         {
             _csharpScriptRunner = new Mock<ICSharpScriptRunner>();
-            _flow = new Mock<IFlow>();
         }
 
         [Theory]
@@ -66,6 +64,6 @@ namespace Teamcity.CSharpInteractive.Tests
         }
 
         private CSharpScriptCommandRunner CreateInstance() =>
-            new(Mock.Of<ILog<CSharpScriptCommandRunner>>(), _csharpScriptRunner.Object, _flow.Object);
+            new(_csharpScriptRunner.Object);
     }
 }
