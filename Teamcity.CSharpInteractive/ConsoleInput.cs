@@ -8,7 +8,7 @@ namespace Teamcity.CSharpInteractive
     using System.Threading.Tasks;
 
     [ExcludeFromCodeCoverage]
-    internal class ConsoleInput : ICodeSource, IEnumerator<string>
+    internal class ConsoleInput : ICodeSource, IEnumerator<string?>
     {
         public ConsoleInput() => Console.CancelKeyPress += (_, _) => System.Environment.Exit(0);
 
@@ -16,17 +16,25 @@ namespace Teamcity.CSharpInteractive
 
         public bool Internal => false;
 
-        public IEnumerator<string> GetEnumerator() => this;
+        public IEnumerator<string?> GetEnumerator() => this;
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         
-        public string Current { get; private set; } = string.Empty;
+        public string? Current { get; private set; } = string.Empty;
 
-        object IEnumerator.Current => Current;
+        object? IEnumerator.Current => Current;
 
         public bool MoveNext()
         {
-            Task.Run(() => { Current = Console.In.ReadLine() ?? string.Empty; }).Wait();
+            if (Current == default)
+            {
+                Task.Run(() => { Current = Console.In.ReadLine() ?? string.Empty; }).Wait();
+            }
+            else
+            {
+                Current = null;
+            }
+            
             return true;
         }
 

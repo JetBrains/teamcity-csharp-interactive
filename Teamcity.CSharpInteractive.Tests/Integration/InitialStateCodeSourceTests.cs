@@ -51,7 +51,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
             }
         };
 
-        private static void RunScript(IEnumerable<string> lines)
+        private static void RunScript(IEnumerable<string?> lines)
         {
             ScriptState<object>? scriptState = null;
             foreach (var line in lines)

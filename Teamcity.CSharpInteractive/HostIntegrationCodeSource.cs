@@ -19,7 +19,7 @@ namespace Teamcity.CSharpInteractive
         
         public bool Internal => true;
 
-        public IEnumerator<string> GetEnumerator()
+        public IEnumerator<string?> GetEnumerator()
         {
             var lines = new List<string>
             {

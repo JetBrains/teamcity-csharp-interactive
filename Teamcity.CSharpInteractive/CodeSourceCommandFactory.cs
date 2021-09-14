@@ -29,6 +29,16 @@ namespace Teamcity.CSharpInteractive
             var sb = new StringBuilder();
             foreach (var code in codeSource)
             {
+                if (code == null)
+                {
+                    foreach (var command in CreateCommands(codeSource, sb))
+                    {
+                        yield return command;
+                    }
+
+                    continue;
+                }
+                
                 foreach (var line in code.Split(System.Environment.NewLine))
                 {
                     var trimmedLine = line.Trim();
@@ -45,15 +55,9 @@ namespace Teamcity.CSharpInteractive
                                 continue;
                             }
 
-                            if (sb.Length > 0)
+                            foreach (var command in CreateCommands(codeSource, sb))
                             {
-                                _log.Trace("Yield script commands before REPL commands.");
-                                foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
-                                {
-                                    yield return command;
-                                }
-
-                                sb.Clear();
+                                yield return command;
                             }
 
                             hasReplCommand = true;
@@ -76,15 +80,26 @@ namespace Teamcity.CSharpInteractive
                     }
                 }
             }
-            
-            if (sb.Length > 0)
+
+            foreach (var command in CreateCommands(codeSource, sb))
             {
-                _log.Trace("Finally yield script commands.");
-                foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
-                {
-                    yield return command;
-                }
+                yield return command;
             }
+        }
+
+        private IEnumerable<ICommand> CreateCommands(ICodeSource codeSource, StringBuilder sb)
+        {
+            if (sb.Length <= 0)
+            {
+                yield break;
+            }
+
+            foreach (var command in _scriptCommandFactory.Create(new ScriptCommand(codeSource.Name, sb.ToString(), codeSource.Internal)))
+            {
+                yield return command;
+            }
+
+            sb.Clear();
         }
     }
 }

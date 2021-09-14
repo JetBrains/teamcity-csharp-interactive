@@ -28,7 +28,7 @@ namespace Teamcity.CSharpInteractive.Tests
 
             // Then
             actualCode.ShouldBe(
-                new List<string>
+                new List<string?>
                 {
                     $"#r \"{Path.Combine("Bin", "Teamcity.CSharpInteractive.Contracts.dll")}\"",
                     HostIntegrationCodeSource.UsingStatic

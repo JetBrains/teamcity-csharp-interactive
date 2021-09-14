@@ -1,6 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Teamcity.CSharpInteractive
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
@@ -17,14 +18,18 @@ namespace Teamcity.CSharpInteractive
         {
             if (data.Variables.Any())
             {
-                _log.Trace("Variables:");
-                var variables = 
+                var trace = new List<Text> {new("Variables:")};
+                var variables = (
                     from variable in data.Variables
                     group variable by variable.Name
                     into gr
-                    select gr.Last();
+                    select gr.Last())
+                    .Select(GetVariablyTrace)
+                    .Select(i => new [] {Text.NewLine, new Text($"  {i}")})
+                    .SelectMany(i => i);
 
-                _log.Trace(string.Join(System.Environment.NewLine, variables.Select(GetVariablyTrace)));
+                trace.AddRange(variables);
+                _log.Trace(trace.ToArray());
             }
             else
             {

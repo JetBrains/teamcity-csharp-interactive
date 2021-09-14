@@ -75,7 +75,12 @@ namespace Teamcity.CSharpInteractive.Tests
             {
                 new[] {"code1", "code2"},
                 new[] {ScriptCommand4}
-            }
+            },
+            new object[]
+            {
+                new[] {"code1", null, "code2"},
+                new[] {ScriptCommand11, ScriptCommand12, ScriptCommand2}
+            },
         };
 
         private CodeSourceCommandFactory CreateInstance() =>

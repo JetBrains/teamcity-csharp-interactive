@@ -19,7 +19,7 @@ namespace Teamcity.CSharpInteractive
         
         public IReadOnlyDictionary<string, string> ScriptProperties { get; set; } = new Dictionary<string, string>();
 
-        public IEnumerator<string> GetEnumerator()
+        public IEnumerator<string?> GetEnumerator()
         {
             var lines = new List<string>();
             var stringType = SyntaxFactory.ParseTypeName("System.String");
