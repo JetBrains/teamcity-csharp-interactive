@@ -4,6 +4,10 @@ namespace Teamcity.CSharpInteractive
 
     internal interface ISettings
     {
+        IReadOnlyList<string> ScriptArguments { get; }
+        
+        IReadOnlyDictionary<string, string> ScriptProperties { get; }
+        
         VerbosityLevel VerbosityLevel { get; }
 
         InteractionMode InteractionMode { get; }

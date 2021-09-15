@@ -84,7 +84,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
                 Array.Empty<string>(),
                 new []{"Abc", "Xyz"},
                 TestTool.DefaultVars,
-                @"WriteLine($""Args: {Args.Length}, {Args[0]}, {Args[1]}"");"
+                @"WriteLine($""Args: {Args.Count}, {Args[0]}, {Args[1]}"");"
             );
             
             // Then

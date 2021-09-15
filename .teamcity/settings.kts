@@ -14,8 +14,8 @@ project {
 
 object CSharpScriptRepo : GitVcsRoot({
     name = "C# Script"
-    url = "C:\\Projects\\TeamCity\\Teamcity.CSharpInteractive"
-    //url = "https://github.com/JetBrains/teamcity-csharp-interactive.git"
+    //url = "C:\\Projects\\TeamCity\\Teamcity.CSharpInteractive"
+    url = "https://github.com/JetBrains/teamcity-csharp-interactive.git"
     branch = "refs/heads/master"
 })
 

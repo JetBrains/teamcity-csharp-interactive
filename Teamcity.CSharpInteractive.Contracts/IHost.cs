@@ -1,9 +1,15 @@
 // ReSharper disable UnusedMember.Global
 namespace Teamcity.CSharpInteractive.Contracts
 {
+    using System.Collections.Generic;
+
     public interface IHost
     {
         IHost Host { get; }
+        
+        IReadOnlyList<string> Args { get; }
+        
+        IReadOnlyDictionary<string, string> Props { get; }
 
         void WriteLine();
         

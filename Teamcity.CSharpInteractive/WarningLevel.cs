@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMember.Global
 namespace Teamcity.CSharpInteractive
 {
     // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/errors-warnings
@@ -8,6 +9,6 @@ namespace Teamcity.CSharpInteractive
         L2 = 2,
         L3 = 3,
         L4 = 4,
-        L5 = 5,
+        L5 = 5
     }
 }

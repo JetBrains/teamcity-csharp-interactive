@@ -2,6 +2,7 @@
 
 namespace Teamcity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Pure.DI;
@@ -12,7 +13,6 @@ namespace Teamcity.CSharpInteractive
         private readonly ICommandLineParser _commandLineParser;
         private readonly ICodeSource _hostCodeSource;
         private readonly ICodeSource _consoleCodeSource;
-        private readonly IInitialStateCodeSourceFactory _initialStateCodeSourceFactory;
         private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
 
         public Settings(
@@ -20,14 +20,12 @@ namespace Teamcity.CSharpInteractive
             ICommandLineParser commandLineParser,
             [Tag("Host")] ICodeSource hostCodeSource,
             ICodeSource consoleCodeSource,
-            IInitialStateCodeSourceFactory initialStateCodeSourceFactory,
             IFileCodeSourceFactory fileCodeSourceFactory)
         {
             _environment = environment;
             _commandLineParser = commandLineParser;
             _hostCodeSource = hostCodeSource;
             _consoleCodeSource = consoleCodeSource;
-            _initialStateCodeSourceFactory = initialStateCodeSourceFactory;
             _fileCodeSourceFactory = fileCodeSourceFactory;
         }
 
@@ -41,7 +39,7 @@ namespace Teamcity.CSharpInteractive
 
         public IEnumerable<ICodeSource> CodeSources { get; private set; } = Enumerable.Empty<ICodeSource>();
         
-        public IEnumerable<string> ScriptArguments { get; private set; }  = Enumerable.Empty<string>();
+        public IReadOnlyList<string> ScriptArguments { get; private set; }  = Array.Empty<string>();
 
         public IReadOnlyDictionary<string, string> ScriptProperties { get; private set; } = new Dictionary<string, string>();
 
@@ -62,7 +60,7 @@ namespace Teamcity.CSharpInteractive
                 VerbosityLevel = VerbosityLevel.Normal;
                 ShowHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
                 ShowVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
-                ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value);
+                ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToArray();
                 var props = new Dictionary<string, string>();
                 ScriptProperties = props;
                 foreach (var prop in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
@@ -71,9 +69,7 @@ namespace Teamcity.CSharpInteractive
                 }
 
                 NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);
-                CodeSources =
-                    new [] {_hostCodeSource, _initialStateCodeSourceFactory.Create(ScriptArguments.ToArray(), ScriptProperties)}.Concat(
-                        args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value)));
+                CodeSources = new [] {_hostCodeSource }.Concat(args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value)));
             }
         }
 
