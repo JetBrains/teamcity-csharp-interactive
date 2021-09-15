@@ -11,15 +11,13 @@ namespace Teamcity.CSharpInteractive
         IScriptOptionsFactory,
         IReferenceRegistry,
         ISettingSetter<LanguageVersion>,
-        ISettingSetter<OptimizationLevel>
+        ISettingSetter<OptimizationLevel>,
+        ISettingSetter<WarningLevel>,
+        ISettingSetter<CheckOverflow>,
+        ISettingSetter<AllowUnsafe>
     {
+        internal static readonly ScriptOptions Default = ScriptOptions.Default.AddImports("System");
         private readonly ILog<ScriptOptionsFactory> _log;
-        internal static readonly ScriptOptions Default =
-            ScriptOptions.Default
-                .AddImports("System")
-                .WithLanguageVersion(LanguageVersion.Latest)
-                .WithOptimizationLevel(OptimizationLevel.Release);
-
         private ScriptOptions _options = Default;
 
         public ScriptOptionsFactory(ILog<ScriptOptionsFactory> log) => _log = log;
@@ -55,6 +53,27 @@ namespace Teamcity.CSharpInteractive
         {
             var prev = _options.OptimizationLevel;
             _options = _options.WithOptimizationLevel(value);
+            return prev;
+        }
+
+        WarningLevel? ISettingSetter<WarningLevel>.SetSetting(WarningLevel value)
+        {
+            var prev = (WarningLevel)_options.WarningLevel;
+            _options = _options.WithWarningLevel((int)value);
+            return prev;
+        }
+
+        CheckOverflow? ISettingSetter<CheckOverflow>.SetSetting(CheckOverflow value)
+        {
+            var prev = _options.CheckOverflow ? CheckOverflow.On : CheckOverflow.Off;
+            _options = _options.WithCheckOverflow(value == CheckOverflow.On);
+            return prev;
+        }
+
+        AllowUnsafe? ISettingSetter<AllowUnsafe>.SetSetting(AllowUnsafe value)
+        {
+            var prev = _options.AllowUnsafe ? AllowUnsafe.On : AllowUnsafe.Off;
+            _options = _options.WithAllowUnsafe(value == AllowUnsafe.On);
             return prev;
         }
     }

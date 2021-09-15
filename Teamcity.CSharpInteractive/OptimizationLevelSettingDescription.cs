@@ -6,7 +6,7 @@ namespace Teamcity.CSharpInteractive
 
     internal class OptimizationLevelSettingDescription : ISettingDescription
     {
-        public bool IsVisible => false;
+        public bool IsVisible => true;
 
         public Type SettingType => typeof(OptimizationLevel);
 
