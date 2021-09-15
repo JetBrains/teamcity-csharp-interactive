@@ -9,7 +9,8 @@ version = "2021.1"
 
 project {
     vcsRoot(CSharpScriptRepo)
-    subProject(DemoProject)
+    buildType(HelloWorldBuildType)
+    buildType(InteractiveBuildType)
 }
 
 object CSharpScriptRepo : GitVcsRoot({
@@ -17,12 +18,6 @@ object CSharpScriptRepo : GitVcsRoot({
     //url = "C:\\Projects\\TeamCity\\Teamcity.CSharpInteractive"
     url = "https://github.com/JetBrains/teamcity-csharp-interactive.git"
     branch = "refs/heads/master"
-})
-
-object DemoProject: Project({
-    name = "Demo"
-    buildType(HelloWorldBuildType)
-    buildType(InteractiveBuildType)
 })
 
 object HelloWorldBuildType: BuildType({

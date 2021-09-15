@@ -1,3 +1,5 @@
+#wl L0
+
 if(!Props.TryGetValue("telegram.bot.token", out var token))
 {
     throw new ArgumentException($"Required TeamCity parameter system.telegram.bot.token was not specified, see https://telegrambots.github.io/book/1/quickstart.html#bot-father");
