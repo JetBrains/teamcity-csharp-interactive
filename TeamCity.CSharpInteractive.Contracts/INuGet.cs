@@ -5,6 +5,6 @@ namespace TeamCity.CSharpInteractive.Contracts
 
     public interface INuGet
     {
-        IEnumerable<NuGetPackage> Restore(string packageId, string versionRange, string? packagesPath = null);
+        IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange = null, string? packagesPath = null);
     }
 }

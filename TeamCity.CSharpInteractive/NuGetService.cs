@@ -35,7 +35,7 @@ namespace TeamCity.CSharpInteractive
             _nugetAssetsReader = nugetAssetsReader;
         }
 
-        public IEnumerable<NuGetPackage> Restore(string packageId, string versionRange, string? packagesPath)
+        public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? packagesPath)
         {
             packagesPath ??= _nugetEnvironment.PackagesPath;
             var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
@@ -48,7 +48,7 @@ namespace TeamCity.CSharpInteractive
 
             var restoreResult = _nugetRestoreService.Restore(
                 packageId,
-                VersionRange.Parse(versionRange),
+                versionRange != default ? VersionRange.Parse(versionRange) : default,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,
                 outputPath,
