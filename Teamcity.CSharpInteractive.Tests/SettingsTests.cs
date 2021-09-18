@@ -29,7 +29,6 @@ namespace Teamcity.CSharpInteractive.Tests
             // Given
             var settings = CreateInstance();
             var codeSource = Mock.Of<ICodeSource>();
-            var props = new Dictionary<string, string>();
             _fileCodeSourceFactory.Setup(i => i.Create("myScript")).Returns(codeSource);
 
             // When
@@ -53,7 +52,6 @@ namespace Teamcity.CSharpInteractive.Tests
             settings.CodeSources.ToArray().ShouldBe(new []{_hostCodeSource, codeSource});
             settings.NuGetSources.ToArray().ShouldBe(new []{"Src1", "Src2"});
             settings.ScriptArguments.ToArray().ShouldBe(new []{"Arg1", "Arg2"});
-            settings.ScriptProperties.ToArray().ShouldBe(props);
         }
         
         [Fact]

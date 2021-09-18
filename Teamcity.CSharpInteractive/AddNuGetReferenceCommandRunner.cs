@@ -61,7 +61,7 @@ namespace Teamcity.CSharpInteractive
             using var addRefsToken = _log.Block("References");
             var assetsFilePath = Path.Combine(outputPath, "project.assets.json");
             var success = true;
-            foreach (var assembly in _nugetAssetsReader.ReadAssemblies(assetsFilePath))
+            foreach (var assembly in _nugetAssetsReader.ReadReferencingAssemblies(assetsFilePath))
             {
                 if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
                 {

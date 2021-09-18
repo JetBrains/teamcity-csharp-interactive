@@ -2,6 +2,7 @@
 namespace Teamcity.CSharpInteractive
 {
     using System;
+    using System.IO;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -17,10 +18,17 @@ namespace Teamcity.CSharpInteractive
         ISettingSetter<AllowUnsafe>
     {
         internal static readonly ScriptOptions Default = ScriptOptions.Default.AddImports("System");
+
         private readonly ILog<ScriptOptionsFactory> _log;
         private ScriptOptions _options = Default;
 
-        public ScriptOptionsFactory(ILog<ScriptOptionsFactory> log) => _log = log;
+        public ScriptOptionsFactory(IEnvironment environment, ILog<ScriptOptionsFactory> log)
+        {
+            _log = log;
+            _options = _options
+                .AddReferences(Path.Combine(environment.GetPath(SpecialFolder.Bin), "Teamcity.CSharpInteractive.Contracts.dll"))
+                .AddImports("Teamcity.CSharpInteractive.Contracts");
+        }
 
         public ScriptOptions Create() => _options;
         

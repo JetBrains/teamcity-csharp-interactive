@@ -1,7 +1,5 @@
 namespace Teamcity.CSharpInteractive.Tests
 {
-    using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Moq;
     using Shouldly;
@@ -27,12 +25,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var actualCode = instance.ToList();
 
             // Then
-            actualCode.ShouldBe(
-                new List<string?>
-                {
-                    $"#r \"{Path.Combine("Bin", "Teamcity.CSharpInteractive.Contracts.dll")}\"",
-                    HostIntegrationCodeSource.UsingStatic
-                });
+            actualCode.ShouldBe(new []{HostIntegrationCodeSource.UsingStatic});
         }
 
         private HostIntegrationCodeSource CreateInstance() =>

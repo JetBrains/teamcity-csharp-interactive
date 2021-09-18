@@ -30,7 +30,6 @@ namespace Teamcity.CSharpInteractive
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
-                .Bind<IHost>().To<ScriptHost>()
                 .Bind<Version>().Tag("ToolVersion").To(_ => ToolVersion)
                 .Bind<string>().Tag("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
                 .Bind<CancellationTokenSource>().To(_ => new CancellationTokenSource())
@@ -135,7 +134,11 @@ namespace Teamcity.CSharpInteractive
                 .Bind<ITeamCityWriter>().Tag("Root").To(
                     ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
                         str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).WriteLine(new Text(str + "\n"))))
-                .Bind<IServiceMessageParser>().To<ServiceMessageParser>();
+                .Bind<IServiceMessageParser>().To<ServiceMessageParser>()
+                
+                // Public
+                .Bind<IHost>().Bind<IServiceProvider>().To<HostService>()
+                .Bind<INuGet>().To<NuGetService>();
         }
     }
 }

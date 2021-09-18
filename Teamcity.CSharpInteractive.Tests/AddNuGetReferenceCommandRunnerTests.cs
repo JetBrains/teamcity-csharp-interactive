@@ -53,7 +53,7 @@ namespace Teamcity.CSharpInteractive.Tests
             ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
             
             _nugetAssetsReader = new Mock<INugetAssetsReader>();
-            _nugetAssetsReader.Setup(i => i.ReadAssemblies(AssetsFilePath)).Returns(new [] {referencingAssembly1, referencingAssembly2});
+            _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(AssetsFilePath)).Returns(new [] {referencingAssembly1, referencingAssembly2});
             
             _trackToken = new Mock<IDisposable>();
             _cleaner = new Mock<ICleaner>();
@@ -118,7 +118,7 @@ namespace Teamcity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            _nugetAssetsReader.Setup(i => i.ReadAssemblies(AssetsFilePath)).Returns(Enumerable.Empty<ReferencingAssembly>());
+            _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(AssetsFilePath)).Returns(Enumerable.Empty<ReferencingAssembly>());
             var result = runner.TryRun(_command);
 
             // Then

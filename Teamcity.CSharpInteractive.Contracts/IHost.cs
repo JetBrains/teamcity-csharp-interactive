@@ -22,5 +22,7 @@ namespace Teamcity.CSharpInteractive.Contracts
         void Info(string text);
         
         void Trace(string trace, string origin = "");
+        
+        T GetService<T>();
     }
 }

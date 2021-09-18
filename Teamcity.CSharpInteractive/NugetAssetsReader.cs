@@ -7,6 +7,7 @@ namespace Teamcity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using Contracts;
     using NuGet.Common;
     using NuGet.ProjectModel;
     using NuGet.Versioning;
@@ -28,7 +29,20 @@ namespace Teamcity.CSharpInteractive
             _dotnetEnvironment = dotnetEnvironment;
         }
 
-        public IEnumerable<ReferencingAssembly> ReadAssemblies(string assetsFilePath)
+        public IEnumerable<NuGetPackage> ReadPackages(string packagesPath, string assetsFilePath)
+        {
+            var lockFile = LockFileUtilities.GetLockFile(assetsFilePath, _logger);
+            // ReSharper disable once InvertIf
+            if (lockFile == null)
+            {
+                _log.Warning($"Cannot process the lock file \"{assetsFilePath}\".");
+                return Enumerable.Empty<NuGetPackage>();
+            }
+            
+            return lockFile.Libraries.Select(i => new NuGetPackage(i.Name, i.Version.Version, i.Type, Path.Combine(packagesPath, i.Path), i.Sha512));
+        }
+
+        public IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string assetsFilePath)
         {
             var lockFile = LockFileUtilities.GetLockFile(assetsFilePath, _logger);
             if (lockFile == null)
