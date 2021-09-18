@@ -1,5 +1,5 @@
 // ReSharper disable MemberCanBePrivate.Global
-namespace Teamcity.CSharpInteractive.Contracts
+namespace TeamCity.CSharpInteractive.Contracts
 {
     using System;
 
@@ -26,7 +26,7 @@ namespace Teamcity.CSharpInteractive.Contracts
         }
 
         public override bool Equals(object? obj) =>
-            obj is NuGetPackage other && (Name == other.Name && Version.Equals(other.Version) && Type == other.Type && Path == other.Path && Sha512 == other.Sha512);
+            obj is NuGetPackage other && Name == other.Name && Version.Equals(other.Version) && Type == other.Type && Path == other.Path && Sha512 == other.Sha512;
 
         public override int GetHashCode()
         {

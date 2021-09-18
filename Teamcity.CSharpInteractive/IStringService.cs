@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     public interface IStringService
     {

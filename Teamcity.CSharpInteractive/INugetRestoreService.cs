@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
     using NuGet.Versioning;

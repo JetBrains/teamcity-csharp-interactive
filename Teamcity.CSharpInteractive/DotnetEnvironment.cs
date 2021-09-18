@@ -1,6 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;

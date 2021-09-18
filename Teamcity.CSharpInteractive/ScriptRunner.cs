@@ -1,6 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InvertIf
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
     using Contracts;

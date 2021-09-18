@@ -1,5 +1,5 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System;
     using Microsoft.CodeAnalysis;

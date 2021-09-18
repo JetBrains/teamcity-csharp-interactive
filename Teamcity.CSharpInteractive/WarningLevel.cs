@@ -1,5 +1,5 @@
 // ReSharper disable UnusedMember.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/errors-warnings
     internal enum WarningLevel

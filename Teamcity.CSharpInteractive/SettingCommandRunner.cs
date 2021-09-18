@@ -1,5 +1,5 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     internal class SettingCommandRunner<TOption>: ICommandRunner
         where TOption: struct, System.Enum

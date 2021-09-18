@@ -1,6 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

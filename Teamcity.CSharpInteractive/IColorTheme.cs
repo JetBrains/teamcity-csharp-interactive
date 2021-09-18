@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedMember.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System;
     using Contracts;

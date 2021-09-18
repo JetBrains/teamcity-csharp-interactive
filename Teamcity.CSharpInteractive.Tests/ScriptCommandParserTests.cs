@@ -1,5 +1,5 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-namespace Teamcity.CSharpInteractive.Tests
+namespace TeamCity.CSharpInteractive.Tests
 {
     using System.Linq;
     using Moq;

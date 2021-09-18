@@ -1,7 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 
 // ReSharper disable InvertIf
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     internal class CSharpScriptCommandRunner : ICommandRunner
     {

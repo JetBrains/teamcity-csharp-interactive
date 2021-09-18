@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Teamcity.CSharpInteractive\Teamcity.CSharpInteractive.csproj" />
+      <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
     </ItemGroup>
 
     <ItemGroup>

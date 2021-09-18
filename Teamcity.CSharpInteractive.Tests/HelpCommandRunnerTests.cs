@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive.Tests
+namespace TeamCity.CSharpInteractive.Tests
 {
     using Moq;
     using Shouldly;

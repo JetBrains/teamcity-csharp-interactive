@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive.Contracts
+namespace TeamCity.CSharpInteractive.Contracts
 {
     public enum Color
     {

@@ -1,9 +1,9 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
-namespace Teamcity.CSharpInteractive.Tests.Integration.Core
+namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 {
     using System;
     using System.Diagnostics;
-    
+
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal class Process : IProcess
     {

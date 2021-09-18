@@ -1,5 +1,5 @@
 // ReSharper disable UnusedMember.Global
-namespace Teamcity.CSharpInteractive.Contracts
+namespace TeamCity.CSharpInteractive.Contracts
 {
     using System.Collections.Generic;
 

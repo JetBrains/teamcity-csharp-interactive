@@ -1,5 +1,5 @@
 // ReSharper disable UnusedMemberInSuper.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
     using Microsoft.DotNet.PlatformAbstractions;

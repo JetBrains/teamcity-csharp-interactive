@@ -1,5 +1,5 @@
 // ReSharper disable StringLiteralTypo
-namespace Teamcity.CSharpInteractive.Tests.Integration
+namespace TeamCity.CSharpInteractive.Tests.Integration
 {
     using System;
     using System.IO;
@@ -7,7 +7,7 @@ namespace Teamcity.CSharpInteractive.Tests.Integration
     using Core;
     using Shouldly;
     using Xunit;
-    
+
     public class ScriptRunTests
     {
         private const int InitialLinesCount = 3;

@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System.Collections.ObjectModel;
     using Microsoft.CodeAnalysis;

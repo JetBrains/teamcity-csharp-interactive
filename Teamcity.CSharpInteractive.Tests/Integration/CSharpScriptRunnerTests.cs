@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive.Tests.Integration
+namespace TeamCity.CSharpInteractive.Tests.Integration
 {
     using System;
     using System.Collections.Generic;

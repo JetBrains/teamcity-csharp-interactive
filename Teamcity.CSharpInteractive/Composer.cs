@@ -1,6 +1,6 @@
 // ReSharper disable PartialTypeWithSinglePart
 // ReSharper disable RedundantCast
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;

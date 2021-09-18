@@ -1,4 +1,4 @@
-namespace Teamcity.CSharpInteractive.Tests
+namespace TeamCity.CSharpInteractive.Tests
 {
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Moq;

@@ -1,5 +1,5 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace Teamcity.CSharpInteractive
+namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.IO;
@@ -26,8 +26,8 @@ namespace Teamcity.CSharpInteractive
         {
             _log = log;
             _options = _options
-                .AddReferences(Path.Combine(environment.GetPath(SpecialFolder.Bin), "Teamcity.CSharpInteractive.Contracts.dll"))
-                .AddImports("Teamcity.CSharpInteractive.Contracts");
+                .AddReferences(Path.Combine(environment.GetPath(SpecialFolder.Bin), "TeamCity.CSharpInteractive.Contracts.dll"))
+                .AddImports("TeamCity.CSharpInteractive.Contracts");
         }
 
         public ScriptOptions Create() => _options;
