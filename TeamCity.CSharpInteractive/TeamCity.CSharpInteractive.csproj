@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>dotnet-csi</AssemblyName>
+        <NoWarn>NU1605</NoWarn>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageType>DotnetCliTool</PackageType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>dotnet-csi</ToolCommandName>
+        <IncludeAssets>All</IncludeAssets>
+        <PackageId>TeamCity.csi</PackageId>
+        <IncludeAssets>All</IncludeAssets>
+        <Title>TeamCity C# script runner</Title>
+        <PackageIcon>_common\icon.png</PackageIcon>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <Description>TeamCity C# script runner</Description>
+        <PackageTags>C# csharp script interactive TeamCity</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Pure.DI" Version="1.0.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.11.0" />
+        <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="5.11.0" />
+        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
+        <ProjectReference Include="..\TeamCity.CSharpInteractive.Contracts\TeamCity.CSharpInteractive.Contracts.csproj" />
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>TeamCity.CSharpInteractive.Tests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="$(MSBuildProjectDirectory)\..\icon.png">
+            <PackagePath>_common</PackagePath>
+            <Pack>true</Pack>
+        </None>
+
+        <Content Include="$(MSBuildProjectDirectory)\..\teamcity-plugin.xml">
+            <PackagePath>.</PackagePath>
+            <Pack>true</Pack>
+        </Content>
+    </ItemGroup>
+
+</Project>
