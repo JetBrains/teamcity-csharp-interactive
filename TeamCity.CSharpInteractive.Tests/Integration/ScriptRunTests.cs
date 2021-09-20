@@ -264,8 +264,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
         }
         
-        [Fact]
-        public void ShouldNotAddAlreadyAddedReferencesWhenRestore()
+        [Theory]
+        [InlineData("")]
+        [InlineData("2021")]
+        public void ShouldNotAddAlreadyAddedReferencesWhenRestore(string teamcityVersionEnvVar)
         {
             // Given
 
@@ -273,7 +275,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(
                 new []{"-s", Path.Combine(Directory.GetCurrentDirectory(), "Integration", "Resources")},
                 Array.Empty<string>(),
-                Array.Empty<EnvironmentVariable>(),
+                new [] {new EnvironmentVariable("TEAMCITY_VERSION", teamcityVersionEnvVar)},
                 @"#r ""nuget: csinetstandard11, 1.0.0""",
                 "using System.Collections.Generic;",
                 "using System.Linq;",
@@ -282,8 +284,8 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 "WriteLine(list2.Count);");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
+            result.ExitCode.Value.ShouldBe(0, $"StdOut:\n{string.Join("\n", result.StdOut)}\n\nStdErr:\n{string.Join("\n", result.StdErr)}");
         }
         
         [Fact]
@@ -310,8 +312,8 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 );
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
+            result.ExitCode.Value.ShouldBe(0);
             result.StdOut.Contains("Abc").ShouldBeTrue();
         }
         
@@ -331,8 +333,41 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             );
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
+            result.ExitCode.Value.ShouldBe(0);
+        }
+        
+        [Fact]
+        public void ShouldUseGenericCollectionsAndLinq()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                "using System.Collections.Generic;",
+                "using System.Linq;",
+                "var list = new List<int>{1, 2};",
+                "var list2 = list.Where(i => i == 1).ToList();",
+                "WriteLine(list2.Count);");
+            
+            // Then
+            result.StdErr.ShouldBeEmpty();
+            result.ExitCode.Value.ShouldBe(0);
+        }
+        
+        [Fact]
+        public void ShouldSupportTeamCityServiceMessages()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                "using JetBrains.TeamCity.ServiceMessages.Write.Special;",
+                "GetService<ITeamCityBuildStatusWriter>().WriteBuildParameter(\"system.hello\", \"Abc\");");
+            
+            // Then
+            result.StdErr.ShouldBeEmpty();
+            result.ExitCode.Value.ShouldBe(0);
         }
     }
 }

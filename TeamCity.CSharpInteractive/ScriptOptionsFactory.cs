@@ -2,13 +2,16 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.IO;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
     internal class ScriptOptionsFactory:
+        MetadataReferenceResolver,
         IScriptOptionsFactory,
         IReferenceRegistry,
         ISettingSetter<LanguageVersion>,
@@ -17,17 +20,17 @@ namespace TeamCity.CSharpInteractive
         ISettingSetter<CheckOverflow>,
         ISettingSetter<AllowUnsafe>
     {
-        internal static readonly ScriptOptions Default = ScriptOptions.Default.AddImports("System");
+        internal static readonly ScriptOptions Default = ScriptOptions.Default
+            .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic && !i.ReflectionOnly))
+            .AddImports("System", "TeamCity.CSharpInteractive.Contracts");
 
         private readonly ILog<ScriptOptionsFactory> _log;
         private ScriptOptions _options = Default;
 
-        public ScriptOptionsFactory(IEnvironment environment, ILog<ScriptOptionsFactory> log)
+        public ScriptOptionsFactory(ILog<ScriptOptionsFactory> log)
         {
             _log = log;
-            _options = _options
-                .AddReferences(Path.Combine(environment.GetPath(SpecialFolder.Bin), "TeamCity.CSharpInteractive.Contracts.dll"))
-                .AddImports("TeamCity.CSharpInteractive.Contracts");
+            _options = _options.WithMetadataResolver(this);
         }
 
         public ScriptOptions Create() => _options;
@@ -84,5 +87,30 @@ namespace TeamCity.CSharpInteractive
             _options = _options.WithAllowUnsafe(value == AllowUnsafe.On);
             return prev;
         }
+
+        public override ImmutableArray<PortableExecutableReference> ResolveReference(string reference, string? baseFilePath, MetadataReferenceProperties properties)
+        {
+            try
+            {
+                _log.Trace($"Resoling reference \"{reference}\".");
+                var assembly = Assembly.ReflectionOnlyLoad(reference);
+                _log.Trace($"The reference was resolved as the assembly {assembly.GetName()}.");
+                return ImmutableArray.Create(MetadataReference.CreateFromFile(assembly.Location));
+            }
+            catch (Exception ex)
+            {
+                _log.Trace($"The reference \"{reference}\" was not resolved: {ex.Message}");
+                return ImmutableArray<PortableExecutableReference>.Empty;
+            }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == this.GetType() && _options.Equals(((ScriptOptionsFactory)obj)._options);
+        }
+
+        public override int GetHashCode() => _options.GetHashCode();
     }
 }

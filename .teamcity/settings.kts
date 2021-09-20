@@ -11,6 +11,7 @@ project {
     vcsRoot(CSharpScriptRepo)
     buildType(HelloWorldBuildType)
     buildType(InteractiveBuildType)
+    buildType(PushNuGetPackageBuildType)
 }
 
 object CSharpScriptRepo : GitVcsRoot({
@@ -40,8 +41,34 @@ object InteractiveBuildType: BuildType({
             path = "Samples/Scripts/TelegramBot.csx"
             arguments = """"%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%&buildTypeId=%system.teamcity.buildType.id%&guest=1""""
         }
-        script {
-            scriptContent = "echo Deploying ..."
+        script { scriptContent = "echo Deploying ..." }
+    }
+})
+
+object PushNuGetPackageBuildType: BuildType({
+    name = "Push NuGet package"
+    params {
+        param("system.version", "1.0.0")
+    }
+    vcs { root(CSharpScriptRepo) }
+    steps {
+        csharpScript {
+            content =
+                    "using System.Linq;\n" +
+                    "using JetBrains.TeamCity.ServiceMessages.Write.Special;\n" +
+                    "var packageId = \"MySampleLib\";\n" +
+                    "var nextVersion = \n" +
+                    "  GetService<INuGet>().Restore(packageId, \"*\")\n" +
+                    "  .Where(i => i.Name == packageId)\n" +
+                    "  .Select(i => i.Version)\n" +
+                    "  .Select(i => new Version(i.Major, i.Minor, i.Build + 1))\n" +
+                    "  .DefaultIfEmpty(new Version(1, 0, 0))\n" +
+                    "  .Max();\n" +
+                    "WriteLine(\$\"Next NuGet package version for {packageId} is {nextVersion}\");\n" +
+                    "GetService<ITeamCityBuildStatusWriter>().WriteBuildParameter(\"system.version\", nextVersion.ToString());"
         }
+        dotnetCustom { args = "new classlib -n MySampleLib --force" }
+        dotnetPack { workingDir = "MySampleLib" }
+        script { scriptContent = "echo Pushing the NuGet package MySampleLib version %system.version% ..." }
     }
 })

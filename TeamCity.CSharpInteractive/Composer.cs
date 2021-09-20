@@ -125,7 +125,15 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICommandFactory<string>>().Tag("REPL Load script").To<LoadCommandFactory>()
 
                 // Service messages
-                .Bind<ITeamCityBlockWriter<IDisposable>>().Bind<ITeamCityMessageWriter>().Bind<ITeamCityBuildProblemWriter>().To<HierarchicalTeamCityWriter>()
+                .Bind<ITeamCityWriter>()
+                    .Bind<ITeamCityBlockWriter<ITeamCityWriter>>()
+                    .Bind<ITeamCityFlowWriter<ITeamCityWriter>>()
+                    .Bind<ITeamCityMessageWriter>()
+                    .Bind<ITeamCityTestsWriter>()
+                    .Bind<ITeamCityCompilationBlockWriter<ITeamCityWriter>>()
+                    .Bind<ITeamCityArtifactsWriter>()
+                    .Bind<ITeamCityBuildStatusWriter>()
+                    .To<HierarchicalTeamCityWriter>()
                 .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
                 .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
                 .Bind<IFlowIdGenerator>().To<FlowIdGenerator>()

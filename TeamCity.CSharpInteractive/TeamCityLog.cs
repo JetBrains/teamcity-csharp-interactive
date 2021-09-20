@@ -9,24 +9,24 @@ namespace TeamCity.CSharpInteractive
     {
         private readonly ISettings _settings;
         private readonly ITeamCityLineFormatter _lineFormatter;
-        private readonly ITeamCityBlockWriter<IDisposable> _blockWriter;
+        private readonly ITeamCityBlockWriter<ITeamCityWriter> _blockWriter;
         private readonly ITeamCityMessageWriter _teamCityMessageWriter;
-        private readonly ITeamCityBuildProblemWriter _teamCityBuildProblemWriter;
+        private readonly ITeamCityBuildStatusWriter _teamCityBuildStatusWriter;
         private readonly IStatistics _statistics;
 
         public TeamCityLog(
             ISettings settings,
             ITeamCityLineFormatter lineFormatter,
-            ITeamCityBlockWriter<IDisposable> blockWriter,
+            ITeamCityBlockWriter<ITeamCityWriter> blockWriter,
             ITeamCityMessageWriter teamCityMessageWriter,
-            ITeamCityBuildProblemWriter teamCityBuildProblemWriter,
+            ITeamCityBuildStatusWriter teamCityBuildStatusWriter,
             IStatistics statistics)
         {
             _settings = settings;
             _lineFormatter = lineFormatter;
             _blockWriter = blockWriter;
             _teamCityMessageWriter = teamCityMessageWriter;
-            _teamCityBuildProblemWriter = teamCityBuildProblemWriter;
+            _teamCityBuildStatusWriter = teamCityBuildStatusWriter;
             _statistics = statistics;
         }
 
@@ -34,7 +34,7 @@ namespace TeamCity.CSharpInteractive
         {
             var message = error.ToSimpleString();
             _statistics.RegisterError(message);
-            _teamCityBuildProblemWriter.WriteBuildProblem(id.Id, message);
+            _teamCityBuildStatusWriter.WriteBuildProblem(id.Id, message);
         }
 
         public void Warning(params Text[] warning)
