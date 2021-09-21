@@ -36,7 +36,7 @@ namespace TeamCity.CSharpInteractive
             _cleaner = cleaner;
         }
 
-        public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? packagesPath)
+        public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
         {
             packagesPath ??= _nugetEnvironment.PackagesPath;
             if (!string.IsNullOrWhiteSpace(packagesPath) && !_fileSystem.IsPathRooted(packagesPath))
@@ -48,6 +48,7 @@ namespace TeamCity.CSharpInteractive
             var restoreResult = _nugetRestoreService.TryRestore(
                 packageId,
                 versionRange != default ? VersionRange.Parse(versionRange) : default,
+                targetFrameworkMoniker,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,
                 packagesPath,

@@ -19,24 +19,28 @@ namespace TeamCity.CSharpInteractive
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly IEnvironment _environment;
         private readonly IDotnetEnvironment _dotnetEnvironment;
+        private readonly ITargetFrameworkMonikerParser _targetFrameworkMonikerParser;
 
         public NugetRestoreService(
             ILog<NugetRestoreService> log,
             IBuildEngine buildEngine,
             IUniqueNameGenerator uniqueNameGenerator,
             IEnvironment environment,
-            IDotnetEnvironment dotnetEnvironment)
+            IDotnetEnvironment dotnetEnvironment,
+            ITargetFrameworkMonikerParser targetFrameworkMonikerParser)
         {
             _log = log;
             _buildEngine = buildEngine;
             _uniqueNameGenerator = uniqueNameGenerator;
             _environment = environment;
             _dotnetEnvironment = dotnetEnvironment;
+            _targetFrameworkMonikerParser = targetFrameworkMonikerParser;
         }
 
         public bool TryRestore(
             string packageId,
             VersionRange? versionRange,
+            string? targetFrameworkMoniker,
             IEnumerable<string> sources,
             IEnumerable<string> fallbackFolders,
             string packagesPath,
@@ -44,7 +48,8 @@ namespace TeamCity.CSharpInteractive
         {
             var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
             var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
-
+            var tfm = targetFrameworkMoniker ?? _dotnetEnvironment.TargetFrameworkMoniker;
+            targetFrameworkMoniker = _targetFrameworkMonikerParser.Parse(tfm);
             _log.Trace($"Restore nuget package {packageId} {versionRange} to \"{outputPath}\" and \"{packagesPath}\".");
             var restoreGraphItems = new[]
             {
@@ -62,14 +67,14 @@ namespace TeamCity.CSharpInteractive
 
                 CreateTaskItem(
                     "Dependency",
-                    ("TargetFrameworks", _dotnetEnvironment.Tfm),
+                    ("TargetFrameworks", tfm),
                     ("Id", packageId),
                     ("VersionRange", versionRange?.ToString())),
 
                 CreateTaskItem(
                     "TargetFrameworkInformation",
-                    ("TargetFramework", _dotnetEnvironment.Tfm),
-                    ("TargetFrameworkMoniker", _dotnetEnvironment.TargetFrameworkMoniker))
+                    ("TargetFramework", tfm),
+                    ("TargetFrameworkMoniker", targetFrameworkMoniker))
             };
 
             projectAssetsJson = Path.Combine(outputPath, "project.assets.json");

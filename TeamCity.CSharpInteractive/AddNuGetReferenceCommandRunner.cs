@@ -40,6 +40,7 @@ namespace TeamCity.CSharpInteractive
             var restoreResult = _nugetRestoreService.TryRestore(
                 addPackageReferenceCommand.PackageId,
                 addPackageReferenceCommand.VersionRange,
+                default,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,
                 _nugetEnvironment.PackagesPath,

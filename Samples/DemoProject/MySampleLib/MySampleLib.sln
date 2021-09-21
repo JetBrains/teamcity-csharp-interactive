@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator", "Calculator\Calculator.csproj", "{7AF29DE9-9A76-49C4-B4BC-C842A3B27C34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySampleLib", "MySampleLib\MySampleLib.csproj", "{7AF29DE9-9A76-49C4-B4BC-C842A3B27C34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator.Tests", "Calculator.Tests\Calculator.Tests.csproj", "{209F21A5-80D3-4AF9-BEAA-893A5A555194}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySampleLib.Tests", "MySampleLib.Tests\MySampleLib.Tests.csproj", "{209F21A5-80D3-4AF9-BEAA-893A5A555194}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

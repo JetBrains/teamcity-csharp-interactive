@@ -1,6 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests
 {
-    using System;
     using System.IO;
     using Moq;
     using Shouldly;
@@ -41,36 +40,6 @@ namespace TeamCity.CSharpInteractive.Tests
             instance.TargetFrameworkMoniker.ShouldBe(".NETCoreApp,Version=v3.1");
         }
         
-        [Theory]
-        [InlineData(".NETCoreApp,Version=v3.1", "3.1")]
-        [InlineData(".NETCoreApp,Version=v5.0", "5.0")]
-        public void ShouldProvideVersion(string targetFrameworkMoniker, string versionStr)
-        {
-            // Given
-            var instance = CreateInstance(targetFrameworkMoniker);
-
-            // When
-            var version = instance.Version;
-
-            // Then
-            version.ShouldBe(Version.Parse(versionStr));
-        }
-        
-        [Theory]
-        [InlineData(".NETCoreApp,Version=v3.1", "netcoreapp3.1")]
-        [InlineData(".NETCoreApp,Version=v5.0", "net5.0")]
-        public void ShouldProvideTfm(string targetFrameworkMoniker, string expectedTfm)
-        {
-            // Given
-            var instance = CreateInstance(targetFrameworkMoniker);
-
-            // When
-            var actualTfm = instance.Tfm;
-
-            // Then
-            actualTfm.ShouldBe(expectedTfm);
-        }
-
         private DotnetEnvironment CreateInstance(string frameworkName) => 
             new(frameworkName, _env.Object);
     }

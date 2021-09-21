@@ -4,3 +4,4 @@
 **/obj
 
 *.user
+.teamcity/target/

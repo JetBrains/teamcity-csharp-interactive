@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -14,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Calculator\Calculator.csproj" />
+      <ProjectReference Include="..\MySampleLib\MySampleLib.csproj" />
     </ItemGroup>
 
 </Project>

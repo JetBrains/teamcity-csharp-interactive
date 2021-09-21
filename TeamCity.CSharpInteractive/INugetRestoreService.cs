@@ -8,6 +8,7 @@ namespace TeamCity.CSharpInteractive
         bool TryRestore(
             string packageId,
             VersionRange? versionRange,
+            string? targetFrameworkMoniker,
             IEnumerable<string> sources,
             IEnumerable<string> fallbackFolders,
             string packagesPath,

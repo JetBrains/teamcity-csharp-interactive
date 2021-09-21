@@ -10,7 +10,6 @@ namespace TeamCity.CSharpInteractive
 
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
-        private const string VersionPrefix = ",Version=v";
         private readonly IEnvironment _environment;
 
         public DotnetEnvironment(
@@ -24,11 +23,7 @@ namespace TeamCity.CSharpInteractive
         public string Path => System.IO.Path.Combine(_environment.GetPath(SpecialFolder.ProgramFiles), "dotnet");
 
         public string TargetFrameworkMoniker { get; }
-
-        public string Tfm => Version.Major >= 5 ? $"net{Version}" : $"netcoreapp{Version}";
-
-        public Version Version => Version.Parse(TargetFrameworkMoniker[(TargetFrameworkMoniker.IndexOf(VersionPrefix, StringComparison.Ordinal) + VersionPrefix.Length)..]);
-
+        
         [ExcludeFromCodeCoverage]
         public IEnumerable<Text> GetTrace()
         {
@@ -36,8 +31,6 @@ namespace TeamCity.CSharpInteractive
             yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
             yield return new Text($"DotnetPath: {Path}");
             yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
-            yield return new Text($"Tfm: {Tfm}");
-            yield return new Text($"DotnetVersion: {Version}");
         }
     }
 }

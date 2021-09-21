@@ -40,7 +40,7 @@ namespace TeamCity.CSharpInteractive
         
         public void ShowHeader()
         {
-            _stdOut.WriteLine(new Text(Header, Color.Header), new Text($" {_version} {_dotnetEnvironment.Tfm}", Color.Trace));
+            _stdOut.WriteLine(new Text(Header, Color.Header), new Text($" {_version} {_dotnetEnvironment.TargetFrameworkMoniker}", Color.Trace));
             if (_settings.InteractionMode != InteractionMode.Interactive)
             {
                 return;

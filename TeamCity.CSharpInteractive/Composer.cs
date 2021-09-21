@@ -84,6 +84,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IProperties>().Tag("Default").To<Properties>()
                 .Bind<IProperties>().Tag("TeamCity").To<TeamCityProperties>()
                 .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IProperties>("TeamCity") : ctx.Resolve<IProperties>("Default"))
+                .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()

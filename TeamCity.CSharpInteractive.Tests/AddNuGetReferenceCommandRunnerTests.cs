@@ -36,7 +36,7 @@ namespace TeamCity.CSharpInteractive.Tests
             
             _nugetRestoreService = new Mock<INugetRestoreService>();
             string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-            _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(true);
+            _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, default, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(true);
 
             ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
             ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
@@ -93,7 +93,7 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // When
             string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-            _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(false);
+            _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, default, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(false);
             var result = runner.TryRun(_command);
 
             // Then
