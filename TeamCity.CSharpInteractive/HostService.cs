@@ -11,22 +11,24 @@ namespace TeamCity.CSharpInteractive
         private readonly ILog<HostService> _log;
         private readonly ISettings _settings;
         private readonly IStdOut _stdOut;
-        
+
         public HostService(
             ILog<HostService> log,
             ISettings settings,
-            IStdOut stdOut)
+            IStdOut stdOut,
+            IProperties properties)
         {
             _log = log;
             _settings = settings;
             _stdOut = stdOut;
+            Props = properties;
         }
 
         public IHost Host => this;
 
         public IReadOnlyList<string> Args => _settings.ScriptArguments;
-
-        public IReadOnlyDictionary<string, string> Props => _settings.ScriptProperties;
+        
+        public IProperties Props { get; }
 
         public void WriteLine() => _stdOut.WriteLine();
 

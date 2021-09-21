@@ -1,4 +1,5 @@
 // ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMemberInSuper.Global
 namespace TeamCity.CSharpInteractive.Contracts
 {
     using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace TeamCity.CSharpInteractive.Contracts
         
         IReadOnlyList<string> Args { get; }
         
-        IReadOnlyDictionary<string, string> Props { get; }
+        IProperties Props { get; }
 
         void WriteLine();
         

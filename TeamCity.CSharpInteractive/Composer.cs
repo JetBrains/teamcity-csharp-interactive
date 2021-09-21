@@ -81,6 +81,9 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICommandFactory<ICodeSource>>().To<CodeSourceCommandFactory>()
                 .Bind<ICommandFactory<ScriptCommand>>().As(Transient).To<ScriptCommandFactory>()
                 .Bind<ICSharpScriptRunner>().To<CSharpScriptRunner>()
+                .Bind<IProperties>().Tag("Default").To<Properties>()
+                .Bind<IProperties>().Tag("TeamCity").To<TeamCityProperties>()
+                .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IProperties>("TeamCity") : ctx.Resolve<IProperties>("Default"))
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()

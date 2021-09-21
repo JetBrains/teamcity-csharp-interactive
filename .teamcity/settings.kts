@@ -55,17 +55,16 @@ object PushNuGetPackageBuildType: BuildType({
         csharpScript {
             content =
                     "using System.Linq;\n" +
-                    "using JetBrains.TeamCity.ServiceMessages.Write.Special;\n" +
-                    "var packageId = \"MySampleLib\";\n" +
-                    "var nextVersion = \n" +
-                    "  GetService<INuGet>().Restore(packageId, \"*\")\n" +
-                    "  .Where(i => i.Name == packageId)\n" +
+                    "Props[\"version\"] = \n" +
+                    "  GetService<INuGet>()\n" +
+                    "  .Restore(Args[0], \"*\")\n" +
+                    "  .Where(i => i.Name == Args[0])\n" +
                     "  .Select(i => i.Version)\n" +
                     "  .Select(i => new Version(i.Major, i.Minor, i.Build + 1))\n" +
                     "  .DefaultIfEmpty(new Version(1, 0, 0))\n" +
-                    "  .Max();\n" +
-                    "WriteLine(\$\"Next NuGet package version for {packageId} is {nextVersion}\");\n" +
-                    "GetService<ITeamCityBuildStatusWriter>().WriteBuildParameter(\"system.version\", nextVersion.ToString());"
+                    "  .Max()\n" +
+                    "  .ToString();"
+            arguments = "MySampleLib"
         }
         dotnetCustom { args = "new classlib -n MySampleLib --force" }
         dotnetPack { workingDir = "MySampleLib" }

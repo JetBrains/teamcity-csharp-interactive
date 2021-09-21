@@ -93,8 +93,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             result.StdOut.Contains("Args: 2, Abc, Xyz").ShouldBeTrue(result.ToString());
         }
         
-        [Fact]
-        public void ShouldSupportProps()
+        [Theory]
+        [InlineData("")]
+        [InlineData("2021")]
+        public void ShouldSupportProps(string teamcityVersionEnvVar)
         {
             // Given
 
@@ -108,14 +110,33 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                     "/p", "4=_"
                 },
                 Array.Empty<string>(),
-                TestTool.DefaultVars,
+                new [] {new EnvironmentVariable("TEAMCITY_VERSION", teamcityVersionEnvVar)},
                 @"WriteLine(Props[""Val1""] + Props[""val2""] + Props[""val3""] + Props[""4""] + Props.Count);"
             );
             
             // Then
             result.ExitCode.Value.ShouldBe(0, result.ToString());
             result.StdErr.ShouldBeEmpty(result.ToString());
-            result.StdOut.Contains("AbcXyzASD_4").ShouldBeTrue(result.ToString());
+            result.StdOut.Any(i => i.Contains("AbcXyzASD_4")).ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void ShouldSetTeamCitySystemParamViaProp()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                Array.Empty<string>(),
+                Array.Empty<string>(),
+                new [] {new EnvironmentVariable("TEAMCITY_VERSION", "2021")},
+                @"Props[""Val1""]=""Xyz"";"
+            );
+            
+            // Then
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Any(i => i.Contains("##teamcity[setParameter name='system.Val1' value='Xyz'")).ShouldBeTrue();
         }
         
         [Fact]

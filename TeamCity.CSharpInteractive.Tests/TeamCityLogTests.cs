@@ -1,6 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests
 {
-    using System;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Moq;
     using Shouldly;
