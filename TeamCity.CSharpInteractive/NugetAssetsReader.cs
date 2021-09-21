@@ -29,25 +29,25 @@ namespace TeamCity.CSharpInteractive
             _dotnetEnvironment = dotnetEnvironment;
         }
 
-        public IEnumerable<NuGetPackage> ReadPackages(string packagesPath, string assetsFilePath)
+        public IEnumerable<NuGetPackage> ReadPackages(string packagesPath, string projectAssetsJson)
         {
-            var lockFile = LockFileUtilities.GetLockFile(assetsFilePath, _logger);
+            var lockFile = LockFileUtilities.GetLockFile(projectAssetsJson, _logger);
             // ReSharper disable once InvertIf
             if (lockFile == null)
             {
-                _log.Warning($"Cannot process the lock file \"{assetsFilePath}\".");
+                _log.Warning($"Cannot process the lock file \"{projectAssetsJson}\".");
                 return Enumerable.Empty<NuGetPackage>();
             }
             
             return lockFile.Libraries.Select(i => new NuGetPackage(i.Name, i.Version.Version, i.Type, Path.Combine(packagesPath, i.Path), i.Sha512));
         }
 
-        public IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string assetsFilePath)
+        public IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string projectAssetsJson)
         {
-            var lockFile = LockFileUtilities.GetLockFile(assetsFilePath, _logger);
+            var lockFile = LockFileUtilities.GetLockFile(projectAssetsJson, _logger);
             if (lockFile == null)
             {
-                _log.Warning($"Cannot process the lock file \"{assetsFilePath}\".");
+                _log.Warning($"Cannot process the lock file \"{projectAssetsJson}\".");
                 yield break;
             }
             

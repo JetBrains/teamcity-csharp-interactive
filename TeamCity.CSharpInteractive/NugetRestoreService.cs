@@ -3,6 +3,7 @@ namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -15,26 +16,35 @@ namespace TeamCity.CSharpInteractive
         private const string Project = "restore";
         private readonly ILog<NugetRestoreService> _log;
         private readonly IBuildEngine _buildEngine;
+        private readonly IUniqueNameGenerator _uniqueNameGenerator;
+        private readonly IEnvironment _environment;
         private readonly IDotnetEnvironment _dotnetEnvironment;
 
         public NugetRestoreService(
             ILog<NugetRestoreService> log,
             IBuildEngine buildEngine,
+            IUniqueNameGenerator uniqueNameGenerator,
+            IEnvironment environment,
             IDotnetEnvironment dotnetEnvironment)
         {
             _log = log;
             _buildEngine = buildEngine;
+            _uniqueNameGenerator = uniqueNameGenerator;
+            _environment = environment;
             _dotnetEnvironment = dotnetEnvironment;
         }
 
-        public bool Restore(
+        public bool TryRestore(
             string packageId,
             VersionRange? versionRange,
             IEnumerable<string> sources,
             IEnumerable<string> fallbackFolders,
-            string outputPath,
-            string packagesPath)
+            string packagesPath,
+            out string projectAssetsJson)
         {
+            var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
+            var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
+
             _log.Trace($"Restore nuget package {packageId} {versionRange} to \"{outputPath}\" and \"{packagesPath}\".");
             var restoreGraphItems = new[]
             {
@@ -62,6 +72,7 @@ namespace TeamCity.CSharpInteractive
                     ("TargetFrameworkMoniker", _dotnetEnvironment.TargetFrameworkMoniker))
             };
 
+            projectAssetsJson = Path.Combine(outputPath, "project.assets.json");
             return new RestoreTask
             {
                 RestoreDisableParallel = false,

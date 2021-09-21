@@ -5,12 +5,12 @@ namespace TeamCity.CSharpInteractive
 
     internal interface INugetRestoreService
     {
-        bool Restore(
+        bool TryRestore(
             string packageId,
             VersionRange? versionRange,
             IEnumerable<string> sources,
             IEnumerable<string> fallbackFolders,
-            string outputPath,
-            string packagesPath);
+            string packagesPath,
+            out string projectAssetsJson);
     }
 }

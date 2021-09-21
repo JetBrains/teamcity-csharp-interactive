@@ -1,13 +1,12 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
+    using System;
     using System.IO;
 
     internal class AddNuGetReferenceCommandRunner: ICommandRunner
     {
         private readonly ILog<AddNuGetReferenceCommandRunner> _log;
-        private readonly IEnvironment _environment;
-        private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly INugetEnvironment _nugetEnvironment;
         private readonly INugetRestoreService _nugetRestoreService;
         private readonly INugetAssetsReader _nugetAssetsReader;
@@ -16,8 +15,6 @@ namespace TeamCity.CSharpInteractive
 
         public AddNuGetReferenceCommandRunner(
             ILog<AddNuGetReferenceCommandRunner> log,
-            IEnvironment environment,
-            IUniqueNameGenerator uniqueNameGenerator,
             INugetEnvironment nugetEnvironment,
             INugetRestoreService nugetRestoreService,
             INugetAssetsReader nugetAssetsReader,
@@ -25,8 +22,6 @@ namespace TeamCity.CSharpInteractive
             IReferenceRegistry referenceRegistry)
         {
             _log = log;
-            _environment = environment;
-            _uniqueNameGenerator = uniqueNameGenerator;
             _nugetEnvironment = nugetEnvironment;
             _nugetRestoreService = nugetRestoreService;
             _nugetAssetsReader = nugetAssetsReader;
@@ -42,39 +37,45 @@ namespace TeamCity.CSharpInteractive
             }
 
             using var restoreToken = _log.Block($"Restore {addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.VersionRange}".Trim());
-            var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
-            var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
-            var restoreResult = _nugetRestoreService.Restore(
+            var restoreResult = _nugetRestoreService.TryRestore(
                 addPackageReferenceCommand.PackageId,
                 addPackageReferenceCommand.VersionRange,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,
-                outputPath,
-                _nugetEnvironment.PackagesPath);
+                _nugetEnvironment.PackagesPath,
+                out var projectAssetsJson);
 
             if (!restoreResult)
             {
                 return new CommandResult(command, false);
             }
 
-            using var outputPathToken = _cleaner.Track(outputPath);
-            using var addRefsToken = _log.Block("References");
-            var assetsFilePath = Path.Combine(outputPath, "project.assets.json");
-            var success = true;
-            foreach (var assembly in _nugetAssetsReader.ReadReferencingAssemblies(assetsFilePath))
+            var output = Path.GetDirectoryName(projectAssetsJson);
+            IDisposable outputPathToken = Disposable.Empty;
+            if (!string.IsNullOrWhiteSpace(output))
             {
-                if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
-                {
-                    _log.Info(assembly.Name);
-                }
-                else
-                {
-                    _log.Error(ErrorId.Nuget, $"Cannot add the reference \"{assembly.Name}\": {description}");
-                    success = false;
-                }
+                outputPathToken = _cleaner.Track(output);
             }
-            
-            return new CommandResult(command, success);
+
+            using (outputPathToken)
+            {
+                using var addRefsToken = _log.Block("References");
+                var success = true;
+                foreach (var assembly in _nugetAssetsReader.ReadReferencingAssemblies(projectAssetsJson))
+                {
+                    if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
+                    {
+                        _log.Info(assembly.Name);
+                    }
+                    else
+                    {
+                        _log.Error(ErrorId.Nuget, $"Cannot add the reference \"{assembly.Name}\": {description}");
+                        success = false;
+                    }
+                }
+
+                return new CommandResult(command, success);
+            }
         }
     }
 }

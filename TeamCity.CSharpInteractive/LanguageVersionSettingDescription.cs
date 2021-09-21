@@ -2,8 +2,10 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
+    [ExcludeFromCodeCoverage]
     internal class LanguageVersionSettingDescription : ISettingDescription
     {
         public bool IsVisible => true;

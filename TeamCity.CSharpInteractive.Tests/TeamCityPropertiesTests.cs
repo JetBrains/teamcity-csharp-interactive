@@ -27,7 +27,7 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // Then
             _properties.VerifySet(i => i["Abc"] = "Xyz");
-            _teamCityBuildStatusWriter.Verify(i => i.WriteBuildParameter($"system.Abc", "Xyz"));
+            _teamCityBuildStatusWriter.Verify(i => i.WriteBuildParameter("system.Abc", "Xyz"));
         }
 
         private TeamCityProperties CreateInstance() =>

@@ -11,8 +11,6 @@ namespace TeamCity.CSharpInteractive.Tests
     public class AddNuGetReferenceCommandRunnerTests
     {
         private readonly Mock<ILog<AddNuGetReferenceCommandRunner>> _log;
-        private readonly Mock<IEnvironment> _env;
-        private readonly Mock<IUniqueNameGenerator> _uniqueNameGenerator;
         private readonly Mock<INugetEnvironment> _nugetEnv;
         private readonly Mock<INugetRestoreService> _nugetRestoreService;
         private readonly Mock<INugetAssetsReader> _nugetAssetsReader;
@@ -20,14 +18,10 @@ namespace TeamCity.CSharpInteractive.Tests
         private readonly Mock<IReferenceRegistry> _referenceRegistry;
         private readonly AddNuGetReferenceCommand _command;
         private readonly Mock<IDisposable> _trackToken;
-        private const string TempDir = "Tmp";
-        private const string UniqName = "123456";
         private static readonly string[] Sources = {"src"};
         private static readonly string[] FallbackFolders = {"fallback"};
-        private static readonly string OutputPath = Path.Combine(TempDir, UniqName);
         private const string PackagesPath = "packages";
-        private static readonly string AssetsFilePath = Path.Combine(OutputPath, "project.assets.json");
-
+        
         public AddNuGetReferenceCommandRunnerTests()
         {
             _command = new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)));
@@ -35,29 +29,24 @@ namespace TeamCity.CSharpInteractive.Tests
             _log = new Mock<ILog<AddNuGetReferenceCommandRunner>>();
             _log.Setup(i => i.Block(It.IsAny<Text[]>())).Returns(Disposable.Empty);
             
-            _env = new Mock<IEnvironment>();
-            _env.Setup(i => i.GetPath(SpecialFolder.Temp)).Returns(TempDir);
-                
-            _uniqueNameGenerator = new Mock<IUniqueNameGenerator>();
-            _uniqueNameGenerator.Setup(i => i.Generate()).Returns(UniqName);
-            
             _nugetEnv = new Mock<INugetEnvironment>();
             _nugetEnv.SetupGet(i => i.Sources).Returns(Sources);
             _nugetEnv.SetupGet(i => i.FallbackFolders).Returns(FallbackFolders);
             _nugetEnv.SetupGet(i => i.PackagesPath).Returns(PackagesPath);
             
             _nugetRestoreService = new Mock<INugetRestoreService>();
-            _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(true);
+            string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
+            _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(true);
 
             ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
             ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
             
             _nugetAssetsReader = new Mock<INugetAssetsReader>();
-            _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(AssetsFilePath)).Returns(new [] {referencingAssembly1, referencingAssembly2});
+            _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(new [] {referencingAssembly1, referencingAssembly2});
             
             _trackToken = new Mock<IDisposable>();
             _cleaner = new Mock<ICleaner>();
-            _cleaner.Setup(i => i.Track(OutputPath)).Returns(_trackToken.Object);
+            _cleaner.Setup(i => i.Track("TMP")).Returns(_trackToken.Object);
 
             _referenceRegistry = new Mock<IReferenceRegistry>();
             var referencingAssembly1Description = referencingAssembly1.Name;
@@ -103,7 +92,8 @@ namespace TeamCity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            _nugetRestoreService.Setup(i => i.Restore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, OutputPath, PackagesPath)).Returns(false);
+            string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
+            _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(false);
             var result = runner.TryRun(_command);
 
             // Then
@@ -118,7 +108,8 @@ namespace TeamCity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(AssetsFilePath)).Returns(Enumerable.Empty<ReferencingAssembly>());
+            string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
+            _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(Enumerable.Empty<ReferencingAssembly>());
             var result = runner.TryRun(_command);
 
             // Then
@@ -148,8 +139,6 @@ namespace TeamCity.CSharpInteractive.Tests
         private AddNuGetReferenceCommandRunner CreateInstance() =>
             new(
                 _log.Object,
-                _env.Object,
-                _uniqueNameGenerator.Object,
                 _nugetEnv.Object,
                 _nugetRestoreService.Object,
                 _nugetAssetsReader.Object,

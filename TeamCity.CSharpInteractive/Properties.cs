@@ -8,10 +8,16 @@ namespace TeamCity.CSharpInteractive
 
     internal class Properties: IProperties
     {
+        private readonly ILog<Properties> _log;
         private readonly Dictionary<string, string> _props;
         
-        public Properties(ISettings settings) => 
+        public Properties(
+            ILog<Properties> log,
+            ISettings settings)
+        {
+            _log = log;
             _props = new Dictionary<string, string>(FilterPairs(settings.ScriptProperties));
+        }
 
         public int Count
         {
@@ -31,12 +37,14 @@ namespace TeamCity.CSharpInteractive
             {
                 lock (_props)
                 {
+                    _log.Trace($"Props[\"{key}\"]=\"{value}\"");
                     if (!string.IsNullOrEmpty(value))
                     {
                         _props[key] = value;
                     }
                     else
                     {
+                        _log.Trace($"Props.Remove(\"{key}\")");
                         _props.Remove(key);
                     }
                 }
@@ -62,10 +70,11 @@ namespace TeamCity.CSharpInteractive
             {
                 _props.TryGetValue(key, out var curValue);
                 value = curValue ?? string.Empty;
+                _log.Trace($"Props[\"{key}\"] returns \"{value}\"");
                 return !string.IsNullOrEmpty(value);
             }
         }
-
+        
         private static IEnumerable<KeyValuePair<string, string>> FilterPairs(IEnumerable<KeyValuePair<string, string>> pairs) =>
             pairs.Where(i => !string.IsNullOrWhiteSpace(i.Key) && !string.IsNullOrEmpty(i.Value));
     }

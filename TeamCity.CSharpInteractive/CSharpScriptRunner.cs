@@ -64,7 +64,7 @@ namespace TeamCity.CSharpInteractive
                 if (_scriptState != null)
                 {
                     _scriptStatePresenter.Show(_scriptState);
-                }                
+                }
             }
 
             return success;

@@ -2,7 +2,9 @@
 namespace TeamCity.CSharpInteractive.Contracts
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public readonly struct NuGetPackage
     {
         public readonly string Name;

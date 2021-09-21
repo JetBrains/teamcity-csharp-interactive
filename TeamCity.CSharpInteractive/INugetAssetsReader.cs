@@ -5,8 +5,8 @@ namespace TeamCity.CSharpInteractive
 
     internal interface INugetAssetsReader
     {
-        IEnumerable<NuGetPackage> ReadPackages(string packagesPath, string assetsFilePath);
+        IEnumerable<NuGetPackage> ReadPackages(string packagesPath, string projectAssetsJson);
         
-        IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string assetsFilePath);
+        IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string projectAssetsJson);
     }
 }

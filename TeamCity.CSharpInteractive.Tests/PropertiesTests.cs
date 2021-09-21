@@ -7,11 +7,13 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class PropertiesTests
     {
+        private readonly Mock<ILog<Properties>> _log;
         private readonly Mock<ISettings> _settings;
         private readonly Dictionary<string, string> _scriptProperties = new();
 
         public PropertiesTests()
         {
+            _log = new Mock<ILog<Properties>>();
             _settings = new Mock<ISettings>();
             _settings.SetupGet(i => i.ScriptProperties).Returns(_scriptProperties);
         }
@@ -94,7 +96,7 @@ namespace TeamCity.CSharpInteractive.Tests
             var props = CreateInstance();
 
             // When
-            var result = props.TryGetValue("Abc", out var val);
+            var result = props.TryGetValue("Abc", out _);
 
             // Then
             result.ShouldBeFalse();
@@ -134,6 +136,6 @@ namespace TeamCity.CSharpInteractive.Tests
         }
 
         private Properties CreateInstance() =>
-            new(_settings.Object);
+            new(_log.Object, _settings.Object);
     }
 }
