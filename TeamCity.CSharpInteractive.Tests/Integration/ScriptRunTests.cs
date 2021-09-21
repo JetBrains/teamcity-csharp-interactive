@@ -21,9 +21,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run();
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count.ShouldBe(InitialLinesCount);
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount, result.ToString());
         }
         
         [Fact]
@@ -35,10 +35,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(@"Console.WriteLine(""Hello"");");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Contains("Hello").ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+            result.StdOut.Contains("Hello").ShouldBeTrue(result.ToString());
         }
         
         [Theory]
@@ -53,10 +53,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(@$"WriteLine({writeLineArg});");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Contains(expectedOutput).ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+            result.StdOut.Contains(expectedOutput).ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -68,10 +68,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run("WriteLine();");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Contains(string.Empty).ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+            result.StdOut.Contains(string.Empty).ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -88,9 +88,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             );
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Contains("Args: 2, Abc, Xyz").ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Contains("Args: 2, Abc, Xyz").ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -113,9 +113,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             );
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Contains("AbcXyzASD_4").ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Contains("AbcXyzASD_4").ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -127,10 +127,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(@"Error(""My error"");");
             
             // Then
-            result.ExitCode.Value.ShouldBe(1);
-            result.StdErr.ShouldBe(new []{ "My error" });
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 2);
-            result.StdOut.Contains("My error").ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(1, result.ToString());
+            result.StdErr.ShouldBe(new []{ "My error" }, result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 2, result.ToString());
+            result.StdOut.Contains("My error").ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -142,10 +142,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(@"Warning(""My warning"");");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 3);
-            result.StdOut.Contains("My warning").ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 3, result.ToString());
+            result.StdOut.Contains("My warning").ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -157,10 +157,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(@"Info(""My info"");");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-            result.StdOut.Contains("My info").ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+            result.StdOut.Contains("My info").ShouldBeTrue(result.ToString());
         }
         
         [Theory]
@@ -179,10 +179,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 "WriteLine(Container.Create());");
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdErr.ShouldBeEmpty();
-            result.StdOut.Count(i => i.Trim() == "Installed:").ShouldBe(1);
-            result.StdOut.Contains(name).ShouldBeTrue();
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count(i => i.Trim() == "Installed:").ShouldBe(1, result.ToString());
+            result.StdOut.Contains(name).ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -199,10 +199,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 var result = TestTool.Run(@$"#load ""{refScriptFile}""");
                 
                 // Then
-                result.ExitCode.Value.ShouldBe(0);
-                result.StdErr.ShouldBeEmpty();
-                result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-                result.StdOut.Contains("Hello").ShouldBeTrue();
+                result.ExitCode.Value.ShouldBe(0, result.ToString());
+                result.StdErr.ShouldBeEmpty(result.ToString());
+                result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+                result.StdOut.Contains("Hello").ShouldBeTrue(result.ToString());
             }
             finally
             {
@@ -224,10 +224,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 var result = TestTool.Run(@$"#load ""{Path.GetFileName(refScriptFile)}""");
                 
                 // Then
-                result.ExitCode.Value.ShouldBe(0);
-                result.StdErr.ShouldBeEmpty();
-                result.StdOut.Count.ShouldBe(InitialLinesCount + 1);
-                result.StdOut.Contains("Hello").ShouldBeTrue();
+                result.ExitCode.Value.ShouldBe(0, result.ToString());
+                result.StdErr.ShouldBeEmpty(result.ToString());
+                result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+                result.StdOut.Contains("Hello").ShouldBeTrue(result.ToString());
             }
             finally
             {
@@ -244,10 +244,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run("i = 10;");
             
             // Then
-            result.ExitCode.Value.ShouldBe(1);
-            result.StdErr.Count(i => i.Contains("CS0103")).ShouldBe(1);
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 2);
-            result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(1);
+            result.ExitCode.Value.ShouldBe(1, result.ToString());
+            result.StdErr.Count(i => i.Contains("CS0103")).ShouldBe(1, result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 2, result.ToString());
+            result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(1, result.ToString());
         }
         
         [Fact]
@@ -259,9 +259,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.Run(@"throw new Exception(""Test"");");
             
             // Then
-            result.ExitCode.Value.ShouldBe(1);
-            result.StdErr.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
-            result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1);
+            result.ExitCode.Value.ShouldBe(1, result.ToString());
+            result.StdErr.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1, result.ToString());
+            result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1, result.ToString());
         }
         
         [Theory]
@@ -284,8 +284,8 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 "WriteLine(list2.Count);");
             
             // Then
-            result.StdErr.ShouldBeEmpty();
-            result.ExitCode.Value.ShouldBe(0, $"StdOut:\n{string.Join("\n", result.StdOut)}\n\nStdErr:\n{string.Join("\n", result.StdErr)}");
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
         }
         
         [Fact]
@@ -312,9 +312,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 );
             
             // Then
-            result.StdErr.ShouldBeEmpty();
-            result.ExitCode.Value.ShouldBe(0);
-            result.StdOut.Contains("Abc").ShouldBeTrue();
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+            result.StdOut.Contains("Abc").ShouldBeTrue(result.ToString());
         }
         
         [Fact]
@@ -333,26 +333,8 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             );
             
             // Then
-            result.StdErr.ShouldBeEmpty();
-            result.ExitCode.Value.ShouldBe(0);
-        }
-        
-        [Fact]
-        public void ShouldUseGenericCollectionsAndLinq()
-        {
-            // Given
-
-            // When
-            var result = TestTool.Run(
-                "using System.Collections.Generic;",
-                "using System.Linq;",
-                "var list = new List<int>{1, 2};",
-                "var list2 = list.Where(i => i == 1).ToList();",
-                "WriteLine(list2.Count);");
-            
-            // Then
-            result.StdErr.ShouldBeEmpty();
-            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
         }
         
         [Fact]
@@ -366,8 +348,26 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 "GetService<ITeamCityBuildStatusWriter>().WriteBuildParameter(\"system.hello\", \"Abc\");");
             
             // Then
-            result.StdErr.ShouldBeEmpty();
-            result.ExitCode.Value.ShouldBe(0);
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
+        }
+        
+        [Theory]
+        [InlineData("System.Linq", "Enumerable.Empty<int>()")]
+        [InlineData("System.Collections.Generic", "new List<int>()")]
+        [InlineData("System.Net.Http", "new HttpClient()")]
+        public void ShouldUseType(string ns, string ctor)
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(
+                $"using {ns};",
+                $"{ctor};");
+            
+            // Then
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.ExitCode.Value.ShouldBe(0, result.ToString());
         }
     }
 }

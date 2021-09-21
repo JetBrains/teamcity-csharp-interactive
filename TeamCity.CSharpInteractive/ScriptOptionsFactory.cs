@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.Collections.Immutable;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using Microsoft.CodeAnalysis;
@@ -11,7 +11,6 @@ namespace TeamCity.CSharpInteractive
     using Microsoft.CodeAnalysis.Scripting;
 
     internal class ScriptOptionsFactory:
-        MetadataReferenceResolver,
         IScriptOptionsFactory,
         IReferenceRegistry,
         ISettingSetter<LanguageVersion>,
@@ -20,18 +19,36 @@ namespace TeamCity.CSharpInteractive
         ISettingSetter<CheckOverflow>,
         ISettingSetter<AllowUnsafe>
     {
-        internal static readonly ScriptOptions Default = ScriptOptions.Default
-            .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic && !i.ReflectionOnly))
-            .AddImports("System", "TeamCity.CSharpInteractive.Contracts");
-
+        internal static readonly ScriptOptions Default;
         private readonly ILog<ScriptOptionsFactory> _log;
         private ScriptOptions _options = Default;
 
-        public ScriptOptionsFactory(ILog<ScriptOptionsFactory> log)
+        static ScriptOptionsFactory()
         {
-            _log = log;
-            _options = _options.WithMetadataResolver(this);
+            // Load assemblies from Microsoft.NETCore.App
+            LoadAssembliesFromPathOfType<string>();
+            Default = ScriptOptions.Default
+                .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic))
+                .AddImports("System", "TeamCity.CSharpInteractive.Contracts");
         }
+
+        private static void LoadAssembliesFromPathOfType<T>()
+        {
+            var basePath = Path.GetDirectoryName(typeof(T).Assembly.Location);
+            foreach (var assemblyFile in Directory.GetFiles(basePath, "*.dll"))
+            {
+                try
+                {
+                    Assembly.LoadFrom(assemblyFile);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+        }
+
+        public ScriptOptionsFactory(ILog<ScriptOptionsFactory> log) => _log = log;
 
         public ScriptOptions Create() => _options;
         
@@ -87,30 +104,5 @@ namespace TeamCity.CSharpInteractive
             _options = _options.WithAllowUnsafe(value == AllowUnsafe.On);
             return prev;
         }
-
-        public override ImmutableArray<PortableExecutableReference> ResolveReference(string reference, string? baseFilePath, MetadataReferenceProperties properties)
-        {
-            try
-            {
-                _log.Trace($"Resoling reference \"{reference}\".");
-                var assembly = Assembly.ReflectionOnlyLoad(reference);
-                _log.Trace($"The reference was resolved as the assembly {assembly.GetName()}.");
-                return ImmutableArray.Create(MetadataReference.CreateFromFile(assembly.Location));
-            }
-            catch (Exception ex)
-            {
-                _log.Trace($"The reference \"{reference}\" was not resolved: {ex.Message}");
-                return ImmutableArray<PortableExecutableReference>.Empty;
-            }
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && _options.Equals(((ScriptOptionsFactory)obj)._options);
-        }
-
-        public override int GetHashCode() => _options.GetHashCode();
     }
 }

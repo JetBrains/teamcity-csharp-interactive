@@ -55,6 +55,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration.Core
             }
 
             public void OnExitCode(ExitCode exitCode) => ExitCode = exitCode;
+
+            public override string ToString() =>
+                $"Exit code:{ExitCode}\n\nStdOut:\n{string.Join("\n", StdOut)}\n\nStdErr:\n{string.Join("\n", StdErr)}";
         }
     }
 }
