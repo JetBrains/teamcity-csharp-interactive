@@ -1,6 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
@@ -11,7 +12,7 @@ namespace TeamCity.CSharpInteractive
     using NuGet.Versioning;
 
     [ExcludeFromCodeCoverage]
-    internal class NugetRestoreService : INugetRestoreService
+    internal class NugetRestoreService : INugetRestoreService, ISettingSetter<NuGetRestoreSetting>
     {
         private const string Project = "restore";
         private readonly ILog<NugetRestoreService> _log;
@@ -20,6 +21,12 @@ namespace TeamCity.CSharpInteractive
         private readonly IEnvironment _environment;
         private readonly IDotnetEnvironment _dotnetEnvironment;
         private readonly ITargetFrameworkMonikerParser _targetFrameworkMonikerParser;
+        private readonly ISettings _settings;
+
+        private bool _restoreDisableParallel;
+        private bool _restoreIgnoreFailedSources;
+        private bool _hideWarningsAndErrors;
+        private bool _restoreNoCache;
 
         public NugetRestoreService(
             ILog<NugetRestoreService> log,
@@ -27,7 +34,8 @@ namespace TeamCity.CSharpInteractive
             IUniqueNameGenerator uniqueNameGenerator,
             IEnvironment environment,
             IDotnetEnvironment dotnetEnvironment,
-            ITargetFrameworkMonikerParser targetFrameworkMonikerParser)
+            ITargetFrameworkMonikerParser targetFrameworkMonikerParser,
+            ISettings settings)
         {
             _log = log;
             _buildEngine = buildEngine;
@@ -35,6 +43,8 @@ namespace TeamCity.CSharpInteractive
             _environment = environment;
             _dotnetEnvironment = dotnetEnvironment;
             _targetFrameworkMonikerParser = targetFrameworkMonikerParser;
+            _settings = settings;
+            SetSetting(NuGetRestoreSetting.Default);
         }
 
         public bool TryRestore(
@@ -58,7 +68,7 @@ namespace TeamCity.CSharpInteractive
                 // { "ConfigFilePaths", @"C:\Users\Nikol\AppData\Roaming\NuGet\NuGet.Config;C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.FallbackLocation.config;C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.Offline.config;C:\Program Files (x86)\NuGet\Config\Xamarin.Offline.config" }
                 CreateTaskItem(
                     "ProjectSpec",
-                    ("ProjectName", Project ),
+                    ("ProjectName", Project),
                     ("ProjectStyle", "PackageReference"),
                     ("Sources", string.Join(";", sources)),
                     ("FallbackFolders", string.Join(";", fallbackFolders)),
@@ -80,13 +90,15 @@ namespace TeamCity.CSharpInteractive
             projectAssetsJson = Path.Combine(outputPath, "project.assets.json");
             return new RestoreTask
             {
-                RestoreDisableParallel = false,
-                RestoreIgnoreFailedSources = false,
-                HideWarningsAndErrors = false,
-                RestoreForceEvaluate = false,
-                RestorePackagesConfig = true,
-                RestoreRecursive = true,
-                Interactive = false,
+                RestoreDisableParallel = _restoreDisableParallel,
+                RestoreIgnoreFailedSources = _restoreIgnoreFailedSources,
+                HideWarningsAndErrors = _hideWarningsAndErrors,
+                RestoreNoCache = _restoreNoCache,
+                RestoreForceEvaluate = true,
+                RestorePackagesConfig = false,
+                RestoreRecursive = false,
+                RestoreForce = true,
+                Interactive = _settings.InteractionMode == InteractionMode.Interactive,
                 RestoreGraphItems = restoreGraphItems,
                 BuildEngine = _buildEngine
             }.Execute();
@@ -106,6 +118,65 @@ namespace TeamCity.CSharpInteractive
             }
             
             return taskItem;
+        }
+
+        public NuGetRestoreSetting? SetSetting(NuGetRestoreSetting value)
+        {
+            NuGetRestoreSetting prevVal = default;
+            switch (value)
+            {
+                case NuGetRestoreSetting.Default:
+                    _restoreDisableParallel = false;
+                    _restoreIgnoreFailedSources = false;
+                    _hideWarningsAndErrors = false;
+                    _restoreNoCache = false;
+                    break;
+                
+                case NuGetRestoreSetting.Parallel:
+                    prevVal = _restoreDisableParallel ? NuGetRestoreSetting.Parallel : NuGetRestoreSetting.NonParallel; 
+                    _restoreDisableParallel = true;
+                    break;
+
+                case NuGetRestoreSetting.NonParallel:
+                    prevVal = _restoreDisableParallel ? NuGetRestoreSetting.Parallel : NuGetRestoreSetting.NonParallel;
+                    _restoreDisableParallel = false;
+                    break;
+
+                case NuGetRestoreSetting.IgnoreFailedSources:
+                    prevVal = _restoreIgnoreFailedSources ? NuGetRestoreSetting.IgnoreFailedSources : NuGetRestoreSetting.ConsiderFailedSources;
+                    _restoreIgnoreFailedSources = true;
+                    break;
+
+                case NuGetRestoreSetting.ConsiderFailedSources:
+                    prevVal = _restoreIgnoreFailedSources ? NuGetRestoreSetting.IgnoreFailedSources : NuGetRestoreSetting.ConsiderFailedSources;
+                    _restoreIgnoreFailedSources = false;
+                    break;
+
+                case NuGetRestoreSetting.HideWarningsAndErrors:
+                    prevVal = _hideWarningsAndErrors ? NuGetRestoreSetting.HideWarningsAndErrors : NuGetRestoreSetting.ShowWarningsAndErrors;
+                    _hideWarningsAndErrors = true;
+                    break;
+
+                case NuGetRestoreSetting.ShowWarningsAndErrors:
+                    prevVal = _hideWarningsAndErrors ? NuGetRestoreSetting.HideWarningsAndErrors : NuGetRestoreSetting.ShowWarningsAndErrors;
+                    _hideWarningsAndErrors = false;
+                    break;
+
+                case NuGetRestoreSetting.NoCache:
+                    prevVal = _restoreNoCache ? NuGetRestoreSetting.NoCache : NuGetRestoreSetting.WithCache;
+                    _restoreNoCache = true;
+                    break;
+
+                case NuGetRestoreSetting.WithCache:
+                    prevVal = _restoreNoCache ? NuGetRestoreSetting.NoCache : NuGetRestoreSetting.WithCache;
+                    _restoreNoCache = false;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
+            }
+
+            return prevVal;
         }
     }
 }

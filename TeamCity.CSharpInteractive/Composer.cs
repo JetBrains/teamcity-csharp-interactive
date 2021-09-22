@@ -72,7 +72,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IPresenter<CompilationDiagnostics>>().To<DiagnosticsPresenter>()
                 .Bind<IPresenter<ScriptState<object>>>().To<ScriptStatePresenter>()
                 .Bind<IBuildEngine>().To<BuildEngine>()
-                .Bind<INugetRestoreService>().To<NugetRestoreService>()
+                .Bind<INugetRestoreService>().Bind<ISettingSetter<NuGetRestoreSetting>>().To<NugetRestoreService>()
                 .Bind<NuGet.Common.ILogger>().To<NugetLogger>()
                 .Bind<IUniqueNameGenerator>().To<UniqueNameGenerator>()
                 .Bind<INugetAssetsReader>().To<NugetAssetsReader>()
@@ -115,6 +115,10 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICommandFactory<string>>().Tag("REPL Set allow unsafe parser").To<SettingCommandFactory<AllowUnsafe>>()
                 .Bind<ICommandRunner>().Tag("REPL Set allow unsafe").To<SettingCommandRunner<AllowUnsafe>>()
                 .Bind<ISettingDescription>().Tag(typeof(AllowUnsafe)).To<AllowUnsafeSettingDescription>()
+                
+                .Bind<ICommandFactory<string>>().Tag("REPL Set NuGet restore setting parser").To<SettingCommandFactory<NuGetRestoreSetting>>()
+                .Bind<ICommandRunner>().Tag("REPL Set NuGet restore setting").To<SettingCommandRunner<NuGetRestoreSetting>>()
+                .Bind<ISettingDescription>().Tag(typeof(NuGetRestoreSetting)).To<NuGetRestoreSettingDescription>()
 
                 .Bind<IScriptSubmissionAnalyzer>().To<ScriptSubmissionAnalyzer>()
                 .Bind<ICommandRunner>().Tag("CSharp").To<CSharpScriptCommandRunner>()
