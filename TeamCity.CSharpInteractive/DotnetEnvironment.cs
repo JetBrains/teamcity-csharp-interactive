@@ -2,7 +2,6 @@
 // ReSharper disable UnusedMember.Global
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;

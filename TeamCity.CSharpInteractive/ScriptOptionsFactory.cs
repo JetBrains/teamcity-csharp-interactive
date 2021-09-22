@@ -5,6 +5,8 @@ namespace TeamCity.CSharpInteractive
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -19,39 +21,32 @@ namespace TeamCity.CSharpInteractive
         ISettingSetter<CheckOverflow>,
         ISettingSetter<AllowUnsafe>
     {
-        internal static readonly ScriptOptions Default;
         private readonly ILog<ScriptOptionsFactory> _log;
-        private ScriptOptions _options = Default;
+        private readonly CancellationToken _cancellationToken;
+        private readonly ManualResetEventSlim _isReady = new(false);
+        private ScriptOptions _options = ScriptOptions.Default;
+        private static int _assembliesWereLoaded;
 
-        static ScriptOptionsFactory()
+        public ScriptOptionsFactory(
+            ILog<ScriptOptionsFactory> log,
+            CancellationToken cancellationToken)
         {
-            // Load assemblies from Microsoft.NETCore.App
-            LoadAssembliesFromPathOfType<string>();
-            Default = ScriptOptions.Default
-                .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic))
-                .AddImports("System", "TeamCity.CSharpInteractive.Contracts");
+            _log = log;
+            _cancellationToken = cancellationToken;
+            Task.Run(ConfigureOptions);
         }
 
-        private static void LoadAssembliesFromPathOfType<T>()
+        private ScriptOptions Options
         {
-            var basePath = Path.GetDirectoryName(typeof(T).Assembly.Location);
-            foreach (var assemblyFile in Directory.GetFiles(basePath, "*.dll"))
+            get
             {
-                try
-                {
-                    Assembly.LoadFrom(assemblyFile);
-                }
-                catch
-                {
-                    // ignored
-                }
+                _isReady.Wait(_cancellationToken);
+                return _options;
             }
         }
 
-        public ScriptOptionsFactory(ILog<ScriptOptionsFactory> log) => _log = log;
+        public ScriptOptions Create() => Options;
 
-        public ScriptOptions Create() => _options;
-        
         public bool TryRegisterAssembly(string fileName, out string description)
         {
             try
@@ -59,7 +54,7 @@ namespace TeamCity.CSharpInteractive
                 _log.Trace($"Try register the assembly \"{fileName}\".");
                 var reference = MetadataReference.CreateFromFile(fileName);
                 description = reference.Display ?? string.Empty;
-                _options = _options.AddReferences(reference);
+                _options = Options.AddReferences(reference);
                 _log.Trace($"New metadata reference added \"{reference.Display}\".");
                 return true;
             }
@@ -73,36 +68,85 @@ namespace TeamCity.CSharpInteractive
 
         LanguageVersion? ISettingSetter<LanguageVersion>.SetSetting(LanguageVersion value)
         {
-            _options = _options.WithLanguageVersion(value);
+            _options = Options.WithLanguageVersion(value);
             return default;
         }
 
         OptimizationLevel? ISettingSetter<OptimizationLevel>.SetSetting(OptimizationLevel value)
         {
-            var prev = _options.OptimizationLevel;
-            _options = _options.WithOptimizationLevel(value);
+            var prev = Options.OptimizationLevel;
+            _options = Options.WithOptimizationLevel(value);
             return prev;
         }
 
         WarningLevel? ISettingSetter<WarningLevel>.SetSetting(WarningLevel value)
         {
-            var prev = (WarningLevel)_options.WarningLevel;
-            _options = _options.WithWarningLevel((int)value);
+            var prev = (WarningLevel)Options.WarningLevel;
+            _options = Options.WithWarningLevel((int)value);
             return prev;
         }
 
         CheckOverflow? ISettingSetter<CheckOverflow>.SetSetting(CheckOverflow value)
         {
-            var prev = _options.CheckOverflow ? CheckOverflow.On : CheckOverflow.Off;
-            _options = _options.WithCheckOverflow(value == CheckOverflow.On);
+            var prev = Options.CheckOverflow ? CheckOverflow.On : CheckOverflow.Off;
+            _options = Options.WithCheckOverflow(value == CheckOverflow.On);
             return prev;
         }
 
         AllowUnsafe? ISettingSetter<AllowUnsafe>.SetSetting(AllowUnsafe value)
         {
-            var prev = _options.AllowUnsafe ? AllowUnsafe.On : AllowUnsafe.Off;
-            _options = _options.WithAllowUnsafe(value == AllowUnsafe.On);
+            var prev = Options.AllowUnsafe ? AllowUnsafe.On : AllowUnsafe.Off;
+            _options = Options.WithAllowUnsafe(value == AllowUnsafe.On);
             return prev;
+        }
+        
+        private static void LoadAssembliesFromPathOfType<T>(CancellationToken cancellationToken)
+        {
+            if (Interlocked.Increment(ref _assembliesWereLoaded) != 1)
+            {
+                return;
+            }
+            
+            var basePath = Path.GetDirectoryName(typeof(T).Assembly.Location);
+            foreach (var assemblyFile in Directory.GetFiles(basePath, "*.dll"))
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                try
+                {
+                    Assembly.LoadFrom(assemblyFile);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+        }
+
+        private void ConfigureOptions()
+        {
+            try
+            {
+                _log.Trace("Loading assemblies.");
+                LoadAssembliesFromPathOfType<string>(_cancellationToken);
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic && !string.IsNullOrWhiteSpace(i.Location)).ToList();
+                var assembliesTrace = new [] {new Text($"{assemblies.Count} assemblies were loaded:")}.Concat(assemblies.Select(i => new [] {Text.NewLine, new Text(i.ToString())}).SelectMany(i => i));
+                _log.Trace(assembliesTrace.ToArray());
+                _log.Trace("Add references.");
+                foreach (var assembly in assemblies)
+                {
+                    _options = _options.AddReferences(assembly);
+                }
+                
+                _options = _options.AddImports("System", "TeamCity.CSharpInteractive.Contracts");
+            }
+            finally
+            {
+                _isReady.Set();
+            }
         }
     }
 }
