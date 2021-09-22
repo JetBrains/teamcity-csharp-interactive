@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class NuGetRestoreSettingDescription : ISettingDescription
     {
-        public bool IsVisible => true;
+        public bool IsVisible => false;
 
         public Type SettingType => typeof(NuGetRestoreSetting);
 

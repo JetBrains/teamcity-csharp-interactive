@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class WarningLevelSettingDescription : ISettingDescription
     {
-        public bool IsVisible => true;
+        public bool IsVisible => false;
 
         public Type SettingType => typeof(WarningLevel);
 
