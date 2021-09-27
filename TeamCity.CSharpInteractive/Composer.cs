@@ -34,6 +34,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<string>().Tag("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
                 .Bind<CancellationTokenSource>().To(_ =>  new CancellationTokenSource())
                 .Bind<CancellationToken>().As(Transient).To(ctx =>  ctx.Resolve<CancellationTokenSource>().Token)
+                .Bind<IActive>().Tag(typeof(ExitManager)).To<ExitManager>()
                 .Bind<IHostEnvironment>().To<HostEnvironment>()
                 .Bind<ITeamCitySettings>().To<TeamCitySettings>()
                 .Bind<IColorTheme>().To<ColorTheme>()

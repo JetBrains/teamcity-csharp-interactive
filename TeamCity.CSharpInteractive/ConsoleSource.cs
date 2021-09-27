@@ -5,12 +5,15 @@ namespace TeamCity.CSharpInteractive
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
     using System.Threading.Tasks;
 
     [ExcludeFromCodeCoverage]
     internal class ConsoleSource : ICodeSource, IEnumerator<string?>
     {
-        public ConsoleSource() => Console.CancelKeyPress += (_, _) => System.Environment.Exit(0);
+        private readonly CancellationToken _cancellationToken;
+
+        public ConsoleSource(CancellationToken cancellationToken) => _cancellationToken = cancellationToken;
 
         public string Name => "Console";
 
@@ -28,7 +31,7 @@ namespace TeamCity.CSharpInteractive
         {
             if (Current == default)
             {
-                Task.Run(() => { Current = Console.In.ReadLine() ?? string.Empty; }).Wait();
+                Task.Run(() => { Current = Console.In.ReadLine() ?? string.Empty; }, _cancellationToken).Wait(_cancellationToken);
             }
             else
             {
