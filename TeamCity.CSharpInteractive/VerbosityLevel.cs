@@ -6,6 +6,6 @@ namespace TeamCity.CSharpInteractive
 
         Normal,
 
-        Trace
+        Diagnostic
     }
 }

@@ -55,7 +55,7 @@ namespace TeamCity.CSharpInteractive
         public void Trace(string origin, params Text[] traceMessage)
         {
             // ReSharper disable once InvertIf
-            if (_settings.VerbosityLevel >= VerbosityLevel.Trace)
+            if (_settings.VerbosityLevel >= VerbosityLevel.Diagnostic)
             {
                 origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
                 _teamCityMessageWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin, -40}") + traceMessage).WithDefaultColor(Color.Trace)));

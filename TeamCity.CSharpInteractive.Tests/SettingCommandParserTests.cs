@@ -27,13 +27,13 @@ namespace TeamCity.CSharpInteractive.Tests
         
         public static IEnumerable<object[]> Data => new List<object[]> 
         {
-            new object[] { "#l trace", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace) } },
-            new object[] { "#l   Trace", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace) } },
-            new object[] { "#L Trace", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace) } },
-            new object[] { "#  l   Trace", Array.Empty<ICommand>() },
-            new object[] { "#lTrace", Array.Empty<ICommand>() },
+            new object[] { "#l diagnostic", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Diagnostic) } },
+            new object[] { "#l   Diagnostic", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Diagnostic) } },
+            new object[] { "#L Diagnostic", new [] { new SettingCommand<VerbosityLevel>(VerbosityLevel.Diagnostic) } },
+            new object[] { "#  l   Diagnostic", Array.Empty<ICommand>() },
+            new object[] { "#lDiagnostic", Array.Empty<ICommand>() },
             new object[] { "#l ", Array.Empty<ICommand>() },
-            new object[] { "#Trace", Array.Empty<ICommand>() },
+            new object[] { "#Diagnostic", Array.Empty<ICommand>() },
             new object[] { "#  ", Array.Empty<ICommand>() },
             new object[] { "#", Array.Empty<ICommand>() },
             new object[] { "", Array.Empty<ICommand>() }

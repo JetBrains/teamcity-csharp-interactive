@@ -94,10 +94,10 @@ namespace TeamCity.CSharpInteractive
                 RestoreIgnoreFailedSources = _restoreIgnoreFailedSources,
                 HideWarningsAndErrors = _hideWarningsAndErrors,
                 RestoreNoCache = _restoreNoCache,
-                RestoreForceEvaluate = true,
+                RestoreForceEvaluate = false,
                 RestorePackagesConfig = false,
-                RestoreRecursive = false,
-                RestoreForce = true,
+                RestoreRecursive = true,
+                RestoreForce = false,
                 Interactive = _settings.InteractionMode == InteractionMode.Interactive,
                 RestoreGraphItems = restoreGraphItems,
                 BuildEngine = _buildEngine

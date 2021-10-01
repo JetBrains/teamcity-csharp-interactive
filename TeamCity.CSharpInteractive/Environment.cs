@@ -12,7 +12,7 @@ namespace TeamCity.CSharpInteractive
     internal class Environment : IEnvironment, ITraceSource, IScriptContext
     {
         private readonly LinkedList<string> _scriptDirectories = new();
-        
+
         public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
         public string ProcessArchitecture => RuntimeEnvironment.RuntimeArchitecture;
@@ -69,12 +69,6 @@ namespace TeamCity.CSharpInteractive
             {
                 yield return new Text($"  {arg}");
             }
-            
-            yield return new Text("Environment variables:");
-            foreach (var key in System.Environment.GetEnvironmentVariables().Keys.OfType<string>().OrderBy(i => i).Where(string.IsNullOrWhiteSpace))
-            {
-                yield return new Text($"  {key}={System.Environment.GetEnvironmentVariable(key)}");
-            }
         }
 
         public IDisposable OverrideScriptDirectory(string? scriptDirectory)
@@ -87,7 +81,7 @@ namespace TeamCity.CSharpInteractive
             _scriptDirectories.AddLast(scriptDirectory);
             return Disposable.Create(() => _scriptDirectories.Remove(scriptDirectory));
         }
-        
+
         private static string GetWorkingDirectory() =>  Directory.GetCurrentDirectory();
 
         private string GetBinDirectory() => Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]) ?? GetScriptDirectory();

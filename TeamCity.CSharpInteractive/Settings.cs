@@ -48,28 +48,30 @@ namespace TeamCity.CSharpInteractive
         public void Load()
         {
             var args = _commandLineParser.Parse(_environment.GetCommandLineArgs().Skip(1)).ToArray();
-            if (args.Length == 0)
+            var props = new Dictionary<string, string>();
+            ScriptProperties = props;
+            foreach (var prop in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
             {
-                InteractionMode = InteractionMode.Interactive;
-                VerbosityLevel = VerbosityLevel.Quiet;
-                CodeSources = new []{ _hostCodeSource, _consoleCodeSource };
+                props[prop.Key] = prop.Value;
             }
-            else
+
+            NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);
+            if (args.Any(i => i.ArgumentType == CommandLineArgumentType.ScriptFile) || args.Any(i => i.ArgumentType == CommandLineArgumentType.Help))
             {
                 InteractionMode = InteractionMode.Script;
                 VerbosityLevel = VerbosityLevel.Normal;
                 ShowHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
                 ShowVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
                 ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToArray();
-                var props = new Dictionary<string, string>();
-                ScriptProperties = props;
-                foreach (var prop in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
-                {
-                    props[prop.Key] = prop.Value;
-                }
-
-                NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);
-                CodeSources = new [] {_hostCodeSource }.Concat(args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value)));
+                CodeSources = new[] { _hostCodeSource }
+                    .Concat(args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile)
+                    .Select(i => _fileCodeSourceFactory.Create(i.Value)));
+            }
+            else
+            {
+                InteractionMode = InteractionMode.Interactive;
+                VerbosityLevel = VerbosityLevel.Quiet;
+                CodeSources = new[] { _hostCodeSource, _consoleCodeSource };
             }
         }
 

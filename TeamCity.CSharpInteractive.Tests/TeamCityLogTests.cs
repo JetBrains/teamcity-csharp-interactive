@@ -45,7 +45,7 @@ namespace TeamCity.CSharpInteractive.Tests
         [Theory]
         [InlineData(VerbosityLevel.Normal)]
         [InlineData(VerbosityLevel.Quiet)]
-        [InlineData(VerbosityLevel.Trace)]
+        [InlineData(VerbosityLevel.Diagnostic)]
         internal void ShouldSupportError(VerbosityLevel verbosityLevel)
         {
             // Given
@@ -63,7 +63,7 @@ namespace TeamCity.CSharpInteractive.Tests
         [Theory]
         [InlineData(VerbosityLevel.Normal)]
         [InlineData(VerbosityLevel.Quiet)]
-        [InlineData(VerbosityLevel.Trace)]
+        [InlineData(VerbosityLevel.Diagnostic)]
         internal void ShouldSupportWarning(VerbosityLevel verbosityLevel)
         {
             // Given
@@ -81,7 +81,7 @@ namespace TeamCity.CSharpInteractive.Tests
         [Theory]
         [InlineData(VerbosityLevel.Normal, true)]
         [InlineData(VerbosityLevel.Quiet, false)]
-        [InlineData(VerbosityLevel.Trace, true)]
+        [InlineData(VerbosityLevel.Diagnostic, true)]
         internal void ShouldSupportInfo(VerbosityLevel verbosityLevel, bool enabled)
         {
             // Given
@@ -99,7 +99,7 @@ namespace TeamCity.CSharpInteractive.Tests
         [Theory]
         [InlineData(VerbosityLevel.Normal, false)]
         [InlineData(VerbosityLevel.Quiet, false)]
-        [InlineData(VerbosityLevel.Trace, true)]
+        [InlineData(VerbosityLevel.Diagnostic, true)]
         internal void ShouldSupportTrace(VerbosityLevel verbosityLevel, bool enabled)
         {
             // Given

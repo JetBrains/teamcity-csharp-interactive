@@ -13,10 +13,10 @@ namespace TeamCity.CSharpInteractive.Tests
             var runner = new SettingCommandRunner<VerbosityLevel>(Mock.Of<ILog<SettingCommandRunner<VerbosityLevel>>>(), settingSetter.Object);
 
             // When
-            runner.TryRun(new SettingCommand<VerbosityLevel>(VerbosityLevel.Trace));
+            runner.TryRun(new SettingCommand<VerbosityLevel>(VerbosityLevel.Diagnostic));
 
             // Then
-            settingSetter.Verify(i => i.SetSetting(VerbosityLevel.Trace));
+            settingSetter.Verify(i => i.SetSetting(VerbosityLevel.Diagnostic));
         }
         
         [Fact]
