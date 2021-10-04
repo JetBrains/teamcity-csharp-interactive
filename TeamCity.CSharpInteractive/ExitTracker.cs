@@ -49,6 +49,6 @@ namespace TeamCity.CSharpInteractive
             _info.ShowFooter();
         }
 
-        private void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e) => _environment.Exit(ExitCode.Success);
+        private void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e) => _environment.Exit(ExitCode.Success);
     }
 }

@@ -33,7 +33,7 @@ namespace TeamCity.CSharpInteractive
         {
             _log = log;
             _cancellationToken = cancellationToken;
-            Task.Run(ConfigureOptions);
+            Task.Run(ConfigureOptions, cancellationToken);
         }
 
         private ScriptOptions Options
@@ -100,7 +100,7 @@ namespace TeamCity.CSharpInteractive
             return prev;
         }
         
-        private static void LoadAssembliesFromPathOfType<T>(CancellationToken cancellationToken)
+        private void LoadAssembliesFromPathOfType<T>(CancellationToken cancellationToken)
         {
             if (Interlocked.Increment(ref _assembliesWereLoaded) != 1)
             {
@@ -108,6 +108,12 @@ namespace TeamCity.CSharpInteractive
             }
             
             var basePath = Path.GetDirectoryName(typeof(T).Assembly.Location);
+            if (basePath == null)
+            {
+                _log.Warning($"Cannot get a path of {typeof(T).Assembly}.");
+                return;
+            }
+            
             foreach (var assemblyFile in Directory.GetFiles(basePath, "*.dll"))
             {
                 if (cancellationToken.IsCancellationRequested)
