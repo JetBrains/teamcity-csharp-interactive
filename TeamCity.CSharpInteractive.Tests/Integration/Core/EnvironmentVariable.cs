@@ -9,7 +9,7 @@
 
         public EnvironmentVariable(string name, string value)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException(nameof(name));
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid variable name.", nameof(name));
             Name = name;
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }

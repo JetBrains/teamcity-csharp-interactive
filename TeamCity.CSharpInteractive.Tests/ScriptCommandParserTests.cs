@@ -49,7 +49,9 @@ namespace TeamCity.CSharpInteractive.Tests
             var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
             // When
+#pragma warning disable CA1806
             parser.Create(new ScriptCommand("origin", "code1")).ToArray();
+#pragma warning restore CA1806
             var commands = parser.Create(new ScriptCommand("origin", "code2")).ToArray();
             var commands2 = parser.Create(new ScriptCommand("origin", "code2")).ToArray();
 

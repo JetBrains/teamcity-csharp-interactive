@@ -9,7 +9,7 @@
 
         public CommandLineArgument(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException(nameof(value));
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("Invalid argument.", nameof(value));
             Value = value;
         }
 

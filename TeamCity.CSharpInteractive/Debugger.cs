@@ -24,7 +24,7 @@ namespace TeamCity.CSharpInteractive
                 return Disposable.Empty;
             }
 
-            _log.Warning($"\nWaiting for debugger in process [{Process.GetCurrentProcess().Id}] \"{Process.GetCurrentProcess().ProcessName}\".");
+            _log.Warning($"\nWaiting for debugger in process [{System.Environment.ProcessId}] \"{Process.GetCurrentProcess().ProcessName}\".");
             while (!System.Diagnostics.Debugger.IsAttached)
             {
                 Thread.Sleep(100);

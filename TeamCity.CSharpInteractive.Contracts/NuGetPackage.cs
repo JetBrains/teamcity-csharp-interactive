@@ -27,22 +27,16 @@ namespace TeamCity.CSharpInteractive.Contracts
             Sha512 = sha512;
         }
 
-        public override bool Equals(object? obj) =>
-            obj is NuGetPackage other && Name == other.Name && Version.Equals(other.Version) && Type == other.Type && Path == other.Path && Sha512 == other.Sha512;
+        public bool Equals(NuGetPackage other) => Name == other.Name && Version.Equals(other.Version) && Type == other.Type && Path == other.Path && Sha512 == other.Sha512;
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Name.GetHashCode();
-                hashCode = (hashCode * 397) ^ Version.GetHashCode();
-                hashCode = (hashCode * 397) ^ Type.GetHashCode();
-                hashCode = (hashCode * 397) ^ Path.GetHashCode();
-                hashCode = (hashCode * 397) ^ Sha512.GetHashCode();
-                return hashCode;
-            }
-        }
+        public override bool Equals(object? obj) => obj is NuGetPackage other && Equals(other);
+
+        public override int GetHashCode() => HashCode.Combine(Name, Version, Type, Path, Sha512);
 
         public override string ToString() => $"{Type} {Name} v.{Version} Sha512:{Sha512} at {Path}";
+
+        public static bool operator ==(NuGetPackage left, NuGetPackage right) => left.Equals(right);
+
+        public static bool operator !=(NuGetPackage left, NuGetPackage right) => !(left == right);
     }
 }

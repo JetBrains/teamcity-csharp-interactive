@@ -25,7 +25,7 @@ namespace TeamCity.CSharpInteractive
             }
 
             Console.TreatControlCAsInput = false;
-            Console.CancelKeyPress += ConsoleOnCancelKeyPress!;
+            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
             return Disposable.Create(() => Console.CancelKeyPress -= ConsoleOnCancelKeyPress);
         }
 

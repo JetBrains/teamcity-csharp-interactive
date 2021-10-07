@@ -49,7 +49,7 @@ namespace TeamCity.CSharpInteractive
                     };
                 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(specialFolder));
             }
         }
 
