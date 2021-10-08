@@ -45,6 +45,7 @@ object BuildAndTestBuildType: BuildType({
             name = "Run tests"
             sdk = "5"
             dockerImage = Settings.dockerImageSdk
+            dockerImagePlatform = DotnetTestStep.ImagePlatform.Linux
         }
 
         dotnetPack {
@@ -53,6 +54,7 @@ object BuildAndTestBuildType: BuildType({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             configuration = "Release"
             dockerImage = Settings.dockerImageSdk
+            dockerImagePlatform = DotnetPackStep.ImagePlatform.Linux
         }
     }
 
