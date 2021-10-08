@@ -27,7 +27,7 @@ object CSharpScriptRepo : GitVcsRoot({
 project {
     vcsRoot(CSharpScriptRepo)
     buildType(BuildAndTestBuildType)
-    subProject(DemoProject)
+    //subProject(DemoProject)
 }
 
 object BuildAndTestBuildType: BuildType({
@@ -73,6 +73,7 @@ object BuildAndTestBuildType: BuildType({
     }
 })
 
+/*
 object DemoProject: Project({
     name = "Demo"
     buildType(HelloWorldBuildType)
@@ -150,3 +151,4 @@ object BuildAndDeployBuildType: BuildType({
         }
     }
 })
+*/
