@@ -1,15 +1,21 @@
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
-import jetbrains.buildServer.configs.kotlin.v2019_2.project
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
-import jetbrains.buildServer.configs.kotlin.v2019_2.version
 
 version = "2021.1"
 
-project {
-    vcsRoot(CSharpScriptRepo)
-    buildType(HelloWorldBuildType)
-    buildType(BuildAndDeployBuildType)
+// Build settings
+open class Settings {
+    companion object {
+        private const val dotnetToolVersion = "6.0"
+        private const val dotnetSampleVersion = "3.1"
+
+        const val dockerImageSdk = "mcr.microsoft.com/dotnet/sdk:$dotnetToolVersion"
+        const val dockerImageRuntime = "mcr.microsoft.com/dotnet/runtime:$dotnetToolVersion"
+        const val dockerImageSampleSdk = "mcr.microsoft.com/dotnet/sdk:$dotnetSampleVersion"
+    }
 }
 
 object CSharpScriptRepo : GitVcsRoot({
@@ -18,12 +24,68 @@ object CSharpScriptRepo : GitVcsRoot({
     branch = "refs/heads/master"
 })
 
+project {
+    vcsRoot(CSharpScriptRepo)
+    buildType(BuildAndTestBuildType)
+    subProject(DemoProject)
+}
+
+object BuildAndTestBuildType: BuildType({
+    name = "Build and test"
+    artifactRules = "Teamcity.CSharpInteractive/bin/Release/TeamCity.csi.*.nupkg => ."
+
+    params {
+        param("system.version", "1.0.0")
+    }
+
+    vcs { root(CSharpScriptRepo) }
+
+    steps {
+        dotnetTest {
+            name = "Run tests"
+            sdk = "5"
+            dockerImage = Settings.dockerImageSdk
+        }
+
+        dotnetPack {
+            name = "Pack"
+            sdk = "5"
+            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+            configuration = "Release"
+            dockerImage = Settings.dockerImageSdk
+        }
+    }
+
+    triggers {
+        vcs {
+        }
+    }
+
+    features {
+        swabra {
+        }
+    }
+
+    failureConditions {
+        nonZeroExitCode = true
+        testFailure = true
+        errorMessage = true
+    }
+})
+
+object DemoProject: Project({
+    name = "Demo"
+    buildType(HelloWorldBuildType)
+    buildType(BuildAndDeployBuildType)
+})
+
 object HelloWorldBuildType: BuildType({
     name = "Say hello"
     steps {
         csharpScript {
             content = "WriteLine(\"Hello World from project \" + Args[0])"
             arguments = "%system.teamcity.projectName%"
+            dockerImage = Settings.dockerImageRuntime
         }
     }
 })
@@ -53,32 +115,38 @@ object BuildAndDeployBuildType: BuildType({
                     "  .ToString();\n" +
                     "WriteLine($\"Version: {Props[\"version\"]}\", Success);"
             arguments = "%demo.package%"
+            dockerImage = Settings.dockerImageRuntime
         }
         dotnetBuild {
             name = "Build library"
             workingDir = "%demo.path%"
             sdk = "3.1"
+            dockerImage = Settings.dockerImageSampleSdk
         }
         dotnetTest {
             name = "Run tests"
             workingDir = "%demo.path%"
             skipBuild = true
+            dockerImage = Settings.dockerImageSampleSdk
         }
         csharpFile {
             name = "Make a pol"
             path = "Samples/Scripts/TelegramBot.csx"
             arguments = "%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%&buildTypeId=%system.teamcity.buildType.id%&guest=1"
+            dockerImage = Settings.dockerImageRuntime
         }
         dotnetPack {
             name = "Create a NuGet package"
             workingDir = "%demo.path%"
             skipBuild = true
+            dockerImage = Settings.dockerImageSampleSdk
         }
         dotnetNugetPush {
             name = "Push the NuGet package"
             packages = "%demo.path%/%demo.package%/bin/%system.configuration%/%demo.package%.%system.version%.nupkg"
             serverUrl = "https://api.nuget.org/v3/index.json"
             apiKey = "%NuGetKey%"
+            dockerImage = Settings.dockerImageSampleSdk
         }
     }
 })
