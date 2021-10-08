@@ -75,6 +75,7 @@ object BuildAndTestBuildType: BuildType({
     }
 })
 
+/*
 object DemoProject: Project({
     name = "Demo"
     buildType(HelloWorldBuildType)
@@ -152,3 +153,4 @@ object BuildAndDeployBuildType: BuildType({
         }
     }
 })
+*/
