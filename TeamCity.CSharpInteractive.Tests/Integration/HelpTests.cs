@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration
 {
     using System.Linq;
-    using System.Text.RegularExpressions;
     using Core;
     using Shouldly;
     using Xunit;
@@ -26,7 +25,6 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             // Then
             result.ExitCode.Value.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
-            result.StdOut.Any(i => new Regex($"^{Info.Header} [\\d\\.]+ \\.NETCoreApp,Version=v.+$").IsMatch(i)).ShouldBeTrue();
             result.StdOut.Any(i => i.StartsWith("Usage:")).ShouldBeTrue();
             result.StdOut.Any(i => i.StartsWith("Options:")).ShouldBeTrue();
         }

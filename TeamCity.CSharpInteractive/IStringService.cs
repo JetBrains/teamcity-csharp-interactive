@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive
 {
-    public interface IStringService
+    internal interface IStringService
     {
         string TrimAndUnquote(string quotedString);
     }

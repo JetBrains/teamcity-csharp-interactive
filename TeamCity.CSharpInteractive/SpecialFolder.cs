@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive
 {
-    public enum SpecialFolder
+    internal enum SpecialFolder
     {
         // Directory with executable file
         Bin,

@@ -24,14 +24,12 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal static partial class Composer
     {
-        private static readonly Version ToolVersion = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
-
         private static void Setup() =>
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
-                .Bind<Version>("ToolVersion").To(_ => ToolVersion)
-                .Bind<string>("TargetFrameworkMoniker").To(_ => Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
+                .Bind<Assembly>().To(_ => Assembly.GetEntryAssembly())
+                .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
                 .Bind<CancellationTokenSource>().To(_ =>  new CancellationTokenSource())
                 .Bind<CancellationToken>().As(Transient).To(ctx =>  ctx.Resolve<CancellationTokenSource>().Token)
                 .Bind<IActive>(typeof(ExitManager)).To<ExitManager>()

@@ -1,13 +1,15 @@
+<!--suppress MsbuildTargetFrameworkTagInspection -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net6.0</TargetFrameworks>
         <AssemblyName>dotnet-csi</AssemblyName>
         <NoWarn>NU1605</NoWarn>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup>
+        <Version>1.0.0-dev</Version>
         <PackageType>DotnetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-csi</ToolCommandName>
@@ -17,7 +19,7 @@
         <Title>TeamCity C# script runner</Title>
         <PackageIcon>_common\icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <Description>TeamCity C# script runner</Description>
+        <Description>$(Company) $(Title) $(Version) $(TargetFramework)</Description>
         <PackageTags>C# csharp script interactive TeamCity</PackageTags>
     </PropertyGroup>
 
