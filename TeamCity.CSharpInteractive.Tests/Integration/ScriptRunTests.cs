@@ -202,7 +202,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             // Then
             result.ExitCode.Value.ShouldBe(0, result.ToString());
             result.StdErr.ShouldBeEmpty(result.ToString());
-            result.StdOut.Count(i => i.Trim() == "Installed:").ShouldBe(1, result.ToString());
+            result.StdOut.Count(i => i.Contains("//1")).ShouldBe(1, result.ToString());
             result.StdOut.Contains(name).ShouldBeTrue(result.ToString());
         }
         
