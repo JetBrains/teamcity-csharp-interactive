@@ -79,8 +79,8 @@ namespace TeamCity.CSharpInteractive
             lines.AddRange(new []
             {
                 new Text("Script directives:", Color.Header), Text.NewLine,
-                new Text("    #r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r \"nuget:MyPackage, 1.2.3\"", Color.Details), new Text(" or "), new Text("#r \"nuget:MyPackage\"", Color.Details), new Text(" or "), new Text("#r \"myLib.dll\"", Color.Details), new Text("."), Text.NewLine,
-                new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. "), new Text("#load \"myScript.csx\"", Color.Details), new Text(".")
+                new Text("    #r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r \"nuget:MyPackage, 1.2.3\"", Color.Details), new Text(" or "), new Text("#r \"nuget:MyPackage\"", Color.Details), new Text(" or "), new Text("#r \"MyLib.dll\"", Color.Details), new Text("."), Text.NewLine,
+                new Text("    #load        ", Color.Header), new Text("Load specified script file and execute it, e.g. "), new Text("#load \"script-file.csx\"", Color.Details), new Text(".")
             });
 
             _stdOut.WriteLine(lines.ToArray());
@@ -89,16 +89,16 @@ namespace TeamCity.CSharpInteractive
         public void ShowHelp() =>
             _stdOut.WriteLine(
                 Text.NewLine,
-                new Text("Usage: dotnet csi [option] ... [script-file.csx] [script-argument] ..."), Text.NewLine,
-                new Text("    script arguments are accessible in scripts via a global array called Args"), Text.NewLine,
+                new Text("Usage: dotnet csi [options] [script-file.csx] [script-arguments]"), Text.NewLine,
+                new Text("    script arguments are accessible in scripts via a global list called "), new Text("Args", Color.Details), Text.NewLine,
                 Text.NewLine,
-                new Text("Executes script-file.csx if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
+                new Text("Executes \"script-file.csx\" if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
                 Text.NewLine,
                 new Text("Options:"), Text.NewLine,
                 new Text("    --help                           ", Color.Header), new Text("Display this usage message (alternative forms: /? -h /h /help)."), Text.NewLine,
                 new Text("    --version                        ", Color.Header), new Text("Display the version and exit (alternative form: /version)."), Text.NewLine,
                 new Text("    --source <NuGet package source>  ", Color.Header), new Text("NuGet package source (URL, UNC/folder path) to use (alternative forms: -s /source /s)."), Text.NewLine,
-                new Text("    --property <key=value>           ", Color.Header), new Text("Define a key=value pair for the global dictionary called Props accessible in scripts (alternative forms: -p /property /p)."), Text.NewLine,
+                new Text("    --property <key=value>           ", Color.Header), new Text("Define a key=value pair for the global dictionary called "), new Text("Props", Color.Details), new Text(" accessible in scripts (alternative forms: -p /property /p)."), Text.NewLine,
                 new Text("    @<file>                          ", Color.Header), new Text("Read response file for more options."), Text.NewLine,
                 new Text("    --                               ", Color.Header), new Text("Indicates that the remaining arguments should not be treated as options."), Text.NewLine
             );

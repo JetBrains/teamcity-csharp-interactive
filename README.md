@@ -6,7 +6,7 @@ This is a repository of TeamCity.csi which is an interactive tool for running C#
 
 ## Prerequisites
 
-The tool requires .NET runtime 3.1.
+The tool requires .NET 6 runtime.
 
 ## Download and Install TeamCity.csi
 
@@ -38,118 +38,27 @@ dotnet csi
 
 Run a specified script with a given argument:
 ```Shell
-dotnet csi <script_name>.csx --<arg>
+dotnet csi script-file.csx
 ```
+
+Usage:
+
+```Shell
+dotnet csi [options] [script-file.csx] [script-arguments]
+```
+
+Script arguments are accessible in scripts via a global list called _Args_.
 
 Supported arguments:
 
-<table>
-
-<tr><td>Argument</td><td>Description</td><td>Alternative form</td></tr>
-
-<tr>
-<td>
-
-`--help`
-
-</td>
-<td>
-
-Show how to use the command.
-
-</td>
-<td>
-
-`/?`, `-h`, `/h`, `/help`
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`--version`
-
-</td>
-<td>
-
-Display the tool version.
-
-</td>
-<td>
-
-`/version`
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`--source`
-
-</td>
-<td>
-
-Specify the NuGet package source to use. Supported formats: URL, or a UNC directory path.
-
-</td>
-<td>
-
-`-s`, `/s`, `/source`
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`--property <key=value>`
-
-</td>
-<td>
-
-Define a `key=value` pair for the global dictionary called `Props`, which is accessible in scripts.
-
-</td>
-<td>
-
-`-p`, `/property`, `/p`
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`@file`
-
-</td>
-<td>
-
-Read the response file for more options.
-
-</td>
-<td></td>
-</tr>
-
-<tr>
-<td>
-
-`--`
-
-</td>
-<td>
-
-Indicates that the remaining arguments should not be treated as options.
-
-</td>
-<td>
-</td>
-</tr>
-
-</table>
-
+| Option | Description | Alternative form |
+| -------- | ------------| ---------------- |
+| `--help` | Show how to use the command. | `/?`, `-h`, `/h`, `/help` |
+| `--version` | Display the tool version. | `/version` |
+| `--source` | Specify the NuGet package source to use. Supported formats: URL, or a UNC directory path. | `-s`, `/s`, `/source` |
+| `--property <key=value>` | Define a _key=value_ pair for the global dictionary called _Props_, which is accessible in scripts. | `-p`, `/property`, `/p` |
+| `@file` | Read the response file for more options. | |
+| `--` | Indicates that the remaining arguments should not be treated as options. | |
 
 ## Report and Track Issues
 

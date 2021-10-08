@@ -2,8 +2,8 @@
 
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using Pure.DI;
 
@@ -39,7 +39,7 @@ namespace TeamCity.CSharpInteractive
 
         public IEnumerable<ICodeSource> CodeSources { get; private set; } = Enumerable.Empty<ICodeSource>();
         
-        public IReadOnlyList<string> ScriptArguments { get; private set; }  = Array.Empty<string>();
+        public IReadOnlyList<string> ScriptArguments { get; private set; }  = ImmutableArray<string>.Empty;
 
         public IReadOnlyDictionary<string, string> ScriptProperties { get; private set; } = new Dictionary<string, string>();
 
@@ -47,7 +47,7 @@ namespace TeamCity.CSharpInteractive
 
         public void Load()
         {
-            var args = _commandLineParser.Parse(_environment.GetCommandLineArgs().Skip(1)).ToArray();
+            var args = _commandLineParser.Parse(_environment.GetCommandLineArgs().Skip(1)).ToImmutableArray();
             var props = new Dictionary<string, string>();
             ScriptProperties = props;
             foreach (var prop in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
@@ -62,7 +62,7 @@ namespace TeamCity.CSharpInteractive
                 VerbosityLevel = VerbosityLevel.Normal;
                 ShowHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
                 ShowVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
-                ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToArray();
+                ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToImmutableArray();
                 CodeSources = new[] { _hostCodeSource }
                     .Concat(args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile)
                     .Select(i => _fileCodeSourceFactory.Create(i.Value)));
