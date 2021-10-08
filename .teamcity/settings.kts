@@ -32,7 +32,7 @@ project {
 
 object BuildAndTestBuildType: BuildType({
     name = "Build and test"
-    artifactRules = "Teamcity.CSharpInteractive/bin/Release/TeamCity.csi.*.nupkg => ."
+    artifactRules = "TeamCity.CSharpInteractive/bin/Release/TeamCity.csi.*.nupkg => ."
 
     params {
         param("system.version", "1.0.0")
