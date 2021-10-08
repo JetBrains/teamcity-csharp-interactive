@@ -3,14 +3,18 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <TargetFrameworks>net6.0</TargetFrameworks>
     </PropertyGroup>
 
     <PropertyGroup>
+        <Version>1.0.0-dev</Version>
         <Authors>NikolayP</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/NikolayPianikov/teamcity-csharp-interactive</PackageProjectUrl>
-        <Copyright>JetBrains</Copyright>
+        <PackageProjectUrl>https://github.com/JetBrains/teamcity-csharp-interactive</PackageProjectUrl>
         <Company>JetBrains</Company>
+        <Copyright>$(Company) 2021</Copyright>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/JetBrains/teamcity-csharp-interactive</RepositoryUrl>
     </PropertyGroup>
 </Project>
 

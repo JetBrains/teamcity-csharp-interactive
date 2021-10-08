@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>1.0.0-dev</Version>
         <PackageType>DotnetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-csi</ToolCommandName>
