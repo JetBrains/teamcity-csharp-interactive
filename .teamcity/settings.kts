@@ -21,7 +21,7 @@ open class Settings {
 object CSharpScriptRepo : GitVcsRoot({
     name = "C# Script"
     url = "https://github.com/JetBrains/teamcity-csharp-interactive.git"
-    branch = "refs/heads/demo"
+    branch = "refs/heads/master"
 })
 
 project {
