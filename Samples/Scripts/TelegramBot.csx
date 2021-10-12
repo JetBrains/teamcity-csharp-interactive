@@ -5,7 +5,7 @@ if(!Props.TryGetValue("telegram.bot.token", out var token))
     throw new ArgumentException($"Required TeamCity parameter system.telegram.bot.token was not specified, see https://telegrambots.github.io/book/1/quickstart.html#bot-father");
 }
 
-if(!Props.TryGetValue("telegram.bot.poll.timeout", out var timeoutStr) || !int.TryParse(timeoutStr, out var timeout))
+if(!Props.TryGetValue("telegram.bot.poll.timeout", out var timeoutStr) || !TimeSpan.TryParse(timeoutStr, out var timeout))
 {
     throw new ArgumentException($"Required TeamCity parameter system.telegram.bot.poll.timeout (poll timeout in minutes) was not specified");
 }
@@ -23,12 +23,14 @@ static class Bot
 {
     public static IEnumerable<PollAnswer> Run(IHost host, string token, string messageToSend, TimeSpan timeout, string question, params string[] options)
     {
-        var start = DateTime.Now.ToUniversalTime();
+        var start = DateTime.Now;
+        var finish = start + timeout;
+	host.WriteLine($"Start: {start}, finish: {finish}.");
         var pollAnswers = new List<PollAnswer>();
         var usersCount = 0;
-        using var finish = new ManualResetEvent(false);
+        using var finishEvent = new ManualResetEvent(false);
         new TelegramBotClient(token).StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync));
-        finish.WaitOne(timeout);
+        finishEvent.WaitOne(timeout);
         return pollAnswers;
 
         async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -68,7 +70,7 @@ static class Bot
                                     allowsMultipleAnswers: false,
                                     isAnonymous: false,
                                     type:PollType.Regular,
-                                    closeDate: (start + timeout).ToUniversalTime(),
+                                    closeDate: finish.ToUniversalTime(),
                                     cancellationToken: cancellationToken);
 
                                 usersCount++;
@@ -82,7 +84,7 @@ static class Bot
                     pollAnswers.Add(update.PollAnswer);
                     if (pollAnswers.Count == usersCount)
                     {
-                        finish.Set();
+                        finishEvent.Set();
                     }
 
                     break;
@@ -95,7 +97,7 @@ var answers = Bot.Run(
     Host,
     token,
     $"The <a href='{Args[0]}'>build #{Props["build.number"]} \"{Props["teamcity.buildConfName"]}\"</a> has been almost completed.",
-    TimeSpan.FromMinutes(timeout),
+    timeout,
     "Ready to deploy?",
     "Yes, deploy.",
     "No, abort this build.")

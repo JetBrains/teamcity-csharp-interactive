@@ -27,7 +27,7 @@
     </repository>
     <repository>
       <id>teamcity-server</id>
-      <url>http://tcavs2015.cloudapp.net//app/dsl-plugins-repository</url>
+      <url>http://teamcity.jetbrains.com//app/dsl-plugins-repository</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

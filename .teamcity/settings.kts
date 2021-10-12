@@ -10,7 +10,7 @@ version = "2021.1"
 open class Settings {
     companion object {
         const val dotnetToolVersion = "6.0"
-        private const val dotnetSampleVersion = "3.1"
+        const val dotnetSampleVersion = "6.0"
 
         const val dockerImageSdk = "mcr.microsoft.com/dotnet/sdk:$dotnetToolVersion"
         const val dockerImageRuntime = "mcr.microsoft.com/dotnet/runtime:$dotnetToolVersion"
@@ -19,15 +19,15 @@ open class Settings {
 }
 
 object CSharpScriptRepo : GitVcsRoot({
-    name = "C# Script"
+    name = "C# Script Runner"
     url = "https://github.com/JetBrains/teamcity-csharp-interactive.git"
-    branch = "refs/heads/master"
+    branch = "refs/heads/demo"
 })
 
 project {
     vcsRoot(CSharpScriptRepo)
-    buildType(BuildAndTestBuildType)
-    //subProject(DemoProject)
+    buildType(HelloWorldBuildType)
+    buildType(BuildAndDeployBuildType)
 }
 
 object BuildAndTestBuildType: BuildType({
@@ -73,7 +73,6 @@ object BuildAndTestBuildType: BuildType({
     }
 })
 
-/*
 object DemoProject: Project({
     name = "Demo"
     buildType(HelloWorldBuildType)
@@ -85,8 +84,9 @@ object HelloWorldBuildType: BuildType({
     steps {
         csharpScript {
             content = "WriteLine(\"Hello World from project \" + Args[0])"
-            arguments = "%system.teamcity.projectName%"
+            arguments = "\"%system.teamcity.projectName%\""
             dockerImage = Settings.dockerImageRuntime
+            dockerImagePlatform = CSharpScriptCustomBuildStep.ImagePlatform.Linux
         }
     }
 })
@@ -108,7 +108,7 @@ object BuildAndDeployBuildType: BuildType({
                     "using HostApi;\n" +
                     "Props[\"version\"] = \n" +
                     "  GetService<INuGet>()\n" +
-                    "  .Restore(Args[0], \"*\", \"netcoreapp3.1\")\n" +
+                    "  .Restore(Args[0], \"*\", \"net${Settings.dotnetSampleVersion}\")\n" +
                     "  .Where(i => i.Name == Args[0])\n" +
                     "  .Select(i => i.Version)\n" +
                     "  .Select(i => new Version(i.Major, i.Minor, i.Build + 1))\n" +
@@ -118,30 +118,35 @@ object BuildAndDeployBuildType: BuildType({
                     "WriteLine($\"Version: {Props[\"version\"]}\", Success);"
             arguments = "%demo.package%"
             dockerImage = Settings.dockerImageRuntime
+            dockerImagePlatform = CSharpScriptCustomBuildStep.ImagePlatform.Linux
         }
         dotnetBuild {
             name = "Build library"
             workingDir = "%demo.path%"
-            sdk = "3.1"
+            sdk = "6"
             dockerImage = Settings.dockerImageSampleSdk
+            dockerImagePlatform = DotnetBuildStep.ImagePlatform.Linux
         }
         dotnetTest {
             name = "Run tests"
             workingDir = "%demo.path%"
             skipBuild = true
             dockerImage = Settings.dockerImageSampleSdk
+            dockerImagePlatform = DotnetTestStep.ImagePlatform.Linux
         }
         csharpFile {
             name = "Make a pol"
             path = "Samples/Scripts/TelegramBot.csx"
             arguments = "%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%&buildTypeId=%system.teamcity.buildType.id%&guest=1"
             dockerImage = Settings.dockerImageRuntime
+            dockerImagePlatform = CSharpScriptFileBuildStep.ImagePlatform.Linux
         }
         dotnetPack {
             name = "Create a NuGet package"
             workingDir = "%demo.path%"
             skipBuild = true
             dockerImage = Settings.dockerImageSampleSdk
+            dockerImagePlatform = DotnetPackStep.ImagePlatform.Linux
         }
         dotnetNugetPush {
             name = "Push the NuGet package"
@@ -149,7 +154,7 @@ object BuildAndDeployBuildType: BuildType({
             serverUrl = "https://api.nuget.org/v3/index.json"
             apiKey = "%NuGetKey%"
             dockerImage = Settings.dockerImageSampleSdk
+            dockerImagePlatform = DotnetNugetPushStep.ImagePlatform.Linux
         }
     }
 })
-*/
