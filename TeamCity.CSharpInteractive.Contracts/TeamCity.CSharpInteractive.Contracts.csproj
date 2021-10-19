@@ -3,4 +3,10 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="Pure.DI" Version="1.1.9">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+    </ItemGroup>
 </Project>
