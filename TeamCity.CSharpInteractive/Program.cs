@@ -12,7 +12,7 @@ namespace TeamCity.CSharpInteractive
         {
             try
             {
-                return (int)Composer.Resolve<Program>().Run();
+                return (int)Composer.ResolveProgram().Run();
             }
             finally
             {
