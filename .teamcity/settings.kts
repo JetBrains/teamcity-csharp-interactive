@@ -9,7 +9,7 @@ version = "2021.1"
 // Build settings
 open class Settings {
     companion object {
-        private const val dotnetToolVersion = "6.0"
+        const val dotnetToolVersion = "6.0"
         private const val dotnetSampleVersion = "3.1"
 
         const val dockerImageSdk = "mcr.microsoft.com/dotnet/sdk:$dotnetToolVersion"
@@ -43,14 +43,14 @@ object BuildAndTestBuildType: BuildType({
     steps {
         dotnetTest {
             name = "Run tests"
-            sdk = "5"
+            sdk = Settings.dotnetToolVersion
             dockerImage = Settings.dockerImageSdk
             dockerImagePlatform = DotnetTestStep.ImagePlatform.Linux
         }
 
         dotnetPack {
             name = "Pack"
-            sdk = "5"
+            sdk = Settings.dotnetToolVersion
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             configuration = "Release"
             dockerImage = Settings.dockerImageSdk

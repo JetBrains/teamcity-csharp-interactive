@@ -6,7 +6,7 @@ This is a repository of TeamCity.csi which is an interactive tool for running C#
 
 ## Prerequisites
 
-The tool requires .NET 6 runtime.
+The tool requires [.NET 6 runtime](https://dotnet.microsoft.com/download/dotnet/6.0).
 
 ## Download and Install TeamCity.csi
 
