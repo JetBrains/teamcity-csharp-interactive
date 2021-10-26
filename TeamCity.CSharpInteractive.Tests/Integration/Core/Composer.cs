@@ -2,7 +2,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 {
     using System;
-    using System.Diagnostics;
     using JetBrains.TeamCity.ServiceMessages.Read;
     using Pure.DI;
     using static Tags;

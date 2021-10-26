@@ -25,6 +25,9 @@ namespace TeamCity.CSharpInteractive
     internal static partial class Composer
     {
         private static void Setup() =>
+            // #out=C:\Projects\_temp\a
+            // #verbosity=diagnostic
+            // #trace=true
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
@@ -37,13 +40,14 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITeamCitySettings>().To<TeamCitySettings>()
                 .Bind<IColorTheme>().To<ColorTheme>()
                 .Bind<ITeamCityLineFormatter>().To<TeamCityLineFormatter>()
+                .Bind<ITeamCitySpecific<TT>>().To<TeamCitySpecific<TT>>()
                 .Bind<IStdOut>().Bind<IStdErr>().Tags("Default").To<ConsoleOutput>()
                 .Bind<IStdOut>().Bind<IStdErr>().Tags("TeamCity").To<TeamCityOutput>()
-                .Bind<IStdOut>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IStdOut>("TeamCity") : ctx.Resolve<IStdOut>("Default"))
-                .Bind<IStdErr>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IStdErr>("TeamCity") : ctx.Resolve<IStdErr>("Default"))
+                .Bind<IStdOut>().To(ctx => ctx.Resolve<ITeamCitySpecific<IStdOut>>().Instance)
+                .Bind<IStdErr>().To(ctx => ctx.Resolve<ITeamCitySpecific<IStdErr>>().Instance)
                 .Bind<ILog<TT>>("Default").To<Log<TT>>()
                 .Bind<ILog<TT>>("TeamCity").To<TeamCityLog<TT>>()
-                .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<ILog<TT>>("TeamCity") : ctx.Resolve<ILog<TT>>("Default"))
+                .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySpecific<ILog<TT>>>().Instance)
                 .Bind<IFileSystem>().To<FileSystem>()
                 .Bind<IEnvironment>().Bind<IScriptContext>().Bind<ITraceSource>(typeof(Environment)).To<Environment>()
                 .Bind<ITeamCitySettings>().To<TeamCitySettings>()
@@ -81,7 +85,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICSharpScriptRunner>().To<CSharpScriptRunner>()
                 .Bind<IProperties>("Default").To<Properties>()
                 .Bind<IProperties>("TeamCity").To<TeamCityProperties>()
-                .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySettings>().IsUnderTeamCity ? ctx.Resolve<IProperties>("TeamCity") : ctx.Resolve<IProperties>("Default"))
+                .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
                 .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
                 .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
                 .Bind<IActive>(typeof(Debugger)).To<Debugger>()
