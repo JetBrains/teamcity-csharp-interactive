@@ -2,8 +2,7 @@
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
-        <TargetFrameworks>net6.0</TargetFrameworks>
+        <Nullable>enable</Nullable>       
     </PropertyGroup>
 
     <PropertyGroup>
