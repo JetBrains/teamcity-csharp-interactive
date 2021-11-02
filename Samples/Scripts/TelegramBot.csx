@@ -100,7 +100,7 @@ var answers = Bot.Run(
     token,
     $"The <a href='{Args[0]}'>build #{Props["build.number"]} \"{Props["teamcity.buildConfName"]}\"</a> has been almost completed.",
     TimeSpan.FromMinutes(timeout),
-    "We are ready to deploy?",
+    "Ready to deploy?",
     "Yes, deploy.",
     "No, abort this build.")
     .Where(i => i.OptionIds.Length == 1)
