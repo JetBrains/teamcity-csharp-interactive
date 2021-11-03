@@ -4,11 +4,11 @@ namespace TeamCity.CSharpInteractive.Tests
     using Shouldly;
     using Xunit;
 
-    public class TeamCitySettingsSettings
+    public class TeamCitySettingsTests
     {
         private readonly Mock<IHostEnvironment> _environment;
 
-        public TeamCitySettingsSettings() => _environment = new Mock<IHostEnvironment>();
+        public TeamCitySettingsTests() => _environment = new Mock<IHostEnvironment>();
 
         [Theory]
         [InlineData("Abc", "1", true)]

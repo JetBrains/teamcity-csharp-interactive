@@ -3,6 +3,8 @@ namespace TeamCity.CSharpInteractive
 {
     internal class StringService : IStringService
     {
+        public string Tab => "  ";
+        
         public string TrimAndUnquote(string quotedString)
         {
             var str = quotedString.Trim();

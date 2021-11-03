@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"Console.WriteLine(""Hello"");");
 
             // Then
-            result.ExitCode.Value.ShouldBe(0);
+            result.ExitCode.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.Count.ShouldBe(InitialMessagesCount);
@@ -33,7 +33,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"WriteLine(99);");
 
             // Then
-            result.ExitCode.Value.ShouldBe(0);
+            result.ExitCode.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.Count.ShouldBe(InitialMessagesCount + 1);
@@ -49,7 +49,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"Error(""My error"", ""errId"");");
 
             // Then
-            result.ExitCode.Value.ShouldBe(1);
+            result.ExitCode.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.ShouldContainBuildProblem(i => i == "My error", i => i == "errId");
@@ -64,7 +64,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"Warning(""My warning"");");
 
             // Then
-            result.ExitCode.Value.ShouldBe(0);
+            result.ExitCode.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.ShouldContainWarningTextMessage(i => i == "My warning");
@@ -79,7 +79,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"Info(""My info"");");
 
             // Then
-            result.ExitCode.Value.ShouldBe(0);
+            result.ExitCode.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.Count.ShouldBe(InitialMessagesCount + 1);
@@ -95,7 +95,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity("i = 10;");
 
             // Then
-            result.ExitCode.Value.ShouldBe(1);
+            result.ExitCode.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.ShouldContainBuildProblem(i => i.Contains("error CS0103"), i => i.StartsWith("CS0103,0,1"));
@@ -110,7 +110,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"throw new Exception(""Test"");");
 
             // Then
-            result.ExitCode.Value.ShouldBe(1);
+            result.ExitCode.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.ShouldContainBuildProblem(i => i.Contains("System.Exception: Test"), i => i == "CSI006");
@@ -125,7 +125,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var result = TestTool.RunUnderTeamCity(@"var i=10");
 
             // Then
-            result.ExitCode.Value.ShouldBe(1);
+            result.ExitCode.ShouldBe(1);
             result.StdErr.ShouldBeEmpty();
             var messages = result.StdOut.ParseMessages();
             messages.ShouldContainBuildProblem(i => i.Contains("Script is uncompleted."), i => i == "CSI007");

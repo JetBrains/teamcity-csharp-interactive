@@ -8,8 +8,8 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
         <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="Pure.DI" Version="1.1.13">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Shouldly" Version="4.0.3" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
@@ -18,17 +18,18 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
+        <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Integration\Resources\csinetstandard11.1.0.0.nupkg" />
-      <Content Include="Integration\Resources\csinetstandard11.1.0.0.nupkg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+        <None Remove="Integration\Resources\csinetstandard11.1.0.0.nupkg" />
+        <Content Include="Integration\Resources\csinetstandard11.1.0.0.nupkg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

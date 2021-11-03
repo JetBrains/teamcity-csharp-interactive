@@ -3,33 +3,42 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Contracts;
     using Core;
     using JetBrains.TeamCity.ServiceMessages;
     using JetBrains.TeamCity.ServiceMessages.Read;
     using Shouldly;
+    using Composer = Composer;
 
     internal static class TestTool
     {
-        public static readonly EnvironmentVariable[] DefaultVars = {
-            new("TEAMCITY_VERSION", string.Empty),
-            new("TEAMCITY_PROJECT_NAME", string.Empty)
+        public static readonly (string, string)[] DefaultVars = {
+            ("TEAMCITY_VERSION", string.Empty),
+            ("TEAMCITY_PROJECT_NAME", string.Empty)
         };
 
-        private static readonly EnvironmentVariable[] TeamCityVars = {
-            new("TEAMCITY_VERSION", "2021.2"),
-            new("TEAMCITY_PROJECT_NAME", "Test")
+        private static readonly (string, string)[] TeamCityVars = {
+            ("TEAMCITY_VERSION", "2021.2"),
+            ("TEAMCITY_PROJECT_NAME", "Test")
         };
-
-        public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<EnvironmentVariable> vars, params string[] lines)
+        
+        public static IProcessResult Run(CommandLine commandLine)
         {
-            var fileSystem = Composer.Resolve<IFileSystem>();
+            var events = new List<CommandLineOutput>();
+            var exitCode = Composer.ResolveICommandLine().Run(commandLine, e => events.Add(e));
+            return new ProcessResult(exitCode!.Value, events);
+        }
+
+        public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines)
+        {
+            var fileSystem = Core.Composer.ResolveIFileSystem();
             var scriptFile = fileSystem.CreateTempFilePath();
             try
             {
                 fileSystem.AppendAllLines(scriptFile, lines);
                 var allArgs = new List<string>(args) { scriptFile };
                 allArgs.AddRange(scriptArgs);
-                return Composer.Resolve<IProcessRunner>().Run(allArgs.Select(i => new CommandLineArgument(i)), vars);
+                return Run(DotNetScript.Shared.AddArgs(allArgs.ToArray()).AddVars(vars.ToArray()));
             }
             finally
             {
@@ -77,6 +86,22 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                     yield return message;
                 }
             }
+        }
+        
+        private class ProcessResult: IProcessResult
+        {
+            public ProcessResult(int exitCode, IReadOnlyList<CommandLineOutput> events)
+            {
+                ExitCode = exitCode;
+                StdOut = events.Where(i => !i.IsError).Select(i => i.Line).ToList();
+                StdErr = events.Where(i => i.IsError).Select(i => i.Line).ToList();
+            }
+
+            public int ExitCode { get; }
+
+            public IReadOnlyCollection<string> StdOut { get; }
+
+            public IReadOnlyCollection<string> StdErr { get; }
         }
     }
 }

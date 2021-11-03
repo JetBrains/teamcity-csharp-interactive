@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 
     internal interface IProcessResult
     {
-        ExitCode ExitCode { get; }
+        int ExitCode { get; }
         
         IReadOnlyCollection<string> StdOut { get; }
         

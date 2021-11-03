@@ -1,6 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration
 {
     using System.Linq;
+    using Contracts;
     using Core;
     using Shouldly;
     using Xunit;
@@ -17,13 +18,12 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         public void ShouldShowHelp(string arg)
         {
             // Given
-            var runner = Composer.Resolve<IProcessRunner>();
-            
+
             // When
-            var result = runner.Run(new []{new CommandLineArgument(arg)}, TestTool.DefaultVars);
+            var result = TestTool.Run(DotNetScript.Shared.AddArgs(arg).AddVars(TestTool.DefaultVars));
             
             // Then
-            result.ExitCode.Value.ShouldBe(0);
+            result.ExitCode.ShouldBe(0);
             result.StdErr.ShouldBeEmpty();
             result.StdOut.Any(i => i.StartsWith("Usage:")).ShouldBeTrue();
             result.StdOut.Any(i => i.StartsWith("Options:")).ShouldBeTrue();

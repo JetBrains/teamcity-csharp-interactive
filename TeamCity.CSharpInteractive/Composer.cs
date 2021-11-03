@@ -158,6 +158,9 @@ namespace TeamCity.CSharpInteractive
                 
                 // Public
                 .Bind<IHost>().Bind<IServiceProvider>().To<HostService>()
-                .Bind<INuGet>().To<NuGetService>();
+                .Bind<INuGet>().To<NuGetService>()
+                .Bind<IStartInfoFactory>().To<StartInfoFactory>()
+                .Bind<IProcess>().As(Transient).To<Process>()
+                .Bind<ICommandLine>().To<CommandLineService>();
     }
 }

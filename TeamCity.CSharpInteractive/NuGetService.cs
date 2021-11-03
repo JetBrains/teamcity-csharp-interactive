@@ -38,11 +38,14 @@ namespace TeamCity.CSharpInteractive
 
         public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
         {
-            packagesPath ??= _nugetEnvironment.PackagesPath;
-            if (!string.IsNullOrWhiteSpace(packagesPath) && !_fileSystem.IsPathRooted(packagesPath))
+            if (string.IsNullOrWhiteSpace(packagesPath))
             {
-                var basePath = _environment.GetPath(SpecialFolder.Working);
-                packagesPath = Path.Combine(basePath, packagesPath);
+                packagesPath = _nugetEnvironment.PackagesPath;
+            }
+
+            if (!_fileSystem.IsPathRooted(packagesPath))
+            {
+                packagesPath = Path.Combine(_environment.GetPath(SpecialFolder.Working), packagesPath);
             }
             
             var restoreResult = _nugetRestoreService.TryRestore(

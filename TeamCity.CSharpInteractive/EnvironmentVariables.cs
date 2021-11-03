@@ -8,8 +8,13 @@ namespace TeamCity.CSharpInteractive
     internal class EnvironmentVariables : IEnvironmentVariables, ITraceSource
     {
         private readonly ILog<EnvironmentVariables> _log;
+        private readonly IStringService _stringService;
 
-        public EnvironmentVariables(ILog<EnvironmentVariables> log) => _log = log;
+        public EnvironmentVariables(ILog<EnvironmentVariables> log, IStringService stringService)
+        {
+            _log = log;
+            _stringService = stringService;
+        }
 
         public string? GetEnvironmentVariable(string variable)
         {
@@ -23,7 +28,7 @@ namespace TeamCity.CSharpInteractive
             yield return new Text("Environment variables:");
             foreach (var entry in System.Environment.GetEnvironmentVariables().OfType<DictionaryEntry>().OrderBy(i => i.Key))
             {
-                yield return new Text($"  {entry.Key}={entry.Value}");
+                yield return new Text($"{_stringService.Tab}{entry.Key}={entry.Value}");
             }
         }
     }
