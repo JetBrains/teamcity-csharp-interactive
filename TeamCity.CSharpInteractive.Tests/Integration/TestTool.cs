@@ -28,29 +28,18 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var exitCode = Composer.ResolveICommandLine().Run(commandLine, e => events.Add(e));
             return new ProcessResult(exitCode!.Value, events);
         }
+        
+        private static CommandLine CreateScriptCommandLine(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines) => 
+            DotNetScript.Create(args, lines).AddArgs(scriptArgs.ToArray()).AddVars(vars.ToArray());
 
-        public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines)
-        {
-            var fileSystem = Core.Composer.ResolveIFileSystem();
-            var scriptFile = fileSystem.CreateTempFilePath();
-            try
-            {
-                fileSystem.AppendAllLines(scriptFile, lines);
-                var allArgs = new List<string>(args) { scriptFile };
-                allArgs.AddRange(scriptArgs);
-                return Run(DotNetScript.Shared.AddArgs(allArgs.ToArray()).AddVars(vars.ToArray()));
-            }
-            finally
-            {
-                fileSystem.DeleteFile(scriptFile);
-            }
-        }
+        public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines) =>
+            Run(CreateScriptCommandLine(args, scriptArgs, vars, lines));
         
         public static IProcessResult Run(params string[] lines) =>
-            Run(Array.Empty<string>(), Array.Empty<string>(), DefaultVars, lines);
+            Run(DotNetScript.Create(lines));
         
         public static IProcessResult RunUnderTeamCity(params string[] lines) =>
-            Run(Array.Empty<string>(), Array.Empty<string>(), TeamCityVars, lines);
+            Run(CreateScriptCommandLine(Array.Empty<string>(), Array.Empty<string>(), TeamCityVars, lines));
 
         public static void ShouldContainNormalTextMessage(this IEnumerable<IServiceMessage> messages, Predicate<string> textMatcher) =>
             messages.Count(i => 
