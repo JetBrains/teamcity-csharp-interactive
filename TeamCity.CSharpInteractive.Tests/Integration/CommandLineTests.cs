@@ -32,6 +32,24 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         }
         
         [Fact]
+        public void ShouldRunWithEnvironmentVariable()
+        {
+            // Given
+            var events = new List<CommandLineOutput>();
+
+            // When
+            var exitCode = Composer.ResolveICommandLine().Run(
+                DotNetScript.Create("WriteLine(\"VAL=\" + System.Environment.GetEnvironmentVariable(\"ABC\"));").AddVars(("ABC", "123")),
+                e => events.Add(e));
+
+            // Then
+            exitCode.HasValue.ShouldBeTrue();
+            exitCode.ShouldBe(0);
+            events.Any(i => i.IsError).ShouldBeFalse();
+            events.Any(i => !i.IsError && i.Line == "VAL=123").ShouldBeTrue();
+        }
+        
+        [Fact]
         public void ShouldRunUsingTimeout()
         {
             // Given

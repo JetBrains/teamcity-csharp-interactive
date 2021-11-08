@@ -3,6 +3,8 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Linq;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Contracts;
@@ -24,32 +26,32 @@ namespace TeamCity.CSharpInteractive
         {
             using var process = _processFactory();
             process.OnOutput += handler;
-            var info = commandLine.ToString();
+            var info = new Text(GetInfo(commandLine), Color.Header);
             if (!process.Start(commandLine))
             {
-                _log.Trace($"{info} - cannot start.");
+                _log.Trace(info, new Text(" - cannot start."));
                 return default;
             }
 
             var finished = true;
             if (timeout == TimeSpan.Zero)
             {
-                _log.Trace($"{info} - started with process id {process.Id}.");
+                _log.Trace(info, new Text($" - started with process id {process.Id}."));
                 process.WaitForExit();
             }
             else
             {
-                _log.Trace($"{info} - started with id {process.Id} and with timeout {timeout}.");
+                _log.Trace(info, new Text($" - started with id {process.Id} and with timeout {timeout}."));
                 finished = process.WaitForExit(timeout);
             }
 
             if (finished)
             {
-                _log.Trace($"{info} - finished with exit code {process.ExitCode}.");
+                _log.Trace(info, new Text($" - finished with exit code {process.ExitCode}."));
                 return process.ExitCode;
             }
 
-            _log.Trace($"{info} - timeout is expired.");
+            _log.Trace(info, new Text(" - timeout is expired."));
             Kill(process, info);
 
             return default;
@@ -62,15 +64,15 @@ namespace TeamCity.CSharpInteractive
             var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
             // ReSharper disable once AccessToDisposedClosure
             process.OnExit += () => completionSource.TrySetResult(process.ExitCode);
-            var info = commandLine.ToString();
+            var info = new Text(GetInfo(commandLine), Color.Header);
             if (!process.Start(commandLine))
             {
-                _log.Trace($"{info} - cannot start process.");
+                _log.Trace(info, new Text(" - cannot start process."));
                 process.Dispose();
                 return default;
             }
             
-            _log.Trace($"{info} - started with process id {process.Id}.");
+            _log.Trace(info, new Text($" - started with process id {process.Id}."));
             
             void Cancel()
             {
@@ -80,7 +82,7 @@ namespace TeamCity.CSharpInteractive
                 }
                 
                 process.Dispose();
-                _log.Trace($"{info} - canceled.");
+                _log.Trace(info, new Text(" - canceled."));
             }
 
             await using (cancellationToken.Register(Cancel, false))
@@ -88,27 +90,64 @@ namespace TeamCity.CSharpInteractive
                 using (process)
                 {
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
-                    _log.Trace($"{info} - finished with exit code {exitCode}.");
+                    _log.Trace(info, new Text($" - finished with exit code {exitCode}."));
                     return exitCode;
                 }
             }
         }
         
-        private bool Kill(IProcess process, string info)
+        private bool Kill(IProcess process, Text info)
         {
             try
             {
-                _log.Trace($"{info} - try to kill process.");
+                _log.Trace(info, new Text(" - try to kill process."));
                 process.Kill();
-                _log.Trace($"{info} - killed.");
+                _log.Trace(info, new Text(" - killed."));
             }
             catch (Exception ex)
             {
-                _log.Trace($"{info} - failed to kill: {ex.Message}.");
+                _log.Trace(info, new Text($" - failed to kill: {ex.Message}."));
                 return false;
             }
 
             return true;
         }
+        
+        private static string GetInfo(CommandLine commandLine)
+        {
+            var sb = new StringBuilder();
+            if (!string.IsNullOrWhiteSpace(commandLine.WorkingDirectory))
+            {
+                sb.Append(commandLine.WorkingDirectory);
+                sb.Append(" => ");
+            }
+
+            sb.Append('[');
+            sb.Append(Escape(commandLine.ExecutablePath));
+            foreach (var arg in commandLine.Args)
+            {
+                sb.Append(' ');
+                sb.Append(Escape(arg));
+            }
+            sb.Append(']');
+
+            // ReSharper disable once InvertIf
+            if (commandLine.Vars.Any())
+            {
+                sb.Append(" with environment variables ");
+                foreach (var (name, value) in commandLine.Vars)
+                {
+                    sb.Append('[');
+                    sb.Append(name);
+                    sb.Append('=');
+                    sb.Append(value);
+                    sb.Append(']');
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Escape(string text) => text.Contains(' ') ? $"\"{text}\"" : text;
     }
 }

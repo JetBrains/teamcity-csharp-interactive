@@ -15,6 +15,7 @@ namespace TeamCity.CSharpInteractive
         private readonly Text _stdErrPrefix;
         private readonly System.Diagnostics.Process _process;
         private CommandLine? _commandLine;
+        private Text _processId;
 
         public Process(
             ILog<Process> log,
@@ -52,6 +53,7 @@ namespace TeamCity.CSharpInteractive
                 return false;
             }
 
+            _processId = new Text(_process.Id.ToString().PadRight(5));
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
             return true;
@@ -80,7 +82,7 @@ namespace TeamCity.CSharpInteractive
             var handler = OnOutput;
             if (handler != default)
             {
-                _log.Trace(isError ? _stdErrPrefix : _stdOutPrefix, new Text(line));
+                _log.Trace(_processId, isError ? _stdErrPrefix : _stdOutPrefix, new Text(line));
                 handler(new CommandLineOutput(commandLine, isError, line));
             }
             else
