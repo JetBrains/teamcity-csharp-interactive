@@ -29,7 +29,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.11.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-        <PackageReference Include="NuGet.Build.Tasks" Version="5.11.0" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.Contracts\TeamCity.CSharpInteractive.Contracts.csproj" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

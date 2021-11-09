@@ -28,7 +28,11 @@ namespace TeamCity.CSharpInteractive
         public int? Run(CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default)
         {
             using var process = _processFactory();
-            process.OnOutput += handler;
+            if (handler != default)
+            {
+                process.OnOutput += handler;
+            }
+
             var info = new Text(GetInfo(commandLine), Color.Header);
             if (!process.Start(commandLine))
             {
@@ -68,7 +72,11 @@ namespace TeamCity.CSharpInteractive
             }
 
             var process = _processFactory();
-            process.OnOutput += handler;
+            if (handler != default)
+            {
+                process.OnOutput += handler;
+            }
+
             var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
             // ReSharper disable once AccessToDisposedClosure
             process.OnExit += () => completionSource.TrySetResult(process.ExitCode);

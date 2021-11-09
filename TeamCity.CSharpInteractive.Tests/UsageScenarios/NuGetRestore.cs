@@ -1,7 +1,7 @@
 // ReSharper disable StringLiteralTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
-    using System;
+    using System.Collections.Generic;
     using Contracts;
     using Shouldly;
     using Xunit;
@@ -16,8 +16,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=00
             // $description=Restore NuGet a package of newest version
             // {
-            var packagesPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString()[..4]); 
-            var packages = GetService<INuGet>().Restore("IoC.Container");
+            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container");
             // }
             
             packages.ShouldNotBeEmpty();

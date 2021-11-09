@@ -49,7 +49,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             new object?[] { "myPackages", false, Path.Combine("WD", "myPackages") },
             new object?[] { "myPackages", true, "myPackages" },
-            new object?[] { default, true, "defaultPackagesPath" },
             new object?[] { default, true, "defaultPackagesPath" }
         };
 

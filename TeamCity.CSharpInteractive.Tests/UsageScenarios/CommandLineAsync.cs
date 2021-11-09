@@ -9,17 +9,17 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     
     public class CommandLineAsync: Scenario
     {
-        [SkippableFact]
+        [SkippableFact(Timeout = 5000)]
         public async Task Run()
         {
-            Skip.IfNot(System.Environment.OSVersion.Platform == PlatformID.Win32NT);
+            Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
 
             // $visible=true
             // $tag=2 Command Line API
-            // $priority=01
-            // $description=Run asynchronously
+            // $priority=02
+            // $description=Run a command line asynchronously
             // {
-            var exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
+            int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
             // }
             
             exitCode.HasValue.ShouldBeTrue();

@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMember.Global
 namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 {
     using System.Collections.Generic;

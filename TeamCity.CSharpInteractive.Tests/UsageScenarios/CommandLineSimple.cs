@@ -11,14 +11,14 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
         [SkippableFact]
         public void Run()
         {
-            Skip.IfNot(System.Environment.OSVersion.Platform == PlatformID.Win32NT);
+            Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
 
             // $visible=true
             // $tag=2 Command Line API
-            // $priority=00
-            // $description=Run
+            // $priority=01
+            // $description=Run a command line
             // {
-            var exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
+            int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
             // }
             
             exitCode.HasValue.ShouldBeTrue();

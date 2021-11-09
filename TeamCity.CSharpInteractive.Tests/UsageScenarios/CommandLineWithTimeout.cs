@@ -3,12 +3,11 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
     using System.Threading;
-    using System.Threading.Tasks;
     using Contracts;
     using Shouldly;
     using Xunit;
 
-    public class CommandLineAsyncCancellation: Scenario
+    public class CommandLineWithTimeout: Scenario
     {
         [SkippableFact(Timeout = 5000)]
         public void Run()
@@ -18,17 +17,15 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $visible=true
             // $tag=2 Command Line API
             // $priority=06
-            // $description=Cancellation of asynchronous run
-            // $header=The cancellation will kill a related process.
+            // $description=Run timeout
+            // $header=If timeout expired a process will be killed.
             // {
-            var cancellationTokenSource = new CancellationTokenSource();
-            Task<int?> task = GetService<ICommandLine>().RunAsync(
+            int? exitCode = GetService<ICommandLine>().Run(
                 new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
                 default,
-                cancellationTokenSource.Token);
+                TimeSpan.FromMilliseconds(1));
             
-            cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
-            task.IsCompleted.ShouldBeFalse();
+            exitCode.HasValue.ShouldBeFalse();
             // }
         }
     }
