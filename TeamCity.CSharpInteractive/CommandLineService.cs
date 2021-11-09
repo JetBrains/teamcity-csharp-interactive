@@ -13,13 +13,16 @@ namespace TeamCity.CSharpInteractive
     {
         private readonly ILog<CommandLineService> _log;
         private readonly Func<IProcess> _processFactory;
-        
+        private readonly CancellationTokenSource _cancellationTokenSource;
+
         public CommandLineService(
             ILog<CommandLineService> log,
-            Func<IProcess> processFactory)
+            Func<IProcess> processFactory,
+            CancellationTokenSource cancellationTokenSource)
         {
             _log = log;
             _processFactory = processFactory;
+            _cancellationTokenSource = cancellationTokenSource;
         }
 
         public int? Run(CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default)
@@ -59,6 +62,11 @@ namespace TeamCity.CSharpInteractive
 
         public async Task<int?> RunAsync(CommandLine commandLine, Action<CommandLineOutput>? handler = default, CancellationToken cancellationToken = default)
         {
+            if (cancellationToken == default)
+            {
+                cancellationToken = _cancellationTokenSource.Token;
+            }
+
             var process = _processFactory();
             process.OnOutput += handler;
             var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
