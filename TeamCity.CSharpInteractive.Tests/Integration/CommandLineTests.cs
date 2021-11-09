@@ -22,7 +22,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var events = new List<CommandLineOutput>();
 
             // When
-            var exitCode = Composer.ResolveICommandLine().Run(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
+            var exitCode = GetService<ICommandLine>().Run(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
 
             // Then
             exitCode.HasValue.ShouldBeTrue();
@@ -38,7 +38,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var events = new List<CommandLineOutput>();
 
             // When
-            var exitCode = Composer.ResolveICommandLine().Run(
+            var exitCode = GetService<ICommandLine>().Run(
                 DotNetScript.Create("WriteLine(\"VAL=\" + System.Environment.GetEnvironmentVariable(\"ABC\"));").AddVars(("ABC", "123")),
                 e => events.Add(e));
 
@@ -57,7 +57,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
 
             // When
             stopwatch.Start();
-            var exitCode = Composer.ResolveICommandLine().Run(
+            var exitCode = GetService<ICommandLine>().Run(
                 DotNetScript.Create("System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));"),
                 _ => { },
                 TimeSpan.FromMilliseconds(100));
@@ -76,7 +76,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             var events = new List<CommandLineOutput>();
 
             // When
-            var exitCode = await Composer.ResolveICommandLine().RunAsync(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
+            var exitCode = await GetService<ICommandLine>().RunAsync(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
 
             // Then
             exitCode.HasValue.ShouldBeTrue();
@@ -94,7 +94,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
 
             // When
             stopwatch.Start();
-            Composer.ResolveICommandLine().RunAsync(
+            GetService<ICommandLine>().RunAsync(
                 DotNetScript.Create("System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));"),
                 _ => { },
                 cancellationTokenSource.Token);
@@ -107,5 +107,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             stopwatch.ElapsedMilliseconds.ShouldBeLessThanOrEqualTo(10000);
             stopwatch.ElapsedMilliseconds.ShouldBeGreaterThanOrEqualTo(100);
         }
+
+        private static T GetService<T>() => Composer.Resolve<T>();
     }
 }

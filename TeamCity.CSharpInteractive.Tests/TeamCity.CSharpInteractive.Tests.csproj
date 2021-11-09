@@ -19,6 +19,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
+        <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,6 +31,13 @@
         <Content Include="Integration\Resources\csinetstandard11.1.0.0.nupkg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <None Update="README_TEMPLATE.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>README_TEMPLATE.md</LastGenOutput>
+        </None>
+        <None Update="README_TEMPLATE.md">
+          <DependentUpon>README_TEMPLATE.tt</DependentUpon>
+        </None>
     </ItemGroup>
 
 </Project>
