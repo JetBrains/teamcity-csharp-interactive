@@ -3,6 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using Contracts;
     using Core;
     using JetBrains.TeamCity.ServiceMessages;
@@ -36,7 +37,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             Run(CreateScriptCommandLine(args, scriptArgs, vars, lines));
         
         public static IProcessResult Run(params string[] lines) =>
-            Run(DotNetScript.Create(lines));
+            Run(DotNetScript.Create(lines).WithVars(("TEAMCITY_PROJECT_NAME", string.Empty), ("TEAMCITY_VERSION", string.Empty)));
         
         public static IProcessResult RunUnderTeamCity(params string[] lines) =>
             Run(CreateScriptCommandLine(Array.Empty<string>(), Array.Empty<string>(), TeamCityVars, lines));
@@ -91,6 +92,29 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             public IReadOnlyCollection<string> StdOut { get; }
 
             public IReadOnlyCollection<string> StdErr { get; }
+
+            public override string ToString()
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine($"Exit code: {ExitCode}");
+                sb.AppendLine();
+                sb.AppendLine($"StdOut({StdOut.Count}):");
+                foreach (var line in StdOut)
+                {
+                    sb.Append("  ");
+                    sb.AppendLine(line);
+                }
+                
+                sb.AppendLine();
+                sb.AppendLine($"StdErr({StdErr.Count}):");
+                foreach (var line in StdErr)
+                {
+                    sb.Append("  ");
+                    sb.AppendLine(line);
+                }
+
+                return sb.ToString();
+            }
         }
     }
 }

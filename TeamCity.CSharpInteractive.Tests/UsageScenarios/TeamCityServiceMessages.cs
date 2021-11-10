@@ -11,6 +11,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
         [SkippableFact]
         public void Run()
         {
+            Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
+
             // $visible=true
             // $tag=3 TeamCity Service Messages API
             // $priority=00

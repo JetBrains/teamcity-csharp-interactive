@@ -1,18 +1,19 @@
 // ReSharper disable StringLiteralTypo
+// ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using System.Threading;
     using Contracts;
     using Shouldly;
     using Xunit;
 
     public class CommandLineWithTimeout: Scenario
     {
-        [SkippableFact(Timeout = 5000)]
+        [SkippableFact]
         public void Run()
         {
             Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
+            Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
             // $visible=true
             // $tag=2 Command Line API

@@ -1,4 +1,5 @@
 // ReSharper disable StringLiteralTypo
+// ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
@@ -9,10 +10,11 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     
     public class CommandLineAsync: Scenario
     {
-        [SkippableFact(Timeout = 5000)]
+        [SkippableFact]
         public async Task Run()
         {
             Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
+            Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
             // $visible=true
             // $tag=2 Command Line API

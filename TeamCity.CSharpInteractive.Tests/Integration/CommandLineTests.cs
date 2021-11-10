@@ -13,6 +13,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using Xunit;
     using Composer = Composer;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class CommandLineTests
     {
         [Fact]
@@ -28,7 +29,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             exitCode.HasValue.ShouldBeTrue();
             exitCode.ShouldBe(0);
             events.Any(i => i.IsError).ShouldBeFalse();
-            events.Any(i => !i.IsError && i.Line == "Hello").ShouldBeTrue();
+            events.Any(i => !i.IsError && i.Line.Contains("Hello")).ShouldBeTrue();
         }
         
         [Fact]
@@ -46,7 +47,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             exitCode.HasValue.ShouldBeTrue();
             exitCode.ShouldBe(0);
             events.Any(i => i.IsError).ShouldBeFalse();
-            events.Any(i => !i.IsError && i.Line == "VAL=123").ShouldBeTrue();
+            events.Any(i => !i.IsError && i.Line.Contains("VAL=123")).ShouldBeTrue();
         }
         
         [Fact]
@@ -82,7 +83,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             exitCode.HasValue.ShouldBeTrue();
             exitCode.ShouldBe(0);
             events.Any(i => i.IsError).ShouldBeFalse();
-            events.Any(i => !i.IsError && i.Line == "Hello").ShouldBeTrue();
+            events.Any(i => !i.IsError && i.Line.Contains("Hello")).ShouldBeTrue();
         }
         
         [Fact]

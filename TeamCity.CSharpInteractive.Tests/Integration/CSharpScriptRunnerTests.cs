@@ -10,6 +10,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class CSharpScriptRunnerTests
     {
         private readonly Mock<ILog<CSharpScriptRunner>> _log;
@@ -54,7 +55,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             new object[] {"class Abc" + Environment.NewLine + "{}"},
             // using System;
             new object[] {"Console.WriteLine(10);"}
-    };
+        };
         
         [Fact]
         public void ShouldPreserveState()

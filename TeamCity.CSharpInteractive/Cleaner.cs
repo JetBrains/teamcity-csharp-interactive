@@ -16,7 +16,7 @@ namespace TeamCity.CSharpInteractive
 
         public IDisposable Track(string path)
         {
-            _log.Trace($"Trace \"{path}\".");
+            _log.Trace($"Start tracking \"{path}\".");
             return Disposable.Create(() =>
             {
                 _log.Trace($"Delete \"{path}\".");

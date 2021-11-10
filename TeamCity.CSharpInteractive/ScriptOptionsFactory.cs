@@ -51,6 +51,7 @@ namespace TeamCity.CSharpInteractive
         {
             try
             {
+                fileName = Path.GetFullPath(fileName);
                 _log.Trace($"Try register the assembly \"{fileName}\".");
                 var reference = MetadataReference.CreateFromFile(fileName);
                 description = reference.Display ?? string.Empty;

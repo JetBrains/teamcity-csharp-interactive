@@ -2,8 +2,10 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
+    [ExcludeFromCodeCoverage]
     internal class ExitManager: IActive
     {
         private readonly ISettings _settings;

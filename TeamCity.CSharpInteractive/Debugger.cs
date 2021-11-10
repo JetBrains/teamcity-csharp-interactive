@@ -1,8 +1,10 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
+    [ExcludeFromCodeCoverage]
     internal class Debugger: IActive
     {
         private readonly ILog<Debugger> _log;

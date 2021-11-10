@@ -16,6 +16,7 @@ namespace TeamCity.CSharpInteractive
         private readonly System.Diagnostics.Process _process;
         private CommandLine? _commandLine;
         private Text _processId;
+        private int _disposed;
 
         public Process(
             ILog<Process> log,
@@ -100,10 +101,22 @@ namespace TeamCity.CSharpInteractive
 
         public void Dispose()
         {
-            _process.Exited -= ProcessOnExited;
-            _process.OutputDataReceived -= ProcessOnOutputDataReceived;
-            _process.ErrorDataReceived -= ProcessOnErrorDataReceived;
-            _process.Dispose();
+            try
+            {
+                if (System.Threading.Interlocked.Exchange(ref _disposed, 1) != 0)
+                {
+                    return;
+                }
+                
+                _process.Exited -= ProcessOnExited;
+                _process.OutputDataReceived -= ProcessOnOutputDataReceived;
+                _process.ErrorDataReceived -= ProcessOnErrorDataReceived;
+                _process.Dispose();
+            }
+            catch (Exception exception)
+            {
+                _log.Trace($"Exception during disposing: {exception}.");
+            }
         }
     }
 }

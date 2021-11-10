@@ -8,6 +8,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class ScriptRunTests
     {
         private const int InitialLinesCount = 3;

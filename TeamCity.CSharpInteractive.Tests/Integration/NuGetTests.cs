@@ -7,6 +7,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class NuGetTests
     {
         [Fact]

@@ -10,10 +10,11 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 
     public class CommandLineAsyncCancellation: Scenario
     {
-        [SkippableFact(Timeout = 5000)]
+        [SkippableFact]
         public void Run()
         {
             Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
+            Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
             // $visible=true
             // $tag=2 Command Line API

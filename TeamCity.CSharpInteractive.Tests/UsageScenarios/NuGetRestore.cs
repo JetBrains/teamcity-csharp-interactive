@@ -16,7 +16,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=00
             // $description=Restore NuGet a package of newest version
             // {
-            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container");
+            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container", "*");
             // }
             
             packages.ShouldNotBeEmpty();
