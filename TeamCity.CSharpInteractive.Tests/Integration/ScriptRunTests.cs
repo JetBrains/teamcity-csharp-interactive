@@ -366,7 +366,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             // When
             var result = TestTool.Run(
                 "using JetBrains.TeamCity.ServiceMessages.Write.Special;",
-                "GetService<ITeamCityBuildStatusWriter>().WriteBuildParameter(\"system.hello\", \"Abc\");");
+                "GetService<ITeamCityWriter>().WriteBuildParameter(\"system.hello\", \"Abc\");");
             
             // Then
             result.StdErr.ShouldBeEmpty(result.ToString());

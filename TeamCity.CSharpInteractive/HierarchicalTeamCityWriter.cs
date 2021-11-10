@@ -11,11 +11,8 @@ namespace TeamCity.CSharpInteractive
     {
         private readonly Stack<ITeamCityWriter> _teamCityWriters = new();
 
-        public HierarchicalTeamCityWriter(
-            [Tag("Root")] ITeamCityWriter currentWriter)
-        {
+        public HierarchicalTeamCityWriter([Tag("Root")] ITeamCityWriter currentWriter) =>
             _teamCityWriters.Push(currentWriter);
-        }
 
         internal ITeamCityWriter CurrentWriter
         {
@@ -106,6 +103,7 @@ namespace TeamCity.CSharpInteractive
 
         public void Dispose()
         {
+            // Should not dispose
         }
 
         public void WriteRawMessage(IServiceMessage message) => CurrentWriter.WriteRawMessage(message);

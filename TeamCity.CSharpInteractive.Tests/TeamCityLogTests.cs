@@ -9,20 +9,16 @@ namespace TeamCity.CSharpInteractive.Tests
     {
         private readonly Mock<ISettings> _settings;
         private readonly Mock<ITeamCityLineFormatter> _lineFormatter;
-        private readonly Mock<ITeamCityBlockWriter<ITeamCityWriter>> _blockWriter;
-        private readonly Mock<ITeamCityMessageWriter> _teamCityMessageWriter;
+        private readonly Mock<ITeamCityWriter> _teamCityWriter;
         private readonly Text[] _text = {new("line1"), new("line2")};
         private readonly Mock<IStatistics> _statistics;
-        private readonly Mock<ITeamCityBuildStatusWriter> _teamCityBuildStatusWriter;
-
+        
         public TeamCityLogTests()
         {
             _settings = new Mock<ISettings>();
             _lineFormatter = new Mock<ITeamCityLineFormatter>();
             _lineFormatter.Setup(i => i.Format(It.IsAny<Text[]>())).Returns<Text[]>(i => "F_" + i.ToSimpleString());
-            _blockWriter = new Mock<ITeamCityBlockWriter<ITeamCityWriter>>();
-            _teamCityMessageWriter = new Mock<ITeamCityMessageWriter>();
-            _teamCityBuildStatusWriter = new Mock<ITeamCityBuildStatusWriter>();
+            _teamCityWriter = new Mock<ITeamCityWriter>();
             _statistics = new Mock<IStatistics>();
         }
 
@@ -32,13 +28,13 @@ namespace TeamCity.CSharpInteractive.Tests
             // Given
             var log = CreateInstance();
             var blockToken = Mock.Of<ITeamCityWriter>();
-            _blockWriter.Setup(i => i.OpenBlock("line1line2")).Returns(blockToken);
+            _teamCityWriter.Setup(i => i.OpenBlock("line1line2")).Returns(blockToken);
 
             // When
             var actualBlockToken = log.Block(_text);
 
             // Then
-            _blockWriter.Verify(i => i.OpenBlock("line1line2"));
+            _teamCityWriter.Verify(i => i.OpenBlock("line1line2"));
             actualBlockToken.ShouldBe(blockToken);
         }
         
@@ -56,7 +52,7 @@ namespace TeamCity.CSharpInteractive.Tests
             log.Error(new ErrorId("id"), _text);
 
             // Then
-            _teamCityBuildStatusWriter.Verify(i => i.WriteBuildProblem("id", "line1line2"));
+            _teamCityWriter.Verify(i => i.WriteBuildProblem("id", "line1line2"));
             _statistics.Verify(i => i.RegisterError("line1line2"));
         }
         
@@ -74,7 +70,7 @@ namespace TeamCity.CSharpInteractive.Tests
             log.Warning(_text);
 
             // Then
-            _teamCityMessageWriter.Verify(i => i.WriteWarning("line1line2"));
+            _teamCityWriter.Verify(i => i.WriteWarning("line1line2"));
             _statistics.Verify(i => i.RegisterWarning("line1line2"));
         }
         
@@ -93,7 +89,7 @@ namespace TeamCity.CSharpInteractive.Tests
             log.Info(_text);
 
             // Then
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("F_line1line2"), times);
+            _teamCityWriter.Verify(i => i.WriteMessage("F_line1line2"), times);
         }
         
         [Theory]
@@ -111,16 +107,14 @@ namespace TeamCity.CSharpInteractive.Tests
             log.Trace("Orig", _text);
 
             // Then
-            _teamCityMessageWriter.Verify(i => i.WriteMessage($"F_{"Orig", -40}line1line2"), times);
+            _teamCityWriter.Verify(i => i.WriteMessage($"F_{"Orig", -40}line1line2"), times);
         }
 
         private TeamCityLog<string> CreateInstance() =>
             new(
                 _settings.Object,
+                _teamCityWriter.Object,
                 _lineFormatter.Object,
-                _blockWriter.Object,
-                _teamCityMessageWriter.Object,
-                _teamCityBuildStatusWriter.Object,
                 _statistics.Object);
     }
 }

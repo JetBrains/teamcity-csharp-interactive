@@ -77,6 +77,8 @@ Please use our YouTrack to [report](https://youtrack.jetbrains.com/newIssue?proj
   - [Run asynchronously in parallel](#run-asynchronously-in-parallel)
   - [Cancellation of asynchronous run](#cancellation-of-asynchronous-run)
   - [Run timeout](#run-timeout)
+- TeamCity Service Messages API
+  - [TeamCity integration via service messages](#teamcity-integration-via-service-messages)
 
 ### Restore NuGet a package of newest version
 
@@ -215,4 +217,36 @@ exitCode.HasValue.ShouldBeFalse();
 ```
 
 
+
+### TeamCity integration via service messages
+
+For more details how to use TeamCity service message API please see [this](https://github.com/JetBrains/TeamCity.ServiceMessages) page. Instead of creating a root message writer like in the following example:
+``` CSharp
+using var writer = new TeamCityServiceMessages().CreateWriter(Console.WriteLine);
+```
+use this statement:
+``` CSharp
+using var writer = GetService<ITeamCityWriter>();
+```
+This sample opens a block _My Tests_ and reports about two tests:
+
+``` CSharp
+using var writer = GetService<ITeamCityWriter>();
+using (var tests = writer.OpenBlock("My Tests"))
+{
+    using (var test = tests.OpenTest("Test1"))
+    {
+        test.WriteStdOutput("Hello");
+        test.WriteImage("TestsResults/Test1Screenshot.jpg", "Screenshot");
+        test.WriteDuration(TimeSpan.FromMilliseconds(10));
+    }
+    
+    using (var test = tests.OpenTest("Test2"))
+    {
+        test.WriteFailed("Some error", "Error details");
+    }
+}
+```
+
+For more information on TeamCity Service Messages, see [this](https://www.jetbrains.com/help/teamcity/service-messages.html) page.
 

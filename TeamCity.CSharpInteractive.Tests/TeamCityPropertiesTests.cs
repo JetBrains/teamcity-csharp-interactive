@@ -8,12 +8,12 @@ namespace TeamCity.CSharpInteractive.Tests
     public class TeamCityPropertiesTests
     {
         private readonly Mock<IProperties> _properties;
-        private readonly Mock<ITeamCityBuildStatusWriter> _teamCityBuildStatusWriter;
+        private readonly Mock<ITeamCityWriter> _teamCityWriter;
 
         public TeamCityPropertiesTests()
         {
             _properties = new Mock<IProperties>();
-            _teamCityBuildStatusWriter = new Mock<ITeamCityBuildStatusWriter>();
+            _teamCityWriter = new Mock<ITeamCityWriter>();
         }
 
         [Fact]
@@ -27,10 +27,10 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // Then
             _properties.VerifySet(i => i["Abc"] = "Xyz");
-            _teamCityBuildStatusWriter.Verify(i => i.WriteBuildParameter("system.Abc", "Xyz"));
+            _teamCityWriter.Verify(i => i.WriteBuildParameter("system.Abc", "Xyz"));
         }
 
         private TeamCityProperties CreateInstance() =>
-            new(_properties.Object, _teamCityBuildStatusWriter.Object);
+            new(_properties.Object, _teamCityWriter.Object);
     }
 }

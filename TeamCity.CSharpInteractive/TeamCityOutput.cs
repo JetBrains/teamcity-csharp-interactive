@@ -6,20 +6,20 @@ namespace TeamCity.CSharpInteractive
     internal class TeamCityOutput : IStdOut, IStdErr
     {
         private readonly ITeamCityLineFormatter _lineFormatter;
-        private readonly ITeamCityMessageWriter _teamCityMessageWriter;
+        private readonly ITeamCityWriter _teamCityWriter;
 
         public TeamCityOutput(
             ITeamCityLineFormatter lineFormatter,
-            ITeamCityMessageWriter teamCityMessageWriter)
+            ITeamCityWriter teamCityWriter)
         {
             _lineFormatter = lineFormatter;
-            _teamCityMessageWriter = teamCityMessageWriter;
+            _teamCityWriter = teamCityWriter;
         }
 
-        public void Write(params Text[] text) => _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(text));
+        public void Write(params Text[] text) => _teamCityWriter.WriteMessage(_lineFormatter.Format(text));
 
-        void IStdOut.WriteLine(params Text[] line) => _teamCityMessageWriter.WriteMessage(_lineFormatter.Format(line));
+        void IStdOut.WriteLine(params Text[] line) => _teamCityWriter.WriteMessage(_lineFormatter.Format(line));
 
-        void IStdErr.WriteLine(params Text[] errorLine) => _teamCityMessageWriter.WriteError(_lineFormatter.Format(errorLine));
+        void IStdErr.WriteLine(params Text[] errorLine) => _teamCityWriter.WriteError(_lineFormatter.Format(errorLine));
     }
 }

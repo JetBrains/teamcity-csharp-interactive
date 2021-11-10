@@ -24,17 +24,18 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal static partial class Composer
     {
-        private static void Setup() =>
-            // #out=C:\Projects\_temp\a
-            // #verbosity=diagnostic
+        private static void Setup()
+        {
             // #trace=true
+            // #verbosity=diagnostic
+            // #out=C:\Projects\_temp\a
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
                 .Bind<Assembly>().To(_ => Assembly.GetEntryAssembly())
                 .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
-                .Bind<CancellationTokenSource>().To(_ =>  new CancellationTokenSource())
-                .Bind<CancellationToken>().As(Transient).To(ctx =>  ctx.Resolve<CancellationTokenSource>().Token)
+                .Bind<CancellationTokenSource>().To(_ => new CancellationTokenSource())
+                .Bind<CancellationToken>().As(Transient).To(ctx => ctx.Resolve<CancellationTokenSource>().Token)
                 .Bind<IActive>(typeof(ExitManager)).To<ExitManager>()
                 .Bind<IHostEnvironment>().To<HostEnvironment>()
                 .Bind<ITeamCitySettings>().To<TeamCitySettings>()
@@ -92,38 +93,31 @@ namespace TeamCity.CSharpInteractive
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()
-                    .Bind<IReferenceRegistry>()
-                    .Bind<ISettingSetter<LanguageVersion>>()
-                    .Bind<ISettingSetter<OptimizationLevel>>()
-                    .Bind<ISettingSetter<WarningLevel>>()
-                    .Bind<ISettingSetter<CheckOverflow>>()
-                    .Bind<ISettingSetter<AllowUnsafe>>()
-                    .To<ScriptOptionsFactory>()
-
+                .Bind<IReferenceRegistry>()
+                .Bind<ISettingSetter<LanguageVersion>>()
+                .Bind<ISettingSetter<OptimizationLevel>>()
+                .Bind<ISettingSetter<WarningLevel>>()
+                .Bind<ISettingSetter<CheckOverflow>>()
+                .Bind<ISettingSetter<AllowUnsafe>>()
+                .To<ScriptOptionsFactory>()
                 .Bind<ICommandFactory<string>>("REPL Set a C# language version parser").To<SettingCommandFactory<LanguageVersion>>()
                 .Bind<ICommandRunner>("REPL Set a C# language version").To<SettingCommandRunner<LanguageVersion>>()
                 .Bind<ISettingDescription>(typeof(LanguageVersion)).To<LanguageVersionSettingDescription>()
-
                 .Bind<ICommandFactory<string>>("REPL Set an optimization level parser").To<SettingCommandFactory<OptimizationLevel>>()
                 .Bind<ICommandRunner>("REPL Set an optimization level").To<SettingCommandRunner<OptimizationLevel>>()
                 .Bind<ISettingDescription>(typeof(OptimizationLevel)).To<OptimizationLevelSettingDescription>()
-
                 .Bind<ICommandFactory<string>>("REPL Set a warning level parser").To<SettingCommandFactory<WarningLevel>>()
                 .Bind<ICommandRunner>("REPL Set a warning level").To<SettingCommandRunner<WarningLevel>>()
                 .Bind<ISettingDescription>(typeof(WarningLevel)).To<WarningLevelSettingDescription>()
-
                 .Bind<ICommandFactory<string>>("REPL Set an overflow check parser").To<SettingCommandFactory<CheckOverflow>>()
                 .Bind<ICommandRunner>("REPL Set an overflow check").To<SettingCommandRunner<CheckOverflow>>()
                 .Bind<ISettingDescription>(typeof(CheckOverflow)).To<CheckOverflowSettingDescription>()
-                
                 .Bind<ICommandFactory<string>>("REPL Set allow unsafe parser").To<SettingCommandFactory<AllowUnsafe>>()
                 .Bind<ICommandRunner>("REPL Set allow unsafe").To<SettingCommandRunner<AllowUnsafe>>()
                 .Bind<ISettingDescription>(typeof(AllowUnsafe)).To<AllowUnsafeSettingDescription>()
-                
                 .Bind<ICommandFactory<string>>("REPL Set NuGet restore setting parser").To<SettingCommandFactory<NuGetRestoreSetting>>()
                 .Bind<ICommandRunner>("REPL Set NuGet restore setting").To<SettingCommandRunner<NuGetRestoreSetting>>()
                 .Bind<ISettingDescription>(typeof(NuGetRestoreSetting)).To<NuGetRestoreSettingDescription>()
-
                 .Bind<IScriptSubmissionAnalyzer>().To<ScriptSubmissionAnalyzer>()
                 .Bind<ICommandRunner>("CSharp").To<CSharpScriptCommandRunner>()
                 .Bind<ICommandFactory<string>>("REPL Help parser").To<HelpCommandFactory>()
@@ -134,18 +128,18 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IFilePathResolver>().To<FilePathResolver>()
                 .Bind<ICommandFactory<string>>("REPL Add assembly reference parser").To<AddAssemblyReferenceCommandFactory>()
                 .Bind<ICommandRunner>("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>()
-                .Bind<ICommandFactory<string>>("REPL Load script").To<LoadCommandFactory>()
+                .Bind<ICommandFactory<string>>("REPL Load script").To<LoadCommandFactory>();
 
-                // Service messages
-                .Bind<ITeamCityWriter>()
-                    .Bind<ITeamCityBlockWriter<ITeamCityWriter>>()
-                    .Bind<ITeamCityFlowWriter<ITeamCityWriter>>()
-                    .Bind<ITeamCityMessageWriter>()
-                    .Bind<ITeamCityTestsWriter>()
-                    .Bind<ITeamCityCompilationBlockWriter<ITeamCityWriter>>()
-                    .Bind<ITeamCityArtifactsWriter>()
-                    .Bind<ITeamCityBuildStatusWriter>()
-                    .To<HierarchicalTeamCityWriter>()
+            // Public
+            DI.Setup()
+                .Bind<IHost>().Bind<IServiceProvider>().To<HostService>()
+                .Bind<INuGet>().To<NuGetService>()
+                .Bind<IStartInfoFactory>().To<StartInfoFactory>()
+                .Bind<IProcess>().As(Transient).To<Process>()
+                .Bind<ICommandLine>().To<CommandLineService>()
+
+                // TeamCity Service messages
+                .Bind<ITeamCityWriter>().To<HierarchicalTeamCityWriter>()
                 .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
                 .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
                 .Bind<IFlowIdGenerator>().To<FlowIdGenerator>()
@@ -154,13 +148,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITeamCityWriter>("Root").To(
                     ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
                         str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).WriteLine(new Text(str + "\n"))))
-                .Bind<IServiceMessageParser>().To<ServiceMessageParser>()
-                
-                // Public
-                .Bind<IHost>().Bind<IServiceProvider>().To<HostService>()
-                .Bind<INuGet>().To<NuGetService>()
-                .Bind<IStartInfoFactory>().To<StartInfoFactory>()
-                .Bind<IProcess>().As(Transient).To<Process>()
-                .Bind<ICommandLine>().To<CommandLineService>();
+                .Bind<IServiceMessageParser>().To<ServiceMessageParser>();
+        }
     }
 }

@@ -10,14 +10,14 @@ namespace TeamCity.CSharpInteractive
     internal class TeamCityProperties: IProperties
     {
         private readonly IProperties _props;
-        private readonly ITeamCityBuildStatusWriter _teamCityBuildStatusWriter;
+        private readonly ITeamCityWriter _teamCityWriter;
 
         public TeamCityProperties(
             [Tag("Default")] IProperties properties,
-            ITeamCityBuildStatusWriter teamCityBuildStatusWriter)
+            ITeamCityWriter teamCityWriter)
         {
             _props = properties;
-            _teamCityBuildStatusWriter = teamCityBuildStatusWriter;
+            _teamCityWriter = teamCityWriter;
         }
         
         public int Count => _props.Count;
@@ -28,7 +28,7 @@ namespace TeamCity.CSharpInteractive
             set
             {
                 _props[key] = value;
-                _teamCityBuildStatusWriter.WriteBuildParameter($"system.{key}", value);
+                _teamCityWriter.WriteBuildParameter($"system.{key}", value);
             }
         }
 

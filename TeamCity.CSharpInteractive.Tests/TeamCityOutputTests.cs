@@ -7,13 +7,13 @@ namespace TeamCity.CSharpInteractive.Tests
     public class TeamCityOutputTests
     {
         private readonly Mock<ITeamCityLineFormatter> _lineFormatter;
-        private readonly Mock<ITeamCityMessageWriter> _teamCityMessageWriter;
+        private readonly Mock<ITeamCityWriter> _teamCityWriter;
 
         public TeamCityOutputTests()
         {
             _lineFormatter = new Mock<ITeamCityLineFormatter>();
             _lineFormatter.Setup(i => i.Format(It.IsAny<Text[]>())).Returns<Text[]>(i => "F_" + i.ToSimpleString());
-            _teamCityMessageWriter = new Mock<ITeamCityMessageWriter>();
+            _teamCityWriter = new Mock<ITeamCityWriter>();
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace TeamCity.CSharpInteractive.Tests
             output.WriteLine(new[] {new Text("err")});
 
             // Then
-            _teamCityMessageWriter.Verify(i => i.WriteError("F_err", null));
+            _teamCityWriter.Verify(i => i.WriteError("F_err", null));
         }
         
         [Fact]
@@ -39,12 +39,12 @@ namespace TeamCity.CSharpInteractive.Tests
             output.WriteLine(new[] {new Text("message")});
 
             // Then
-            _teamCityMessageWriter.Verify(i => i.WriteMessage("F_message"));
+            _teamCityWriter.Verify(i => i.WriteMessage("F_message"));
         }
         
         private TeamCityOutput CreateInstance() => 
             new(
                 _lineFormatter.Object,
-                _teamCityMessageWriter.Object);
+                _teamCityWriter.Object);
     }
 }
