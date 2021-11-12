@@ -5,13 +5,10 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Pure.DI" Version="1.1.14">
+        <PackageReference Include="Pure.DI" Version="1.1.16">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-            <_Parameter1>dotnet-csi</_Parameter1>
-        </AssemblyAttribute>
     </ItemGroup>
 </Project>
