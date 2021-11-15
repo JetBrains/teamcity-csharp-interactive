@@ -95,7 +95,8 @@
 <#
     foreach(var group in infos.Where(info => info["visible"] == "true").GroupBy(i => i["tag"]).OrderBy(i => i.Key[0]))
     {
-        var groupName = group.Key.Substring(1).Trim();
+        var groupNameIndex = group.Key.IndexOf(' ');
+        var groupName = group.Key.Substring(groupNameIndex + 1,  group.Key.Length - groupNameIndex - 1);
     #>- <#=groupName#>
 <#
         foreach(var info in group.OrderBy(i => i["priority"] + "_" + i["description"]))

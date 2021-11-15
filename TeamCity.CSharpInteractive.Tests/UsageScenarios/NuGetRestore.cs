@@ -12,7 +12,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
         public void Run()
         {
             // $visible=true
-            // $tag=1 NuGet API
+            // $tag=11 NuGet API
             // $priority=00
             // $description=Restore NuGet a package of newest version
             // {

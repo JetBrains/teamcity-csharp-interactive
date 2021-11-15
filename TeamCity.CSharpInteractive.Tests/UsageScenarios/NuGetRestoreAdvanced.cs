@@ -13,7 +13,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
         public void Run()
         {
             // $visible=true
-            // $tag=1 NuGet API
+            // $tag=11 NuGet API
             // $priority=01
             // $description=Restore a NuGet package by a version range for the specified .NET and path
             // {

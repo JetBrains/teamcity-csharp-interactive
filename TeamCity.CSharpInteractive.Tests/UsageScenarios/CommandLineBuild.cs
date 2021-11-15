@@ -15,7 +15,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
 
             // $visible=true
-            // $tag=2 Command Line API
+            // $tag=10 Command Line API
             // $priority=00
             // $description=Build command lines
             // {

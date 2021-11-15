@@ -3,27 +3,22 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using Contracts;
-    using Shouldly;
     using Xunit;
 
-    public class CommandLineSimple: Scenario
+    public class LogError: Scenario
     {
         [SkippableFact]
         public void Run()
         {
-            Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
             Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
-
-            // $visible=true
-            // $tag=10 Command Line API
-            // $priority=01
-            // $description=Run a command line
-            // {
-            int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
-            // }
             
-            exitCode.HasValue.ShouldBeTrue();
+            // $visible=true
+            // $tag=09 Build log API
+            // $priority=02
+            // $description=Log an error to a build log
+            // {
+            Error("Error info", "Error identifier");
+            // }
         }
     }
 }

@@ -16,7 +16,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
             // $visible=true
-            // $tag=2 Command Line API
+            // $tag=10 Command Line API
             // $priority=04
             // $description=Run and process output
             // {

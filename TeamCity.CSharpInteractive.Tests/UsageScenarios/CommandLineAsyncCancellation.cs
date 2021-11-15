@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
             // $visible=true
-            // $tag=2 Command Line API
+            // $tag=10 Command Line API
             // $priority=06
             // $description=Cancellation of asynchronous run
             // $header=The cancellation will kill a related process.
