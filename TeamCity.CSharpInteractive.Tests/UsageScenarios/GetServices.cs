@@ -20,7 +20,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // {
             GetService<INuGet>();
 
-            GetService<IServiceProvider>();
+            var serviceProvider = GetService<IServiceProvider>();
+            serviceProvider.GetService(typeof(INuGet));
             // }
         }
     }

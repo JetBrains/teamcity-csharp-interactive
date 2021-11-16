@@ -28,7 +28,7 @@ namespace TeamCity.CSharpInteractive
         {
             // #trace=true
             // #verbosity=diagnostic
-            // #out=C:\Projects\_temp\a
+            // out=C:\Projects\_temp\a
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
@@ -84,9 +84,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICommandFactory<ICodeSource>>().To<CodeSourceCommandFactory>()
                 .Bind<ICommandFactory<ScriptCommand>>().As(Transient).To<ScriptCommandFactory>()
                 .Bind<ICSharpScriptRunner>().To<CSharpScriptRunner>()
-                .Bind<IProperties>("Default").To<Properties>()
-                .Bind<IProperties>("TeamCity").To<TeamCityProperties>()
-                .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
                 .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
                 .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
                 .Bind<IActive>(typeof(Debugger)).To<Debugger>()
@@ -130,12 +127,16 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICommandRunner>("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>()
                 .Bind<ICommandFactory<string>>("REPL Load script").To<LoadCommandFactory>();
 
-            // Public
             DI.Setup()
-                .Bind<IHost>().Bind<IServiceProvider>().To<HostService>()
-                .Bind<INuGet>().To<NuGetService>()
                 .Bind<IStartInfoFactory>().To<StartInfoFactory>()
                 .Bind<IProcess>().As(Transient).To<Process>()
+                .Bind<IProperties>("Default").To<Properties>()
+                .Bind<IProperties>("TeamCity").To<TeamCityProperties>()
+
+                // Public
+                .Bind<IHost>().To<HostService>()
+                .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
+                .Bind<INuGet>().To<NuGetService>()
                 .Bind<ICommandLine>().To<CommandLineService>()
 
                 // TeamCity Service messages

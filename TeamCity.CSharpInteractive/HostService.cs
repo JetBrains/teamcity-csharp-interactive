@@ -2,11 +2,10 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
     using Contracts;
 
-    internal class HostService : IHost, IServiceProvider
+    internal class HostService : IHost
     {
         private readonly ILog<HostService> _log;
         private readonly ISettings _settings;
@@ -41,8 +40,6 @@ namespace TeamCity.CSharpInteractive
         public void Info(string text) => _log.Info(text);
 
         public void Trace(string trace, string origin = "") => _log.Trace(origin, trace);
-
-        public object GetService(Type serviceType) => Composer.Resolve(serviceType);
 
         public T GetService<T>() => Composer.Resolve<T>();
     }
