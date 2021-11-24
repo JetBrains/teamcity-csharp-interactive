@@ -1,6 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests
 {
     using System;
+    using System.Linq;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -16,6 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests
         private readonly Mock<IRunner> _runner;
         private readonly Mock<IActive> _active;
         private readonly Mock<IDisposable> _activationToken;
+        private readonly Mock<IStatistics> _statistics;
 
         public ProgramTests()
         {
@@ -31,6 +33,8 @@ namespace TeamCity.CSharpInteractive.Tests
             _activationToken = new Mock<IDisposable>();
             _active = new Mock<IActive>();
             _active.Setup(i => i.Activate()).Returns(_activationToken.Object);
+            _statistics = new Mock<IStatistics>();
+            _statistics.SetupGet(i => i.Errors).Returns(Array.Empty<string>());
         }
 
         [Fact]
@@ -102,8 +106,30 @@ namespace TeamCity.CSharpInteractive.Tests
             _info.Verify(i => i.ShowHelp());
             actualResult.ShouldBe(ExitCode.Success);
         }
+        
+        [Fact]
+        public void ShouldFailedWhenHasErrors()
+        {
+            // Given
+            var program = CreateInstance();
+
+            // When
+            _statistics.SetupGet(i => i.Errors).Returns(new []{"some error"});
+            var actualResult = program.Run();
+
+            // Then
+            actualResult.ShouldBe(ExitCode.Fail);
+        }
 
         private Program CreateInstance() =>
-            new(_log.Object, new []{_active.Object}, _info.Object, _settingsManager.Object, _settings.Object, _exitTracker.Object, () => _runner.Object);
+            new(
+                _log.Object,
+                new []{_active.Object},
+                _info.Object,
+                _settingsManager.Object,
+                _settings.Object,
+                _exitTracker.Object,
+                () => _runner.Object,
+                _statistics.Object);
     }
 }

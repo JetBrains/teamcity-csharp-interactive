@@ -391,5 +391,18 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             result.StdErr.ShouldBeEmpty(result.ToString());
             result.ExitCode.ShouldBe(0, result.ToString());
         }
+        
+        [Fact]
+        public void ShouldFailWhenHasErrors()
+        {
+            // Given
+
+            // When
+            var result = TestTool.Run(@"Abc.Abc();");
+            
+            // Then
+            result.ExitCode.ShouldBe(1, result.ToString());
+            result.StdErr.ShouldNotBeEmpty();
+        }
     }
 }

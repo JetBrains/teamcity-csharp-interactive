@@ -27,6 +27,7 @@ namespace TeamCity.CSharpInteractive
         private readonly ISettings _settings;
         private readonly IExitTracker _exitTracker;
         private readonly Func<IRunner> _runner;
+        private readonly IStatistics _statistics;
 
         internal Program(
             ILog<Program> log,
@@ -35,7 +36,8 @@ namespace TeamCity.CSharpInteractive
             ISettingsManager settingsManager,
             ISettings settings,
             IExitTracker exitTracker,
-            Func<IRunner> runner)
+            Func<IRunner> runner,
+            IStatistics statistics)
         {
             _log = log;
             _activeObjects = activeObjects;
@@ -44,6 +46,7 @@ namespace TeamCity.CSharpInteractive
             _settings = settings;
             _exitTracker = exitTracker;
             _runner = runner;
+            _statistics = statistics;
         }
         
         internal ExitCode Run()
@@ -68,7 +71,13 @@ namespace TeamCity.CSharpInteractive
             {
                 using (Disposable.Create(_activeObjects.Select(i => i.Activate()).ToArray()))
                 {
-                    return _runner().Run();
+                    var result = _runner().Run();
+                    if (_statistics.Errors.Any())
+                    {
+                        result = ExitCode.Fail;
+                    }
+
+                    return result;
                 }
             }
             catch(Exception error)

@@ -5,6 +5,7 @@ namespace TeamCity.CSharpInteractive.Contracts
     using System.Collections.Generic;
     using System.Collections.Immutable;
 
+    [Immutype.TargetAttribute]
     public record CommandLine(
         string ExecutablePath,
         string WorkingDirectory,
