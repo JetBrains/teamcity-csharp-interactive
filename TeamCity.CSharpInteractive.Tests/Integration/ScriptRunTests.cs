@@ -150,8 +150,6 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             
             // Then
             result.ExitCode.ShouldBe(1, result.ToString());
-            result.StdErr.ShouldBe(new []{ "My error" }, result.ToString());
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 2, result.ToString());
             result.StdOut.Contains("My error").ShouldBeTrue(result.ToString());
         }
         
@@ -237,7 +235,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         {
             // Given
             var fileSystem = Composer.Resolve<IFileSystem>();
-            var refScriptFile = fileSystem.CreateTempFilePath();
+            string refScriptFile = fileSystem.CreateTempFilePath();
             try
             {
                 fileSystem.AppendAllLines(refScriptFile, new []{ @"Console.WriteLine(""Hello"");" });
@@ -267,9 +265,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             
             // Then
             result.ExitCode.ShouldBe(1, result.ToString());
-            result.StdErr.Count(i => i.Contains("CS0103")).ShouldBe(1, result.ToString());
-            result.StdOut.Count.ShouldBe(InitialLinesCount + 2, result.ToString());
-            result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(1, result.ToString());
+            result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(2, result.ToString());
         }
         
         [Fact]
@@ -282,8 +278,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             
             // Then
             result.ExitCode.ShouldBe(1, result.ToString());
-            result.StdErr.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1, result.ToString());
-            result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1, result.ToString());
+            result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(2, result.ToString());
         }
         
         [Theory]
@@ -402,7 +397,8 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             
             // Then
             result.ExitCode.ShouldBe(1, result.ToString());
-            result.StdErr.ShouldNotBeEmpty();
+            result.StdErr.ShouldBeEmpty();
+            result.StdOut.Any(i => i.Contains("error CS0103")).ShouldBeTrue(result.ToString());
         }
     }
 }

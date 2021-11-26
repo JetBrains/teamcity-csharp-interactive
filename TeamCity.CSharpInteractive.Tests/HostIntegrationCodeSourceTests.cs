@@ -16,7 +16,7 @@ namespace TeamCity.CSharpInteractive.Tests
             var actualCode = instance.ToList();
 
             // Then
-            actualCode.ShouldBe(new []{"using static TeamCity.CSharpInteractive.Contracts.Color;"});
+            actualCode.ShouldBe(new []{"using NuGet;", "using static TeamCity.CSharpInteractive.Contracts.Color;"});
         }
 
         private static HostIntegrationCodeSource CreateInstance() => new();

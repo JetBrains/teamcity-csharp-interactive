@@ -2,22 +2,27 @@
 namespace TeamCity.CSharpInteractive
 {
     using System.Diagnostics;
+    using Cmd;
 
     internal class StartInfoFactory : IStartInfoFactory
     {
         private readonly ILog<StartInfoFactory> _log;
         private readonly IEnvironment _environment;
+        private readonly IWellknownValueResolver _wellknownValueResolver;
+
         public StartInfoFactory(
             ILog<StartInfoFactory> log,
-            IEnvironment environment)
+            IEnvironment environment,
+            IWellknownValueResolver wellknownValueResolver)
         {
             _log = log;
             _environment = environment;
+            _wellknownValueResolver = wellknownValueResolver;
         }
 
-        public ProcessStartInfo Create(Contracts.CommandLine commandLine)
+        public ProcessStartInfo Create(CommandLine commandLine)
         {
-            var workingDirectory = commandLine.WorkingDirectory;
+            var workingDirectory = _wellknownValueResolver.Resolve(commandLine.WorkingDirectory);
             _log.Trace($"Working directory: \"{workingDirectory}\".");
             if (string.IsNullOrWhiteSpace(workingDirectory))
             {
@@ -27,7 +32,7 @@ namespace TeamCity.CSharpInteractive
 
             var startInfo = new ProcessStartInfo
             {
-                FileName = commandLine.ExecutablePath,
+                FileName = _wellknownValueResolver.Resolve(commandLine.ExecutablePath),
                 WorkingDirectory = workingDirectory,
                 UseShellExecute = false,
                 CreateNoWindow = true,
@@ -39,14 +44,17 @@ namespace TeamCity.CSharpInteractive
 
             foreach (var arg in commandLine.Args)
             {
-                startInfo.ArgumentList.Add(arg);
-                _log.Trace($"Add the argument \"{arg}\".");
+                var curArg = _wellknownValueResolver.Resolve(arg);
+                startInfo.ArgumentList.Add(curArg);
+                _log.Trace($"Add the argument \"{curArg}\".");
             }
 
             foreach (var (name, value) in commandLine.Vars)
             {
-                startInfo.Environment[name] = value;
-                _log.Trace($"Add the environment variable {name}={value}.");
+                var curName = _wellknownValueResolver.Resolve(name);
+                var curValue = _wellknownValueResolver.Resolve(value);
+                startInfo.Environment[curName] = curValue;
+                _log.Trace($"Add the environment variable {curName}={curValue}.");
             }
             
             return startInfo;

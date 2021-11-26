@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
     using System.Threading.Tasks;
-    using Contracts;
+    using Cmd;
     using Shouldly;
     using Xunit;
     
@@ -21,6 +21,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=02
             // $description=Run a command line asynchronously
             // {
+            // Adds the namespace "Cmd" to use ICommandLine
+            // ## using Cmd;
             int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
             // }
             

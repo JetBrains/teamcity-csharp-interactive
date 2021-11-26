@@ -27,8 +27,10 @@ namespace TeamCity.CSharpInteractive
         public IEnumerable<ICommand> Create(ICodeSource codeSource)
         {
             var sb = new StringBuilder();
-            foreach (var code in codeSource)
+            using var codeEnumerator = codeSource.GetEnumerator();
+            while(codeEnumerator.MoveNext())
             {
+                var code = codeEnumerator.Current;
                 if (code == null)
                 {
                     foreach (var command in CreateCommands(codeSource, sb))

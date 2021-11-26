@@ -41,7 +41,7 @@ namespace TeamCity.CSharpInteractive
             }
 
             _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
-            _stdErr.WriteLine(GetMessage(error, Color.Error));
+            _stdOut.WriteLine(GetMessage(error, Color.Error));
         }
         
         public void Warning(params Text[] warning)

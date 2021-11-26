@@ -3,7 +3,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using Contracts;
+    using Cmd;
     using Shouldly;
     using Xunit;
 
@@ -20,6 +20,9 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=04
             // $description=Run and process output
             // {
+            // Adds the namespace "Cmd" to use ICommandLine
+            // ## using Cmd;
+
             var lines = new System.Collections.Generic.List<string>();
             int? exitCode = GetService<ICommandLine>().Run(
                 new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),

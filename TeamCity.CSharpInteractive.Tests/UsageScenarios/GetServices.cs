@@ -3,7 +3,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using Contracts;
+    using NuGet;
     using Xunit;
 
     public class GetServices: Scenario

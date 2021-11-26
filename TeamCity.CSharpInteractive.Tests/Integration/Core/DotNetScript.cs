@@ -2,7 +2,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Contracts;
+    using Cmd;
 
     internal record DotNetScript: CommandLine
     {

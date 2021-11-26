@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using Contracts;
+    using NuGet;
     using NuGet.Common;
     using NuGet.ProjectModel;
     using NuGet.Versioning;

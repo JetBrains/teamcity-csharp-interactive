@@ -70,6 +70,12 @@
 
             if (isBody)
             {
+                if (line.TrimStart().StartsWith("// ##"))
+                {
+                    body.Add(str.Replace("// ##", string.Empty));
+                    continue;
+                }
+
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     var curOffset = line.Length - line.TrimStart().Length;

@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests
 {
     using System;
-    using System.Linq;
     using Moq;
     using Shouldly;
     using Xunit;

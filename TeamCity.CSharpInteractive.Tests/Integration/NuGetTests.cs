@@ -1,4 +1,5 @@
 // ReSharper disable StringLiteralTypo
+// ReSharper disable RedundantUsingDirective
 namespace TeamCity.CSharpInteractive.Tests.Integration
 {
     using System;

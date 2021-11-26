@@ -1,8 +1,9 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_BuiltInTypes
+// ReSharper disable UnusedVariable
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
-    using Contracts;
+    using NuGet;
     using Xunit;
 
     public class Host: Scenario
@@ -16,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $description=Using the _Host_ property
             // $header=[_Host_](TeamCity.CSharpInteractive.Contracts/IHost.cs) is actually the provider of all global properties and methods.
             // {
-            var nuGet = Host.GetService<INuGet>();
+            var packages = Host.GetService<INuGet>();
             Host.WriteLine("Hello");
             // }
         }

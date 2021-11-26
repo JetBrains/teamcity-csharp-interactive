@@ -1,5 +1,6 @@
 // ReSharper disable UnusedMember.Global
-namespace TeamCity.CSharpInteractive.Contracts
+// ReSharper disable CheckNamespace
+namespace Cmd
 {
     using System;
     using System.Threading;

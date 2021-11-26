@@ -2,6 +2,7 @@
 // ReSharper disable UnusedMember.Global
 namespace TeamCity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
@@ -9,17 +10,12 @@ namespace TeamCity.CSharpInteractive
 
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
-        private readonly IEnvironment _environment;
-
-        public DotnetEnvironment(
-            [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
-            IEnvironment environment)
-        {
+        private readonly Lazy<string> _path = new(() => System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty);
+        
+        public DotnetEnvironment([Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker) =>
             TargetFrameworkMoniker = targetFrameworkMoniker;
-            _environment = environment;
-        }
 
-        public string Path => System.IO.Path.Combine(_environment.GetPath(SpecialFolder.ProgramFiles), "dotnet");
+        public string Path => _path.Value;
 
         public string TargetFrameworkMoniker { get; }
         

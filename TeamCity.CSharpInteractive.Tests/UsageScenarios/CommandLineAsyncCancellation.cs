@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Contracts;
+    using Cmd;
     using Shouldly;
     using Xunit;
 
@@ -22,6 +22,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $description=Cancellation of asynchronous run
             // $header=The cancellation will kill a related process.
             // {
+            // Adds the namespace "Cmd" to use ICommandLine
+            // ## using Cmd;
             var cancellationTokenSource = new CancellationTokenSource();
             Task<int?> task = GetService<ICommandLine>().RunAsync(
                 new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),

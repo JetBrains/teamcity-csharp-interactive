@@ -1,3 +1,4 @@
+// ReSharper disable RedundantUsingDirective
 namespace TeamCity.CSharpInteractive.Tests.Integration
 {
     using System.Linq;
@@ -5,6 +6,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using Core;
     using Shouldly;
     using Xunit;
+    using Cmd;
 
     [CollectionDefinition("Integration", DisableParallelization = true)]
     public class HelpTests

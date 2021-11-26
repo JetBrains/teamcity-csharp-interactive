@@ -9,6 +9,7 @@ namespace TeamCity.CSharpInteractive
     using System.Reflection;
     using System.Runtime.Versioning;
     using System.Threading;
+    using Cmd;
     using Contracts;
     using JetBrains.TeamCity.ServiceMessages.Read;
     using JetBrains.TeamCity.ServiceMessages.Write;
@@ -18,6 +19,7 @@ namespace TeamCity.CSharpInteractive
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Scripting;
+    using NuGet;
     using Pure.DI;
     using static Pure.DI.Lifetime;
 
@@ -28,7 +30,7 @@ namespace TeamCity.CSharpInteractive
         {
             // #trace=true
             // #verbosity=diagnostic
-            // out=C:\Projects\_temp\a
+            // #out=C:\Projects\_temp\a
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
@@ -42,8 +44,9 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IColorTheme>().To<ColorTheme>()
                 .Bind<ITeamCityLineFormatter>().To<TeamCityLineFormatter>()
                 .Bind<ITeamCitySpecific<TT>>().To<TeamCitySpecific<TT>>()
-                .Bind<IStdOut>().Bind<IStdErr>().Tags("Default").To<ConsoleOutput>()
-                .Bind<IStdOut>().Bind<IStdErr>().Tags("TeamCity").To<TeamCityOutput>()
+                .Bind<IStdOut>().Bind<IStdErr>().Tags("Default").To<ConsoleInOut>()
+                .Bind<IStdOut>().Bind<IStdErr>().Tags("TeamCity").To<TeamCityInOut>()
+                .Bind<IConsole>().To<Console>()
                 .Bind<IStdOut>().To(ctx => ctx.Resolve<ITeamCitySpecific<IStdOut>>().Instance)
                 .Bind<IStdErr>().To(ctx => ctx.Resolve<ITeamCitySpecific<IStdErr>>().Instance)
                 .Bind<ILog<TT>>("Default").To<Log<TT>>()
@@ -87,6 +90,8 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
                 .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
                 .Bind<IActive>(typeof(Debugger)).To<Debugger>()
+                .Bind<IWellknownValueResolver>().To<WellknownValueResolver>()
+                .Bind<ITextToColorStrings>().To<TextToColorStrings>()
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()
@@ -148,7 +153,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
                 .Bind<ITeamCityWriter>("Root").To(
                     ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
-                        str => ((IStdOut)ctx.Resolve<IStdOut>("Default")).WriteLine(new Text(str + "\n"))))
+                        str => ctx.Resolve<IConsole>().Write((default, str + "\n"))))
                 .Bind<IServiceMessageParser>().To<ServiceMessageParser>();
         }
     }

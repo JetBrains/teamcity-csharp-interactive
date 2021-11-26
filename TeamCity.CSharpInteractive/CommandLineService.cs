@@ -3,10 +3,13 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Cmd;
     using Contracts;
 
     internal class CommandLineService: ICommandLine
@@ -34,11 +37,13 @@ namespace TeamCity.CSharpInteractive
             }
 
             var info = new Text(GetInfo(commandLine), Color.Header);
-            if (!process.Start(commandLine))
+            if (!process.Start(commandLine, out var startInfo))
             {
                 _log.Trace(info, new Text(" - cannot start."));
                 return default;
             }
+
+            _log.Info(GetHeader(startInfo).ToArray());
 
             var finished = true;
             if (timeout == TimeSpan.Zero)
@@ -55,6 +60,7 @@ namespace TeamCity.CSharpInteractive
             if (finished)
             {
                 _log.Trace(info, new Text($" - finished with exit code {process.ExitCode}."));
+                _log.Info($"Process exited with code {process.ExitCode}");
                 return process.ExitCode;
             }
 
@@ -81,13 +87,15 @@ namespace TeamCity.CSharpInteractive
             // ReSharper disable once AccessToDisposedClosure
             process.OnExit += () => completionSource.TrySetResult(process.ExitCode);
             var info = new Text(GetInfo(commandLine), Color.Header);
-            if (!process.Start(commandLine))
+            if (!process.Start(commandLine, out var startInfo))
             {
                 _log.Trace(info, new Text(" - cannot start process."));
                 process.Dispose();
                 return default;
             }
             
+            _log.Info(GetHeader(startInfo).ToArray());
+
             _log.Trace(info, new Text($" - started with process id {process.Id}."));
             
             void Cancel()
@@ -107,6 +115,7 @@ namespace TeamCity.CSharpInteractive
                 {
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
                     _log.Trace(info, new Text($" - finished with exit code {exitCode}."));
+                    _log.Info($"Process exited with code {process.ExitCode}");
                     return exitCode;
                 }
             }
@@ -164,6 +173,21 @@ namespace TeamCity.CSharpInteractive
             return sb.ToString();
         }
 
-        private static string Escape(string text) => text.Contains(' ') ? $"\"{text}\"" : text;
+        private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
+        
+        private static IEnumerable<Text> GetHeader(ProcessStartInfo startInfo)
+        {
+            yield return new Text("Starting: ");
+            yield return new Text(Escape(startInfo.FileName));
+            foreach (var arg in startInfo.ArgumentList)
+            {
+                yield return new Text(" ");
+                yield return new Text(Escape(arg));
+            }
+            
+            yield return Text.NewLine;
+            yield return new Text("in directory: ");
+            yield return new Text(Escape(startInfo.WorkingDirectory));
+        }
     }
 }

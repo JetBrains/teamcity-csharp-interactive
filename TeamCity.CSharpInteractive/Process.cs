@@ -3,6 +3,7 @@ namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Diagnostics;
+    using Cmd;
     using Contracts;
 
     internal class Process: IProcess
@@ -45,10 +46,10 @@ namespace TeamCity.CSharpInteractive
 
         public int ExitCode => _process.ExitCode;
 
-        public bool Start(CommandLine commandLine)
+        public bool Start(CommandLine commandLine, out ProcessStartInfo startInfo)
         {
             _commandLine = commandLine;
-            _process.StartInfo = _startInfoFactory.Create(commandLine);
+            startInfo = _process.StartInfo = _startInfoFactory.Create(commandLine);
             if (!_process.Start())
             {
                 return false;

@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Contracts;
+    using Cmd;
     using Core;
     using JetBrains.TeamCity.ServiceMessages;
     using JetBrains.TeamCity.ServiceMessages.Read;

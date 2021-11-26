@@ -4,7 +4,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using Contracts;
+    using Cmd;
     using Xunit;
 
     public class CommandLineBuild: Scenario
@@ -19,6 +19,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=00
             // $description=Build command lines
             // {
+            // Adds the namespace "Cmd" to use ICommandLine
+            // ## using Cmd;
             
             // Creates a simple command line from just the name of the executable 
             new CommandLine("whoami");

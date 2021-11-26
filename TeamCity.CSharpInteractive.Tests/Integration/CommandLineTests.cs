@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Contracts;
+    using Cmd;
     using Core;
     using Shouldly;
     using Xunit;

@@ -4,12 +4,12 @@ namespace TeamCity.CSharpInteractive.Tests
     using Moq;
     using Xunit;
 
-    public class TeamCityOutputTests
+    public class TeamCityInOutTests
     {
         private readonly Mock<ITeamCityLineFormatter> _lineFormatter;
         private readonly Mock<ITeamCityWriter> _teamCityWriter;
 
-        public TeamCityOutputTests()
+        public TeamCityInOutTests()
         {
             _lineFormatter = new Mock<ITeamCityLineFormatter>();
             _lineFormatter.Setup(i => i.Format(It.IsAny<Text[]>())).Returns<Text[]>(i => "F_" + i.ToSimpleString());
@@ -42,7 +42,7 @@ namespace TeamCity.CSharpInteractive.Tests
             _teamCityWriter.Verify(i => i.WriteMessage("F_message"));
         }
         
-        private TeamCityOutput CreateInstance() => 
+        private TeamCityInOut CreateInstance() => 
             new(
                 _lineFormatter.Object,
                 _teamCityWriter.Object);

@@ -4,8 +4,8 @@ namespace TeamCity.CSharpInteractive.Tests
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Contracts;
     using Moq;
+    using NuGet;
     using NuGet.Versioning;
     using Shouldly;
     using Xunit;

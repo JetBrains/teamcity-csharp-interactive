@@ -3,7 +3,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using Contracts;
+    using Cmd;
     using Shouldly;
     using Xunit;
 
@@ -20,6 +20,9 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=01
             // $description=Run a command line
             // {
+            // Adds the namespace "Cmd" to use ICommandLine
+            // ## using Cmd;
+
             int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
             // }
             

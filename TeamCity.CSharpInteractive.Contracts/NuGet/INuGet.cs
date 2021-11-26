@@ -1,6 +1,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace TeamCity.CSharpInteractive.Contracts
+// ReSharper disable CheckNamespace
+namespace NuGet
 {
     using System.Collections.Generic;
 

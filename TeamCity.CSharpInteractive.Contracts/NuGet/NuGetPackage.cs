@@ -1,6 +1,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable SuggestBaseTypeForParameterInConstructor
-namespace TeamCity.CSharpInteractive.Contracts
+// ReSharper disable CheckNamespace
+namespace NuGet
 {
     using System;
 

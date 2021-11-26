@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
     using System.Collections.Generic;
-    using Contracts;
+    using NuGet;
     using Shouldly;
     using Xunit;
 
@@ -17,6 +17,9 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=01
             // $description=Restore a NuGet package by a version range for the specified .NET and path
             // {
+            // Adds the namespace "NuGet" to use INuGet
+            // ## using NuGet;
+
             var packagesPath = System.IO.Path.Combine(
                 System.IO.Path.GetTempPath(),
                 Guid.NewGuid().ToString()[..4]);

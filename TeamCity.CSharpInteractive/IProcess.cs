@@ -1,7 +1,8 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using Contracts;
+    using System.Diagnostics;
+    using Cmd;
 
     internal interface IProcess: IDisposable
     {
@@ -13,7 +14,7 @@ namespace TeamCity.CSharpInteractive
 
         int ExitCode { get; }
 
-        bool Start(CommandLine commandLine);
+        bool Start(CommandLine commandLine, out ProcessStartInfo startInfo);
 
         void WaitForExit();
         

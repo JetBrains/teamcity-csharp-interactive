@@ -2,9 +2,10 @@ namespace TeamCity.CSharpInteractive.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
-    using Contracts;
+    using Cmd;
     using Moq;
     using Shouldly;
     using Xunit;
@@ -26,7 +27,8 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.FromSeconds(5);
-            _process.Setup(i => i.Start(_commandLine)).Returns(true);
+            ProcessStartInfo startInfo = new();
+            _process.Setup(i => i.Start(_commandLine, out startInfo)).Returns(true);
             _process.Setup(i => i.WaitForExit(timeout)).Returns(false);
             var instance = CreateInstance(new CancellationTokenSource());
 
@@ -44,7 +46,8 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.FromSeconds(5);
-            _process.Setup(i => i.Start(_commandLine)).Returns(true);
+            ProcessStartInfo startInfo = new();
+            _process.Setup(i => i.Start(_commandLine, out startInfo)).Returns(true);
             _process.Setup(i => i.WaitForExit(timeout)).Returns(true);
             _process.SetupGet(i => i.ExitCode).Returns(1);
             var instance = CreateInstance(new CancellationTokenSource());
@@ -64,7 +67,8 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.Zero;
-            _process.Setup(i => i.Start(_commandLine)).Returns(true);
+            ProcessStartInfo startInfo = new();
+            _process.Setup(i => i.Start(_commandLine, out startInfo)).Returns(true);
             _process.SetupGet(i => i.ExitCode).Returns(1);
             var instance = CreateInstance(new CancellationTokenSource());
 
@@ -83,7 +87,8 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.Zero;
-            _process.Setup(i => i.Start(_commandLine)).Returns(false);
+            ProcessStartInfo startInfo = new();
+            _process.Setup(i => i.Start(_commandLine, out startInfo)).Returns(false);
             var instance = CreateInstance(new CancellationTokenSource());
 
             // When
@@ -99,7 +104,8 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.Zero;
-            _process.Setup(i => i.Start(_commandLine)).Returns(true);
+            ProcessStartInfo startInfo = new();
+            _process.Setup(i => i.Start(_commandLine, out startInfo)).Returns(true);
             _process.SetupGet(i => i.ExitCode).Returns(1);
             _process.SetupAdd(i => i.OnOutput += Handler).Callback<Action<CommandLineOutput>>(i => i(new CommandLineOutput(_commandLine, false, "out")));
             var instance = CreateInstance(new CancellationTokenSource());
@@ -115,7 +121,8 @@ namespace TeamCity.CSharpInteractive.Tests
         public async Task ShouldRunAsync()
         {
             // Given
-            _process.Setup(i => i.Start(_commandLine)).Returns(true);
+            ProcessStartInfo startInfo = new();
+            _process.Setup(i => i.Start(_commandLine, out startInfo)).Returns(true);
             _process.SetupGet(i => i.ExitCode).Returns(1);
             _process.SetupAdd(i => i.OnExit += It.IsAny<Action>()).Callback<Action>(i => i());
             var cancellationTokenSource = new CancellationTokenSource();

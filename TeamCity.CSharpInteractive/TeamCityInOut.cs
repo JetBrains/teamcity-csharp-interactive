@@ -3,12 +3,12 @@ namespace TeamCity.CSharpInteractive
 {
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-    internal class TeamCityOutput : IStdOut, IStdErr
+    internal class TeamCityInOut : IStdOut, IStdErr
     {
         private readonly ITeamCityLineFormatter _lineFormatter;
         private readonly ITeamCityWriter _teamCityWriter;
 
-        public TeamCityOutput(
+        public TeamCityInOut(
             ITeamCityLineFormatter lineFormatter,
             ITeamCityWriter teamCityWriter)
         {

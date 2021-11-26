@@ -1,4 +1,5 @@
 // ReSharper disable UnusedMember.Local
+// ReSharper disable PartialTypeWithSinglePart
 namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 {
     using JetBrains.TeamCity.ServiceMessages.Read;

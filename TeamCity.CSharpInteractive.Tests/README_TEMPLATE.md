@@ -66,7 +66,7 @@ Props["Version"] = "1.1.6";
 [_Host_](TeamCity.CSharpInteractive.Contracts/IHost.cs) is actually the provider of all global properties and methods.
 
 ``` CSharp
-var nuGet = Host.GetService<INuGet>();
+var packages = Host.GetService<INuGet>();
 Host.WriteLine("Hello");
 ```
 
@@ -160,6 +160,8 @@ Trace("Some trace info");
 
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
 
 // Creates a simple command line from just the name of the executable 
 new CommandLine("whoami");
@@ -191,6 +193,9 @@ new CommandLine("cmd", "/c", "echo", "Hello")
 
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
+
 int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
 ```
 
@@ -201,6 +206,8 @@ int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all")
 
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
 int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
 ```
 
@@ -211,6 +218,9 @@ int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoam
 
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
+
 var lines = new System.Collections.Generic.List<string>();
 int? exitCode = GetService<ICommandLine>().Run(
     new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
@@ -226,6 +236,9 @@ lines.ShouldContain("MyEnv=MyVal");
 
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
+
 Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
 int? exitCode = GetService<ICommandLine>().Run(new CommandLine("cmd", "/c", "SET"));
 task.Wait();
@@ -238,6 +251,8 @@ task.Wait();
 The cancellation will kill a related process.
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
 var cancellationTokenSource = new CancellationTokenSource();
 Task<int?> task = GetService<ICommandLine>().RunAsync(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
@@ -255,6 +270,9 @@ task.IsCompleted.ShouldBeFalse();
 If timeout expired a process will be killed.
 
 ``` CSharp
+// Adds the namespace "Cmd" to use ICommandLine
+using Cmd;
+
 int? exitCode = GetService<ICommandLine>().Run(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
     default,
@@ -270,6 +288,9 @@ exitCode.HasValue.ShouldBeFalse();
 
 
 ``` CSharp
+// Adds the namespace "NuGet" to use INuGet
+;
+
 IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container", "*");
 ```
 
@@ -280,6 +301,9 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container
 
 
 ``` CSharp
+// Adds the namespace "NuGet" to use INuGet
+;
+
 var packagesPath = System.IO.Path.Combine(
     System.IO.Path.GetTempPath(),
     Guid.NewGuid().ToString()[..4]);

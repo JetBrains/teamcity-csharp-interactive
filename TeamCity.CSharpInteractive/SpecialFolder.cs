@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive
 {
     internal enum SpecialFolder
@@ -15,6 +16,12 @@ namespace TeamCity.CSharpInteractive
         Script,
         
         // Working directory of process
-        Working
+        Working,
+        
+        // Path to MSBuild logger
+        MSBuildLoggerPath,
+        
+        // Path to VSTest logger
+        VSTestLoggerDirectory
     }
 }

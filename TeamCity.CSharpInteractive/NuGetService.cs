@@ -5,7 +5,7 @@ namespace TeamCity.CSharpInteractive
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Contracts;
+    using NuGet;
     using NuGet.Versioning;
 
     internal class NuGetService: INuGet

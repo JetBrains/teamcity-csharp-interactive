@@ -1,18 +1,19 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBeProtected.Global
-namespace TeamCity.CSharpInteractive.Contracts
+// ReSharper disable CheckNamespace
+namespace Cmd
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
+    using System.Linq;
 
     [Immutype.TargetAttribute]
     public record CommandLine(
         string ExecutablePath,
         string WorkingDirectory,
-        IReadOnlyCollection<string> Args,
-        IReadOnlyCollection<(string, string)> Vars)
+        IEnumerable<string> Args,
+        IEnumerable<(string name, string value)> Vars)
     {
         public CommandLine(string executablePath, params string[] args)
-            :this(executablePath, string.Empty, args, ImmutableList<(string, string)>.Empty) { }
+            :this(executablePath, string.Empty, args, Enumerable.Empty<(string name, string value)>()) { }
     }
 }

@@ -31,7 +31,7 @@ namespace TeamCity.CSharpInteractive
         {
             if (Current == default)
             {
-                Task.Run(() => { Current = Console.In.ReadLine() ?? string.Empty; }, _cancellationToken).Wait(_cancellationToken);
+                Task.Run(() => { Current = System.Console.In.ReadLine() ?? string.Empty; }, _cancellationToken).Wait(_cancellationToken);
             }
             else
             {

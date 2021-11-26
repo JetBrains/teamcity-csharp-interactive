@@ -9,19 +9,19 @@
     [ExcludeFromCodeCoverage]
     internal class ColorTheme : IColorTheme
     {
-        private readonly HashSet<ConsoleColor> DarkColors = new()
+        private static readonly HashSet<ConsoleColor> DarkColors = new()
         {
             ConsoleColor.Black,
             ConsoleColor.DarkBlue,
             ConsoleColor.DarkCyan,
             ConsoleColor.DarkGreen,
             ConsoleColor.DarkMagenta,
-            ConsoleColor.DarkRed,
+            ConsoleColor.DarkRed
         };
         
         public ConsoleColor GetConsoleColor(Color color)
         {
-            if (DarkColors.Contains(Console.BackgroundColor))
+            if (DarkColors.Contains(System.Console.BackgroundColor))
             {
                 return color switch
                 {

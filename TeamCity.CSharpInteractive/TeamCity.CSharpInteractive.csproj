@@ -30,6 +30,9 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.0.1" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0" />
+        <PackageReference Include="TeamCity.Dotnet.Integration" Version="1.0.20" GeneratePathProperty="true" PrivateAssets="all">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.Contracts\TeamCity.CSharpInteractive.Contracts.csproj" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -40,6 +43,20 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*" />
+            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*" />
+        </ItemGroup>
+        
+        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
+        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
+    </Target>
+
     <ItemGroup>
         <None Include="$(MSBuildProjectDirectory)\..\icon.png">
             <PackagePath>_common</PackagePath>
@@ -48,6 +65,16 @@
 
         <Content Include="$(MSBuildProjectDirectory)\..\teamcity-plugin.xml">
             <PackagePath>.</PackagePath>
+            <Pack>true</Pack>
+        </Content>
+
+        <Content Include="$(OutDir)\msbuild\*.*">
+            <PackagePath>tools\$(TargetFramework)\any\msbuild</PackagePath>
+            <Pack>true</Pack>
+        </Content>
+
+        <Content Include="$(OutDir)\vstest\*.*">
+            <PackagePath>tools\$(TargetFramework)\any\vstest</PackagePath>
             <Pack>true</Pack>
         </Content>
     </ItemGroup>

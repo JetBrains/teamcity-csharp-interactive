@@ -1,5 +1,7 @@
 namespace TeamCity.CSharpInteractive
 {
+    using System.Collections.Generic;
+
     internal interface IFileSystem
     {
         void DeleteDirectory(string path, bool recursive);
@@ -7,5 +9,7 @@ namespace TeamCity.CSharpInteractive
         bool IsPathRooted(string path);
 
         bool IsFileExist(string path);
+
+        void WriteAllLines(string path, IEnumerable<string> contents);
     }
 }

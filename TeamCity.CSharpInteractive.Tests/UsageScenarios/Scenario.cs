@@ -35,7 +35,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             private readonly Dictionary<string, string> _dict = new()
             {
                 {"TEAMCITY_VERSION", "2021.2"},
-                {"TEAMCITY_PROJECT_NAME", "Samples"},
+                {"TEAMCITY_PROJECT_NAME", "Samples"}
             };
 
             public int Count => _dict.Count;

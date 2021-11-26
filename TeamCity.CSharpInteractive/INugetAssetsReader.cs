@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
-    using Contracts;
+    using NuGet;
 
     internal interface INugetAssetsReader
     {
