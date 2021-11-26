@@ -6,21 +6,27 @@ namespace TeamCity.CSharpInteractive
 
     internal class FlowIdGenerator: IFlowIdGenerator
     {
-        private readonly ITeamCitySettings _teamCitySettings;
-        private bool _isFirst = true;
+        private readonly object _lockObject = new();
+        private string _nextFlowId; 
 
-        public FlowIdGenerator(ITeamCitySettings teamCitySettings) => _teamCitySettings = teamCitySettings;
+        public FlowIdGenerator(ITeamCitySettings teamCitySettings) =>
+            _nextFlowId = teamCitySettings.FlowId;
 
-        public string NewFlowId()
+        public string NewFlowId() => GenerateFlowId();
+
+        private string GenerateFlowId()
         {
-            if (!_isFirst)
+            lock (_lockObject)
             {
-                return Guid.NewGuid().ToString().Replace("-", string.Empty);
-            }
+                if (string.IsNullOrWhiteSpace(_nextFlowId))
+                {
+                    return "cs_" + Guid.NewGuid().ToString()[..8];
+                }
 
-            _isFirst = false;
-            var flowId = _teamCitySettings.FlowId;
-            return string.IsNullOrWhiteSpace(flowId) ? Guid.NewGuid().ToString().Replace("-", string.Empty) : flowId;
+                var currentFlowId = _nextFlowId;
+                _nextFlowId = string.Empty;
+                return currentFlowId;
+            }
         }
     }
 }

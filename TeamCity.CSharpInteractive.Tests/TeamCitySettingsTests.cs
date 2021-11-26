@@ -39,8 +39,8 @@ namespace TeamCity.CSharpInteractive.Tests
         
         [Theory]
         [InlineData("Abc", "Abc")]
-        [InlineData(null, "")]
-        [InlineData("  ", "")]
+        [InlineData(null, "ROOT")]
+        [InlineData("  ", "ROOT")]
         public void ShouldProvideFlowId(string? flowId, string expectedFlowId)
         {
             // Given

@@ -11,7 +11,6 @@
         private readonly IConsole _console;
         private readonly ITextToColorStrings _textToColorStrings;
         private readonly IColorTheme _colorTheme;
-        private readonly object _lockObject = new();
 
         public ConsoleInOut(
             IConsole console,
@@ -29,21 +28,12 @@
         {
             foreach (var textItem in text)
             {
-                _console.Write(_textToColorStrings.Convert(textItem.Value, _colorTheme.GetConsoleColor(textItem.Color)).ToArray());
+                _console.WriteToOut(_textToColorStrings.Convert(textItem.Value, _colorTheme.GetConsoleColor(textItem.Color)).ToArray());
             }
         }
 
         void IStdOut.WriteLine(params Text[] line) => Write(line + Text.NewLine);
         
-        private void WriteStdErr(TextWriter textWriter, params Text[] text)
-        {
-            lock (_lockObject)
-            {
-                foreach (var textItem in text)
-                {
-                    textWriter.Write(textItem.Value);
-                }
-            }
-        }
+        private void WriteStdErr(TextWriter textWriter, params Text[] text) => _console.WriteToErr(text.Select(i => i.Value).ToArray());
     }
 }

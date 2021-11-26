@@ -9,7 +9,7 @@
     {
         private readonly object _lockObject = new();
 
-        public void Write(params (ConsoleColor? color, string output)[] text)
+        public void WriteToOut(params (ConsoleColor? color, string output)[] text)
         {
             lock (_lockObject)
             {
@@ -29,6 +29,17 @@
                 finally
                 {
                     System.Console.ForegroundColor = foregroundColor;
+                }
+            }
+        }
+
+        public void WriteToErr(params string[] text)
+        {
+            lock (_lockObject)
+            {
+                foreach (var item in text)
+                {
+                    System.Console.Error.Write(item);
                 }
             }
         }

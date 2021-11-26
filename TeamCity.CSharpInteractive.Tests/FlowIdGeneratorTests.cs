@@ -15,8 +15,8 @@ namespace TeamCity.CSharpInteractive.Tests
         public void ShouldProvideRootFlowIdWhenItIsSpecified()
         {
             // Given
-            var generator = CreateInstance();
             _teamCitySettings.SetupGet(i => i.FlowId).Returns("root");
+            var generator = CreateInstance();
 
             // When
             var flowId = generator.NewFlowId();

@@ -57,6 +57,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITeamCitySettings>().To<TeamCitySettings>()
                 .Bind<IExitTracker>().To<ExitTracker>()
                 .Bind<IDotnetEnvironment>().Bind<ITraceSource>(typeof(DotnetEnvironment)).To<DotnetEnvironment>()
+                .Bind<IDockerEnvironment>().Bind<ITraceSource>(typeof(DockerEnvironment)).To<DockerEnvironment>()
                 .Bind<INugetEnvironment>().Bind<ITraceSource>(typeof(NugetEnvironment)).To<NugetEnvironment>()
                 .Bind<ISettings>().Bind<ISettingsManager>().Bind<ISettingSetter<VerbosityLevel>>().Bind<Settings>().To<Settings>()
                 .Bind<ISettingDescription>().Tags(typeof(VerbosityLevel)).To<VerbosityLevelSettingDescription>()
@@ -91,7 +92,12 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
                 .Bind<IActive>(typeof(Debugger)).To<Debugger>()
                 .Bind<IWellknownValueResolver>().To<WellknownValueResolver>()
+                .Bind<IBuildResult>().As(Transient).To<BuildResult>()
                 .Bind<ITextToColorStrings>().To<TextToColorStrings>()
+                .Bind<ITestDisplayNameToFullyQualifiedNameConverter>().To<TestDisplayNameToFullyQualifiedNameConverter>()
+                .Bind<IFileExplorer>().To<FileExplorer>()
+                .Bind<ICommandLineOutputWriter>().To<CommandLineOutputWriter>()
+                .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()
@@ -143,6 +149,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
                 .Bind<INuGet>().To<NuGetService>()
                 .Bind<ICommandLine>().To<CommandLineService>()
+                .Bind<Dotnet.IBuild>().To<BuildService>()
 
                 // TeamCity Service messages
                 .Bind<ITeamCityWriter>().To<HierarchicalTeamCityWriter>()
@@ -153,7 +160,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
                 .Bind<ITeamCityWriter>("Root").To(
                     ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
-                        str => ctx.Resolve<IConsole>().Write((default, str + "\n"))))
+                        str => ctx.Resolve<IConsole>().WriteToOut((default, str + "\n"))))
                 .Bind<IServiceMessageParser>().To<ServiceMessageParser>();
         }
     }

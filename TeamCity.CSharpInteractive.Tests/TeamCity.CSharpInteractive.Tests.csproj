@@ -20,11 +20,25 @@
         </PackageReference>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
         <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+        <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
+        <PackageReference Include="TeamCity.Dotnet.Integration" Version="1.0.21" GeneratePathProperty="true" PrivateAssets="all">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
-    </ItemGroup>
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*" />
+            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
+        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
+    </Target>
 
     <ItemGroup>
         <None Remove="Integration\Resources\csinetstandard11.1.0.0.nupkg" />

@@ -10,7 +10,15 @@ namespace TeamCity.CSharpInteractive.Tests.Integration.Core
 
         public void DeleteFile(string file) => File.Delete(file);
 
-        public void AppendAllLines(string file, IEnumerable<string> lines) =>
+        public void AppendAllLines(string file, IEnumerable<string> lines)
+        {
+            var path = Path.GetDirectoryName(file);
+            if (!string.IsNullOrWhiteSpace(path) && !Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            
             File.AppendAllLines(file, lines);
+        }
     }
 }

@@ -1,6 +1,7 @@
 namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
+    using System.IO;
 
     internal interface IFileSystem
     {
@@ -9,7 +10,11 @@ namespace TeamCity.CSharpInteractive
         bool IsPathRooted(string path);
 
         bool IsFileExist(string path);
+        
+        bool IsDirectoryExist(string path);
 
         void WriteAllLines(string path, IEnumerable<string> contents);
+
+        IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption);
     }
 }

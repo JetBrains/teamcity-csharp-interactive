@@ -5,17 +5,37 @@ namespace TeamCity.CSharpInteractive
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Runtime.InteropServices;
+    using Microsoft.DotNet.PlatformAbstractions;
     using Pure.DI;
 
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
-        private readonly Lazy<string> _path = new(() => System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty);
-        
-        public DotnetEnvironment([Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker) =>
+        public DotnetEnvironment(
+            [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
+            IEnvironment environment,
+            IFileExplorer fileExplorer)
+        {
             TargetFrameworkMoniker = targetFrameworkMoniker;
+            Path = environment.OperatingSystemPlatform == Platform.Windows ? "dotnet.exe" : "dotnet";
+            try
+            {
+                var processFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
+                if (System.IO.Path.GetFileName(processFileName).Equals(Path, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Path = processFileName;
+                }
 
-        public string Path => _path.Value;
+                Path = fileExplorer.FindFiles(Path).FirstOrDefault() ?? Path;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+        
+        public string Path { get; }
 
         public string TargetFrameworkMoniker { get; }
         

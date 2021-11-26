@@ -5,6 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using System.IO;
     using System.Linq;
     using Core;
+    using Cmd;
     using Shouldly;
     using Xunit;
 
@@ -234,25 +235,18 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         public void ShouldSupportLoadWhenRelativePath()
         {
             // Given
-            var fileSystem = Composer.Resolve<IFileSystem>();
-            string refScriptFile = fileSystem.CreateTempFilePath();
-            try
-            {
-                fileSystem.AppendAllLines(refScriptFile, new []{ @"Console.WriteLine(""Hello"");" });
-                
-                // When
-                var result = TestTool.Run(@$"#load ""{Path.GetFileName(refScriptFile)}""");
-                
-                // Then
-                result.ExitCode.ShouldBe(0, result.ToString());
-                result.StdErr.ShouldBeEmpty(result.ToString());
-                result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
-                result.StdOut.Contains("Hello").ShouldBeTrue(result.ToString());
-            }
-            finally
-            {
-                fileSystem.DeleteFile(refScriptFile);
-            }
+            var workingDirectory = DotNetScript.GetWorkingDirectory();
+            var scrip1 = DotNetScript.Create("abc.csx", workingDirectory, Enumerable.Empty<string>(), "Console.WriteLine(\"Hello\");");
+            var scrip2 = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"abc.csx\"").WithVars(TestTool.DefaultVars);
+            
+            // When
+            var result = TestTool.Run(scrip2);
+
+            // Then
+            result.ExitCode.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+            result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+            result.StdOut.Contains("Hello").ShouldBeTrue(result.ToString());
         }
         
         [Fact]

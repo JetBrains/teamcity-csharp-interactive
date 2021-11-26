@@ -9,7 +9,6 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class NugetEnvironmentTests
     {
-        private readonly Mock<IDotnetEnvironment> _dotnetEnvironment;
         private readonly Mock<IHostEnvironment> _hostEnvironment;
         private readonly Mock<IEnvironment> _environment;
         private readonly Mock<IUniqueNameGenerator> _uniqueNameGenerator;
@@ -22,7 +21,6 @@ namespace TeamCity.CSharpInteractive.Tests
             _environment = new Mock<IEnvironment>();
             _uniqueNameGenerator = new Mock<IUniqueNameGenerator>();
             _cleaner = new Mock<ICleaner>();
-            _dotnetEnvironment = new Mock<IDotnetEnvironment>();
             _settings = new Mock<ISettings>();
         }
 
@@ -88,7 +86,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var instance = CreateInstance();
-            _dotnetEnvironment.SetupGet(i => i.Path).Returns("Abc");
             var sources = new [] {"Src1", "Src2"};
 
             // When

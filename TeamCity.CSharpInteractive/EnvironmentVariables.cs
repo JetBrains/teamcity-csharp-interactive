@@ -3,8 +3,10 @@ namespace TeamCity.CSharpInteractive
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    [ExcludeFromCodeCoverage]
     internal class EnvironmentVariables : IEnvironmentVariables, ITraceSource
     {
         private readonly ILog<EnvironmentVariables> _log;

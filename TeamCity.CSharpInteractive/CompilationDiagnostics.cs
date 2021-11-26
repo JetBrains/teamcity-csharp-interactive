@@ -1,8 +1,10 @@
 namespace TeamCity.CSharpInteractive
 {
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     internal readonly struct CompilationDiagnostics
     {
         public readonly ICommand SourceCommand;

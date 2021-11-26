@@ -9,8 +9,7 @@ namespace TeamCity.CSharpInteractive
     internal class Process: IProcess
     {
         private readonly ILog<Process> _log;
-        private readonly IStdOut _stdOut;
-        private readonly IStdErr _stdErr;
+        private readonly ICommandLineOutputWriter _commandLineOutputWriter;
         private readonly IStartInfoFactory _startInfoFactory;
         private readonly Text _stdOutPrefix;
         private readonly Text _stdErrPrefix;
@@ -21,14 +20,12 @@ namespace TeamCity.CSharpInteractive
 
         public Process(
             ILog<Process> log,
-            IStdOut stdOut,
-            IStdErr stdErr,
+            ICommandLineOutputWriter commandLineOutputWriter,
             IStringService stringService,
             IStartInfoFactory startInfoFactory)
         {
             _log = log;
-            _stdOut = stdOut;
-            _stdErr = stdErr;
+            _commandLineOutputWriter = commandLineOutputWriter;
             _startInfoFactory = startInfoFactory;
             _stdOutPrefix = new Text($"{stringService.Tab}OUT: "); 
             _stdErrPrefix = new Text($"{stringService.Tab}ERR: ", Color.Error);
@@ -82,21 +79,15 @@ namespace TeamCity.CSharpInteractive
             }
 
             var handler = OnOutput;
+            var output = new CommandLineOutput(commandLine, isError, line);
             if (handler != default)
             {
                 _log.Trace(_processId, isError ? _stdErrPrefix : _stdOutPrefix, new Text(line));
-                handler(new CommandLineOutput(commandLine, isError, line));
+                handler(output);
             }
             else
             {
-                if (isError)
-                {
-                    _stdErr.WriteLine(new []{ new Text(line) });
-                }
-                else
-                {
-                    _stdOut.WriteLine(new []{ new Text(line) });
-                }
+                _commandLineOutputWriter.Write(output);
             }
         }
 

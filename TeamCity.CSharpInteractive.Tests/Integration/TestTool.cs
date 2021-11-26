@@ -37,7 +37,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             Run(CreateScriptCommandLine(args, scriptArgs, vars, lines));
         
         public static IProcessResult Run(params string[] lines) =>
-            Run(DotNetScript.Create(lines).WithVars(("TEAMCITY_PROJECT_NAME", string.Empty), ("TEAMCITY_VERSION", string.Empty)));
+            Run(DotNetScript.Create(lines).WithVars(DefaultVars));
         
         public static IProcessResult RunUnderTeamCity(params string[] lines) =>
             Run(CreateScriptCommandLine(Array.Empty<string>(), Array.Empty<string>(), TeamCityVars, lines));
