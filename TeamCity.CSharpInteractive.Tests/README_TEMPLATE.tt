@@ -70,9 +70,9 @@
 
             if (isBody)
             {
-                if (line.TrimStart().StartsWith("// ##"))
+                if (line.TrimStart().StartsWith("// ## "))
                 {
-                    body.Add(str.Replace("// ##", string.Empty));
+                    body.Add(line.Replace("// ## ", string.Empty));
                     continue;
                 }
 

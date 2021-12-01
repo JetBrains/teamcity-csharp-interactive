@@ -23,6 +23,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // {
             // Adds the namespace "Cmd" to use ICommandLine
             // ## using Cmd;
+
             int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
             // }
             

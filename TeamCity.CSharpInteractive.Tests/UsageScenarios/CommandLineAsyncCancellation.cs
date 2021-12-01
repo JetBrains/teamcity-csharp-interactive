@@ -24,6 +24,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // {
             // Adds the namespace "Cmd" to use ICommandLine
             // ## using Cmd;
+
             var cancellationTokenSource = new CancellationTokenSource();
             Task<int?> task = GetService<ICommandLine>().RunAsync(
                 new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),

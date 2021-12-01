@@ -160,7 +160,7 @@ Trace("Some trace info");
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use CommandLine
 using Cmd;
 
 // Creates a simple command line from just the name of the executable 
@@ -208,6 +208,7 @@ int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all")
 ``` CSharp
 // Adds the namespace "Cmd" to use ICommandLine
 using Cmd;
+
 int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
 ```
 
@@ -253,6 +254,7 @@ The cancellation will kill a related process.
 ``` CSharp
 // Adds the namespace "Cmd" to use ICommandLine
 using Cmd;
+
 var cancellationTokenSource = new CancellationTokenSource();
 Task<int?> task = GetService<ICommandLine>().RunAsync(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
@@ -289,7 +291,7 @@ exitCode.HasValue.ShouldBeFalse();
 
 ``` CSharp
 // Adds the namespace "NuGet" to use INuGet
-;
+using NuGet;
 
 IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container", "*");
 ```
@@ -302,7 +304,7 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container
 
 ``` CSharp
 // Adds the namespace "NuGet" to use INuGet
-;
+using NuGet;
 
 var packagesPath = System.IO.Path.Combine(
     System.IO.Path.GetTempPath(),
@@ -321,15 +323,20 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(
 
 For more details how to use TeamCity service message API please see [this](https://github.com/JetBrains/TeamCity.ServiceMessages) page. Instead of creating a root message writer like in the following example:
 ``` CSharp
+using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using var writer = new TeamCityServiceMessages().CreateWriter(Console.WriteLine);
 ```
 use this statement:
 ``` CSharp
+using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using var writer = GetService<ITeamCityWriter>();
 ```
 This sample opens a block _My Tests_ and reports about two tests:
 
 ``` CSharp
+// Adds a namespace to use ITeamCityWriter
+using JetBrains.TeamCity.ServiceMessages.Write.Special;
+
 using var writer = GetService<ITeamCityWriter>();
 using (var tests = writer.OpenBlock("My Tests"))
 {
