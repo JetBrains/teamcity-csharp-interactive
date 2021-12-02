@@ -23,14 +23,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pure.DI" Version="1.1.18">
+        <PackageReference Include="Pure.DI" Version="1.1.19">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.0.1" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0" />
-        <PackageReference Include="TeamCity.Dotnet.Integration" Version="1.0.20" GeneratePathProperty="true" PrivateAssets="all">
+        <PackageReference Include="TeamCity.Dotnet.Integration" Version="1.0.21" GeneratePathProperty="true" PrivateAssets="all">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
