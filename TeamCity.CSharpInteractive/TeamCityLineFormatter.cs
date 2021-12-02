@@ -19,7 +19,7 @@ namespace TeamCity.CSharpInteractive
             var sb = new StringBuilder();
             foreach (var text in line)
             {
-                if (text.Color != lastColor)
+                if (text.Color != lastColor && !string.IsNullOrWhiteSpace(text.Value))
                 {
                     sb.Append($"{EscapeSymbol}[{_colorTheme.GetAnsiColor(text.Color)}m");
                     lastColor = text.Color;
