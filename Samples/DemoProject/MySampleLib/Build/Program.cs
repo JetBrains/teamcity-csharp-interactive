@@ -1,33 +1,32 @@
-//#l diagnostic
-using System.Linq;
+﻿using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 
 using NuGet;
-using Cmd;
 using Dotnet;
 using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
+using static TeamCity.CSharpInteractive.Host;
 
-var currentDirectory = System.Environment.CurrentDirectory;
+var currentDirectory = Environment.CurrentDirectory;
 
 // Package version
 var packageVersion = Props["version"];
 
 // Target configuration
-string configuration = string.IsNullOrEmpty(Props["configuration"]) ? "Release" : Props["configuration"];
+var configuration = string.IsNullOrEmpty(Props["configuration"]) ? "Release" : Props["configuration"];
 
 // Test attempts for flaky tests
 if (!int.TryParse(Props["attempts"], out var testAttempts) || testAttempts < 1) testAttempts = 3;
 
 // Target directory
-string output = Path.Combine(currentDirectory, "bin");
+var output = Path.Combine(currentDirectory, "bin");
 
 // Required .NET SDK version
 var requiredSdkVersion = new Version(6, 0);
 
 // NuGet package id
-var packageId = "MySampleLib";
+const string packageId = "MySampleLib";
 
 if(string.IsNullOrEmpty(packageVersion))
 {
@@ -39,21 +38,21 @@ if(string.IsNullOrEmpty(packageVersion))
         .Select(i => i.Version)
         .Select(i => new Version(i.Major, i.Minor, i.Build + 1))
         .DefaultIfEmpty(new Version(1, 0, 0))
-        .Max()
+        .Max()!
         .ToString();
 }
 
 Trace($"Package version is: {packageVersion}.");
 
-var commonProps = new (string, string)[]{ 
-    ("Version", packageVersion.ToString()),
+var commonProps = new[]{ 
+    ("Version", packageVersion),
     ("ContinuousIntegrationBuild", "true")
 };
 
 var build = GetService<IBuild>();
 
 Info($"Check the required .NET SDK version {requiredSdkVersion}.");
-Version sdkVersion;
+var sdkVersion = new Version();
 if (build.Run(new Custom("--version"), output => Version.TryParse(output.Line, out sdkVersion)).Success)
 {
     if (sdkVersion.Major != requiredSdkVersion.Major && sdkVersion.Minor != requiredSdkVersion.Minor)
@@ -135,11 +134,11 @@ var dockerTestCommand = new Docker.Run(testCommand, dockerImage)
     .AddVolumes((currentDirectory, "/project"))
     .WithContainerWorkingDirectory("/project");
 
-WriteLine($"Starting parallel tests.", Details);
+WriteLine($"Starting parallel tests.");
 var testInContainerTask = build.RunAsync(dockerTestCommand);
 var vstestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(output, "MySampleLib.Tests.dll")));
 Task.WaitAll(testInContainerTask, vstestTask);
-WriteLine($"Parallel tests completed.", Details);
+WriteLine($"Parallel tests completed.");
 
 if (!testInContainerTask.Result.Success)
 {

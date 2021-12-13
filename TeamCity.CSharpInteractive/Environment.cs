@@ -37,8 +37,6 @@ namespace TeamCity.CSharpInteractive
                         SpecialFolder.ProgramFiles => System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
                         SpecialFolder.Script => GetScriptDirectory(),
                         SpecialFolder.Working => GetWorkingDirectory(),
-                        SpecialFolder.MSBuildLoggerDirectory => Path.Combine(GetBinDirectory(), "msbuild"),
-                        SpecialFolder.VSTestLoggerDirectory => Path.Combine(GetBinDirectory(), "vstest"),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
 
@@ -53,8 +51,6 @@ namespace TeamCity.CSharpInteractive
                         SpecialFolder.ProgramFiles => "usr/local/share",
                         SpecialFolder.Script => GetScriptDirectory(),
                         SpecialFolder.Working => GetWorkingDirectory(),
-                        SpecialFolder.MSBuildLoggerDirectory => Path.Combine(GetBinDirectory(), "msbuild"),
-                        SpecialFolder.VSTestLoggerDirectory => Path.Combine(GetBinDirectory(), "vstest"),
                         _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                     };
                 

@@ -12,10 +12,10 @@ namespace Dotnet
             integration
                 ? cmd
                     .AddArgs("/noconsolelogger")
-                    .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{WellknownValues.DotnetMSBuildAdapterDirectory}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
+                    .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{WellknownValues.DotnetLoggerDirectory}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
                     .AddProps("/p", 
                         ("VSTestLogger", "logger://teamcity"),
-                        ("VSTestTestAdapterPath", $"\".;{WellknownValues.DotnetVSTestAdapterDirectory}\""),
+                        ("VSTestTestAdapterPath", $"\".;{WellknownValues.DotnetLoggerDirectory}\""),
                         ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()))
                     .AddVars(
                         ("TEAMCITY_PROCESS_FLOW_ID", WellknownValues.TeamCityProcessFlowId))
@@ -27,7 +27,7 @@ namespace Dotnet
                     .AddMSBuildArgs( 
                         ("--Logger", "logger://teamcity"),
                         ("--Logger", $"console;verbosity={(verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()}"),
-                        ("--TestAdapterPath", $"\"{WellknownValues.DotnetVSTestAdapterDirectory}\""))
+                        ("--TestAdapterPath", $"\"{WellknownValues.DotnetLoggerDirectory}\""))
                     .AddVars(("TEAMCITY_PROCESS_FLOW_ID", WellknownValues.TeamCityProcessFlowId))
                 : cmd;
 

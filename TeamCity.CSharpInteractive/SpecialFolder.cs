@@ -16,12 +16,6 @@ namespace TeamCity.CSharpInteractive
         Script,
         
         // Working directory of process
-        Working,
-        
-        // MSBuild logger directory
-        MSBuildLoggerDirectory,
-        
-        // VSTest logger directory
-        VSTestLoggerDirectory
+        Working
     }
 }

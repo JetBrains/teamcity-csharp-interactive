@@ -3,14 +3,18 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
-        <NoWarn>NU1605;NU5118</NoWarn>
+        <AssemblyName>dotnet-csi</AssemblyName>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageId>TeamCity.CSharpInteractive</PackageId>
+        <PackageType>DotnetCliTool</PackageType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>dotnet-csi</ToolCommandName>
         <IncludeAssets>All</IncludeAssets>
-        <Title>TeamCity C# script host</Title>
+        <PackageId>TeamCity.csi</PackageId>
+        <IncludeAssets>All</IncludeAssets>
+        <Title>TeamCity C# script runner</Title>
         <PackageIcon>_common\icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <Description>$(Company) $(Title) $(Version) $(TargetFramework)</Description>
@@ -38,24 +42,19 @@
         </PackageReference>
     </ItemGroup>
 
-    <PropertyGroup>
-        <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-    </PropertyGroup>
-
-    <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
-        <ItemGroup>
-            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
-        </ItemGroup>
-    </Target>
-
     <ItemGroup>
         <None Include="$(MSBuildProjectDirectory)\..\icon.png">
             <PackagePath>_common</PackagePath>
             <Pack>true</Pack>
         </None>
-        
+
+        <Content Include="$(MSBuildProjectDirectory)\..\teamcity-plugin.xml">
+            <PackagePath>.</PackagePath>
+            <Pack>true</Pack>
+        </Content>
+
         <Content Include="$(OutDir)/Integration/*.*">
-            <PackagePath>lib\$(TargetFramework)</PackagePath>
+            <PackagePath>tools\$(TargetFramework)\any</PackagePath>
             <Pack>true</Pack>
         </Content>
     </ItemGroup>

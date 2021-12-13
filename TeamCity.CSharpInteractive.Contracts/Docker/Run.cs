@@ -105,10 +105,9 @@ namespace Docker
             var args = it.CommandLine.Args.ToArray();
 
             var rootDirectory = it.Platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
-            var integrationDirectory = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}/";
+            var integrationDirectory = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}";
             (string fromDir, string toDir)[] directoryMap = {
-                (WellknownValues.DotnetMSBuildAdapterDirectory, $"{integrationDirectory}MSBuild"),
-                (WellknownValues.DotnetVSTestAdapterDirectory, $"{integrationDirectory}VSTest")
+                (WellknownValues.DotnetLoggerDirectory, $"{integrationDirectory}"),
             };
 
             for (var i = 0; i < args.Length; i++)

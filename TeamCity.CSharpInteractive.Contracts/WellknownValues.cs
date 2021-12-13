@@ -5,8 +5,7 @@ namespace TeamCity.CSharpInteractive.Contracts
     {
         // Dotnet
         public const string DotnetExecutablePath = "%DotnetExecutablePath%";
-        public const string DotnetMSBuildAdapterDirectory = "%DotnetMSBuildAdapterDirectory%";
-        public const string DotnetVSTestAdapterDirectory = "%DotnetVSTestAdapterDirectory%";
+        public const string DotnetLoggerDirectory = "%DotnetLoggerDirectory%";
         public const string TeamCityVersion = "%TeamCityVersion%";
         public const string TeamCityProcessFlowId = "%TeamCityProcessFlowId%";
         // Docker
