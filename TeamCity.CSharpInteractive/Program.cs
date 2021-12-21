@@ -48,7 +48,8 @@ namespace TeamCity.CSharpInteractive
             _runner = runner;
             _statistics = statistics;
         }
-        
+
+        // ReSharper disable once MemberCanBePrivate.Global
         internal ExitCode Run()
         {
             _settingsManager.Load();

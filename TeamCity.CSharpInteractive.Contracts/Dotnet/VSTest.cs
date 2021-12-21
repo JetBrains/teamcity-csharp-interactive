@@ -1,5 +1,7 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable CheckNamespace
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 namespace Dotnet
 {
     using System.Collections.Generic;
@@ -8,7 +10,7 @@ namespace Dotnet
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
 
-    [Immutype.TargetAttribute]
+    [Immutype.Target]
     public record VSTest(
         IEnumerable<string> TestFileNames,
         IEnumerable<string> Args,

@@ -1,8 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+// ReSharper disable NotAccessedPositionalProperty.Local
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
@@ -104,21 +104,7 @@ namespace TeamCity.CSharpInteractive
                 }
             }
         }
-        
-        private readonly struct LibraryKey
-        {
-            private readonly string _name;
-            private readonly NuGetVersion _version;
 
-            public LibraryKey(string name, NuGetVersion version)
-            {
-                _name = name;
-                _version = version;
-            }
-
-            public override bool Equals(object? obj) => obj is LibraryKey other && _name == other._name && _version.Equals(other._version);
-
-            public override int GetHashCode() => HashCode.Combine(_name, _version);
-        }
+        private readonly record struct LibraryKey(string Name, NuGetVersion Version);
     }
 }

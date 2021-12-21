@@ -1,28 +1,11 @@
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
 
     [ExcludeFromCodeCoverage]
-    internal readonly struct CommandLineArgument
+    internal readonly record struct CommandLineArgument(CommandLineArgumentType ArgumentType, string Value = "", string Key= "")
     {
-        public readonly CommandLineArgumentType ArgumentType;
-        public readonly string Value;
-        public readonly string Key;
-
-        public CommandLineArgument(CommandLineArgumentType argumentType, string value = "", string key = "")
-        {
-            ArgumentType = argumentType;
-            Value = value;
-            Key = key;
-        }
-
-        public override bool Equals(object? obj) => 
-            obj is CommandLineArgument other && ArgumentType == other.ArgumentType && Value == other.Value && Key == other.Key;
-
-        public override int GetHashCode() => HashCode.Combine((int) ArgumentType, Value, Key);
-
         public override string ToString()
         {
             var sb = new StringBuilder();

@@ -39,10 +39,10 @@ namespace TeamCity.CSharpInteractive.Tests
             new object[] {new [] {new Text("Abc", Color.Error), new Text("Xyz", Color.Error)}, "^[EmAbcXyz"},
             new object[] {new [] {new Text("1"), new Text("Abc", Color.Error), new Text("Xyz", Color.Error), new Text("2")}, "1^[EmAbcXyz^[Dm2"},
             new object[] {new [] {new Text("", Color.Error)}, ""},
-            new object[] {new [] {new Text("   ", Color.Error)}, "   "},
+            new object[] {new [] {new Text("   ", Color.Error)}, "   "}
         };
 
         private TeamCityLineFormatter CreateInstance() =>
-            new(_colorTheme.Object) {EscapeSymbol = '^'};
+            new(_colorTheme.Object) { EscapeSymbol = '^' };
     }
 }

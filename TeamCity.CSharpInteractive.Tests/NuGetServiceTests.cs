@@ -57,7 +57,7 @@ namespace TeamCity.CSharpInteractive.Tests
         public void ShouldRestore(string? packagesPath, bool isPathRooted, string expectedNuGtePackagesDir)
         {
             // Given
-            string projectAssetsJson = Path.Combine("AssetsTmp", "assets.json");
+            var projectAssetsJson = Path.Combine("AssetsTmp", "assets.json");
             var nuGet = CreateInstance();
             _nugetEnvironment.SetupGet(i => i.PackagesPath).Returns("defaultPackagesPath");
             _fileSystem.Setup(i => i.IsPathRooted(It.IsAny<string>())).Returns(isPathRooted);

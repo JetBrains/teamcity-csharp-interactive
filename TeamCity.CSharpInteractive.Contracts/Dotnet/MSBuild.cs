@@ -1,6 +1,7 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 // ReSharper disable CheckNamespace
+// ReSharper disable MemberCanBePrivate.Global
 namespace Dotnet
 {
     using System;
@@ -10,7 +11,7 @@ namespace Dotnet
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
 
-    [Immutype.TargetAttribute]
+    [Immutype.Target]
     public record MSBuild(
         IEnumerable<string> Args,
         IEnumerable<(string name, string value)> Props,
@@ -41,7 +42,12 @@ namespace Dotnet
         Verbosity? Verbosity = default,
         bool Integration = true)
     {
-    public MSBuild(string ExecutablePath = WellknownValues.DotnetExecutablePath)
+
+    public MSBuild()
+        : this(WellknownValues.DotnetExecutablePath)
+    { }
+
+    public MSBuild(string ExecutablePath)
         : this(ImmutableList<string>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList<(string, string)>.Empty, ExecutablePath)
     { }
 

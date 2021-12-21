@@ -29,7 +29,7 @@ namespace TeamCity.CSharpInteractive.Tests
         public void ShouldProvideFileContent()
         {
             // Given
-            string fullPath = Path.Combine("wd", "zx", "Abc");
+            var fullPath = Path.Combine("wd", "zx", "Abc");
             _filePathResolver.Setup(i => i.TryResolve(Path.Combine("zx", "Abc"), out fullPath)).Returns(true);
             _reader.Setup(i => i.ReadLines( Path.Combine("wd", "zx", "Abc"))).Returns(new [] {"content"});
             var source = CreateInstance(Path.Combine("zx", "Abc"));
@@ -48,7 +48,7 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var error = new Exception("test");
-            string fullPath = Path.Combine("wd", "Abc");
+            var fullPath = Path.Combine("wd", "Abc");
             _filePathResolver.Setup(i => i.TryResolve("Abc", out fullPath)).Returns(true);
             _reader.Setup(i => i.ReadLines( Path.Combine("wd", "Abc"))).Throws(error);
             var source = CreateInstance("Abc");

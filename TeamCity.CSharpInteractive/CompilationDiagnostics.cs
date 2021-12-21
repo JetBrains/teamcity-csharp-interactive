@@ -5,15 +5,5 @@ namespace TeamCity.CSharpInteractive
     using Microsoft.CodeAnalysis;
 
     [ExcludeFromCodeCoverage]
-    internal readonly struct CompilationDiagnostics
-    {
-        public readonly ICommand SourceCommand;
-        public readonly ReadOnlyCollection<Diagnostic> Diagnostics;
-
-        public CompilationDiagnostics(ICommand sourceCommand, ReadOnlyCollection<Diagnostic> diagnostics)
-        {
-            SourceCommand = sourceCommand;
-            Diagnostics = diagnostics;
-        }
-    }
+    internal readonly record struct CompilationDiagnostics(ICommand SourceCommand, ReadOnlyCollection<Diagnostic> Diagnostics);
 }

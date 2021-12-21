@@ -50,9 +50,9 @@ namespace TeamCity.CSharpInteractive
             var args = _commandLineParser.Parse(_environment.GetCommandLineArgs().Skip(1)).ToImmutableArray();
             var props = new Dictionary<string, string>();
             ScriptProperties = props;
-            foreach (var prop in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
+            foreach (var (_, value, key) in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
             {
-                props[prop.Key] = prop.Value;
+                props[key] = value;
             }
 
             NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);

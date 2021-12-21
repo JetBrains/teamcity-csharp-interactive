@@ -1,5 +1,6 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable CheckNamespace
+// ReSharper disable UnusedMember.Global
 namespace Dotnet
 {
     using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Dotnet
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
 
-    [Immutype.TargetAttribute]
+    [Immutype.Target]
     public record Run(
         IEnumerable<string> Args,
         IEnumerable<(string name, string value)> Vars,
@@ -29,8 +30,7 @@ namespace Dotnet
     {
         public Run()
             : this(ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
-        {
-        }
+        { }
 
         public static implicit operator CommandLine(Run it) =>
             new CommandLine(it.ExecutablePath)

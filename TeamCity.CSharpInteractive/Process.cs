@@ -14,7 +14,7 @@ namespace TeamCity.CSharpInteractive
         private readonly Text _stdOutPrefix;
         private readonly Text _stdErrPrefix;
         private readonly System.Diagnostics.Process _process;
-        private CommandLine? _commandLine;
+        private CommandLine _commandLine = new(string.Empty);
         private Text _processId;
         private int _disposed;
 
@@ -64,9 +64,9 @@ namespace TeamCity.CSharpInteractive
 
         public void Kill() => _process.Kill();
 
-        private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, _commandLine!, false);
+        private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, _commandLine, false);
 
-        private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, _commandLine!, true);
+        private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, _commandLine, true);
             
         private void ProcessOnExited(object? sender, EventArgs e) => OnExit?.Invoke();
 

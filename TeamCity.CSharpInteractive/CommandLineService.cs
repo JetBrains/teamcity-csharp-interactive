@@ -28,7 +28,7 @@ namespace TeamCity.CSharpInteractive
             _cancellationTokenSource = cancellationTokenSource;
         }
 
-        public int? Run(CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default)
+        public int? Run(in CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default)
         {
             using var process = _processFactory();
             if (handler != default)
@@ -138,7 +138,7 @@ namespace TeamCity.CSharpInteractive
             return true;
         }
         
-        private static string GetInfo(CommandLine commandLine)
+        private static string GetInfo(in CommandLine commandLine)
         {
             var sb = new StringBuilder();
             if (!string.IsNullOrWhiteSpace(commandLine.WorkingDirectory))

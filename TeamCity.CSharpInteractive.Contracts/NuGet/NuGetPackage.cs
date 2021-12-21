@@ -1,6 +1,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable SuggestBaseTypeForParameterInConstructor
 // ReSharper disable CheckNamespace
+// ReSharper disable NotAccessedPositionalProperty.Global
 namespace NuGet
 {
     using System;

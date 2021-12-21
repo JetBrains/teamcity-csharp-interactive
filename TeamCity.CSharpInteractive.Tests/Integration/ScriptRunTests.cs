@@ -236,11 +236,12 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         {
             // Given
             var workingDirectory = DotNetScript.GetWorkingDirectory();
-            var scrip1 = DotNetScript.Create("abc.csx", workingDirectory, Enumerable.Empty<string>(), "Console.WriteLine(\"Hello\");");
-            var scrip2 = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"abc.csx\"").WithVars(TestTool.DefaultVars);
+            // ReSharper disable once UnusedVariable
+            var scriptAbc = DotNetScript.Create("abc.csx", workingDirectory, Enumerable.Empty<string>(), "Console.WriteLine(\"Hello\");");
+            var script = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"abc.csx\"").WithVars(TestTool.DefaultVars);
             
             // When
-            var result = TestTool.Run(scrip2);
+            var result = TestTool.Run(script);
 
             // Then
             result.ExitCode.ShouldBe(0, result.ToString());

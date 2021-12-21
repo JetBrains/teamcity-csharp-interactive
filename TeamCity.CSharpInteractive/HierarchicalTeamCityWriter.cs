@@ -14,6 +14,7 @@ namespace TeamCity.CSharpInteractive
         public HierarchicalTeamCityWriter([Tag("Root")] ITeamCityWriter currentWriter) =>
             _teamCityWriters.Push(currentWriter);
 
+        // ReSharper disable once MemberCanBePrivate.Global
         internal ITeamCityWriter CurrentWriter
         {
             get

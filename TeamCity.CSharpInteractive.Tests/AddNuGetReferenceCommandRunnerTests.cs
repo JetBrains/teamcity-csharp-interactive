@@ -35,7 +35,7 @@ namespace TeamCity.CSharpInteractive.Tests
             _nugetEnv.SetupGet(i => i.PackagesPath).Returns(PackagesPath);
             
             _nugetRestoreService = new Mock<INugetRestoreService>();
-            string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
+            var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
             _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, default, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(true);
 
             ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
@@ -92,7 +92,7 @@ namespace TeamCity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
+            var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
             _nugetRestoreService.Setup(i => i.TryRestore(_command.PackageId, _command.VersionRange, default, Sources, FallbackFolders, PackagesPath, out projectAssetsJson)).Returns(false);
             var result = runner.TryRun(_command);
 
@@ -108,7 +108,7 @@ namespace TeamCity.CSharpInteractive.Tests
             var runner = CreateInstance();
 
             // When
-            string projectAssetsJson = Path.Combine("TMP", "project.assets.json");
+            var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
             _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(Enumerable.Empty<ReferencingAssembly>());
             var result = runner.TryRun(_command);
 

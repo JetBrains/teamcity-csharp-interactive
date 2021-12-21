@@ -18,7 +18,7 @@ namespace TeamCity.CSharpInteractive
         private readonly List<BuildMessage> _messages = new();
         private readonly List<TestResult> _tests = new();
         private readonly Dictionary<TestKey, TestContext> _currentTests = new();
-        private CommandLine? _commandLine;
+        private CommandLine _commandLine = new(string.Empty);
 
         public BuildResult(
             ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter,
@@ -30,7 +30,7 @@ namespace TeamCity.CSharpInteractive
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Local
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public IEnumerable<BuildMessage> ProcessOutput(CommandLineOutput output)
+        public IEnumerable<BuildMessage> ProcessOutput(in CommandLineOutput output)
         {
             _commandLine = output.CommandLine;
             var (_, isError, line) = output;
@@ -59,7 +59,7 @@ namespace TeamCity.CSharpInteractive
         private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message)
         {
             var output = message.GetValue("out") ?? string.Empty;
-            GetTestContext(message).AddStdOut(_commandLine!, output);
+            GetTestContext(message).AddStdOut(_commandLine, output);
             yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
             yield return new BuildMessage(BuildMessageState.Info, Enumerable.Empty<IServiceMessage>(), output);
         }
@@ -67,7 +67,7 @@ namespace TeamCity.CSharpInteractive
         private IEnumerable<BuildMessage> OnStdErr(IServiceMessage message)
         {
             var output = message.GetValue("out") ?? string.Empty;
-            GetTestContext(message).AddStdErr(_commandLine!, output);
+            GetTestContext(message).AddStdErr(_commandLine, output);
             yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
             yield return new BuildMessage(BuildMessageState.Error, Enumerable.Empty<IServiceMessage>(), output);
         }
@@ -175,6 +175,15 @@ namespace TeamCity.CSharpInteractive
             }
 
             return testContext;
+        }
+        
+        // ReSharper disable once NotAccessedPositionalProperty.Local
+        private readonly record struct TestKey(string FlowId, string TestName)
+        {
+            public TestKey(IServiceMessage message) :
+                this(message.GetValue("flowId") ?? string.Empty, message.GetValue("name") ?? string.Empty)
+            {
+            }
         }
     }
 }

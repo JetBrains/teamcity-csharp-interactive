@@ -11,21 +11,23 @@ namespace TeamCity.CSharpInteractive
         
         public TeamCityLineFormatter(IColorTheme colorTheme) => _colorTheme = colorTheme;
 
-        internal char? EscapeSymbol { get; set; } = '\x001B';
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        internal char EscapeSymbol { get; set; }  = '\x001B';
 
         public string Format(params Text[] line)
         {
             var lastColor = Color.Default;
             var sb = new StringBuilder();
-            foreach (var text in line)
+            foreach (var (value, color) in line)
             {
-                if (text.Color != lastColor && !string.IsNullOrWhiteSpace(text.Value))
+                if (color != lastColor && !string.IsNullOrWhiteSpace(value))
                 {
-                    sb.Append($"{EscapeSymbol}[{_colorTheme.GetAnsiColor(text.Color)}m");
-                    lastColor = text.Color;
+                    sb.Append($"{EscapeSymbol}[{_colorTheme.GetAnsiColor(color)}m");
+                    lastColor = color;
                 }
 
-                sb.Append(text.Value);
+                sb.Append(value);
             }
 
             return sb.ToString();

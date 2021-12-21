@@ -9,7 +9,6 @@ namespace Dotnet
     using System.Linq;
     using System.Text;
 
-    [Immutype.TargetAttribute]
     public record BuildResult(
         int? ExitCode,
         IEnumerable<BuildMessage> Messages,

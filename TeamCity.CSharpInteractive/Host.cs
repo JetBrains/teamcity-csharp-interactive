@@ -1,3 +1,5 @@
+// ReSharper disable UnusedType.Global
+// ReSharper disable UnusedMember.Global
 namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;

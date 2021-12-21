@@ -8,7 +8,7 @@ namespace Cmd
 
     public interface ICommandLine
     {
-        int? Run(CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default);
+        int? Run(in CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default);
         
         Task<int?> RunAsync(CommandLine commandLine, Action<CommandLineOutput>? handler = default, CancellationToken cancellationToken = default);
     }

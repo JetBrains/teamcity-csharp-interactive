@@ -21,9 +21,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         public void ShouldShowHelp(string arg)
         {
             // Given
+            var cmd = DotNetScript.Create().AddArgs(arg).AddVars(TestTool.DefaultVars);
 
             // When
-            var result = TestTool.Run(DotNetScript.Shared.AddArgs(arg).AddVars(TestTool.DefaultVars));
+            var result = TestTool.Run(cmd);
             
             // Then
             result.ExitCode.ShouldBe(0);

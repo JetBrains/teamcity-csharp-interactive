@@ -15,7 +15,8 @@ namespace TeamCity.CSharpInteractive
 
         public void Show(CompilationDiagnostics data)
         {
-            foreach (var diagnostic in data.Diagnostics)
+            var (sourceCommand, readOnlyCollection) = data;
+            foreach (var diagnostic in readOnlyCollection)
             {
                 switch (diagnostic.Severity)
                 {
@@ -32,7 +33,7 @@ namespace TeamCity.CSharpInteractive
                         break;
 
                     case DiagnosticSeverity.Error:
-                        var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(data.SourceCommand.Name))}";
+                        var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(sourceCommand.Name))}";
                         _log.Error(new ErrorId(errorId), new []{new Text(diagnostic.ToString())});
                         break;
                 }

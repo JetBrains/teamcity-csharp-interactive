@@ -1,5 +1,6 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
+// ReSharper disable NotAccessedPositionalProperty.Global
 namespace Dotnet
 {
     using System.Collections.Generic;

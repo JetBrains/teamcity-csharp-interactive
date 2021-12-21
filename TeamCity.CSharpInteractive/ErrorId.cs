@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
 
     [ExcludeFromCodeCoverage]
-    internal readonly struct ErrorId
+    internal readonly record struct ErrorId(string Id)
     {
         public static readonly ErrorId Unhandled = new("CSI000");
         public static readonly ErrorId File = new("CSI001");
@@ -14,13 +14,5 @@ namespace TeamCity.CSharpInteractive
         public static readonly ErrorId Exception = new("CSI006");
         public static readonly ErrorId UncompletedScript = new("CSI007");
         public static readonly ErrorId Build = new("CSI008");
-
-        public readonly string Id;
-
-        public ErrorId(string? id) => Id = id ?? "unknown";
-
-        public override bool Equals(object? obj) => obj is ErrorId other && Id == other.Id;
-
-        public override int GetHashCode() => Id.GetHashCode();
     }
 }

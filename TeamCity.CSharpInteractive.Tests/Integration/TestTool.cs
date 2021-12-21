@@ -23,7 +23,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             ("TEAMCITY_PROJECT_NAME", "Test")
         };
         
-        public static IProcessResult Run(CommandLine commandLine)
+        public static IProcessResult Run(in CommandLine commandLine)
         {
             var events = new List<CommandLineOutput>();
             var exitCode = Composer.ResolveICommandLine().Run(commandLine, e => events.Add(e));

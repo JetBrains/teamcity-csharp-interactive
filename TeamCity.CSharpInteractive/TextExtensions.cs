@@ -8,13 +8,13 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal static class TextExtensions
     {
-        public static Text[] WithDefaultColor(this Text[] text, Color color)
+        public static Text[] WithDefaultColor(this Text[] text, Color defaultColor)
         {
             var newText = new Text[text.Length];
             for (var i = 0; i < newText.Length; i++)
             {
-                var curText = text[i];
-                newText[i] = new Text(curText.Value, curText.Color == Color.Default ? color : curText.Color);
+                var (value, color) = text[i];
+                newText[i] = new Text(value, color == Color.Default ? defaultColor : color);
             }
 
             return newText;

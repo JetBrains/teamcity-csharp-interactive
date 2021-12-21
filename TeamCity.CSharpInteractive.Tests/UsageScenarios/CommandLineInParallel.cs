@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_BuiltInTypes
+// ReSharper disable SuggestVarOrType_Elsewhere
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;

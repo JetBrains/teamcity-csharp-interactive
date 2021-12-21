@@ -3,6 +3,8 @@
 // ReSharper disable CommentTypo
 // ReSharper disable IdentifierTypo
 // ReSharper disable InvertIf
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 namespace Docker
 {
     using System;
@@ -12,7 +14,7 @@ namespace Docker
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
 
-    [Immutype.TargetAttribute]
+    [Immutype.Target]
     public record Run(
         // Command to run in container
         CommandLine CommandLine,
@@ -61,6 +63,9 @@ namespace Docker
         // A file with environment variables inside the container
         string EnvFile = "")
     {
+        public Run(): this(new CommandLine(string.Empty), string.Empty) 
+        { }
+
         public Run(CommandLine commandLine, string image)
             : this(
                 commandLine,
@@ -107,7 +112,7 @@ namespace Docker
             var rootDirectory = it.Platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
             var integrationDirectory = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}";
             (string fromDir, string toDir)[] directoryMap = {
-                (WellknownValues.DotnetLoggerDirectory, $"{integrationDirectory}"),
+                (WellknownValues.DotnetLoggerDirectory, $"{integrationDirectory}")
             };
 
             for (var i = 0; i < args.Length; i++)

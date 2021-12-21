@@ -25,7 +25,7 @@ namespace TeamCity.CSharpInteractive
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            AddNuGetReferenceCommand other = (AddNuGetReferenceCommand) obj;
+            var other = (AddNuGetReferenceCommand) obj;
             return PackageId == other.PackageId && Equals(VersionRange?.ToString(), other.VersionRange?.ToString());
         }
 

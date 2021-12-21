@@ -1,7 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.IO;
 
     internal class AddNuGetReferenceCommandRunner: ICommandRunner
@@ -52,7 +51,7 @@ namespace TeamCity.CSharpInteractive
             }
 
             var output = Path.GetDirectoryName(projectAssetsJson);
-            IDisposable outputPathToken = Disposable.Empty;
+            var outputPathToken = Disposable.Empty;
             if (!string.IsNullOrWhiteSpace(output))
             {
                 outputPathToken = _cleaner.Track(output);

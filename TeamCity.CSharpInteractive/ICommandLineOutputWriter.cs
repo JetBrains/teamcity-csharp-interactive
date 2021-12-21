@@ -4,6 +4,6 @@ namespace TeamCity.CSharpInteractive
 
     internal interface ICommandLineOutputWriter
     {
-        void Write(CommandLineOutput output);
+        void Write(in CommandLineOutput output);
     }
 }

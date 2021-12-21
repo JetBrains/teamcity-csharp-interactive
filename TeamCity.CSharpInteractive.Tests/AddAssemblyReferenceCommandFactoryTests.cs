@@ -18,7 +18,7 @@ namespace TeamCity.CSharpInteractive.Tests
             _log = new Mock<ILog<AddAssemblyReferenceCommandFactory>>();
             _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
             _assemblyPathResolver = new Mock<IFilePathResolver>();
-            string fullAssemblyPath = "wd/Abc.dll";
+            var fullAssemblyPath = "wd/Abc.dll";
             _assemblyPathResolver.Setup(i => i.TryResolve("Abc.dll", out fullAssemblyPath)).Returns(true);
         }
         

@@ -6,9 +6,7 @@ namespace TeamCity.CSharpInteractive
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using Microsoft.DotNet.PlatformAbstractions;
-    using Pure.DI;
 
     internal class DockerEnvironment : ITraceSource, IDockerEnvironment
     {

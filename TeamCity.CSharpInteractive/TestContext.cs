@@ -10,7 +10,7 @@ internal class TestContext
 
     public TestContext(string name) => Name = name;
 
-    public void AddStdOut(CommandLine commandLine, string? text)
+    public void AddStdOut(in CommandLine commandLine, string? text)
     {
         if (text != default)
         {
@@ -18,7 +18,7 @@ internal class TestContext
         }
     }
 
-    public void AddStdErr(CommandLine commandLine, string? error)
+    public void AddStdErr(in CommandLine commandLine, string? error)
     {
         if (error != default)
         {

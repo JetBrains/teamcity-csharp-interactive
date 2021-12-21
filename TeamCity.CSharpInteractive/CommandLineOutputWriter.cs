@@ -9,7 +9,7 @@ namespace TeamCity.CSharpInteractive
 
         public CommandLineOutputWriter(IConsole console) => _console = console;
 
-        public void Write(CommandLineOutput output)
+        public void Write(in CommandLineOutput output)
         {
             if (output.IsError)
             {

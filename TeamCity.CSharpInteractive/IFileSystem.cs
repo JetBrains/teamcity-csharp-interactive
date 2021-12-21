@@ -13,8 +13,6 @@ namespace TeamCity.CSharpInteractive
         
         bool IsDirectoryExist(string path);
 
-        void WriteAllLines(string path, IEnumerable<string> contents);
-
         IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption);
     }
 }

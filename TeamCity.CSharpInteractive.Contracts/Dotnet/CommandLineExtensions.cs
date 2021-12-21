@@ -1,5 +1,6 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
+// ReSharper disable ArrangeRedundantParentheses
 namespace Dotnet
 {
     using System.Linq;

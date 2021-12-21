@@ -2,7 +2,6 @@
 namespace TeamCity.CSharpInteractive
 {
     using Contracts;
-    using Dotnet;
 
     internal class WellknownValueResolver : IWellknownValueResolver
     {

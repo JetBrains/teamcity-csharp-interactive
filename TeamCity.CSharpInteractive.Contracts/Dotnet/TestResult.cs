@@ -1,5 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable CheckNamespace
+// ReSharper disable NotAccessedPositionalProperty.Global
 namespace Dotnet
 {
     using System;

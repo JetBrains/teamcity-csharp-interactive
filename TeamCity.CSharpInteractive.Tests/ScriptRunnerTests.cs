@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests
         public ScriptRunnerTests()
         {
             _log = new Mock<ILog<ScriptRunner>>();
-            IEnumerable<ICommand> commands = Mock.Of<IEnumerable<ICommand>>();
+            var commands = Mock.Of<IEnumerable<ICommand>>();
             _commandSource = new Mock<ICommandSource>();
             _commandSource.Setup(i => i.GetCommands()).Returns(commands);
             _commandsRunner = new Mock<ICommandsRunner>();

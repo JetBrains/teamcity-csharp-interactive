@@ -5,19 +5,10 @@
     using Contracts;
 
     [ExcludeFromCodeCoverage]
-    internal readonly struct Text
+    internal readonly record struct Text(string Value, Color Color = Color.Default)
     {
-        public readonly string Value;
-        public readonly Color Color;
-
         public static readonly Text NewLine = new(System.Environment.NewLine);
-
-        public Text(string value, Color color = Color.Default)
-        {
-            Value = value;
-            Color = color;
-        }
-
+        
         public static implicit operator Text[](Text text) => new[] {text};
 
         public override string ToString() => $"{Color}:{Value}";
