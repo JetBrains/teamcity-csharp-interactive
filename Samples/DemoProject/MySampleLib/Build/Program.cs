@@ -1,12 +1,7 @@
-﻿using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
-
-using NuGet;
+﻿using NuGet;
 using Dotnet;
 using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using static TeamCity.CSharpInteractive.Host;
 
 var currentDirectory = Environment.CurrentDirectory;
 
@@ -20,7 +15,7 @@ var configuration = string.IsNullOrEmpty(Props["configuration"]) ? "Release" : P
 if (!int.TryParse(Props["attempts"], out var testAttempts) || testAttempts < 1) testAttempts = 3;
 
 // Target directory
-var output = Path.Combine(currentDirectory, "bin");
+var outputDir = Path.Combine(currentDirectory, "bin");
 
 // Required .NET SDK version
 var requiredSdkVersion = new Version(6, 0);
@@ -94,7 +89,7 @@ Info($"Running flaky tests with {testAttempts} attempts.");
 var failedTests =
     Enumerable.Repeat(new Test().WithNoBuild(true).AddProps(commonProps), testAttempts)
     // Passing an output handler to avoid reporting to CI
-    .Select(test => build.Run(test, output => {}))
+    .Select(test => build.Run(test, _ => {}))
     .TakeWhile(test => !test.Success)
     .ToList();
 
@@ -117,7 +112,7 @@ Info($"Build a {configuration} version.");
 var buildResult = build.Run(
     new Build()
         .WithConfiguration(configuration)
-        .WithOutput(output)
+        .WithOutput(outputDir)
         .AddProps(commonProps));
 
 if (!buildResult.Success)
@@ -136,8 +131,8 @@ var dockerTestCommand = new Docker.Run(testCommand, dockerImage)
 
 WriteLine($"Starting parallel tests.");
 var testInContainerTask = build.RunAsync(dockerTestCommand);
-var vstestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(output, "MySampleLib.Tests.dll")));
-Task.WaitAll(testInContainerTask, vstestTask);
+var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll")));
+Task.WaitAll(testInContainerTask, vsTestTask);
 WriteLine($"Parallel tests completed.");
 
 if (!testInContainerTask.Result.Success)
@@ -146,9 +141,9 @@ if (!testInContainerTask.Result.Success)
     return;
 }
 
-if (!vstestTask.Result.Success)
+if (!vsTestTask.Result.Success)
 {
-    Error(vstestTask.Result);
+    Error(vsTestTask.Result);
     return;
 }
 
@@ -156,7 +151,7 @@ Info($"Pack {configuration} version.");
 var packResult = build.Run(
     new Pack()
         .WithConfiguration(configuration)
-        .WithOutput(output)
+        .WithOutput(outputDir)
         .WithIncludeSymbols(true)
         .WithIncludeSource(true)
         .AddProps(commonProps));
@@ -173,14 +168,14 @@ var teamCityWriter = GetService<ITeamCityWriter>();
 if (flakyTests.Any())
 {
     Warning("Has flaky tests.");
-    var flakyTestsFile = Path.Combine(output, "FlakyTests.txt");
+    var flakyTestsFile = Path.Combine(outputDir, "FlakyTests.txt");
     File.WriteAllLines(flakyTestsFile, flakyTests);
     teamCityWriter.PublishArtifact($"{flakyTestsFile} => .");
 }
 
 var artifacts = 
     from packageExtension in new [] { "nupkg", "symbols.nupkg" }
-    let path = Path.Combine(output, $"{packageId}.{packageVersion}.{packageExtension}")
+    let path = Path.Combine(outputDir, $"{packageId}.{packageVersion}.{packageExtension}")
     select $"{path} => .";
 
 foreach (var artifact in artifacts)

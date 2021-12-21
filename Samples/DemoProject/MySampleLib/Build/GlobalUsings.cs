@@ -1,0 +1,1 @@
+global using static TeamCity.CSharpInteractive.Host;
