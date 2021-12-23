@@ -34,41 +34,48 @@ namespace Dotnet
         bool NoLogo = false,
         bool NoRestore = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Test()
             : this(ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet test";
 
-        public static implicit operator CommandLine(Test it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("test")
-            .AddArgs(new []{
-                it.Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddMSBuildIntegration(it.Integration, it.Verbosity)
-            .AddArgs(
-                ("--settings", it.Settings),
-                ("--test-adapter-path", it.TestAdapterPath),
-                ("--logger", it.Logger),
-                ("--configuration", it.Configuration),
-                ("--framework", it.Framework),
-                ("--runtime", it.Runtime),
-                ("--output", it.Output),
-                ("--diag", it.Diag),
-                ("--results-directory", it.ResultsDirectory),
-                ("--collect", it.Collect),
-                ("--verbosity", it.Verbosity?.ToString().ToLowerInvariant())
-            )
-            .AddBooleanArgs(
-                ("--list-tests", it.ListTests),
-                ("--no-build", it.NoBuild),
-                ("--blame", it.Blame),
-                ("--nologo", it.NoLogo),
-                ("--no-restore", it.NoRestore)
-            )
-            .AddProps("/p", it.Props.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("test")
+                .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddArgs(
+                    ("--settings", Settings),
+                    ("--test-adapter-path", TestAdapterPath),
+                    ("--logger", Logger),
+                    ("--configuration", Configuration),
+                    ("--framework", Framework),
+                    ("--runtime", Runtime),
+                    ("--output", Output),
+                    ("--diag", Diag),
+                    ("--results-directory", ResultsDirectory),
+                    ("--collect", Collect),
+                    ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
+                )
+                .AddBooleanArgs(
+                    ("--list-tests", ListTests),
+                    ("--no-build", NoBuild),
+                    ("--blame", Blame),
+                    ("--nologo", NoLogo),
+                    ("--no-restore", NoRestore)
+                )
+                .AddProps("/p", Props.ToArray())
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

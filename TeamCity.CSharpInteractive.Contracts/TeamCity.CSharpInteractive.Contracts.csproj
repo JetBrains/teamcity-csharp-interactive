@@ -23,7 +23,7 @@
             <_Parameter1>TeamCity.CSharpInteractive</_Parameter1>
         </AssemblyAttribute>
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
-        <PackageReference Update="TeamCity.Dotnet.Integration" Version="1.0.23" PrivateAssets="all">
+        <PackageReference Update="TeamCity.Dotnet.Integration" Version="1.0.24" PrivateAssets="all">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>

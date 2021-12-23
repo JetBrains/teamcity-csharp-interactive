@@ -11,8 +11,8 @@ namespace Dotnet
 
     public record BuildResult(
         int? ExitCode,
-        IEnumerable<BuildMessage> Messages,
-        IEnumerable<TestResult> Tests)
+        IReadOnlyList<BuildMessage> Messages,
+        IReadOnlyList<TestResult> Tests)
     {
         public bool Success => 
             ExitCode == 0
@@ -31,7 +31,7 @@ namespace Dotnet
             return sb.ToString();
         }
 
-        public static implicit operator string(BuildResult it) => it.ToString();
+        public static implicit operator string(in BuildResult it) => it.ToString();
 
         private IEnumerable<string> GetReasons()
         {

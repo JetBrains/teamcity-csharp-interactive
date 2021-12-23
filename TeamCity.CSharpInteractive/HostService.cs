@@ -39,7 +39,7 @@ namespace TeamCity.CSharpInteractive
 
         public void Info(string text) => _log.Info(text);
 
-        public void Trace(string trace, string origin = "") => _log.Trace(origin, trace);
+        public void Trace(string trace, string origin = "") => _log.Trace(() => new [] { new Text(trace) }, origin);
 
         public T GetService<T>() => Composer.Resolve<T>();
     }

@@ -21,7 +21,7 @@ namespace TeamCity.CSharpInteractive
         public string? GetEnvironmentVariable(string variable)
         {
             var value = System.Environment.GetEnvironmentVariable(variable);
-            _log.Trace($"Get environment variable {variable} = \"{value}\".");
+            _log.Trace(() => new []{new Text($"Get environment variable {variable} = \"{value}\".")});
             return value;
         }
 

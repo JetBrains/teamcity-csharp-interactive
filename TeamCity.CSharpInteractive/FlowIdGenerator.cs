@@ -4,15 +4,22 @@ namespace TeamCity.CSharpInteractive
     using System;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-    internal class FlowIdGenerator: IFlowIdGenerator
+    internal class FlowIdGenerator: IFlowIdGenerator, IFlowContext
     {
         private readonly object _lockObject = new();
-        private string _nextFlowId; 
+        private string _nextFlowId;
+        [ThreadStatic] private static string? _currentFlowId;
 
         public FlowIdGenerator(ITeamCitySettings teamCitySettings) =>
             _nextFlowId = teamCitySettings.FlowId;
 
-        public string NewFlowId() => GenerateFlowId();
+        public string CurrentFlowId
+        {
+            get => _currentFlowId ?? _nextFlowId;
+            private set => _currentFlowId = value;
+        }
+
+        public string NewFlowId() => CurrentFlowId = GenerateFlowId();
 
         private string GenerateFlowId()
         {
@@ -20,7 +27,7 @@ namespace TeamCity.CSharpInteractive
             {
                 if (string.IsNullOrWhiteSpace(_nextFlowId))
                 {
-                    return "cs_" + Guid.NewGuid().ToString()[..8];
+                    return Guid.NewGuid().ToString()[..8];
                 }
 
                 var currentFlowId = _nextFlowId;

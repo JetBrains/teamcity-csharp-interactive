@@ -23,7 +23,7 @@ namespace TeamCity.CSharpInteractive
             switch (e.Importance)
             {
                 case MessageImportance.High:
-                    _log.Info(new[] {new Text(e.Message, Color.Header)});
+                    _log.Info(new[] {new Text(e.Message, Color.Highlighted)});
                     break;
                 
                 case MessageImportance.Normal:
@@ -31,12 +31,12 @@ namespace TeamCity.CSharpInteractive
                     break;
                 
                 default:
-                    _log.Trace(new[] {new Text(e.Message)});
+                    _log.Trace(() => new []{ new Text(e.Message) }, "MSBuild");
                     break;
             }
         }
 
-        public void LogCustomEvent(CustomBuildEventArgs e) => _log.Trace(new []{new Text(e.Message)});
+        public void LogCustomEvent(CustomBuildEventArgs e) => _log.Trace(() => new []{ new Text(e.Message) }, "MSBuild");
 
         public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs) =>
             true;

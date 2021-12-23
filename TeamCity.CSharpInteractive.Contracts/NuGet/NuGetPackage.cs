@@ -5,11 +5,13 @@
 namespace NuGet
 {
     using System;
+    using System.Collections.Generic;
 
-    public record NuGetPackage(
+    public readonly record struct NuGetPackage(
         string Name,
         Version Version,
         string Type,
         string Path,
-        string Sha512);
+        string Sha512,
+        IReadOnlyList<string> Files);
 }

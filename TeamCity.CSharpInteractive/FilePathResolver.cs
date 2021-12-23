@@ -28,7 +28,7 @@ namespace TeamCity.CSharpInteractive
                 {
                     fullFilePath = Path.Combine(path, filePath);
                     var isFileExist = _fileSystem.IsFileExist(fullFilePath);
-                    _log.Trace($"Try to find \"{filePath}\" in \"{path}\": {isFileExist}.");
+                    _log.Trace(() => new []{new Text($"Try to find \"{filePath}\" in \"{path}\": {isFileExist}.")});
                     if (isFileExist)
                     {
                         return true;

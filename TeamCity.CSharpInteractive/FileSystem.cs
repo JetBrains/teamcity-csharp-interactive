@@ -12,10 +12,12 @@ namespace TeamCity.CSharpInteractive
         
         public bool IsPathRooted(string path) => Path.IsPathRooted(path);
 
-        public bool IsFileExist(string path) => File.Exists(path);
+        public bool IsFileExist(string file) => File.Exists(file);
 
         public bool IsDirectoryExist(string path) => Directory.Exists(path);
 
         public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
+
+        public IEnumerable<string> ReadAllLines(string file) => File.ReadAllLines(file);
     }
 }

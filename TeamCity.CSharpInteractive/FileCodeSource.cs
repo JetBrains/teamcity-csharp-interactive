@@ -50,7 +50,7 @@ namespace TeamCity.CSharpInteractive
             var resource = _scriptContext.OverrideScriptDirectory(Path.GetDirectoryName(FileName));
             try
             {
-                _log.Trace($@"Read file ""{FileName}"".");
+                _log.Trace(() => new []{new Text($@"Read file ""{FileName}"".")});
                 return new LinesEnumerator(_fileTextReader.ReadLines(FileName).GetEnumerator(), () => resource.Dispose());
             }
             catch (Exception e)

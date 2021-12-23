@@ -25,7 +25,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         
         public static IProcessResult Run(in CommandLine commandLine)
         {
-            var events = new List<CommandLineOutput>();
+            var events = new List<Output>();
             var exitCode = Composer.ResolveICommandLine().Run(commandLine, e => events.Add(e));
             return new ProcessResult(exitCode!.Value, events);
         }
@@ -80,7 +80,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         
         private class ProcessResult: IProcessResult
         {
-            public ProcessResult(int exitCode, IReadOnlyList<CommandLineOutput> events)
+            public ProcessResult(int exitCode, IReadOnlyList<Output> events)
             {
                 ExitCode = exitCode;
                 StdOut = events.Where(i => !i.IsError).Select(i => i.Line).ToList();

@@ -3,13 +3,13 @@ namespace TeamCity.CSharpInteractive
 {
     using Cmd;
 
-    internal class CommandLineOutputWriter : ICommandLineOutputWriter
+    internal class ProcessOutputWriter : IProcessOutputWriter
     {
         private readonly IConsole _console;
 
-        public CommandLineOutputWriter(IConsole console) => _console = console;
+        public ProcessOutputWriter(IConsole console) => _console = console;
 
-        public void Write(in CommandLineOutput output)
+        public void Write(in Output output)
         {
             if (output.IsError)
             {

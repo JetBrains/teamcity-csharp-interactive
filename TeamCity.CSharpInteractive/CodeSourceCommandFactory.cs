@@ -44,14 +44,14 @@ namespace TeamCity.CSharpInteractive
                 foreach (var line in code.Split(System.Environment.NewLine))
                 {
                     var trimmedLine = line.Trim();
-                    _log.Trace($"Line: \"{trimmedLine}\".");
+                    _log.Trace(() => new []{new Text($"Line: \"{trimmedLine}\".")});
                     if (trimmedLine.StartsWith("#"))
                     {
                         var hasReplCommand = false;
                         foreach (var replCommandFactory in _replCommandFactories)
                         {
                             var commands = replCommandFactory.Create(trimmedLine).ToArray();
-                            _log.Trace($"REPL commands count: {commands.Length}.");
+                            _log.Trace(() => new []{new Text($"REPL commands count: {commands.Length}.")});
                             if (!commands.Any())
                             {
                                 continue;

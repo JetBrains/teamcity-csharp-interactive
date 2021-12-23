@@ -26,28 +26,30 @@ namespace TeamCity.CSharpInteractive
         {
             if (data.Variables.Any())
             {
-                var vars = GetTrace(
-                    "Variables",
-                    (
-                        from variable in data.Variables
-                        group variable by variable.Name
-                        into gr
-                        select gr.Last())
-                    .Select(GetVariablyTrace));
+                _log.Trace(() =>
+                {
+                    var vars = GetTrace(
+                        "Variables",
+                        (
+                            from variable in data.Variables
+                            group variable by variable.Name
+                            into gr
+                            select gr.Last())
+                        .Select(GetVariablyTrace));
                 
-                var props = GetTrace(
-                    "Properties",
-                    _properties.Select(i => $"{Tab}Props[\"{i.Key}\"] = \"{i.Value}\""));
+                    var props = GetTrace(
+                        "Properties",
+                        _properties.Select(i => $"{Tab}Props[\"{i.Key}\"] = \"{i.Value}\""));
 
-                _log.Trace(
-                    EmptyLine
+                    return EmptyLine
                         .Concat(vars)
                         .Concat(EmptyLine)
-                        .Concat(props).ToArray());
+                        .Concat(props).ToArray();
+                });
             }
             else
             {
-                _log.Trace("No variables defined.");
+                _log.Trace(() => new []{new Text("No variables defined.")});
             }
         }
 
@@ -56,18 +58,25 @@ namespace TeamCity.CSharpInteractive
 
         private static string GetVariablyTrace(ScriptVariable variable)
         {
-            var sb = new StringBuilder(Tab);
-            if (variable.IsReadOnly)
+            try
             {
-                sb.Append("readonly ");
-            }
+                var sb = new StringBuilder(Tab);
+                if (variable.IsReadOnly)
+                {
+                    sb.Append("readonly ");
+                }
 
-            sb.Append(variable.Type.Name);
-            sb.Append(' ');
-            sb.Append(variable.Name);
-            sb.Append(" = ");
-            sb.Append(variable.Value);
-            return sb.ToString();
+                sb.Append(variable.Type.Name);
+                sb.Append(' ');
+                sb.Append(variable.Name);
+                sb.Append(" = ");
+                sb.Append(variable.Value);
+                return sb.ToString();
+            }
+            catch
+            {
+                return variable.ToString() ?? "null";
+            }
         }
     }
 }

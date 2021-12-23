@@ -14,5 +14,6 @@ namespace TeamCity.CSharpInteractive
         public static readonly ErrorId Exception = new("CSI006");
         public static readonly ErrorId UncompletedScript = new("CSI007");
         public static readonly ErrorId Build = new("CSI008");
+        public static readonly ErrorId Process = new("CSI009");
     }
 }

@@ -28,7 +28,6 @@ namespace TeamCity.CSharpInteractive
                 .Replace(WellknownValues.DotnetExecutablePath, _dotnetEnvironment.Path)
                 .Replace(WellknownValues.DotnetLoggerDirectory, _environment.GetPath(SpecialFolder.Bin))
                 .Replace(WellknownValues.TeamCityVersion, _teamCitySettings.Version)
-                .Replace(WellknownValues.TeamCityProcessFlowId, _teamCitySettings.FlowId)
                 // Docker
                 .Replace(WellknownValues.DockerExecutablePath, _dockerEnvironment.Path);
     }

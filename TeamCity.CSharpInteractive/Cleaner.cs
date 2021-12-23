@@ -16,10 +16,10 @@ namespace TeamCity.CSharpInteractive
 
         public IDisposable Track(string path)
         {
-            _log.Trace($"Start tracking \"{path}\".");
+            _log.Trace(() => new [] {new Text($"Start tracking \"{path}\".")});
             return Disposable.Create(() =>
             {
-                _log.Trace($"Delete \"{path}\".");
+                _log.Trace(() => new []{new Text($"Delete \"{path}\".")});
                 _fileSystem.DeleteDirectory(path, true);
             });
         }

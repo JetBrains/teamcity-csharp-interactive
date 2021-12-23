@@ -31,8 +31,9 @@
                     Color.Success => ConsoleColor.Green,
                     Color.Warning => ConsoleColor.Yellow,
                     Color.Error => ConsoleColor.Red,
-                    Color.Details => ConsoleColor.DarkCyan,
-                    _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)
+                    Color.Details => ConsoleColor.DarkBlue,
+                    Color.Highlighted => ConsoleColor.DarkCyan,
+                    _ => ConsoleColor.Gray
                 };
             }
 
@@ -44,8 +45,9 @@
                 Color.Success => ConsoleColor.Green,
                 Color.Warning => ConsoleColor.Yellow,
                 Color.Error => ConsoleColor.Red,
-                Color.Details => ConsoleColor.DarkCyan,
-                _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)
+                Color.Details => ConsoleColor.DarkBlue,
+                Color.Highlighted => ConsoleColor.DarkCyan,
+                _ => ConsoleColor.Black
             };
         }
 
@@ -59,7 +61,7 @@
                 Color.Warning => "33",
                 Color.Error => "31",
                 Color.Details => "36",
-                _ => throw new ArgumentOutOfRangeException(nameof(color), color, null)
+                _ => "39"
             };
     }
 }

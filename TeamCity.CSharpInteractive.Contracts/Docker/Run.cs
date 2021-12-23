@@ -16,8 +16,8 @@ namespace Docker
 
     [Immutype.Target]
     public record Run(
-        // Command to run in container
-        CommandLine CommandLine,
+        // Process to run in container
+        IProcess Process,
         // Docker image
         string Image,
         IEnumerable<(string name, string value)> Vars,
@@ -61,14 +61,20 @@ namespace Docker
         // Working directory inside the container
         string ContainerWorkingDirectory = "",
         // A file with environment variables inside the container
-        string EnvFile = "")
+        string EnvFile = "",
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Run(): this(new CommandLine(string.Empty), string.Empty) 
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : $"docker run {Image} {Process.ShortName}";
 
-        public Run(CommandLine commandLine, string image)
+        public Run(IProcess process, string image)
             : this(
-                commandLine,
+                process,
                 image,
                 ImmutableList<(string, string)>.Empty,
                 ImmutableList<string>.Empty,
@@ -78,38 +84,39 @@ namespace Docker
                 ImmutableList<(string, string)>.Empty)
         { }
 
-        public static implicit operator CommandLine(Run it)
+        public IStartInfo GetStartInfo(IHost host)
         {
+            var processInfo = Process.GetStartInfo(host);
             var cmd = new CommandLine(WellknownValues.DockerExecutablePath)
-                .WithWorkingDirectory(it.WorkingDirectory)
+                .WithWorkingDirectory(WorkingDirectory)
                 .WithArgs("run")
                 .AddBooleanArgs(
-                    ("-it", it.Name == string.Empty),
-                    ("--privileged", it.Privileged),
-                    ("--read-only", it.ReadOnly),
-                    ("--rm", it.AutoRemove))
-                .AddArgs("--expose", it.ExposedPorts)
-                .AddArgs("--publish", it.PublishedPorts)
-                .AddArgs("--mount", it.Mounts)
+                    ("-it", Name == string.Empty),
+                    ("--privileged", Privileged),
+                    ("--read-only", ReadOnly),
+                    ("--rm", AutoRemove))
+                .AddArgs("--expose", ExposedPorts)
+                .AddArgs("--publish", PublishedPorts)
+                .AddArgs("--mount", Mounts)
                 .AddArgs(
-                    ("--cpus", it.CPUs?.ToString() ?? ""),
-                    ("--entrypoint", it.EntryPoint),
-                    ("--hostname", it.HostName),
-                    ("--kernel-memory", it.KernelMemory?.ToString() ?? ""),
-                    ("--memory", it.Memory?.ToString() ?? ""),
-                    ("--name", it.Name ?? string.Empty),
-                    ("--network", it.Network),
-                    ("--platform", it.Platform),
-                    ("--platform", it.Pull?.ToString() ?? string.Empty),
-                    ("--user", it.User),
-                    ("--workdir", it.ContainerWorkingDirectory),
-                    ("--env-file", it.EnvFile))
-                .AddValues("-e", "=", it.CommandLine.Vars.ToArray());
+                    ("--cpus", CPUs?.ToString() ?? ""),
+                    ("--entrypoint", EntryPoint),
+                    ("--hostname", HostName),
+                    ("--kernel-memory", KernelMemory?.ToString() ?? ""),
+                    ("--memory", Memory?.ToString() ?? ""),
+                    ("--name", Name ?? string.Empty),
+                    ("--network", Network),
+                    ("--platform", Platform),
+                    ("--platform", Pull?.ToString() ?? string.Empty),
+                    ("--user", User),
+                    ("--workdir", ContainerWorkingDirectory),
+                    ("--env-file", EnvFile))
+                .AddValues("-e", "=", processInfo.Vars.ToArray());
 
             var additionalVolums = new HashSet<(string, string)>();
-            var args = it.CommandLine.Args.ToArray();
+            var args = processInfo.Args.ToArray();
 
-            var rootDirectory = it.Platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
+            var rootDirectory = Platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
             var integrationDirectory = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}";
             (string fromDir, string toDir)[] directoryMap = {
                 (WellknownValues.DotnetLoggerDirectory, $"{integrationDirectory}")
@@ -130,12 +137,14 @@ namespace Docker
 
             return cmd
                 .AddValues("-v", ":", additionalVolums.ToArray())
-                .AddValues("-v", ":", it.Volumes.ToArray())
-                .AddArgs(it.Options.ToArray())
-                .AddArgs(it.Image)
-                .AddArgs(it.CommandLine.ExecutablePath)
-                .WithVars(it.Vars)
+                .AddValues("-v", ":", Volumes.ToArray())
+                .AddArgs(Options.ToArray())
+                .AddArgs(Image)
+                .AddArgs(processInfo.ExecutablePath)
+                .WithVars(Vars)
                 .AddArgs(args);
         }
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

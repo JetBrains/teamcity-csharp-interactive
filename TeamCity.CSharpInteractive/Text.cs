@@ -8,6 +8,7 @@
     internal readonly record struct Text(string Value, Color Color = Color.Default)
     {
         public static readonly Text NewLine = new(System.Environment.NewLine);
+        public static readonly Text Tab = new("    ");
         
         public static implicit operator Text[](Text text) => new[] {text};
 

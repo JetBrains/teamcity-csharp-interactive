@@ -39,7 +39,7 @@ namespace TeamCity.CSharpInteractive
                 return Enumerable.Empty<NuGetPackage>();
             }
             
-            return lockFile.Libraries.Select(i => new NuGetPackage(i.Name, i.Version.Version, i.Type, Path.Combine(packagesPath, i.Path), i.Sha512));
+            return lockFile.Libraries.Select(i => new NuGetPackage(i.Name, i.Version.Version, i.Type, Path.Combine(packagesPath, i.Path), i.Sha512, i.Files.ToList().AsReadOnly()));
         }
 
         public IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string projectAssetsJson)
@@ -56,16 +56,16 @@ namespace TeamCity.CSharpInteractive
             var folders = lockFile.PackageFolders.Select(i => i.Path).ToHashSet();
             foreach (var target in lockFile.Targets)
             {
-                _log.Trace($"Processing target \"{target.Name}\".");
+                _log.Trace(() => new []{new Text($"Processing target \"{target.Name}\".")});
                 if (target.TargetFramework.DotNetFrameworkName != _dotnetEnvironment.TargetFrameworkMoniker)
                 {
-                    _log.Trace($"Skip processing of target \"{target.Name}\".");
+                    _log.Trace(() => new []{new Text($"Skip processing of target \"{target.Name}\".")});
                     continue;
                 }
 
                 foreach (var library in target.Libraries)
                 {
-                    _log.Trace($"Processing library \"{library.Name}\".");
+                    _log.Trace(() => new []{new Text($"Processing library \"{library.Name}\".")});
                     if (!librariesDict.TryGetValue(new LibraryKey(library.Name, library.Version), out var lockFileLibrary))
                     {
                         _log.Warning($"Cannot find the related library \"{library.Name}\", version {library.Version}.");
@@ -74,28 +74,28 @@ namespace TeamCity.CSharpInteractive
                     
                     foreach (var assembly in library.RuntimeAssemblies)
                     {
-                        _log.Trace($"Processing assembly \"{assembly.Path}\".");
+                        _log.Trace(() => new []{new Text($"Processing assembly \"{assembly.Path}\".")});
                         var baseAssemblyPath = Path.Combine(lockFileLibrary.Path, assembly.Path);
-                        _log.Trace($"Base assembly path is \"{baseAssemblyPath}\".");
+                        _log.Trace(() => new []{new Text($"Base assembly path is \"{baseAssemblyPath}\".")});
                         foreach (var folder in folders)
                         {
                             var fullAssemblyPath = Path.Combine(folder, baseAssemblyPath);
-                            _log.Trace($"Full assembly path is \"{fullAssemblyPath}\".");
+                            _log.Trace(() => new []{new Text($"Full assembly path is \"{fullAssemblyPath}\".")});
                             if (!File.Exists(fullAssemblyPath))
                             {
-                                _log.Trace($"File \"{baseAssemblyPath}\" does not exist.");
+                                _log.Trace(() => new []{new Text($"File \"{baseAssemblyPath}\" does not exist.")});
                                 continue;
                             }
 
                             var ext = Path.GetExtension(fullAssemblyPath).ToLowerInvariant();
                             if (ext == ".dll")
                             {
-                                _log.Trace($"Add reference to \"{fullAssemblyPath}\".");
+                                _log.Trace(() => new []{new Text($"Add reference to \"{fullAssemblyPath}\".")});
                                 yield return new ReferencingAssembly($"{Path.GetFileNameWithoutExtension(fullAssemblyPath)}", fullAssemblyPath);
                             }
                             else
                             {
-                                _log.Trace($"Skip file \"{fullAssemblyPath}\".");
+                                _log.Trace(() => new []{new Text($"Skip file \"{fullAssemblyPath}\".")});
                             }
 
                             break;

@@ -7,67 +7,77 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
     using Dotnet;
+    using JetBrains.TeamCity.ServiceMessages;
+    using JetBrains.TeamCity.ServiceMessages.Read;
 
     internal class BuildService: IBuild
     {
         private readonly ICommandLine _commandLine;
         private readonly Func<IBuildResult> _resultFactory;
         private readonly ITeamCitySettings _teamCitySettings;
-        private readonly ICommandLineOutputWriter _commandLineOutputWriter;
+        private readonly IProcessOutputWriter _processOutputWriter;
         private readonly IBuildMessageLogWriter _buildMessageLogWriter;
+        private readonly IServiceMessageParser _serviceMessageParser;
 
         public BuildService(
             ICommandLine commandLine,
             Func<IBuildResult> resultFactory,
             ITeamCitySettings teamCitySettings,
-            ICommandLineOutputWriter commandLineOutputWriter,
-            IBuildMessageLogWriter buildMessageLogWriter)
+            IProcessOutputWriter processOutputWriter,
+            IBuildMessageLogWriter buildMessageLogWriter,
+            IServiceMessageParser serviceMessageParser)
         {
             _commandLine = commandLine;
             _resultFactory = resultFactory;
             _teamCitySettings = teamCitySettings;
-            _commandLineOutputWriter = commandLineOutputWriter;
+            _processOutputWriter = processOutputWriter;
             _buildMessageLogWriter = buildMessageLogWriter;
+            _serviceMessageParser = serviceMessageParser;
         }
 
-        public Dotnet.BuildResult Run(in CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default)
+        public Dotnet.BuildResult Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
         {
             var ctx = _resultFactory();
-            var curCommandLine = commandLine;
-            var exitCode = _commandLine.Run(commandLine, output => Handler(curCommandLine, handler, output, ctx), timeout);
+            var exitCode = _commandLine.Run(process, output => Handle(output.StartInfo, handler, output, ctx), timeout);
             return ctx.CreateResult(exitCode);
         }
 
-        public async Task<Dotnet.BuildResult> RunAsync(CommandLine commandLine, Action<CommandLineOutput>? handler = default, CancellationToken cancellationToken = default)
+        public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
             var ctx = _resultFactory();
-            var exitCode = await _commandLine.RunAsync(commandLine, output => Handler(commandLine, handler, output, ctx), cancellationToken);
+            var exitCode = await _commandLine.RunAsync(process, output => Handle(output.StartInfo, handler, output, ctx), cancellationToken);
             return ctx.CreateResult(exitCode);
         }
-
-        private void Handler(in CommandLine commandLine, Action<CommandLineOutput>? handler, in CommandLineOutput output, IBuildResult result)
+        
+        private void Handle(IStartInfo info, Action<Output>? handler, in Output output, IBuildResult result)
         {
-            var messages = result.ProcessOutput(output);
+            var serviceMessages = _serviceMessageParser.ParseServiceMessages(output.Line).ToList().AsReadOnly();
+            var messages = result
+                .ProcessOutput(output.StartInfo, serviceMessages)
+                .DefaultIfEmpty(new BuildMessage(output.IsError ? BuildMessageState.Error : BuildMessageState.Info, Array.Empty<IServiceMessage>(), output.Line));
+
             if (handler != default)
             {
                 foreach (var buildMessage in messages)
                 {
-                    handler(new CommandLineOutput(commandLine, buildMessage.State > BuildMessageState.Warning, buildMessage.Text));
+                    handler(new Output(info, buildMessage.State > BuildMessageState.Warning, buildMessage.Text));
                 }
             }
             else
             {
-                if (_teamCitySettings.IsUnderTeamCity)
+                var curMessages = messages.ToArray();
+                if (_teamCitySettings.IsUnderTeamCity && curMessages.Any(i => i.State == BuildMessageState.ServiceMessage))
                 {
-                    _commandLineOutputWriter.Write(output);
+                    _processOutputWriter.Write(output);
                 }
                 else
                 {
-                    foreach (var buildMessage in messages)
+                    foreach (var buildMessage in curMessages)
                     {
                         _buildMessageLogWriter.Write(buildMessage);
                     }

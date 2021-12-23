@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
+    using Contracts;
     using NuGet.Common;
 
     [ExcludeFromCodeCoverage]
@@ -13,19 +14,19 @@ namespace TeamCity.CSharpInteractive
 
         public NugetLogger(ILog<NugetLogger> log) => _log = log;
 
-        public void LogDebug(string data) => _log.Trace(new []{new Text(data)});
+        public void LogDebug(string data) => _log.Trace(() => new []{new Text(data)}, "NuGet");
 
-        public void LogVerbose(string data) => _log.Trace(new []{new Text(data)});
+        public void LogVerbose(string data) => _log.Trace(() => new []{new Text(data)}, "NuGet");
 
-        public void LogInformation(string data) => _log.Info(new []{new Text(data)});
+        public void LogInformation(string data) => _log.Info(data);
 
-        public void LogMinimal(string data) => _log.Info(new []{new Text(data)});
+        public void LogMinimal(string data) => _log.Info(new[] {new Text(data, Color.Highlighted)});
 
-        public void LogWarning(string data) => _log.Warning(new []{new Text(data)});
+        public void LogWarning(string data) => _log.Warning(data);
 
-        public void LogError(string data) => _log.Error(ErrorId.Nuget, new []{new Text(data)});
+        public void LogError(string data) => _log.Error(ErrorId.Nuget, data);
 
-        public void LogInformationSummary(string data) => _log.Trace(new []{new Text(data)});
+        public void LogInformationSummary(string data) => _log.Trace(() => new []{new Text(data)}, "NuGet");
 
         public void Log(LogLevel level, string data)
         {

@@ -20,7 +20,7 @@ namespace TeamCity.CSharpInteractive
                 yield break;
             }
 
-            _log.Trace(new []{new Text("REPL help")});
+            _log.Trace(() => new []{new Text("REPL help")});
             yield return HelpCommand.Shared;
         }
     }

@@ -12,8 +12,8 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class NuGetServiceTests
     {
-        private static readonly NuGetPackage NuGetPackage1 = new("Abc", new Version(1, 2, 3), "package", "AbcPath", "111222");
-        private static readonly NuGetPackage NuGetPackage2 = new("Abc.Contracts", new Version(3, 2, 1), "package", "AbcContractsPath", "111233");
+        private static readonly NuGetPackage NuGetPackage1 = new("Abc", new Version(1, 2, 3), "package", "AbcPath", "111222", Array.Empty<string>());
+        private static readonly NuGetPackage NuGetPackage2 = new("Abc.Contracts", new Version(3, 2, 1), "package", "AbcContractsPath", "111233", Array.Empty<string>());
         private static readonly IEnumerable<string> Sources = new []{"src1", "src2"};
         private static readonly IEnumerable<string> FallBacks = new []{"fb1", "fb2"};
 

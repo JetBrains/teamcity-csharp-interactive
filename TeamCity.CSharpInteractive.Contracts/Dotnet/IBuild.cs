@@ -10,8 +10,8 @@ namespace Dotnet
 
     public interface IBuild
     {
-        BuildResult Run(in CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default);
+        BuildResult Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default);
         
-        Task<BuildResult> RunAsync(CommandLine commandLine, Action<CommandLineOutput>? handler = default, CancellationToken cancellationToken = default);
+        Task<BuildResult> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default);
     }
 }

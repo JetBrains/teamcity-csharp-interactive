@@ -9,9 +9,6 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal static class LogExtensions
     {
-        public static IDisposable Block<T>(this ILog<T> log, string blockName) => 
-            string.IsNullOrWhiteSpace(blockName) ? Disposable.Empty : log.Block(new[] {new Text(blockName)});
-
         public static ILog<T> Error<T>(this ILog<T> log, ErrorId id, params string[] error)
         {
             log.Error(id, error.Select(i => new Text(i)).ToArray());
@@ -33,24 +30,6 @@ namespace TeamCity.CSharpInteractive
         public static ILog<T> Warning<T>(this ILog<T> log, params string[] warning)
         {
             log.Warning(warning.Select(i => new Text(i)).ToArray());
-            return log;
-        }
-        
-        public static ILog<T> Trace<T>(this ILog<T> log, params Text[] traceMessage)
-        {
-            log.Trace(string.Empty, traceMessage);
-            return log;
-        }
-        
-        public static ILog<T> Trace<T>(this ILog<T> log, string origin, params string[] traceMessage)
-        {
-            log.Trace(origin, traceMessage.Select(i => new Text(i)).ToArray());
-            return log;
-        }
-        
-        public static ILog<T> Trace<T>(this ILog<T> log, params string[] traceMessage)
-        {
-            log.Trace(string.Empty, traceMessage);
             return log;
         }
     }

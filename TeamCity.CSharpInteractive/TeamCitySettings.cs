@@ -5,7 +5,7 @@ namespace TeamCity.CSharpInteractive
     {
         private const string VersionVariableName = "TEAMCITY_VERSION";
         private const string ProjectNameVariableName = "TEAMCITY_PROJECT_NAME";
-        private const string FlowIdEnvironmentVariableName = "TEAMCITY_PROCESS_FLOW_ID";
+        internal const string FlowIdEnvironmentVariableName = "TEAMCITY_PROCESS_FLOW_ID";
         private const string DefaultFlowId = "ROOT";
         private readonly IHostEnvironment _hostEnvironment;
 

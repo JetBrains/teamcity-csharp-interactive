@@ -34,7 +34,7 @@ namespace TeamCity.CSharpInteractive
                 yield break;
             }
 
-            _log.Trace(new []{new Text($"REPL #r \"{fullAssemblyPath}\"")});
+            _log.Trace(() => new []{new Text($"REPL #r \"{fullAssemblyPath}\"")});
             yield return new ScriptCommand(assemblyPath, $"#r \"{fullAssemblyPath}\"");
         }
     }

@@ -33,39 +33,46 @@ namespace Dotnet
         string Arch = "",
         string OS = "",
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Publish()
             : this(ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet pack";
 
-        public static implicit operator CommandLine(Publish it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("publish")
-            .AddArgs(new []{
-                it.Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddMSBuildIntegration(it.Integration, it.Verbosity)
-            .AddArgs(
-                ("--output", it.Output),
-                ("--manifest", it.Manifest),
-                ("--framework", it.Framework),
-                ("--runtime", it.Runtime),
-                ("--configuration", it.Configuration),
-                ("--version-suffix", it.VersionSuffix),
-                ("--arch", it.Arch),
-                ("--os", it.OS)
-            )
-            .AddBooleanArgs(
-                ("--use-current-runtime", it.UseCurrentRuntime),
-                ("--no-build", it.NoBuild),
-                ("--self-contained", it.SelfContained),
-                ("--no-self-contained", it.NoSelfContained),
-                ("--nologo", it.NoLogo),
-                ("--no-restore", it.NoRestore)
-            )
-            .AddProps("/p", it.Props.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("publish")
+                .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddArgs(
+                    ("--output", Output),
+                    ("--manifest", Manifest),
+                    ("--framework", Framework),
+                    ("--runtime", Runtime),
+                    ("--configuration", Configuration),
+                    ("--version-suffix", VersionSuffix),
+                    ("--arch", Arch),
+                    ("--os", OS)
+                )
+                .AddBooleanArgs(
+                    ("--use-current-runtime", UseCurrentRuntime),
+                    ("--no-build", NoBuild),
+                    ("--self-contained", SelfContained),
+                    ("--no-self-contained", NoSelfContained),
+                    ("--nologo", NoLogo),
+                    ("--no-restore", NoRestore)
+                )
+                .AddProps("/p", Props.ToArray())
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

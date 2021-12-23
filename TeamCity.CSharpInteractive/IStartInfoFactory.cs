@@ -5,6 +5,6 @@ namespace TeamCity.CSharpInteractive
 
     internal interface IStartInfoFactory
     {
-        ProcessStartInfo Create(CommandLine commandLine);
+        ProcessStartInfo Create(IStartInfo info);
     }
 }

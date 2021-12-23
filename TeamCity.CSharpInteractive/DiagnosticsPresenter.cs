@@ -21,7 +21,7 @@ namespace TeamCity.CSharpInteractive
                 switch (diagnostic.Severity)
                 {
                     case DiagnosticSeverity.Hidden:
-                        _log.Trace(new []{new Text(diagnostic.ToString())});
+                        _log.Trace(() => new []{new Text(diagnostic.ToString())});
                         break;
 
                     case DiagnosticSeverity.Info:

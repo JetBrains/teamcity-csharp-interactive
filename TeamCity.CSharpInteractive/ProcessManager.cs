@@ -6,53 +6,62 @@ namespace TeamCity.CSharpInteractive
     using Cmd;
     using Contracts;
 
-    internal class Process: IProcess
+    internal class ProcessManager: IProcessManager
     {
-        private readonly ILog<Process> _log;
-        private readonly ICommandLineOutputWriter _commandLineOutputWriter;
+        private readonly ILog<ProcessManager> _log;
+        private readonly IProcessOutputWriter _processOutputWriter;
         private readonly IStartInfoFactory _startInfoFactory;
         private readonly Text _stdOutPrefix;
         private readonly Text _stdErrPrefix;
-        private readonly System.Diagnostics.Process _process;
-        private CommandLine _commandLine = new(string.Empty);
-        private Text _processId;
+        private readonly Process _process;
+        private Text _processIdText;
         private int _disposed;
+        private IStartInfo? _processInfo;
 
-        public Process(
-            ILog<Process> log,
-            ICommandLineOutputWriter commandLineOutputWriter,
+        public ProcessManager(
+            ILog<ProcessManager> log,
+            IProcessOutputWriter processOutputWriter,
             IStringService stringService,
             IStartInfoFactory startInfoFactory)
         {
             _log = log;
-            _commandLineOutputWriter = commandLineOutputWriter;
+            _processOutputWriter = processOutputWriter;
             _startInfoFactory = startInfoFactory;
             _stdOutPrefix = new Text($"{stringService.Tab}OUT: "); 
             _stdErrPrefix = new Text($"{stringService.Tab}ERR: ", Color.Error);
-            _process = new System.Diagnostics.Process{ EnableRaisingEvents = true };
+            _process = new Process{ EnableRaisingEvents = true };
             _process.OutputDataReceived += ProcessOnOutputDataReceived;
             _process.ErrorDataReceived += ProcessOnErrorDataReceived;
             _process.Exited += ProcessOnExited;
         }
 
-        public event Action<CommandLineOutput>? OnOutput;
+        public event Action<Output>? OnOutput;
 
         public event Action? OnExit;
 
-        public int Id => _process.Id;
+        public int Id { get; private set; }
 
         public int ExitCode => _process.ExitCode;
 
-        public bool Start(CommandLine commandLine, out ProcessStartInfo startInfo)
+        public bool Start(IStartInfo info, out ProcessStartInfo startInfo)
         {
-            _commandLine = commandLine;
-            startInfo = _process.StartInfo = _startInfoFactory.Create(commandLine);
+            _processInfo = info;
+            startInfo = _process.StartInfo = _startInfoFactory.Create(info);
             if (!_process.Start())
             {
                 return false;
             }
+            
+            try
+            {
+                 Id = _process.Id;
+            }
+            catch
+            {
+                // ignored
+            }
 
-            _processId = new Text(_process.Id.ToString().PadRight(5));
+            _processIdText = new Text(Id.ToString().PadRight(5));
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
             return true;
@@ -64,13 +73,13 @@ namespace TeamCity.CSharpInteractive
 
         public void Kill() => _process.Kill();
 
-        private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, _commandLine, false);
+        private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, false);
 
-        private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, _commandLine, true);
+        private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, true);
             
         private void ProcessOnExited(object? sender, EventArgs e) => OnExit?.Invoke();
 
-        private void ProcessOutput(DataReceivedEventArgs e, CommandLine commandLine, bool isError)
+        private void ProcessOutput(DataReceivedEventArgs e, bool isError)
         {
             var line = e.Data;
             if (line == default)
@@ -79,15 +88,15 @@ namespace TeamCity.CSharpInteractive
             }
 
             var handler = OnOutput;
-            var output = new CommandLineOutput(commandLine, isError, line);
+            var output = new Output(_processInfo!, isError, line);
             if (handler != default)
             {
-                _log.Trace(_processId, isError ? _stdErrPrefix : _stdOutPrefix, new Text(line));
+                _log.Trace(() => new []{_processIdText, isError ? _stdErrPrefix : _stdOutPrefix, new Text(line)}, "=>");
                 handler(output);
             }
             else
             {
-                _commandLineOutputWriter.Write(output);
+                _processOutputWriter.Write(output);
             }
         }
 
@@ -107,7 +116,7 @@ namespace TeamCity.CSharpInteractive
             }
             catch (Exception exception)
             {
-                _log.Trace($"Exception during disposing: {exception}.");
+                _log.Trace(() => new []{new Text($"Exception during disposing: {exception}.")});
             }
         }
     }

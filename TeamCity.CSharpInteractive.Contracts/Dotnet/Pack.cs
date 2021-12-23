@@ -28,35 +28,42 @@ namespace Dotnet
         string Configuration = "",
         bool UseCurrentRuntime = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Pack()
             : this(ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet pack";
 
-        public static implicit operator CommandLine(Pack it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("pack")
-            .AddArgs(new []{
-                it.Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddMSBuildIntegration(it.Integration, it.Verbosity)
-            .AddArgs(
-                ("--output", it.Output),
-                ("--version-suffix", it.VersionSuffix),
-                ("--configuration", it.Configuration)
-            )
-            .AddBooleanArgs(
-                ("--no-build", it.NoBuild),
-                ("--include-symbols", it.IncludeSymbols),
-                ("--include-source", it.IncludeSource),
-                ("--serviceable", it.Serviceable),
-                ("--nologo", it.NoLogo),
-                ("--no-restore", it.NoRestore),
-                ("--use-current-runtime", it.UseCurrentRuntime)
-            )
-            .AddProps("/p", it.Props.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("pack")
+                .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddArgs(
+                    ("--output", Output),
+                    ("--version-suffix", VersionSuffix),
+                    ("--configuration", Configuration)
+                )
+                .AddBooleanArgs(
+                    ("--no-build", NoBuild),
+                    ("--include-symbols", IncludeSymbols),
+                    ("--include-source", IncludeSource),
+                    ("--serviceable", Serviceable),
+                    ("--nologo", NoLogo),
+                    ("--no-restore", NoRestore),
+                    ("--use-current-runtime", UseCurrentRuntime)
+                )
+                .AddProps("/p", Props.ToArray())
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

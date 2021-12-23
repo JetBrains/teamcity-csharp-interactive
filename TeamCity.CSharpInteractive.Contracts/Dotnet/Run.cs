@@ -26,32 +26,40 @@ namespace Dotnet
         bool NoDependencies = false,
         bool Force = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Run()
             : this(ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet run";
 
-        public static implicit operator CommandLine(Run it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("run")
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddArgs(
-                ("--framework", it.Framework),
-                ("--configuration", it.Configuration),
-                ("--runtime", it.Runtime),
-                ("--project", it.Project),
-                ("--launch-profile", it.LaunchProfile),
-                ("--verbosity", it.Verbosity?.ToString().ToLowerInvariant())
-            )
-            .AddBooleanArgs(
-                ("--no-launch-profile", it.NoLaunchProfile),
-                ("--no-build", it.NoBuild),
-                ("--no-restore", it.NoRestore),
-                ("--no-dependencies", it.NoDependencies),
-                ("--force", it.Force)
-            )
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("run")
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddArgs(
+                    ("--framework", Framework),
+                    ("--configuration", Configuration),
+                    ("--runtime", Runtime),
+                    ("--project", Project),
+                    ("--launch-profile", LaunchProfile),
+                    ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
+                )
+                .AddBooleanArgs(
+                    ("--no-launch-profile", NoLaunchProfile),
+                    ("--no-build", NoBuild),
+                    ("--no-restore", NoRestore),
+                    ("--no-dependencies", NoDependencies),
+                    ("--force", Force)
+                )
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => ProcessState.Unknown;
     }
 }

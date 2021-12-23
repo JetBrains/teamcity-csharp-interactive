@@ -12,8 +12,8 @@ namespace TeamCity.CSharpInteractive
         
         void Info(params Text[] message);
 
-        void Trace(string origin, params Text[] traceMessage);
+        void Trace(Func<Text[]> traceMessagesFactory, string origin = "");
 
-        IDisposable Block(Text[] block);
+        IDisposable Block(params Text[] block);
     }
 }

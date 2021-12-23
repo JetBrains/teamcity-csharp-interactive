@@ -20,7 +20,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         public void ShouldRun()
         {
             // Given
-            var events = new List<CommandLineOutput>();
+            var events = new List<Output>();
 
             // When
             var exitCode = GetService<ICommandLine>().Run(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
@@ -36,7 +36,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         public void ShouldRunWithEnvironmentVariable()
         {
             // Given
-            var events = new List<CommandLineOutput>();
+            var events = new List<Output>();
 
             // When
             var exitCode = GetService<ICommandLine>().Run(
@@ -74,7 +74,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         public async Task ShouldRunAsync()
         {
             // Given
-            var events = new List<CommandLineOutput>();
+            var events = new List<Output>();
 
             // When
             var exitCode = await GetService<ICommandLine>().RunAsync(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));

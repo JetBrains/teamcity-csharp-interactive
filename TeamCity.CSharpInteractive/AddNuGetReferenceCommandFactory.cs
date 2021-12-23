@@ -40,7 +40,7 @@ namespace TeamCity.CSharpInteractive
                 }
             }
                 
-            _log.Trace(new []{new Text($"REPL #r \"nuget:{packageIdStr}, {versionRange}\"")});
+            _log.Trace(() => new []{new Text($"REPL #r \"nuget:{packageIdStr}, {versionRange}\"")}, string.Empty);
             yield return new AddNuGetReferenceCommand(packageIdStr, versionRange);
         }
     }

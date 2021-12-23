@@ -32,39 +32,46 @@ namespace Dotnet
         string LockFilePath = "",
         bool ForceEvaluate = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Restore()
             : this(ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty)
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet restore";
 
-        public static implicit operator CommandLine(Restore it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("restore")
-            .AddArgs(new []{
-                it.Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddMSBuildIntegration(it.Integration, it.Verbosity)
-            .AddArgs(it.Sources.Select(i => ("--source", (string?)i)).ToArray())
-            .AddArgs(
-                ("--packages", it.Packages),
-                ("--configfile", it.ConfigFile),
-                ("--runtime", it.Runtime),
-                ("--lock-file-path", it.LockFilePath)
-            )
-            .AddBooleanArgs(
-                ("--use-current-runtime", it.UseCurrentRuntime),
-                ("--disable-parallel", it.DisableParallel),
-                ("--no-cache", it.NoCache),
-                ("--ignore-failed-sources", it.IgnoreFailedSources),
-                ("--force", it.Force),
-                ("--no-dependencies", it.NoDependencies),
-                ("--use-lock-file", it.UseLockFile),
-                ("--locked-mode", it.LockedMode),
-                ("--force-evaluate", it.ForceEvaluate)
-            )
-            .AddProps("/p", it.Props.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("restore")
+                .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
+                .AddArgs(
+                    ("--packages", Packages),
+                    ("--configfile", ConfigFile),
+                    ("--runtime", Runtime),
+                    ("--lock-file-path", LockFilePath)
+                )
+                .AddBooleanArgs(
+                    ("--use-current-runtime", UseCurrentRuntime),
+                    ("--disable-parallel", DisableParallel),
+                    ("--no-cache", NoCache),
+                    ("--ignore-failed-sources", IgnoreFailedSources),
+                    ("--force", Force),
+                    ("--no-dependencies", NoDependencies),
+                    ("--use-lock-file", UseLockFile),
+                    ("--locked-mode", LockedMode),
+                    ("--force-evaluate", ForceEvaluate)
+                )
+                .AddProps("/p", Props.ToArray())
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

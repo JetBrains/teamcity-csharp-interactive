@@ -4,19 +4,31 @@
 namespace Cmd
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
+    using TeamCity.CSharpInteractive.Contracts;
 
     [Immutype.Target]
     public record CommandLine(
         string ExecutablePath,
         string WorkingDirectory,
         IEnumerable<string> Args,
-        IEnumerable<(string name, string value)> Vars)
+        IEnumerable<(string name, string value)> Vars,
+        string ShortName = "")
+        : IStartInfo, IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public CommandLine(string executablePath, params string[] args)
             :this(executablePath, string.Empty, args, Enumerable.Empty<(string name, string value)>())
         { }
+
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : Path.GetFileNameWithoutExtension(ExecutablePath);
+
+        public IStartInfo GetStartInfo(IHost host) => this;
+
+        public ProcessState GetState(int exitCode) => ProcessState.Unknown;
 
         public override string ToString()
         {

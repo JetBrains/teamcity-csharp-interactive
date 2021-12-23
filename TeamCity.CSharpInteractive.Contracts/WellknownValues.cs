@@ -7,7 +7,6 @@ namespace TeamCity.CSharpInteractive.Contracts
         public const string DotnetExecutablePath = "%DotnetExecutablePath%";
         public const string DotnetLoggerDirectory = "%DotnetLoggerDirectory%";
         public const string TeamCityVersion = "%TeamCityVersion%";
-        public const string TeamCityProcessFlowId = "%TeamCityProcessFlowId%";
         // Docker
         public const string DockerExecutablePath = "%DockerExecutablePath%";
     }

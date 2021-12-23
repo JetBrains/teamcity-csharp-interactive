@@ -37,14 +37,14 @@ namespace TeamCity.CSharpInteractive
             {
                 lock (_props)
                 {
-                    _log.Trace($"Props[\"{key}\"]=\"{value}\"");
+                    _log.Trace(() => new []{new Text($"Props[\"{key}\"]=\"{value}\"")});
                     if (!string.IsNullOrEmpty(value))
                     {
                         _props[key] = value;
                     }
                     else
                     {
-                        _log.Trace($"Props.Remove(\"{key}\")");
+                        _log.Trace(() => new []{new Text($"Props.Remove(\"{key}\")")});
                         _props.Remove(key);
                     }
                 }
@@ -70,7 +70,7 @@ namespace TeamCity.CSharpInteractive
             {
                 _props.TryGetValue(key, out var curValue);
                 value = curValue ?? string.Empty;
-                _log.Trace($"Props[\"{key}\"] returns \"{value}\"");
+                _log.Trace(() => new []{new Text($"Props[\"{key}\"] returns \"{curValue ?? "empty"}\"")});
                 return !string.IsNullOrEmpty(value);
             }
         }

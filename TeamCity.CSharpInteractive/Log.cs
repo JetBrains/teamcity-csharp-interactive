@@ -3,6 +3,7 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Contracts;
@@ -60,13 +61,13 @@ namespace TeamCity.CSharpInteractive
             }
         }
 
-        public void Trace(string origin, params Text[] traceMessage)
+        public void Trace(Func<Text[]> traceMessagesFactory, string origin)
         {
             // ReSharper disable once InvertIf
             if (_settings.VerbosityLevel >= VerbosityLevel.Diagnostic)
             {
                 origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
-                _stdOut.WriteLine(GetMessage(new Text($"{origin, -40}") + traceMessage, Color.Trace));
+                _stdOut.WriteLine(GetMessage(new Text($"{origin, -40}") + traceMessagesFactory(), Color.Trace));
             }
         }
 
@@ -82,12 +83,7 @@ namespace TeamCity.CSharpInteractive
             return Disposable.Create(() => Log.Tabs--);
         }
 
-        private static Text[] GetMessage(Text[] message, Color defaultColor)
-        {
-            var tabsStr = new string(' ', Log.Tabs * 2);
-            message = message.Select(i => new Text(i.Value, i.Color)) .ToArray();
-            message = new Text(tabsStr) + message;
-            return message.WithDefaultColor(defaultColor);
-        }
+        private static Text[] GetMessage(IEnumerable<Text> message, Color defaultColor) => 
+            Enumerable.Repeat(Text.Tab, Log.Tabs).Concat(message).ToArray().WithDefaultColor(defaultColor);
     }
 }

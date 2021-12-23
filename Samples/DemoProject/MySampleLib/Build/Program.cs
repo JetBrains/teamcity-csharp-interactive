@@ -5,9 +5,6 @@ using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
 var currentDirectory = Environment.CurrentDirectory;
 
-// Package version
-var packageVersion = Props["version"];
-
 // Target configuration
 var configuration = string.IsNullOrEmpty(Props["configuration"]) ? "Release" : Props["configuration"];
 
@@ -23,7 +20,9 @@ var requiredSdkVersion = new Version(6, 0);
 // NuGet package id
 const string packageId = "MySampleLib";
 
-if(string.IsNullOrEmpty(packageVersion))
+// Package version
+var packageVersion = Props["version"];
+if (string.IsNullOrEmpty(packageVersion))
 {
     Info("Evaluate next NuGet package version.");
     packageVersion = 
@@ -62,7 +61,6 @@ else
     return;
 }
 
-Info("Clean.");
 var cleanResult = build.Run(new Clean());
 if (!cleanResult.Success)
 {
@@ -70,9 +68,9 @@ if (!cleanResult.Success)
     return;
 }
 
-Info("Running MSBuild.");
 var msbuildResult = build.Run(
     new MSBuild()
+        .WithShortName("Rebuild solution")
         .WithProject("MySampleLib.sln")
         .WithTarget("Rebuild")
         .WithRestore(true)
@@ -89,7 +87,7 @@ Info($"Running flaky tests with {testAttempts} attempts.");
 var failedTests =
     Enumerable.Repeat(new Test().WithNoBuild(true).AddProps(commonProps), testAttempts)
     // Passing an output handler to avoid reporting to CI
-    .Select(test => build.Run(test, _ => {}))
+    .Select((test, index) => build.Run(test.WithShortName($"Test - attempt {index + 1}"), _ => {}))
     .TakeWhile(test => !test.Success)
     .ToList();
 
@@ -108,11 +106,12 @@ var flakyTests =
     .OrderBy(i => i)
     .ToList();
 
-Info($"Build a {configuration} version.");
 var buildResult = build.Run(
     new Build()
+        .WithShortName($"Build a {configuration} version.")
         .WithConfiguration(configuration)
         .WithOutput(outputDir)
+        .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
 if (!buildResult.Success)
@@ -129,7 +128,6 @@ var dockerTestCommand = new Docker.Run(testCommand, dockerImage)
     .AddVolumes((currentDirectory, "/project"))
     .WithContainerWorkingDirectory("/project");
 
-WriteLine($"Starting parallel tests.");
 var testInContainerTask = build.RunAsync(dockerTestCommand);
 var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll")));
 Task.WaitAll(testInContainerTask, vsTestTask);
@@ -147,13 +145,14 @@ if (!vsTestTask.Result.Success)
     return;
 }
 
-Info($"Pack {configuration} version.");
 var packResult = build.Run(
     new Pack()
+        .WithShortName($"Pack {configuration} version.")
         .WithConfiguration(configuration)
         .WithOutput(outputDir)
         .WithIncludeSymbols(true)
         .WithIncludeSource(true)
+        .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
 if (!packResult.Success)

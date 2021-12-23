@@ -15,7 +15,7 @@ namespace TeamCity.CSharpInteractive
             foreach (var source in data)
             foreach (var text in source.GetTrace())
             {
-                _log.Trace(text);
+                _log.Trace(() => new []{text});
             }
         }
     }

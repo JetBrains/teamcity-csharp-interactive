@@ -6,9 +6,9 @@ namespace Dotnet
     using System.Collections.Generic;
     using JetBrains.TeamCity.ServiceMessages;
 
-    public record BuildMessage(
+    public readonly record struct BuildMessage(
         BuildMessageState State,
-        IEnumerable<IServiceMessage> ServiceMessages,
+        IReadOnlyList<IServiceMessage> ServiceMessages,
         string Text = "",
         string ErrorDetails = "");
 }

@@ -9,8 +9,6 @@ namespace TeamCity.CSharpInteractive
     using System.Reflection;
     using System.Runtime.Versioning;
     using System.Threading;
-    using Cmd;
-    using Contracts;
     using JetBrains.TeamCity.ServiceMessages.Read;
     using JetBrains.TeamCity.ServiceMessages.Write;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
@@ -19,7 +17,7 @@ namespace TeamCity.CSharpInteractive
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Scripting;
-    using NuGet;
+    using Contracts;
     using Pure.DI;
     using static Pure.DI.Lifetime;
 
@@ -96,8 +94,11 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITextToColorStrings>().To<TextToColorStrings>()
                 .Bind<ITestDisplayNameToFullyQualifiedNameConverter>().To<TestDisplayNameToFullyQualifiedNameConverter>()
                 .Bind<IFileExplorer>().To<FileExplorer>()
-                .Bind<ICommandLineOutputWriter>().To<CommandLineOutputWriter>()
+                .Bind<IProcessOutputWriter>().To<ProcessOutputWriter>()
                 .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
+                .Bind<Func<Endpoint, IRestClient>>().To(_ => new Func<Endpoint, IRestClient>(endpoint => new RestClient(endpoint)))
+                .Bind<ITeamCityParameters>().To<TeamCityParameters>()
+                .Bind<IJavaPropertiesParser>().To<JavaPropertiesParser>()
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()
@@ -140,25 +141,27 @@ namespace TeamCity.CSharpInteractive
 
             DI.Setup()
                 .Bind<IStartInfoFactory>().To<StartInfoFactory>()
-                .Bind<IProcess>().As(Transient).To<Process>()
+                .Bind<IProcessManager>().As(Transient).To<ProcessManager>()
                 .Bind<IProperties>("Default").To<Properties>()
                 .Bind<IProperties>("TeamCity").To<TeamCityProperties>()
 
                 // Public
                 .Bind<IHost>().To<HostService>()
                 .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
-                .Bind<INuGet>().To<NuGetService>()
-                .Bind<ICommandLine>().To<CommandLineService>()
+                .Bind<NuGet.INuGet>().To<NuGetService>()
+                .Bind<Cmd.ICommandLine>("base").To<CommandLineService>()
+                .Bind<Cmd.ICommandLine>().To<CommandLineInFlowService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
+                .Bind<ITeamCity>().To<TeamCityService>()
 
                 // TeamCity Service messages
                 .Bind<ITeamCityWriter>().To<HierarchicalTeamCityWriter>()
                 .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
                 .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
-                .Bind<IFlowIdGenerator>().To<FlowIdGenerator>()
+                .Bind<IFlowIdGenerator>().Bind<IFlowContext>().To<FlowIdGenerator>()
                 .Bind<DateTime>().As(Transient).To(_ => DateTime.Now)
                 .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
-                .Bind<ITeamCityWriter>("Root").To(
+                .Bind<ITeamCityWriter>("Root").As(Transient).To(
                     ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
                         str => ctx.Resolve<IConsole>().WriteToOut((default, str + "\n"))))
                 .Bind<IServiceMessageParser>().To<ServiceMessageParser>();

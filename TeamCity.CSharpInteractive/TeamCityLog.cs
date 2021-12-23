@@ -46,13 +46,13 @@ namespace TeamCity.CSharpInteractive
             }
         }
 
-        public void Trace(string origin, params Text[] traceMessage)
+        public void Trace(Func<Text[]> traceMessagesFactory, string origin)
         {
             // ReSharper disable once InvertIf
             if (_settings.VerbosityLevel >= VerbosityLevel.Diagnostic)
             {
                 origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
-                _teamCityWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin, -40}") + traceMessage).WithDefaultColor(Color.Trace)));
+                _teamCityWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin, -40}") + traceMessagesFactory()).WithDefaultColor(Color.Trace)));
             }
         }
 

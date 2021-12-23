@@ -60,7 +60,7 @@ namespace TeamCity.CSharpInteractive
             var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
             var tfm = targetFrameworkMoniker ?? _dotnetEnvironment.TargetFrameworkMoniker;
             targetFrameworkMoniker = _targetFrameworkMonikerParser.Parse(tfm);
-            _log.Trace($"Restore nuget package {packageId} {versionRange} to \"{outputPath}\" and \"{packagesPath}\".");
+            _log.Trace(() => new []{new Text($"Restore nuget package {packageId} {versionRange} to \"{outputPath}\" and \"{packagesPath}\".")});
             var restoreGraphItems = new[]
             {
                 CreateTaskItem("RestoreSpec"),

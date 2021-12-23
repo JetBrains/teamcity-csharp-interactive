@@ -9,67 +9,56 @@ namespace TeamCity.CSharpInteractive
     using Cmd;
     using Dotnet;
     using JetBrains.TeamCity.ServiceMessages;
-    using JetBrains.TeamCity.ServiceMessages.Read;
 
     internal class BuildResult : IBuildResult
     {
         private readonly ITestDisplayNameToFullyQualifiedNameConverter _testDisplayNameToFullyQualifiedNameConverter;
-        private readonly IServiceMessageParser _serviceMessageParser;
         private readonly List<BuildMessage> _messages = new();
         private readonly List<TestResult> _tests = new();
         private readonly Dictionary<TestKey, TestContext> _currentTests = new();
-        private CommandLine _commandLine = new(string.Empty);
 
         public BuildResult(
-            ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter,
-            IServiceMessageParser serviceMessageParser)
-        {
+            ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter) =>
             _testDisplayNameToFullyQualifiedNameConverter = testDisplayNameToFullyQualifiedNameConverter;
-            _serviceMessageParser = serviceMessageParser;
-        }
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Local
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public IEnumerable<BuildMessage> ProcessOutput(in CommandLineOutput output)
+        public IEnumerable<BuildMessage> ProcessOutput(IStartInfo startInfo, IReadOnlyList<IServiceMessage> messages)
         {
-            _commandLine = output.CommandLine;
-            var (_, isError, line) = output;
-            var serviceMessages = _serviceMessageParser.ParseServiceMessages(line).ToArray();
-            return serviceMessages
+            return messages
                 .Select(
                     message => message.Name.ToLowerInvariant() switch
                     {
-                        "teststdout" => OnStdOut(message),
-                        "teststderr" => OnStdErr(message),
+                        "teststdout" => OnStdOut(message, startInfo),
+                        "teststderr" => OnStdErr(message, startInfo),
                         "testfinished" => OnTestFinished(message),
                         "testignored " => OnTestIgnored(message),
                         "testfailed " => OnTestFailed(message),
                         "message" => OnMessage(message),
                         "buildproblem" => OnBuildProblem(message),
-                        _ => new[] { new BuildMessage(BuildMessageState.ServiceMessage, serviceMessages) }
+                        _ => new[] { new BuildMessage(BuildMessageState.ServiceMessage, messages) }
                     })
                 .SelectMany(i => i)
-                .DefaultIfEmpty(new BuildMessage(isError ? BuildMessageState.Error : BuildMessageState.Info, Enumerable.Empty<IServiceMessage>(), line))
                 .ToArray();
         }
 
         public Dotnet.BuildResult CreateResult(int? exitCode) =>
-            new(exitCode, _messages, _tests);
+            new(exitCode, _messages.AsReadOnly(), _tests.AsReadOnly());
 
-        private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message)
+        private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo)
         {
             var output = message.GetValue("out") ?? string.Empty;
-            GetTestContext(message).AddStdOut(_commandLine, output);
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
-            yield return new BuildMessage(BuildMessageState.Info, Enumerable.Empty<IServiceMessage>(), output);
+            GetTestContext(message).AddStdOut(startInfo, output);
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
+            yield return new BuildMessage(BuildMessageState.Info, Array.Empty<IServiceMessage>(), output);
         }
 
-        private IEnumerable<BuildMessage> OnStdErr(IServiceMessage message)
+        private IEnumerable<BuildMessage> OnStdErr(IServiceMessage message, IStartInfo info)
         {
             var output = message.GetValue("out") ?? string.Empty;
-            GetTestContext(message).AddStdErr(_commandLine, output);
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
-            yield return new BuildMessage(BuildMessageState.Error, Enumerable.Empty<IServiceMessage>(), output);
+            GetTestContext(message).AddStdErr(info, output);
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
+            yield return new BuildMessage(BuildMessageState.Error, Array.Empty<IServiceMessage>(), output);
         }
 
         private IEnumerable<BuildMessage> OnTestFinished(IServiceMessage message)
@@ -92,7 +81,7 @@ namespace TeamCity.CSharpInteractive
                     duration,
                     ctx.Output));
             
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
         }
 
         private IEnumerable<BuildMessage> OnTestIgnored(IServiceMessage message)
@@ -108,7 +97,7 @@ namespace TeamCity.CSharpInteractive
                     TimeSpan.Zero,
                     ctx.Output));
             
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
         }
 
         private IEnumerable<BuildMessage> OnTestFailed(IServiceMessage message)
@@ -124,33 +113,33 @@ namespace TeamCity.CSharpInteractive
                     TimeSpan.Zero,
                     ctx.Output));
             
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
         }
 
         private IEnumerable<BuildMessage> OnMessage(IServiceMessage message)
         {
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
             var text = message.GetValue("text") ?? string.Empty;
             var statusStr = message.GetValue("status");
             if (Enum.TryParse<BuildMessageState>(statusStr, false, out var status))
             {
                 var errorDetails = message.GetValue("errorDetails") ?? string.Empty;
-                var buildMessage = new BuildMessage(status, Enumerable.Empty<IServiceMessage>(), text, errorDetails);
+                var buildMessage = new BuildMessage(status, Array.Empty<IServiceMessage>(), text, errorDetails);
                 _messages.Add(buildMessage);
                 yield return buildMessage;
             }
             else
             {
-                yield return new BuildMessage(BuildMessageState.Info, Enumerable.Empty<IServiceMessage>(), text);
+                yield return new BuildMessage(BuildMessageState.Info, Array.Empty<IServiceMessage>(), text);
             }
         }
 
         private IEnumerable<BuildMessage> OnBuildProblem(IServiceMessage message)
         {
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, new []{ message });
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, new List<IServiceMessage>(1) { message }.AsReadOnly());
             var description = message.GetValue("description") ?? string.Empty;
             var identity = message.GetValue("identity") ?? string.Empty;
-            var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, Enumerable.Empty<IServiceMessage>(), description, identity);
+            var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, Array.Empty<IServiceMessage>(), description, identity);
             _messages.Add(buildMessage);
             yield return buildMessage;
         }
@@ -182,8 +171,7 @@ namespace TeamCity.CSharpInteractive
         {
             public TestKey(IServiceMessage message) :
                 this(message.GetValue("flowId") ?? string.Empty, message.GetValue("name") ?? string.Empty)
-            {
-            }
+            { }
         }
     }
 }

@@ -4,9 +4,9 @@ namespace TeamCity.CSharpInteractive
     using System.Diagnostics;
     using Cmd;
 
-    internal interface IProcess: IDisposable
+    internal interface IProcessManager: IDisposable
     {
-        event Action<CommandLineOutput> OnOutput;
+        event Action<Output> OnOutput;
         
         event Action OnExit;
 
@@ -14,7 +14,7 @@ namespace TeamCity.CSharpInteractive
 
         int ExitCode { get; }
 
-        bool Start(CommandLine commandLine, out ProcessStartInfo startInfo);
+        bool Start(IStartInfo info, out ProcessStartInfo startInfo);
 
         void WaitForExit();
         

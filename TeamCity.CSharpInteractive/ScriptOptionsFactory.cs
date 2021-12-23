@@ -52,11 +52,11 @@ namespace TeamCity.CSharpInteractive
             try
             {
                 fileName = Path.GetFullPath(fileName);
-                _log.Trace($"Try register the assembly \"{fileName}\".");
+                _log.Trace(() => new []{new Text($"Try register the assembly \"{fileName}\".")});
                 var reference = MetadataReference.CreateFromFile(fileName);
                 description = reference.Display ?? string.Empty;
                 _options = Options.AddReferences(reference);
-                _log.Trace($"New metadata reference added \"{reference.Display}\".");
+                _log.Trace(() => new []{new Text($"New metadata reference added \"{reference.Display}\".")});
                 return true;
             }
             catch(Exception ex)
@@ -137,12 +137,11 @@ namespace TeamCity.CSharpInteractive
         {
             try
             {
-                _log.Trace("Loading assemblies.");
+                _log.Trace(() => new []{new Text("Loading assemblies.")});
                 LoadAssembliesFromPathOfType<string>(_cancellationToken);
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic && !string.IsNullOrWhiteSpace(i.Location)).ToList();
-                var assembliesTrace = new [] {new Text($"{assemblies.Count} assemblies were loaded:")}.Concat(assemblies.Select(i => new [] {Text.NewLine, new Text(i.ToString())}).SelectMany(i => i));
-                _log.Trace(assembliesTrace.ToArray());
-                _log.Trace("Add references.");
+                _log.Trace(() => new [] {new Text($"{assemblies.Count} assemblies were loaded:")}.Concat(assemblies.Select(i => new [] {Text.NewLine, new Text(i.ToString())}).SelectMany(i => i)).ToArray());
+                _log.Trace(() => new []{new Text("Add references.")});
                 foreach (var assembly in assemblies)
                 {
                     _options = _options.AddReferences(assembly);

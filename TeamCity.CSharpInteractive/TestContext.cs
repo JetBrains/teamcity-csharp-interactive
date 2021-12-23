@@ -1,28 +1,29 @@
-namespace TeamCity.CSharpInteractive;
-
-using System.Collections.Generic;
-using Cmd;
-
-internal class TestContext
+namespace TeamCity.CSharpInteractive
 {
-    public readonly string Name;
-    public readonly List<CommandLineOutput> Output = new();
+    using System.Collections.Generic;
+    using Cmd;
 
-    public TestContext(string name) => Name = name;
-
-    public void AddStdOut(in CommandLine commandLine, string? text)
+    internal class TestContext
     {
-        if (text != default)
+        public readonly string Name;
+        public readonly List<Output> Output = new();
+
+        public TestContext(string name) => Name = name;
+
+        public void AddStdOut(IStartInfo info, string? text)
         {
-            Output.Add(new CommandLineOutput(commandLine, false, text));
+            if (text != default)
+            {
+                Output.Add(new Output(info, false, text));
+            }
         }
-    }
 
-    public void AddStdErr(in CommandLine commandLine, string? error)
-    {
-        if (error != default)
+        public void AddStdErr(IStartInfo info, string? error)
         {
-            Output.Add(new CommandLineOutput(commandLine, true, error));
+            if (error != default)
+            {
+                Output.Add(new Output(info, true, error));
+            }
         }
     }
 }

@@ -15,141 +15,144 @@ namespace TeamCity.CSharpInteractive
     internal class CommandLineService: ICommandLine
     {
         private readonly ILog<CommandLineService> _log;
-        private readonly Func<IProcess> _processFactory;
+        private readonly IHost _host;
+        private readonly Func<IProcessManager> _processManagerFactory;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
         public CommandLineService(
             ILog<CommandLineService> log,
-            Func<IProcess> processFactory,
+            IHost host,
+            Func<IProcessManager> processManagerFactory,
             CancellationTokenSource cancellationTokenSource)
         {
             _log = log;
-            _processFactory = processFactory;
+            _host = host;
+            _processManagerFactory = processManagerFactory;
             _cancellationTokenSource = cancellationTokenSource;
         }
 
-        public int? Run(in CommandLine commandLine, Action<CommandLineOutput>? handler = default, TimeSpan timeout = default)
+        public int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
         {
-            using var process = _processFactory();
+            using var processManager = _processManagerFactory();
             if (handler != default)
             {
-                process.OnOutput += handler;
+                processManager.OnOutput += handler;
             }
 
-            var info = new Text(GetInfo(commandLine), Color.Header);
-            if (!process.Start(commandLine, out var startInfo))
+            var processInfo = process.GetStartInfo(_host.Host);
+            var info = new Text(GetInfo(processInfo, processManager), Color.Header);
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            if (!processManager.Start(processInfo, out var startInfo))
             {
-                _log.Trace(info, new Text(" - cannot start."));
+                _log.Trace(() => new []{info, new Text(" - cannot start.")});
                 return default;
             }
 
-            _log.Info(GetHeader(startInfo).ToArray());
-
+            _log.Info(GetHeader(startInfo, processManager).ToArray());
             var finished = true;
             if (timeout == TimeSpan.Zero)
             {
-                _log.Trace(info, new Text($" - started with process id {process.Id}."));
-                process.WaitForExit();
+                processManager.WaitForExit();
             }
             else
             {
-                _log.Trace(info, new Text($" - started with id {process.Id} and with timeout {timeout}."));
-                finished = process.WaitForExit(timeout);
+                finished = processManager.WaitForExit(timeout);
             }
 
             if (finished)
             {
-                _log.Trace(info, new Text($" - finished with exit code {process.ExitCode}."));
-                _log.Info($"Process exited with code {process.ExitCode}");
-                return process.ExitCode;
+                stopwatch.Start();
+                ShowFooter(process, processManager, stopwatch);
+                return processManager.ExitCode;
             }
 
-            _log.Trace(info, new Text(" - timeout is expired."));
-            Kill(process, info);
+            _log.Warning(info, new Text(" - timeout is expired."));
+            Kill(processManager, info);
 
             return default;
         }
 
-        public async Task<int?> RunAsync(CommandLine commandLine, Action<CommandLineOutput>? handler = default, CancellationToken cancellationToken = default)
+        public async Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
             if (cancellationToken == default)
             {
                 cancellationToken = _cancellationTokenSource.Token;
             }
 
-            var process = _processFactory();
+            var processManager = _processManagerFactory();
             if (handler != default)
             {
-                process.OnOutput += handler;
+                processManager.OnOutput += handler;
             }
 
             var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
             // ReSharper disable once AccessToDisposedClosure
-            process.OnExit += () => completionSource.TrySetResult(process.ExitCode);
-            var info = new Text(GetInfo(commandLine), Color.Header);
-            if (!process.Start(commandLine, out var startInfo))
+            processManager.OnExit += () => completionSource.TrySetResult(processManager.ExitCode);
+            var processInfo = process.GetStartInfo(_host.Host);
+            var info = new Text(GetInfo(processInfo, processManager), Color.Header);
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            if (!processManager.Start(processInfo, out var startInfo))
             {
-                _log.Trace(info, new Text(" - cannot start process."));
-                process.Dispose();
+                _log.Warning(info, new Text(" - cannot start process."));
+                processManager.Dispose();
                 return default;
             }
             
-            _log.Info(GetHeader(startInfo).ToArray());
-
-            _log.Trace(info, new Text($" - started with process id {process.Id}."));
-            
+            _log.Info(GetHeader(startInfo, processManager).ToArray());
             void Cancel()
             {
-                if (Kill(process, info))
+                if (Kill(processManager, info))
                 {
                     completionSource.TrySetCanceled(cancellationToken);
                 }
                 
-                process.Dispose();
-                _log.Trace(info, new Text(" - canceled."));
+                processManager.Dispose();
+                _log.Trace(() => new []{info, new Text(" - canceled.")});
             }
 
             await using (cancellationToken.Register(Cancel, false))
             {
-                using (process)
+                using (processManager)
                 {
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
-                    _log.Trace(info, new Text($" - finished with exit code {exitCode}."));
-                    _log.Info($"Process exited with code {process.ExitCode}");
+                    stopwatch.Start();
+                    ShowFooter(process, processManager, stopwatch);
                     return exitCode;
                 }
             }
         }
         
-        private bool Kill(IProcess process, Text info)
+        private bool Kill(IProcessManager processManager, Text info)
         {
             try
             {
-                _log.Trace(info, new Text(" - try to kill process."));
-                process.Kill();
-                _log.Trace(info, new Text(" - killed."));
+                _log.Trace(() => new []{info, new Text(" - try to kill process.")});
+                processManager.Kill();
+                _log.Trace(() => new []{info, new Text(" - killed.")});
             }
             catch (Exception ex)
             {
-                _log.Trace(info, new Text($" - failed to kill: {ex.Message}."));
+                _log.Warning(info, new Text($" - failed to kill: {ex.Message}."));
                 return false;
             }
 
             return true;
         }
         
-        private static string GetInfo(in CommandLine commandLine)
+        private static string GetInfo(IStartInfo info, IProcessManager processManager)
         {
             var sb = new StringBuilder();
-            if (!string.IsNullOrWhiteSpace(commandLine.WorkingDirectory))
+            if (!string.IsNullOrWhiteSpace(info.WorkingDirectory))
             {
-                sb.Append(commandLine.WorkingDirectory);
+                sb.Append(info.WorkingDirectory);
                 sb.Append(" => ");
             }
 
-            sb.Append('[');
-            sb.Append(Escape(commandLine.ExecutablePath));
-            foreach (var arg in commandLine.Args)
+            sb.Append($"process {processManager.Id} [");
+            sb.Append(Escape(info.ExecutablePath));
+            foreach (var arg in info.Args)
             {
                 sb.Append(' ');
                 sb.Append(Escape(arg));
@@ -157,10 +160,10 @@ namespace TeamCity.CSharpInteractive
             sb.Append(']');
 
             // ReSharper disable once InvertIf
-            if (commandLine.Vars.Any())
+            if (info.Vars.Any())
             {
                 sb.Append(" with environment variables ");
-                foreach (var (name, value) in commandLine.Vars)
+                foreach (var (name, value) in info.Vars)
                 {
                     sb.Append('[');
                     sb.Append(name);
@@ -175,10 +178,10 @@ namespace TeamCity.CSharpInteractive
 
         private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
         
-        private static IEnumerable<Text> GetHeader(ProcessStartInfo startInfo)
+        private static IEnumerable<Text> GetHeader(ProcessStartInfo startInfo, IProcessManager processManager)
         {
-            yield return new Text("Starting: ");
-            yield return new Text(Escape(startInfo.FileName));
+            yield return new Text($"Starting process {processManager.Id}: ", Color.Header);
+            yield return new Text(Escape(startInfo.FileName), Color.Header);
             foreach (var arg in startInfo.ArgumentList)
             {
                 yield return new Text(" ");
@@ -188,6 +191,41 @@ namespace TeamCity.CSharpInteractive
             yield return Text.NewLine;
             yield return new Text("in directory: ");
             yield return new Text(Escape(startInfo.WorkingDirectory));
+        }
+
+        private void ShowFooter(IProcess process, IProcessManager processManager, Stopwatch stopwatch)
+        {
+            var state = process.GetState(processManager.ExitCode);
+            var footer = GetFooter(processManager, stopwatch, state).ToArray();
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            switch (state)
+            {
+                case ProcessState.Success:
+                    _log.Info(footer.WithDefaultColor(Color.Success));
+                    break;
+
+                case ProcessState.Fail:
+                    _log.Error(ErrorId.Process, footer);
+                    break;
+
+                default:
+                    _log.Info(footer.WithDefaultColor(Color.Highlighted));
+                    break;
+            }
+        }
+
+        private static IEnumerable<Text> GetFooter(IProcessManager processManager, Stopwatch stopwatch, ProcessState state)
+        {
+            var stateText = state switch
+            {
+                ProcessState.Success => "finished successfully",
+                ProcessState.Fail => "failed",
+                _ => "finished"
+            };
+
+            yield return new Text($"Process {processManager.Id} ");
+            yield return new Text(stateText);
+            yield return new Text($" (in {stopwatch.ElapsedMilliseconds} ms) with exit code {processManager.ExitCode}.");
         }
     }
 }

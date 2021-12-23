@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive
                 case BuildMessageState.ServiceMessage:
                     foreach (var serviceMessage in message.ServiceMessages)
                     {
-                        _log.Trace(serviceMessage.ToString() ?? "Empty service message.");
+                        _log.Trace(() => new []{ new Text(serviceMessage.ToString() ?? "Empty service message.") }, string.Empty);
                     }
 
                     break;

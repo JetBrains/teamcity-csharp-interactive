@@ -23,31 +23,38 @@ namespace Dotnet
         string Output = "",
         bool NoLogo = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Clean()
             : this(ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
         { }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet clean";
 
-        public static implicit operator CommandLine(Clean it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("clean")
-            .AddArgs(new []{
-                it.Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddMSBuildIntegration(it.Integration, it.Verbosity)
-            .AddArgs(
-                ("--output", it.Output),
-                ("--framework", it.Framework),
-                ("--runtime", it.Runtime),
-                ("--configuration", it.Configuration),
-                ("--verbosity", it.Verbosity?.ToString().ToLowerInvariant())
-            )
-            .AddBooleanArgs(
-                ("--nologo", it.NoLogo)
-            )
-            .AddProps("/p", it.Props.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("clean")
+                .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddArgs(
+                    ("--output", Output),
+                    ("--framework", Framework),
+                    ("--runtime", Runtime),
+                    ("--configuration", Configuration),
+                    ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
+                )
+                .AddBooleanArgs(
+                    ("--nologo", NoLogo)
+                )
+                .AddProps("/p", Props.ToArray())
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

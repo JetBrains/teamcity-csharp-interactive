@@ -35,39 +35,58 @@ namespace Dotnet
         string Collect = "",
         bool InIsolation = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public VSTest(params string[] testFileNames)
             : this(testFileNames, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty)
         {
         }
+        
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet vstest";
 
-        public static implicit operator CommandLine(VSTest it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("vstest")
-            .AddArgs(it.TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddVSTestIntegration(it.Integration, it.Verbosity)
-            .AddArgs(
-                ("--TestCaseFilter", it.TestCaseFilter),
-                ("--Framework", it.Framework),
-                ("--Platform", it.Platform?.ToString()),
-                ("--Settings", it.Settings),
-                ("--TestAdapterPath", it.TestAdapterPath),
-                ("--Diag", it.Diag),
-                ("--ResultsDirectory", it.ResultsDirectory),
-                ("--ParentProcessId", it.ParentProcessId?.ToString()),
-                ("--Port", it.Port?.ToString()),
-                ("--Collect", it.Collect)
-            )
-            .AddBooleanArgs(
-                ("--ListTests", it.ListTests),
-                ("--Parallel", it.Parallel),
-                ("--Blame", it.Blame),
-                ("--InIsolation", it.InIsolation)
-            )
-            .AddArgs(it.Loggers.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public IStartInfo GetStartInfo(IHost host)
+        {
+            var cmd =  new CommandLine(ExecutablePath)
+                .WithArgs("vstest")
+                .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddVSTestIntegration(Integration, Verbosity)
+                .AddArgs(
+                    ("--Tests", Tests),
+                    ("--TestCaseFilter", TestCaseFilter),
+                    ("--Framework", Framework),
+                    ("--Platform", Platform?.ToString()),
+                    ("--Settings", Settings),
+                    ("--TestAdapterPath", TestAdapterPath),
+                    ("--Diag", Diag),
+                    ("--ResultsDirectory", ResultsDirectory),
+                    ("--ParentProcessId", ParentProcessId?.ToString()),
+                    ("--Port", Port?.ToString()),
+                    ("--Collect", Collect)
+                )
+                .AddBooleanArgs(
+                    ("--ListTests", ListTests),
+                    ("--Parallel", Parallel),
+                    ("--Blame", Blame),
+                    ("--InIsolation", InIsolation)
+                )
+                .AddArgs(Loggers.ToArray())
+                .AddArgs(Args.ToArray());
+                
+                var runSettings = RunSettings.Select(i => $"{i.name}={i.value}").ToArray();
+                if(runSettings.Any())
+                {
+                    cmd = cmd.AddArgs("--").AddArgs(runSettings);
+                }
+
+                return cmd;
+        }
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

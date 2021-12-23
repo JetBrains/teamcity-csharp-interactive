@@ -51,7 +51,7 @@ namespace TeamCity.CSharpInteractive
                     .Result;
 
                 stopwatch.Stop();
-                _log.Trace(new Text($"Time Elapsed {stopwatch.Elapsed:g}"));
+                _log.Trace(() => new []{new Text($"Time Elapsed {stopwatch.Elapsed:g}")});
                 _diagnosticsPresenter.Show(new CompilationDiagnostics(sourceCommand, _scriptState.Script.GetCompilation().GetDiagnostics().ToList().AsReadOnly()));
             }
             catch (CompilationErrorException e)
@@ -72,7 +72,7 @@ namespace TeamCity.CSharpInteractive
 
         public void Reset()
         {
-            _log.Trace("Reset state.");
+            _log.Trace(() => new []{new Text("Reset state.")});
             _scriptState = default;
         }
     }

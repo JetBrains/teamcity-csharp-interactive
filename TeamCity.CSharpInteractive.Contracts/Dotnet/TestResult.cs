@@ -7,12 +7,12 @@ namespace Dotnet
     using System.Collections.Generic;
     using Cmd;
 
-    public record TestResult(
+    public readonly record struct TestResult(
         TestState State,
         string FullyQualifiedName,
         string DisplayName,
         string Message,
         string Details,
         TimeSpan Duration,
-        IEnumerable<CommandLineOutput> Output);
+        IEnumerable<Output> Output);
 }

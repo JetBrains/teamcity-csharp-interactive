@@ -28,36 +28,43 @@ namespace Dotnet
         bool NoRestore = false,
         bool Force = false,
         Verbosity? Verbosity = default,
-        bool Integration = true)
+        bool Integration = true,
+        string ShortName = "")
+        : IProcess
     {
+        private readonly string _shortName = ShortName;
+
         public Build()
             : this(ImmutableList<(string, string)>.Empty, ImmutableList<string>.Empty, ImmutableList<(string, string)>.Empty)
         { }
 
-        public static implicit operator CommandLine(Build it) =>
-            new CommandLine(it.ExecutablePath)
-            .WithArgs("build")
-            .AddArgs(new []{
-                it.Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
-            .WithWorkingDirectory(it.WorkingDirectory)
-            .WithVars(it.Vars)
-            .AddMSBuildIntegration(it.Integration, it.Verbosity)
-            .AddArgs(
-                ("--output", it.Output),
-                ("--framework", it.Framework),
-                ("--configuration", it.Configuration),
-                ("--runtime", it.Runtime),
-                ("--version-suffix", it.VersionSuffix),
-                ("--verbosity", it.Verbosity?.ToString().ToLowerInvariant())
-            )
-            .AddBooleanArgs(
-                ("--no-incremental", it.NoIncremental),
-                ("--no-dependencies", it.NoDependencies),
-                ("--nologo", it.NoLogo),
-                ("--no-restore", it.NoRestore),
-                ("--force", it.Force)
-            )
-            .AddProps("/p", it.Props.ToArray())
-            .AddArgs(it.Args.ToArray());
+        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet build";
+
+        public IStartInfo GetStartInfo(IHost host) =>
+            new CommandLine(ExecutablePath)
+                .WithArgs("build")
+                .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+                .WithWorkingDirectory(WorkingDirectory)
+                .WithVars(Vars)
+                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddArgs(
+                    ("--output", Output),
+                    ("--framework", Framework),
+                    ("--configuration", Configuration),
+                    ("--runtime", Runtime),
+                    ("--version-suffix", VersionSuffix),
+                    ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
+                )
+                .AddBooleanArgs(
+                    ("--no-incremental", NoIncremental),
+                    ("--no-dependencies", NoDependencies),
+                    ("--nologo", NoLogo),
+                    ("--no-restore", NoRestore),
+                    ("--force", Force)
+                )
+                .AddProps("/p", Props.ToArray())
+                .AddArgs(Args.ToArray());
+
+        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

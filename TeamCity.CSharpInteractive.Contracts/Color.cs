@@ -8,6 +8,7 @@ namespace TeamCity.CSharpInteractive.Contracts
         Success,
         Warning,
         Error,
-        Details
+        Details,
+        Highlighted
     }
 }
