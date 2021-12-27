@@ -15,9 +15,9 @@ namespace TeamCity.CSharpInteractive
             switch (message.State)
             {
                 case BuildMessageState.ServiceMessage:
-                    foreach (var serviceMessage in message.ServiceMessages)
+                    if(message.ServiceMessage != default)
                     {
-                        _log.Trace(() => new []{ new Text(serviceMessage.ToString() ?? "Empty service message.") }, string.Empty);
+                        _log.Trace(() => new []{ new Text(message.ServiceMessage.ToString() ?? "Empty service message.") }, string.Empty);
                     }
 
                     break;

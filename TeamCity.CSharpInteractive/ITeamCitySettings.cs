@@ -7,5 +7,7 @@ namespace TeamCity.CSharpInteractive
         string Version { get; }
         
         string FlowId { get; }
+
+        string ServiceMessagesPath { get; }
     }
 }

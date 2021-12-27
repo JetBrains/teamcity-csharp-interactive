@@ -6,9 +6,14 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class TeamCitySettingsTests
     {
-        private readonly Mock<IHostEnvironment> _environment;
+        private readonly Mock<IHostEnvironment> _hostEnvironment;
+        private readonly Mock<IEnvironment> _environment;
 
-        public TeamCitySettingsTests() => _environment = new Mock<IHostEnvironment>();
+        public TeamCitySettingsTests()
+        {
+            _hostEnvironment = new Mock<IHostEnvironment>();
+            _environment = new Mock<IEnvironment>();
+        }
 
         [Theory]
         [InlineData("Abc", "1", true)]
@@ -27,8 +32,8 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var settings = CreateInstance();
-            _environment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_PROJECT_NAME")).Returns(projectName);
-            _environment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_VERSION")).Returns(version);
+            _hostEnvironment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_PROJECT_NAME")).Returns(projectName);
+            _hostEnvironment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_VERSION")).Returns(version);
 
             // When
             var actualIsUnderTeamCity = settings.IsUnderTeamCity;
@@ -45,7 +50,7 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var settings = CreateInstance();
-            _environment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_PROCESS_FLOW_ID")).Returns(flowId);
+            _hostEnvironment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_PROCESS_FLOW_ID")).Returns(flowId);
 
             // When
             var actualFlowId = settings.FlowId;
@@ -54,6 +59,6 @@ namespace TeamCity.CSharpInteractive.Tests
             actualFlowId.ShouldBe(expectedFlowId);
         }
 
-        private TeamCitySettings CreateInstance() => new(_environment.Object);
+        private TeamCitySettings CreateInstance() => new(_hostEnvironment.Object, _environment.Object);
     }
 }

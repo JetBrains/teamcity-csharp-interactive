@@ -14,6 +14,7 @@ namespace TeamCity.CSharpInteractive
     using Dotnet;
     using JetBrains.TeamCity.ServiceMessages;
     using JetBrains.TeamCity.ServiceMessages.Read;
+    using Microsoft.Build.Tasks;
 
     internal class BuildService: IBuild
     {
@@ -56,10 +57,10 @@ namespace TeamCity.CSharpInteractive
         
         private void Handle(IStartInfo info, Action<Output>? handler, in Output output, IBuildResult result)
         {
-            var serviceMessages = _serviceMessageParser.ParseServiceMessages(output.Line).ToList().AsReadOnly();
-            var messages = result
-                .ProcessOutput(output.StartInfo, serviceMessages)
-                .DefaultIfEmpty(new BuildMessage(output.IsError ? BuildMessageState.Error : BuildMessageState.Info, Array.Empty<IServiceMessage>(), output.Line));
+            var startInfo = output.StartInfo;
+            var messages = _serviceMessageParser.ParseServiceMessages(output.Line)
+                .SelectMany(message => result.ProcessMessage(startInfo, message))
+                .DefaultIfEmpty(new BuildMessage(output.IsError ? BuildMessageState.Error : BuildMessageState.Info, default, output.Line));
 
             if (handler != default)
             {

@@ -18,6 +18,7 @@ namespace Dotnet
                         ("VSTestLogger", "logger://teamcity"),
                         ("VSTestTestAdapterPath", $"\".;{WellknownValues.DotnetLoggerDirectory}\""),
                         ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()))
+                    .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", WellknownValues.TeamCityMessagesPath))
                 : cmd;
         
         public static CommandLine AddVSTestIntegration(this CommandLine cmd, bool integration, Verbosity? verbosity) =>
@@ -27,6 +28,7 @@ namespace Dotnet
                         ("--Logger", "logger://teamcity"),
                         ("--Logger", $"console;verbosity={(verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()}"),
                         ("--TestAdapterPath", $"\"{WellknownValues.DotnetLoggerDirectory}\""))
+                    .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", WellknownValues.TeamCityMessagesPath))
                 : cmd;
 
         public static CommandLine AddArgs(this CommandLine cmd, params (string name, string? value)[] args) =>

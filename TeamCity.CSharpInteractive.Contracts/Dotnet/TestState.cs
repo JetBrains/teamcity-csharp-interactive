@@ -3,7 +3,7 @@ namespace Dotnet
 {
     public enum TestState
     {
-        Finished,
+        Passed,
         Failed,
         Ignored
     }

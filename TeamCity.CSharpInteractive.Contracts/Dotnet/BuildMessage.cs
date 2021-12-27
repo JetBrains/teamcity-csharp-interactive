@@ -3,12 +3,12 @@
 // ReSharper disable NotAccessedPositionalProperty.Global
 namespace Dotnet
 {
-    using System.Collections.Generic;
     using JetBrains.TeamCity.ServiceMessages;
 
+    [Immutype.Target]
     public readonly record struct BuildMessage(
         BuildMessageState State,
-        IReadOnlyList<IServiceMessage> ServiceMessages,
+        IServiceMessage? ServiceMessage = default,
         string Text = "",
         string ErrorDetails = "");
 }

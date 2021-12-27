@@ -9,6 +9,7 @@ namespace Dotnet
 
     public readonly record struct TestResult(
         TestState State,
+        string AssemblyName,
         string FullyQualifiedName,
         string DisplayName,
         string Message,
