@@ -96,7 +96,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IFileExplorer>().To<FileExplorer>()
                 .Bind<IProcessOutputWriter>().To<ProcessOutputWriter>()
                 .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
-                .Bind<Func<Endpoint, IRestClient>>().To(_ => new Func<Endpoint, IRestClient>(endpoint => new RestClient(endpoint)))
                 .Bind<ITeamCityParameters>().To<TeamCityParameters>()
                 .Bind<IJavaPropertiesParser>().To<JavaPropertiesParser>()
 
@@ -152,7 +151,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<Cmd.ICommandLine>("base").To<CommandLineService>()
                 .Bind<Cmd.ICommandLine>().To<CommandLineInFlowService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
-                .Bind<ITeamCity>().To<TeamCityService>()
 
                 // TeamCity Service messages
                 .Bind<ITeamCityWriter>().To<HierarchicalTeamCityWriter>()
