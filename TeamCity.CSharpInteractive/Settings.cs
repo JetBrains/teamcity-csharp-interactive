@@ -75,7 +75,7 @@ namespace TeamCity.CSharpInteractive
             }
         }
 
-        VerbosityLevel? ISettingSetter<VerbosityLevel>.SetSetting(VerbosityLevel value)
+        VerbosityLevel ISettingSetter<VerbosityLevel>.SetSetting(VerbosityLevel value)
         {
             var prevVerbosityLevel = VerbosityLevel;
             VerbosityLevel = value;

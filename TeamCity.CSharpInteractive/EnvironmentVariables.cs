@@ -20,13 +20,16 @@ namespace TeamCity.CSharpInteractive
             return value;
         }
 
-        public IEnumerable<Text> GetTrace()
+        public IEnumerable<Text> Trace
         {
-            yield return new Text("Environment variables:");
-            foreach (var entry in System.Environment.GetEnvironmentVariables().OfType<DictionaryEntry>().OrderBy(i => i.Key))
+            get
             {
-                yield return Text.Tab;
-                yield return new Text($"{entry.Key}={entry.Value}");
+                yield return new Text("Environment variables:");
+                foreach (var entry in System.Environment.GetEnvironmentVariables().OfType<DictionaryEntry>().OrderBy(i => i.Key))
+                {
+                    yield return Text.Tab;
+                    yield return new Text($"{entry.Key}={entry.Value}");
+                }
             }
         }
     }

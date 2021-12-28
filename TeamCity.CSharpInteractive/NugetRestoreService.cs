@@ -120,9 +120,9 @@ namespace TeamCity.CSharpInteractive
             return taskItem;
         }
 
-        public NuGetRestoreSetting? SetSetting(NuGetRestoreSetting value)
+        public NuGetRestoreSetting SetSetting(NuGetRestoreSetting value)
         {
-            NuGetRestoreSetting prevVal = default;
+            var prevVal = NuGetRestoreSetting.Default;
             switch (value)
             {
                 case NuGetRestoreSetting.Default:

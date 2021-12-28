@@ -2,9 +2,9 @@ namespace TeamCity.CSharpInteractive
 {
     using System;
 
-    internal interface ISettingSetter<TSetting>
+    internal interface ISettingGetter<out TSetting>
         where TSetting: struct, Enum
     {
-        TSetting SetSetting(TSetting value);
+        TSetting GetSetting();
     }
 }

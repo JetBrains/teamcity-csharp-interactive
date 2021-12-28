@@ -27,7 +27,7 @@ namespace TeamCity.CSharpInteractive
                     Path = processFileName;
                 }
 
-                Path = fileExplorer.FindFiles(Path).FirstOrDefault() ?? Path;
+                Path = fileExplorer.FindFiles(Path, "DOTNET_HOME").FirstOrDefault() ?? Path;
             }
             catch
             {
@@ -38,14 +38,17 @@ namespace TeamCity.CSharpInteractive
         public string Path { get; }
 
         public string TargetFrameworkMoniker { get; }
-        
+
         [ExcludeFromCodeCoverage]
-        public IEnumerable<Text> GetTrace()
+        public IEnumerable<Text> Trace
         {
-            yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
-            yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
-            yield return new Text($"DotnetPath: {Path}");
-            yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
+            get
+            {
+                yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
+                yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
+                yield return new Text($"DotnetPath: {Path}");
+                yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
+            }
         }
     }
 }

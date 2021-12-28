@@ -3,12 +3,12 @@ namespace TeamCity.CSharpInteractive
     using System;
     using System.IO;
 
-    public class FileReader: IFileReader
+    public class StreamReader: IStreamReader
     {
         private readonly object _lockObject = new();
-        private readonly FileStream _stream;
+        private readonly Stream _stream;
 
-        public FileReader(FileStream stream) => _stream = stream;
+        public StreamReader(Stream stream) => _stream = stream;
 
         public int Read(Span<byte> buffer)
         {

@@ -23,7 +23,7 @@ namespace TeamCity.CSharpInteractive
                     Path = processFileName;
                 }
 
-                Path = fileExplorer.FindFiles(Path).FirstOrDefault() ?? Path;
+                Path = fileExplorer.FindFiles(Path, "DOCKER_HOME").FirstOrDefault() ?? Path;
             }
             catch
             {
@@ -34,9 +34,12 @@ namespace TeamCity.CSharpInteractive
         public string Path { get; }
 
         [ExcludeFromCodeCoverage]
-        public IEnumerable<Text> GetTrace()
+        public IEnumerable<Text> Trace
         {
-            yield return new Text($"DockerPath: {Path}");
+            get
+            {
+                yield return new Text($"DockerPath: {Path}");
+            }
         }
     }
 }

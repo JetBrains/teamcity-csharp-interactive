@@ -17,6 +17,6 @@ namespace TeamCity.CSharpInteractive
 
         IEnumerable<string> ReadAllLines(string file);
 
-        IFileReader OpenReader(string file);
+        IStreamReader OpenReader(string file);
     }
 }

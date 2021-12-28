@@ -3,9 +3,11 @@ namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using Cmd;
     using Contracts;
 
+    [ExcludeFromCodeCoverage]
     internal class ProcessManager: IProcessManager
     {
         private static readonly Text StdOutPrefix = new("OUT: ");

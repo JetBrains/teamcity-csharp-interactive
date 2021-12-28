@@ -1,6 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using Contracts;
@@ -12,7 +13,7 @@ namespace TeamCity.CSharpInteractive
         private readonly ILog<CSharpScriptRunner> _log;
         private readonly IPresenter<ScriptState<object>> _scriptStatePresenter;
         private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
-        private readonly IScriptOptionsFactory _scriptOptionsFactory;
+        private readonly IReadOnlyCollection<IScriptOptionsFactory> _scriptOptionsFactories;
         private readonly IHost _host;
         private ScriptState<object>? _scriptState;
         
@@ -20,13 +21,13 @@ namespace TeamCity.CSharpInteractive
             ILog<CSharpScriptRunner> log,
             IPresenter<ScriptState<object>> scriptStatePresenter,
             IPresenter<CompilationDiagnostics> diagnosticsPresenter,
-            IScriptOptionsFactory scriptOptionsFactory,
+            IReadOnlyCollection<IScriptOptionsFactory> scriptOptionsFactories,
             IHost host)
         {
             _log = log;
             _scriptStatePresenter = scriptStatePresenter;
             _diagnosticsPresenter = diagnosticsPresenter;
-            _scriptOptionsFactory = scriptOptionsFactory;
+            _scriptOptionsFactories = scriptOptionsFactories;
             _host = host;
         }
 
@@ -35,13 +36,15 @@ namespace TeamCity.CSharpInteractive
             var success = true;
             try
             {
+                var options = _scriptOptionsFactories.Aggregate(ScriptOptions.Default, (current, scriptOptionsFactory) => scriptOptionsFactory.Create(current));
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
+
                 _scriptState =
-                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, _scriptOptionsFactory.Create(), _host, typeof(IHost)).Result)
+                    (_scriptState ?? CSharpScript.RunAsync(string.Empty, options, _host, typeof(IHost)).Result)
                     .ContinueWithAsync(
                         script,
-                        _scriptOptionsFactory.Create(),
+                        options,
                         exception =>
                         {
                             success = false;

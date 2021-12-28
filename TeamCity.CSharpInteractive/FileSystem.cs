@@ -20,6 +20,6 @@ namespace TeamCity.CSharpInteractive
 
         public IEnumerable<string> ReadAllLines(string file) => File.ReadAllLines(file);
 
-        public IFileReader OpenReader(string file) => new FileReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+        public IStreamReader OpenReader(string file) => new StreamReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
     }
 }

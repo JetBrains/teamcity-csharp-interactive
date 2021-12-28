@@ -4,6 +4,6 @@ namespace TeamCity.CSharpInteractive
 
     internal interface IScriptOptionsFactory
     {
-        ScriptOptions Create();
+        ScriptOptions Create(ScriptOptions baseOptions);
     }
 }

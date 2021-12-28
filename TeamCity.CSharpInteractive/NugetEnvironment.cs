@@ -61,11 +61,14 @@ namespace TeamCity.CSharpInteractive
         public void Dispose() => _packagePathToken.Dispose();
 
         [ExcludeFromCodeCoverage]
-        public IEnumerable<Text> GetTrace()
+        public IEnumerable<Text> Trace
         {
-            yield return new Text($"PackagesPath: {PackagesPath}");
-            yield return new Text($"NugetSources: {string.Join(";", Sources)}");
-            yield return new Text($"NugetFallbackFolders: {string.Join(";", FallbackFolders)}");
+            get
+            {
+                yield return new Text($"PackagesPath: {PackagesPath}");
+                yield return new Text($"NugetSources: {string.Join(";", Sources)}");
+                yield return new Text($"NugetFallbackFolders: {string.Join(";", FallbackFolders)}");
+            }
         }
 
         private IEnumerable<string> FallbackFoldersFromEnv => _hostEnvironment

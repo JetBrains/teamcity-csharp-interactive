@@ -1,11 +1,11 @@
 // ReSharper disable InconsistentNaming
-namespace TeamCity.CSharpInteractive.Contracts
+// ReSharper disable CheckNamespace
+namespace Cmd
 {
     internal enum WellknownValue
     {
         DotnetExecutablePath,
         DotnetLoggerDirectory,
-        TeamCityVersion,
         TeamCityMessagesPath,
         DockerExecutablePath
     }

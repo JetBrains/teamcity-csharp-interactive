@@ -4,6 +4,6 @@ namespace TeamCity.CSharpInteractive
 
     internal interface ITraceSource
     {
-        IEnumerable<Text> GetTrace();
+        IEnumerable<Text> Trace { get; }
     }
 }

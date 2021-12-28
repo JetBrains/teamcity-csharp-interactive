@@ -1,7 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
-    using Contracts;
+    using Cmd;
 
     internal class WellknownValueResolver : IWellknownValueResolver
     {
@@ -28,7 +28,6 @@ namespace TeamCity.CSharpInteractive
                 // Dotnet
                 WellknownValue.DotnetExecutablePath => _dotnetEnvironment.Path,
                 WellknownValue.DotnetLoggerDirectory => _environment.GetPath(SpecialFolder.Bin),
-                WellknownValue.TeamCityVersion => _teamCitySettings.Version,
                 WellknownValue.TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath,
                 WellknownValue.DockerExecutablePath => _dockerEnvironment.Path,
                 _ => string.Empty

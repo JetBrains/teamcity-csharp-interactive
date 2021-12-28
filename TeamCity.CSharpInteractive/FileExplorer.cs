@@ -19,18 +19,18 @@ namespace TeamCity.CSharpInteractive
             _fileSystem = fileSystem;
         }
 
-        public IEnumerable<string> FindFiles(string searchPattern)
+        public IEnumerable<string> FindFiles(string searchPattern, params string[] additionalVariables)
         {
-            var dotnetHome = _hostEnvironment.GetEnvironmentVariable("DOTNET_HOME") ?? string.Empty;
-            var dockerHome = _hostEnvironment.GetEnvironmentVariable("DOCKER_HOME") ?? string.Empty;
+            var additionalPaths = additionalVariables.Select(varName => _hostEnvironment.GetEnvironmentVariable(varName));
             var paths = _hostEnvironment.GetEnvironmentVariable("PATH")?.Split(";", StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>();
-            var allPaths = new [] {dotnetHome, dockerHome}.Concat(paths).Where(i => !string.IsNullOrWhiteSpace(i));
-            return 
+            var allPaths = additionalPaths.Concat(paths).Where(i => !string.IsNullOrWhiteSpace(i)).Select(i => i?.Trim()).Distinct();
+            return (
                 from path in allPaths 
                 where _fileSystem.IsDirectoryExist(path)
                 from file in _fileSystem.EnumerateFileSystemEntries(path, searchPattern, SearchOption.TopDirectoryOnly)
                 where _fileSystem.IsFileExist(file)
-                select file;
+                select file)
+                .Distinct();
         }
     }
 }

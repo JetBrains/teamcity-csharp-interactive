@@ -1,4 +1,5 @@
-namespace TeamCity.CSharpInteractive.Contracts
+// ReSharper disable CheckNamespace
+namespace Cmd
 {
     internal interface IWellknownValueResolver
     {

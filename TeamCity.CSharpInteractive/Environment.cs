@@ -55,20 +55,23 @@ namespace TeamCity.CSharpInteractive
 
         public void Exit(ExitCode exitCode) => System.Environment.Exit((int)exitCode);
 
-        public IEnumerable<Text> GetTrace()
+        public IEnumerable<Text> Trace
         {
-            yield return new Text($"OperatingSystemPlatform: {OperatingSystemPlatform}");
-            yield return new Text($"ProcessArchitecture: {ProcessArchitecture}");
-            foreach (var specialFolder in Enum.GetValues(typeof(SpecialFolder)).OfType<SpecialFolder>())
+            get
             {
-                yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
-            }
+                yield return new Text($"OperatingSystemPlatform: {OperatingSystemPlatform}");
+                yield return new Text($"ProcessArchitecture: {ProcessArchitecture}");
+                foreach (var specialFolder in Enum.GetValues(typeof(SpecialFolder)).OfType<SpecialFolder>())
+                {
+                    yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
+                }
 
-            yield return new Text("Command line arguments:");
-            foreach (var arg in System.Environment.GetCommandLineArgs())
-            {
-                yield return Text.Tab;
-                yield return new Text(arg);
+                yield return new Text("Command line arguments:");
+                foreach (var arg in System.Environment.GetCommandLineArgs())
+                {
+                    yield return Text.Tab;
+                    yield return new Text(arg);
+                }
             }
         }
 

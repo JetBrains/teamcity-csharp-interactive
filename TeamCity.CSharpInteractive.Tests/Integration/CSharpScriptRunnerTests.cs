@@ -141,7 +141,10 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
         }
 
-        private CSharpScriptRunner CreateInstance() =>
-            new(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new ScriptOptionsFactory(Mock.Of<ILog<ScriptOptionsFactory>>(), CancellationToken.None), _host.Object);
+        private CSharpScriptRunner CreateInstance()
+        {
+            var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider( Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(new FileSystem()), CancellationToken.None);
+            return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new []{ assembliesScriptOptionsProvider }, _host.Object);
+        }
     }
 }

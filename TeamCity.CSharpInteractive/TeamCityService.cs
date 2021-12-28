@@ -2,7 +2,9 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     internal class TeamCityService: ITeamCity, ITeamCityContext
     {
         [ThreadStatic] private static bool _teamCityIntegration;

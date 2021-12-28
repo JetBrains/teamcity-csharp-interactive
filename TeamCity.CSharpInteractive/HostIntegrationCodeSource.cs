@@ -11,19 +11,7 @@ namespace TeamCity.CSharpInteractive
     {
         private static readonly string[] ImplicitUsing = 
         {
-            // .NET 6 default implicit using
-            "global using global::System;",
-            "global using global::System.Collections.Generic;",
-            "global using global::System.IO;",
-            "global using global::System.Linq;",
-            "global using global::System.Net.Http;",
-            "global using global::System.Threading;",
-            "global using global::System.Threading.Tasks;",
-            
-            // Contracts
-            "global using global::TeamCity.CSharpInteractive.Contracts;",
-            "global using static global::TeamCity.CSharpInteractive.Contracts.Color;",
-            "global using global::NuGet;"
+            "global using static global::TeamCity.CSharpInteractive.Contracts.Color;"
         };
 
         // ReSharper disable once IdentifierTypo
