@@ -37,9 +37,16 @@ namespace TeamCity.CSharpInteractive
             }
 
             var rawParam = loadMatch.Groups[1].Value;
-            Enum.TryParse<TOption>(_stringService.TrimAndUnquote(rawParam), true, out var verbosityLevel);
-            _log.Trace(() => new []{new Text($"REPL {_setting.Key}({_setting.Description}) {rawParam} -> {verbosityLevel}")});
-            yield return new SettingCommand<TOption>(verbosityLevel);
+            if (Enum.TryParse<TOption>(_stringService.TrimAndUnquote(rawParam), true, out var verbosityLevel))
+            {
+                _log.Trace(() => new []{new Text($"REPL {_setting.Key}({_setting.Description}) {rawParam} -> {verbosityLevel}")});
+                yield return new SettingCommand<TOption>(verbosityLevel);
+            }
+            else
+            {
+                _log.Error(ErrorId.NotSupported, $"Invalid REPL command: \"{replCommand}\".");
+                yield return HelpCommand.Shared;
+            }
         }
     }
 }
