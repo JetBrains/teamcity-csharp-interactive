@@ -1,6 +1,7 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedType.Global
 namespace Dotnet
 {
     using System;
@@ -16,7 +17,6 @@ namespace Dotnet
         IEnumerable<(string name, string value)> Vars,
         string ExecutablePath = WellknownValues.DotnetExecutablePath,
         string WorkingDirectory = "",
-        bool Integration = false,
         string ShortName = "")
         : IProcess
     {

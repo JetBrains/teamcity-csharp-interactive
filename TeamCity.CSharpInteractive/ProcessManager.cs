@@ -8,11 +8,11 @@ namespace TeamCity.CSharpInteractive
 
     internal class ProcessManager: IProcessManager
     {
+        private static readonly Text StdOutPrefix = new("OUT: ");
+        private static readonly Text StdErrPrefix = new("ERR: ", Color.Error);
         private readonly ILog<ProcessManager> _log;
         private readonly IProcessOutputWriter _processOutputWriter;
         private readonly IStartInfoFactory _startInfoFactory;
-        private readonly Text _stdOutPrefix;
-        private readonly Text _stdErrPrefix;
         private readonly Process _process;
         private string _processId = string.Empty;
         private int _disposed;
@@ -21,14 +21,11 @@ namespace TeamCity.CSharpInteractive
         public ProcessManager(
             ILog<ProcessManager> log,
             IProcessOutputWriter processOutputWriter,
-            IStringService stringService,
             IStartInfoFactory startInfoFactory)
         {
             _log = log;
             _processOutputWriter = processOutputWriter;
             _startInfoFactory = startInfoFactory;
-            _stdOutPrefix = new Text($"{stringService.Tab}OUT: "); 
-            _stdErrPrefix = new Text($"{stringService.Tab}ERR: ", Color.Error);
             _process = new Process{ EnableRaisingEvents = true };
             _process.OutputDataReceived += ProcessOnOutputDataReceived;
             _process.ErrorDataReceived += ProcessOnErrorDataReceived;
@@ -91,7 +88,7 @@ namespace TeamCity.CSharpInteractive
             var output = new Output(_processInfo!, isError, line);
             if (handler != default)
             {
-                _log.Trace(() => new []{isError ? _stdErrPrefix : _stdOutPrefix, new Text(line)}, _processId);
+                _log.Trace(() => new []{Text.Tab, isError ? StdErrPrefix : StdOutPrefix, new Text(line)}, _processId);
                 handler(output);
             }
             else

@@ -11,13 +11,7 @@ namespace TeamCity.CSharpInteractive
     [ExcludeFromCodeCoverage]
     internal class Environment : IEnvironment, ITraceSource, IScriptContext
     {
-        private readonly IStringService _stringService;
         private readonly LinkedList<string> _scriptDirectories = new();
-
-        public Environment(IStringService stringService)
-        {
-            _stringService = stringService;
-        }
 
         public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
@@ -73,7 +67,8 @@ namespace TeamCity.CSharpInteractive
             yield return new Text("Command line arguments:");
             foreach (var arg in System.Environment.GetCommandLineArgs())
             {
-                yield return new Text($"{_stringService.Tab}{arg}");
+                yield return Text.Tab;
+                yield return new Text(arg);
             }
         }
 

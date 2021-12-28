@@ -5,6 +5,7 @@
 // ReSharper disable InvertIf
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedType.Global
 namespace Docker
 {
     using System;

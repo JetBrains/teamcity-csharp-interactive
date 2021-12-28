@@ -23,7 +23,8 @@ namespace TeamCity.CSharpInteractive
         public ProcessStartInfo Create(IStartInfo info)
         {
             var workingDirectory = _wellknownValueResolver.Resolve(info.WorkingDirectory);
-            _log.Trace(() => new []{new Text($"Working directory: \"{workingDirectory}\".")});
+            var directory = workingDirectory;
+            _log.Trace(() => new []{new Text($"Working directory: \"{directory}\".")});
             if (string.IsNullOrWhiteSpace(workingDirectory))
             {
                 workingDirectory = _environment.GetPath(SpecialFolder.Working);

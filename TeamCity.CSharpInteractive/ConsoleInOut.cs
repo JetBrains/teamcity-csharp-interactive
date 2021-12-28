@@ -23,13 +23,7 @@
 
         void IStdErr.WriteLine(params Text[] line) => WriteStdErr(line + Text.NewLine);
 
-        public void Write(params Text[] text)
-        {
-            foreach (var (value, color) in text)
-            {
-                _console.WriteToOut(_textToColorStrings.Convert(value, _colorTheme.GetConsoleColor(color)).ToArray());
-            }
-        }
+        public void Write(params Text[] text) => _console.WriteToOut(text.SelectMany(i => _textToColorStrings.Convert(i.Value, _colorTheme.GetConsoleColor(i.Color))).ToArray());
 
         void IStdOut.WriteLine(params Text[] line) => Write(line + Text.NewLine);
         

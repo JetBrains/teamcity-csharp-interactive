@@ -31,7 +31,7 @@ namespace TeamCity.CSharpInteractive.Tests
             // Given
             var fullPath = Path.Combine("wd", "zx", "Abc");
             _filePathResolver.Setup(i => i.TryResolve(Path.Combine("zx", "Abc"), out fullPath)).Returns(true);
-            _fileSystem.Setup(i => i.ReadLines( Path.Combine("wd", "zx", "Abc"))).Returns(new [] {"content"});
+            _fileSystem.Setup(i => i.ReadAllLines( Path.Combine("wd", "zx", "Abc"))).Returns(new [] {"content"});
             var source = CreateInstance(Path.Combine("zx", "Abc"));
 
             // When

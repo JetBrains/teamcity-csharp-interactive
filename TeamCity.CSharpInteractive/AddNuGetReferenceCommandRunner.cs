@@ -68,7 +68,7 @@ namespace TeamCity.CSharpInteractive
                     {
                         if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
                         {
-                            _log.Info(new[] { Text.Tab, new Text(assembly.Name, Color.Details) });
+                            _log.Info(Text.Tab, new Text(assembly.Name, Color.Details));
                         }
                         else
                         {

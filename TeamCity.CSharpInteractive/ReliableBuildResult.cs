@@ -49,7 +49,7 @@ namespace TeamCity.CSharpInteractive
                 from message in _serviceMessageParser.ParseServiceMessages(line)
                 select (line, message, StartInfoFactory: source.Value);
 
-            foreach (var (line, message, startInfoFactory) in items)
+            foreach (var (_, message, startInfoFactory) in items)
             {
                 _baseBuildResult.ProcessMessage(startInfoFactory, message);
             }

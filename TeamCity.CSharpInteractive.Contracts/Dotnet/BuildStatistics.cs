@@ -1,3 +1,5 @@
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable CheckNamespace
 namespace Dotnet;
 
 using System.Collections.Generic;
@@ -15,9 +17,9 @@ public record BuildStatistics
         Warnings = buildResult.Messages.Count(i => i.State == BuildMessageState.Warning);
 
         var tests = (
-                from testGroup in (
+                from testGroup in 
                     from testResult in buildResult.Tests
-                    group testResult by (testResult.AssemblyName, testResult.DisplayName))
+                    group testResult by (testResult.AssemblyName, testResult.DisplayName)
                 select testGroup.OrderBy(i => i.State).Last())
             .ToArray();
 

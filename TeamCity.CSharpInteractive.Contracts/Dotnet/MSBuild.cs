@@ -2,6 +2,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable CheckNamespace
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedType.Global
 namespace Dotnet
 {
     using System;

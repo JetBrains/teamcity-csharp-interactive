@@ -55,6 +55,7 @@ namespace Dotnet
                 .AddMSBuildIntegration(Integration, Verbosity)
                 .AddArgs(
                     ("--settings", Settings),
+                    ("--filter", Filter),
                     ("--test-adapter-path", TestAdapterPath),
                     ("--logger", Logger),
                     ("--configuration", Configuration),

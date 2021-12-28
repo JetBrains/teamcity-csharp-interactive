@@ -1,4 +1,4 @@
-#l diagnostic
+//#l diagnostic
 
 using Dotnet;
 

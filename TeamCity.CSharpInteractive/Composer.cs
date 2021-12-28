@@ -99,7 +99,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
                 .Bind<ITeamCityParameters>().To<TeamCityParameters>()
                 .Bind<IJavaPropertiesParser>().To<JavaPropertiesParser>()
-                .Bind<MemoryPool<TT>>().To(ctx => MemoryPool<TT>.Shared)
+                .Bind<MemoryPool<TT>>().To(_ => MemoryPool<TT>.Shared)
                 .Bind<IMessageIndicesReader>().To<MessageIndicesReader>()
                 .Bind<IMessagesReader>().To<MessagesReader>()
 

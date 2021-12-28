@@ -12,9 +12,7 @@ namespace TeamCity.CSharpInteractive
     using System.Threading.Tasks;
     using Cmd;
     using Dotnet;
-    using JetBrains.TeamCity.ServiceMessages;
     using JetBrains.TeamCity.ServiceMessages.Read;
-    using Microsoft.Build.Tasks;
 
     internal class BuildService: IBuild
     {
