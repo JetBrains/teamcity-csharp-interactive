@@ -72,7 +72,7 @@ namespace TeamCity.CSharpInteractive
             }
             
             names.AddLast(name);
-            return Array.Empty<BuildMessage>();
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
         }
         
         private IEnumerable<BuildMessage> OnTestSuiteFinished(IServiceMessage message)
@@ -84,7 +84,7 @@ namespace TeamCity.CSharpInteractive
                 names.RemoveLast();
             }
             
-            return Array.Empty<BuildMessage>();
+            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
         }
 
         private IEnumerable<BuildMessage> OnTestFinished(IServiceMessage message)
