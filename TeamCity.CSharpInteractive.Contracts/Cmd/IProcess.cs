@@ -4,12 +4,8 @@ namespace Cmd
 {
     using TeamCity.CSharpInteractive.Contracts;
 
-    public interface IProcess
+    public interface IProcess: IProcessState
     {
-        string ShortName { get; }
-        
         IStartInfo GetStartInfo(IHost host);
-
-        ProcessState GetState(int exitCode);
     }
 }

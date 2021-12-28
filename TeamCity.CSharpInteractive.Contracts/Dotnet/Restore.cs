@@ -4,7 +4,6 @@
 namespace Dotnet
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
@@ -15,7 +14,7 @@ namespace Dotnet
         IEnumerable<string> Args,
         IEnumerable<(string name, string value)> Vars,
         IEnumerable<string> Sources,
-        string ExecutablePath = WellknownValues.DotnetExecutablePath,
+        string ExecutablePath = "",
         string WorkingDirectory = "",
         string Project = "",
         string Packages = "",
@@ -32,25 +31,21 @@ namespace Dotnet
         string LockFilePath = "",
         bool ForceEvaluate = false,
         Verbosity? Verbosity = default,
-        bool Integration = true,
         string ShortName = "")
         : IProcess
     {
-        private readonly string _shortName = ShortName;
-
         public Restore()
-            : this(ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty)
+            : this(Enumerable.Empty<(string, string)>(), Enumerable.Empty< string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())
         { }
         
-        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet restore";
-
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet restore")
                 .WithArgs("restore")
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars)
-                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddMSBuildIntegration(host, Verbosity)
                 .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
                 .AddArgs(
                     ("--packages", Packages),

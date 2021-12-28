@@ -8,21 +8,18 @@ namespace TeamCity.CSharpInteractive
     {
         private readonly ILog<StartInfoFactory> _log;
         private readonly IEnvironment _environment;
-        private readonly IWellknownValueResolver _wellknownValueResolver;
 
         public StartInfoFactory(
             ILog<StartInfoFactory> log,
-            IEnvironment environment,
-            IWellknownValueResolver wellknownValueResolver)
+            IEnvironment environment)
         {
             _log = log;
             _environment = environment;
-            _wellknownValueResolver = wellknownValueResolver;
         }
 
         public ProcessStartInfo Create(IStartInfo info)
         {
-            var workingDirectory = _wellknownValueResolver.Resolve(info.WorkingDirectory);
+            var workingDirectory = info.WorkingDirectory;
             var directory = workingDirectory;
             _log.Trace(() => new []{new Text($"Working directory: \"{directory}\".")});
             if (string.IsNullOrWhiteSpace(workingDirectory))
@@ -33,7 +30,7 @@ namespace TeamCity.CSharpInteractive
 
             var startInfo = new ProcessStartInfo
             {
-                FileName = _wellknownValueResolver.Resolve(info.ExecutablePath),
+                FileName = info.ExecutablePath,
                 WorkingDirectory = workingDirectory,
                 UseShellExecute = false,
                 CreateNoWindow = true,
@@ -45,17 +42,14 @@ namespace TeamCity.CSharpInteractive
 
             foreach (var arg in info.Args)
             {
-                var curArg = _wellknownValueResolver.Resolve(arg);
-                startInfo.ArgumentList.Add(curArg);
-                _log.Trace(() => new []{new Text($"Add the argument \"{curArg}\".")});
+                startInfo.ArgumentList.Add(arg);
+                _log.Trace(() => new []{new Text($"Add the argument \"{arg}\".")});
             }
 
             foreach (var (name, value) in info.Vars)
             {
-                var curName = _wellknownValueResolver.Resolve(name);
-                var curValue = _wellknownValueResolver.Resolve(value);
-                startInfo.Environment[curName] = curValue;
-                _log.Trace(() => new []{new Text($"Add the environment variable {curName}={curValue}.")});
+                startInfo.Environment[name] = value;
+                _log.Trace(() => new []{new Text($"Add the environment variable {name}={value}.")});
             }
             
             return startInfo;

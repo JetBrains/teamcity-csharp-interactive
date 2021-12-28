@@ -12,7 +12,7 @@ namespace TeamCity.CSharpInteractive
     using Cmd;
     using Contracts;
 
-    internal class CommandLineService: ICommandLine
+    internal class CommandLineService: IProcessRunner, ICommandLine
     {
         private readonly ILog<CommandLineService> _log;
         private readonly IHost _host;
@@ -31,7 +31,10 @@ namespace TeamCity.CSharpInteractive
             _cancellationTokenSource = cancellationTokenSource;
         }
 
-        public int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
+        public int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default) =>
+            Run(process.GetStartInfo(_host.Host), process, handler, timeout);
+
+        public int? Run(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, TimeSpan timeout = default)
         {
             using var processManager = _processManagerFactory();
             if (handler != default)
@@ -39,17 +42,16 @@ namespace TeamCity.CSharpInteractive
                 processManager.OnOutput += handler;
             }
 
-            var processInfo = process.GetStartInfo(_host.Host);
-            var info = new Text(GetInfo(processInfo, processManager), Color.Header);
+            var info = new Text(GetInfo(startInfo, processManager), Color.Header);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            if (!processManager.Start(processInfo, out var startInfo))
+            if (!processManager.Start(startInfo, out var processStartInfo))
             {
                 _log.Trace(() => new []{info, new Text(" - cannot start.")});
                 return default;
             }
 
-            _log.Info(GetHeader(startInfo, processManager).ToArray());
+            _log.Info(GetHeader(processStartInfo, processManager).ToArray());
             var finished = true;
             if (timeout == TimeSpan.Zero)
             {
@@ -63,7 +65,7 @@ namespace TeamCity.CSharpInteractive
             if (finished)
             {
                 stopwatch.Start();
-                ShowFooter(process, processManager, stopwatch);
+                ShowFooter(state, processManager, stopwatch);
                 return processManager.ExitCode;
             }
 
@@ -73,7 +75,10 @@ namespace TeamCity.CSharpInteractive
             return default;
         }
 
-        public async Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
+        public Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default) =>
+            RunAsync(process.GetStartInfo(_host.Host), process, handler, cancellationToken);
+
+        public async Task<int?> RunAsync(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
             if (cancellationToken == default)
             {
@@ -89,18 +94,17 @@ namespace TeamCity.CSharpInteractive
             var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
             // ReSharper disable once AccessToDisposedClosure
             processManager.OnExit += () => completionSource.TrySetResult(processManager.ExitCode);
-            var processInfo = process.GetStartInfo(_host.Host);
-            var info = new Text(GetInfo(processInfo, processManager), Color.Header);
+            var info = new Text(GetInfo(startInfo, processManager), Color.Header);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            if (!processManager.Start(processInfo, out var startInfo))
+            if (!processManager.Start(startInfo, out var processStartInfo))
             {
                 _log.Warning(info, new Text(" - cannot start process."));
                 processManager.Dispose();
                 return default;
             }
             
-            _log.Info(GetHeader(startInfo, processManager).ToArray());
+            _log.Info(GetHeader(processStartInfo, processManager).ToArray());
             void Cancel()
             {
                 if (Kill(processManager, info))
@@ -118,7 +122,7 @@ namespace TeamCity.CSharpInteractive
                 {
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
                     stopwatch.Start();
-                    ShowFooter(process, processManager, stopwatch);
+                    ShowFooter(state, processManager, stopwatch);
                     return exitCode;
                 }
             }
@@ -193,12 +197,12 @@ namespace TeamCity.CSharpInteractive
             yield return new Text(Escape(startInfo.WorkingDirectory));
         }
 
-        private void ShowFooter(IProcess process, IProcessManager processManager, Stopwatch stopwatch)
+        private void ShowFooter(IProcessState state, IProcessManager processManager, Stopwatch stopwatch)
         {
-            var state = process.GetState(processManager.ExitCode);
-            var footer = GetFooter(processManager, stopwatch, state).ToArray();
+            var curState = state.GetState(processManager.ExitCode);
+            var footer = GetFooter(processManager, stopwatch, curState).ToArray();
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-            switch (state)
+            switch (curState)
             {
                 case ProcessState.Success:
                     _log.Info(footer.WithDefaultColor(Color.Success));

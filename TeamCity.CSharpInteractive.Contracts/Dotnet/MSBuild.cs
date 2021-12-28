@@ -7,7 +7,6 @@ namespace Dotnet
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
     using Cmd;
@@ -19,7 +18,7 @@ namespace Dotnet
             IEnumerable<(string name, string value)> Props,
             IEnumerable<(string name, string value)> Vars,
             IEnumerable<(string name, string value)> RestoreProps,
-            string ExecutablePath = WellknownValues.DotnetExecutablePath,
+            string ExecutablePath = "",
             string WorkingDirectory = "",
             string Project = "",
             string Target = "",
@@ -42,31 +41,25 @@ namespace Dotnet
             bool NoLogo = false,
             bool Version = false,
             Verbosity? Verbosity = default,
-            bool Integration = true,
             string ShortName = "")
         : IProcess
     {
-        private readonly string _shortName = ShortName;
-
         public MSBuild()
-            : this(WellknownValues.DotnetExecutablePath)
-        {
-        }
+            : this(string.Empty)
+        { }
 
         public MSBuild(string ExecutablePath)
-            : this(ImmutableList<string>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList<(string, string)>.Empty, ExecutablePath)
-        {
-        }
+            : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), ExecutablePath)
+        { }
         
-        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : ExecutablePath == WellknownValues.DotnetExecutablePath ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath);
-
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(ExecutablePath)
-                .WithArgs(ExecutablePath == WellknownValues.DotnetExecutablePath ? new [] {"msbuild"} : Array.Empty<string>())
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath))
+                .WithArgs(ExecutablePath == string.Empty ? new [] {"msbuild"} : Array.Empty<string>())
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars)
-                .AddMSBuildIntegration(Integration, Verbosity)
+                .AddMSBuildIntegration(host, Verbosity)
                 .AddMSBuildArgs(
                     ("-target", Target),
                     ("-maxCpuCount", MaxCpuCount?.ToString()),

@@ -22,14 +22,16 @@ namespace TeamCity.CSharpInteractive
             _teamCitySettings = teamCitySettings;
         }
 
-        public string Resolve(string value) =>
-            value
+        public string Resolve(WellknownValue value) =>
+            value switch
+            {
                 // Dotnet
-                .Replace(WellknownValues.DotnetExecutablePath, _dotnetEnvironment.Path)
-                .Replace(WellknownValues.DotnetLoggerDirectory, _environment.GetPath(SpecialFolder.Bin))
-                .Replace(WellknownValues.TeamCityVersion, _teamCitySettings.Version)
-                .Replace(WellknownValues.TeamCityMessagesPath, _teamCitySettings.ServiceMessagesPath)
-                // Docker
-                .Replace(WellknownValues.DockerExecutablePath, _dockerEnvironment.Path);
-    }
+                WellknownValue.DotnetExecutablePath => _dotnetEnvironment.Path,
+                WellknownValue.DotnetLoggerDirectory => _environment.GetPath(SpecialFolder.Bin),
+                WellknownValue.TeamCityVersion => _teamCitySettings.Version,
+                WellknownValue.TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath,
+                WellknownValue.DockerExecutablePath => _dockerEnvironment.Path,
+                _ => string.Empty
+            };
+    }   
 }

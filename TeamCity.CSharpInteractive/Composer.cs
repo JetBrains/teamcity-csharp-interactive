@@ -152,9 +152,10 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IHost>().To<HostService>()
                 .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
                 .Bind<NuGet.INuGet>().To<NuGetService>()
-                .Bind<Cmd.ICommandLine>("base").To<CommandLineService>()
-                .Bind<Cmd.ICommandLine>().To<CommandLineInFlowService>()
+                .Bind<Cmd.ICommandLine>().Bind<IProcessRunner>().Tags("base").To<CommandLineService>()
+                .Bind<Cmd.ICommandLine>().Bind<IProcessRunner>().To<CommandLineInFlowService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
+                .Bind<ITeamCity>().Bind<ITeamCityContext>().To<TeamCityService>()
 
                 // TeamCity Service messages
                 .Bind<ITeamCityWriter>().To<HierarchicalTeamCityWriter>()

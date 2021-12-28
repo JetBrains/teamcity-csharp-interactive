@@ -5,7 +5,6 @@
 namespace Dotnet
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
@@ -17,7 +16,7 @@ namespace Dotnet
         IEnumerable<(string name, string value)> RunSettings,
         IEnumerable<(string name, string value)> Vars,
         IEnumerable<string> Loggers,
-        string ExecutablePath = WellknownValues.DotnetExecutablePath,
+        string ExecutablePath = "",
         string WorkingDirectory = "",
         string Tests = "",
         string TestCaseFilter = "",
@@ -35,27 +34,22 @@ namespace Dotnet
         string Collect = "",
         bool InIsolation = false,
         Verbosity? Verbosity = default,
-        bool Integration = true,
         string ShortName = "")
         : IProcess
     {
-        private readonly string _shortName = ShortName;
-
         public VSTest(params string[] testFileNames)
-            : this(testFileNames, ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList<(string, string)>.Empty, ImmutableList< string>.Empty)
-        {
-        }
+            : this(testFileNames, Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty< string>())
+        { }
         
-        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet vstest";
-
         public IStartInfo GetStartInfo(IHost host)
         {
-            var cmd =  new CommandLine(ExecutablePath)
+            var cmd =  new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet vstest")
                 .WithArgs("vstest")
                 .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars)
-                .AddVSTestIntegration(Integration, Verbosity)
+                .AddVSTestIntegration(host, Verbosity)
                 .AddArgs(
                     ("--Tests", Tests),
                     ("--TestCaseFilter", TestCaseFilter),

@@ -10,7 +10,6 @@ namespace Docker
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
@@ -21,6 +20,7 @@ namespace Docker
         IProcess Process,
         // Docker image
         string Image,
+        IEnumerable<string> Args,
         IEnumerable<(string name, string value)> Vars,
         // Additional docker options
         IEnumerable<string> Options,
@@ -32,6 +32,7 @@ namespace Docker
         IEnumerable<string> Mounts,
         // Bind mount a volume
         IEnumerable<(string from, string to)> Volumes,
+        string ExecutablePath = "",
         string WorkingDirectory = "",
         // Number of CPUs
         int? CPUs = default,
@@ -66,29 +67,28 @@ namespace Docker
         string ShortName = "")
         : IProcess
     {
-        private readonly string _shortName = ShortName;
-
         public Run(): this(new CommandLine(string.Empty), string.Empty) 
         { }
         
-        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : $"docker run {Image} {Process.ShortName}";
-
         public Run(IProcess process, string image)
             : this(
                 process,
                 image,
-                ImmutableList<(string, string)>.Empty,
-                ImmutableList<string>.Empty,
-                ImmutableList<string>.Empty,
-                ImmutableList<string>.Empty,
-                ImmutableList<string>.Empty,
-                ImmutableList<(string, string)>.Empty)
+                Enumerable.Empty<string>(),
+                Enumerable.Empty<(string, string)>(),
+                Enumerable.Empty<string>(),
+                Enumerable.Empty<string>(),
+                Enumerable.Empty<string>(),
+                Enumerable.Empty<string>(),
+                Enumerable.Empty<(string, string)>())
         { }
 
         public IStartInfo GetStartInfo(IHost host)
         {
             var processInfo = Process.GetStartInfo(host);
-            var cmd = new CommandLine(WellknownValues.DockerExecutablePath)
+            var valueResolver = host.GetService<IWellknownValueResolver>();
+            var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? valueResolver.Resolve(WellknownValue.DockerExecutablePath) : ExecutablePath)
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"docker run {Image} {processInfo.ShortName}")
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithArgs("run")
                 .AddBooleanArgs(
@@ -112,6 +112,7 @@ namespace Docker
                     ("--user", User),
                     ("--workdir", ContainerWorkingDirectory),
                     ("--env-file", EnvFile))
+                .AddArgs(Args.ToArray())
                 .AddValues("-e", "=", processInfo.Vars.ToArray());
 
             var additionalVolums = new HashSet<(string, string)>();
@@ -120,7 +121,7 @@ namespace Docker
             var rootDirectory = Platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
             var integrationDirectory = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}";
             (string fromDir, string toDir)[] directoryMap = {
-                (WellknownValues.DotnetLoggerDirectory, $"{integrationDirectory}")
+                (valueResolver.Resolve(WellknownValue.DotnetLoggerDirectory), $"{integrationDirectory}")
             };
 
             for (var i = 0; i < args.Length; i++)

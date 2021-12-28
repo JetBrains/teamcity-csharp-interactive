@@ -4,7 +4,6 @@
 namespace Dotnet
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
@@ -13,7 +12,7 @@ namespace Dotnet
     public record Run(
         IEnumerable<string> Args,
         IEnumerable<(string name, string value)> Vars,
-        string ExecutablePath = WellknownValues.DotnetExecutablePath,
+        string ExecutablePath = "",
         string WorkingDirectory = "",
         string Framework = "",
         string Configuration = "",
@@ -29,16 +28,13 @@ namespace Dotnet
         string ShortName = "")
         : IProcess
     {
-        private readonly string _shortName = ShortName;
-
         public Run()
-            : this(ImmutableList< string>.Empty, ImmutableList<(string, string)>.Empty)
+            : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>())
         { }
         
-        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : "dotnet run";
-
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet run")
                 .WithArgs("run")
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars)

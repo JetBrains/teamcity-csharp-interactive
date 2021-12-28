@@ -11,40 +11,49 @@ namespace TeamCity.CSharpInteractive
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Pure.DI;
 
-    internal class CommandLineInFlowService: ICommandLine
+    internal class CommandLineInFlowService: IProcessRunner, ICommandLine
     {
         private readonly ILog<CommandLineInFlowService> _log;
-        private readonly ICommandLine _baseCommandLine;
+        private readonly IHost _host;
+        private readonly IProcessRunner _baseProcessRunner;
         private readonly ITeamCitySettings _teamCitySettings;
         private readonly ITeamCityWriter _teamCityWriter;
         private readonly IFlowContext _flowContext;
 
         public CommandLineInFlowService(
             ILog<CommandLineInFlowService> log,
-            [Tag("base")] ICommandLine baseCommandLine,
+            IHost host,
+            [Tag("base")] IProcessRunner baseProcessRunner,
             ITeamCitySettings teamCitySettings,
             ITeamCityWriter teamCityWriter,
             IFlowContext flowContext)
         {
             _log = log;
-            _baseCommandLine = baseCommandLine;
+            _host = host;
+            _baseProcessRunner = baseProcessRunner;
             _teamCitySettings = teamCitySettings;
             _teamCityWriter = teamCityWriter;
             _flowContext = flowContext;
         }
+        
+        public int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default) =>
+            Run(process.GetStartInfo(_host.Host), process, handler, timeout);
 
-        public int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
+        public int? Run(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, TimeSpan timeout = default)
         {
             using var flow = CreateFlow();
-            using var block = CreateBlock(process);
-            return _baseCommandLine.Run(WrapProcess(process), handler, timeout);
+            using var block = CreateBlock(startInfo);
+            return _baseProcessRunner.Run(WrapInFlow(startInfo), state, handler, timeout);
         }
-
-        public Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
+        
+        public Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default) =>
+            RunAsync(process.GetStartInfo(_host.Host), process, handler, cancellationToken);
+        
+        public Task<int?> RunAsync(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
             var flow = CreateFlow();
-            var block = CreateBlock(process);
-            return _baseCommandLine.RunAsync(WrapProcess(process), handler, cancellationToken)
+            var block = CreateBlock(startInfo);
+            return _baseProcessRunner.RunAsync(WrapInFlow(startInfo), state, handler, cancellationToken)
                 .ContinueWith(
                     task =>
                     {
@@ -54,57 +63,39 @@ namespace TeamCity.CSharpInteractive
                     }, cancellationToken);
         }
 
-        private IProcess WrapProcess(IProcess process) =>
+        private IStartInfo WrapInFlow(IStartInfo startInfo) =>
             _teamCitySettings.IsUnderTeamCity
-                ? new ProcessInFlow(process, _flowContext.CurrentFlowId)
-                : process;
+                ? new StartInfoInFlow(startInfo, _flowContext.CurrentFlowId)
+                : startInfo;
         
-        private IDisposable CreateBlock(IProcess process) =>
-            _log.Block(new []{new Text(process.ShortName)});
+        private IDisposable CreateBlock(IStartInfo startInfo) =>
+            _log.Block(new []{new Text(startInfo.ShortName)});
 
         private IDisposable CreateFlow() =>
             _teamCitySettings.IsUnderTeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
 
-        private class ProcessInFlow : IProcess
+        private class StartInfoInFlow: IStartInfo
         {
-            private readonly IProcess _baseProcess;
+            private readonly IStartInfo _baseStartIfo;
             private readonly string _flowId;
 
-            public ProcessInFlow(IProcess baseProcess, string flowId)
+            public StartInfoInFlow(IStartInfo baseStartIfo, string flowId)
             {
-                _baseProcess = baseProcess;
+                _baseStartIfo = baseStartIfo;
                 _flowId = flowId;
             }
-            
-            public string ShortName => _baseProcess.ShortName;
 
-            public IStartInfo GetStartInfo(IHost host) => new StartInfoInFlow(_baseProcess.GetStartInfo(host), _flowId);
+            public string ShortName => _baseStartIfo.ShortName;
 
-            public ProcessState GetState(int exitCode) => _baseProcess.GetState(exitCode);
+            public string ExecutablePath => _baseStartIfo.ExecutablePath;
 
-            public override string ToString() => _baseProcess.ToString() ?? string.Empty;
+            public string WorkingDirectory => _baseStartIfo.WorkingDirectory;
 
-            private class StartInfoInFlow: IStartInfo
-            {
-                private readonly IStartInfo _baseStartIfo;
-                private readonly string _flowId;
+            public IEnumerable<string> Args => _baseStartIfo.Args;
 
-                public StartInfoInFlow(IStartInfo baseStartIfo, string flowId)
-                {
-                    _baseStartIfo = baseStartIfo;
-                    _flowId = flowId;
-                }
-
-                public string ExecutablePath => _baseStartIfo.ExecutablePath;
-
-                public string WorkingDirectory => _baseStartIfo.WorkingDirectory;
-
-                public IEnumerable<string> Args => _baseStartIfo.Args;
-
-                public IEnumerable<(string name, string value)> Vars => 
-                    new []{ (TeamCitySettings.FlowIdEnvironmentVariableName, _flowId) }
-                        .Concat(_baseStartIfo.Vars);
-            }
+            public IEnumerable<(string name, string value)> Vars => 
+                new []{ (TeamCitySettings.FlowIdEnvironmentVariableName, _flowId) }
+                    .Concat(_baseStartIfo.Vars);
         }
     }
 }

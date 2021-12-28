@@ -11,12 +11,15 @@ namespace TeamCity.CSharpInteractive
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
+    using Contracts;
     using Dotnet;
     using JetBrains.TeamCity.ServiceMessages.Read;
 
     internal class BuildService: IBuild
     {
-        private readonly ICommandLine _commandLine;
+        private readonly IProcessRunner _processRunner;
+        private readonly IHost _host;
+        private readonly ITeamCityContext _teamCityContext;
         private readonly Func<IBuildResult> _resultFactory;
         private readonly ITeamCitySettings _teamCitySettings;
         private readonly IProcessOutputWriter _processOutputWriter;
@@ -24,14 +27,18 @@ namespace TeamCity.CSharpInteractive
         private readonly IServiceMessageParser _serviceMessageParser;
 
         public BuildService(
-            ICommandLine commandLine,
+            IProcessRunner processRunner,
+            IHost host,
+            ITeamCityContext teamCityContext,
             Func<IBuildResult> resultFactory,
             ITeamCitySettings teamCitySettings,
             IProcessOutputWriter processOutputWriter,
             IBuildMessageLogWriter buildMessageLogWriter,
             IServiceMessageParser serviceMessageParser)
         {
-            _commandLine = commandLine;
+            _processRunner = processRunner;
+            _host = host;
+            _teamCityContext = teamCityContext;
             _resultFactory = resultFactory;
             _teamCitySettings = teamCitySettings;
             _processOutputWriter = processOutputWriter;
@@ -42,15 +49,28 @@ namespace TeamCity.CSharpInteractive
         public Dotnet.BuildResult Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
         {
             var ctx = _resultFactory();
-            var exitCode = _commandLine.Run(process, output => Handle(output.StartInfo, handler, output, ctx), timeout);
+            var exitCode = _processRunner.Run(CreateStartInfo(process), process, output => Handle(output.StartInfo, handler, output, ctx), timeout);
             return ctx.CreateResult(exitCode);
         }
 
         public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
             var ctx = _resultFactory();
-            var exitCode = await _commandLine.RunAsync(process, output => Handle(output.StartInfo, handler, output, ctx), cancellationToken);
+            var exitCode = await _processRunner.RunAsync(CreateStartInfo(process), process, output => Handle(output.StartInfo, handler, output, ctx), cancellationToken);
             return ctx.CreateResult(exitCode);
+        }
+
+        private IStartInfo CreateStartInfo(IProcess process)
+        {
+            try
+            {
+                _teamCityContext.TeamCityIntegration = true;
+                return process.GetStartInfo(_host);
+            }
+            finally
+            {
+                _teamCityContext.TeamCityIntegration = false;
+            }
         }
         
         private void Handle(IStartInfo info, Action<Output>? handler, in Output output, IBuildResult result)

@@ -6,8 +6,8 @@ namespace Dotnet
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.IO;
+    using System.Linq;
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
 
@@ -15,25 +15,22 @@ namespace Dotnet
     public record Custom(
         IEnumerable<string> Args,
         IEnumerable<(string name, string value)> Vars,
-        string ExecutablePath = WellknownValues.DotnetExecutablePath,
+        string ExecutablePath = "",
         string WorkingDirectory = "",
         string ShortName = "")
         : IProcess
     {
-        private readonly string _shortName = ShortName;
-
         public Custom()
             : this(Array.Empty<string>())
         { }
         
         public Custom(params string[] args)
-            : this(args, ImmutableList<(string, string)>.Empty)
+            : this(args, Enumerable.Empty<(string, string)>())
         { }
         
-        public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : ExecutablePath == WellknownValues.DotnetExecutablePath ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath);
-
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath))
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars)
                 .WithArgs(Args);
