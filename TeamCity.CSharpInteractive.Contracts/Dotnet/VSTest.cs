@@ -48,7 +48,7 @@ namespace Dotnet
                 .WithArgs("vstest")
                 .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
-                .WithVars(Vars)
+                .WithVars(Vars.ToArray())
                 .AddVSTestIntegration(host, Verbosity)
                 .AddArgs(
                     ("--Tests", Tests),

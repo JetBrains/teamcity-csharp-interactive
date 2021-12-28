@@ -4,6 +4,7 @@
 namespace Cmd
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -13,15 +14,15 @@ namespace Cmd
     public record CommandLine(
         string ExecutablePath,
         string WorkingDirectory,
-        IEnumerable<string> Args,
-        IEnumerable<(string name, string value)> Vars,
+        IReadOnlyList<string> Args,
+        IReadOnlyList<(string name, string value)> Vars,
         string ShortName = "")
         : IStartInfo, IProcess
     {
         private readonly string _shortName = ShortName;
 
         public CommandLine(string executablePath, params string[] args)
-            :this(executablePath, string.Empty, args, Enumerable.Empty<(string name, string value)>())
+            :this(executablePath, string.Empty, args, ImmutableArray<(string name, string value)>.Empty)
         { }
 
         public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : Path.GetFileNameWithoutExtension(ExecutablePath);

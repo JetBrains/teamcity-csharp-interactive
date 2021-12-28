@@ -58,7 +58,7 @@ namespace Dotnet
                 .WithArgs(ExecutablePath == string.Empty ? new [] {"msbuild"} : Array.Empty<string>())
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
-                .WithVars(Vars)
+                .WithVars(Vars.ToArray())
                 .AddMSBuildIntegration(host, Verbosity)
                 .AddMSBuildArgs(
                     ("-target", Target),

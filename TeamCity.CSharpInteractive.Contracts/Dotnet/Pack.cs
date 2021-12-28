@@ -40,7 +40,7 @@ namespace Dotnet
                 .WithArgs("pack")
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
-                .WithVars(Vars)
+                .WithVars(Vars.ToArray())
                 .AddMSBuildIntegration(host, Verbosity)
                 .AddArgs(
                     ("--output", Output),

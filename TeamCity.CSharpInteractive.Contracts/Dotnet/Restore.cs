@@ -44,7 +44,7 @@ namespace Dotnet
                 .WithArgs("restore")
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
                 .WithWorkingDirectory(WorkingDirectory)
-                .WithVars(Vars)
+                .WithVars(Vars.ToArray())
                 .AddMSBuildIntegration(host, Verbosity)
                 .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
                 .AddArgs(

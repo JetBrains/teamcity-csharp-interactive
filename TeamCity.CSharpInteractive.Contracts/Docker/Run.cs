@@ -10,6 +10,7 @@ namespace Docker
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Cmd;
     using TeamCity.CSharpInteractive.Contracts;
@@ -85,8 +86,12 @@ namespace Docker
 
         public IStartInfo GetStartInfo(IHost host)
         {
-            var processInfo = Process.GetStartInfo(host);
+            var directoryMap = new Dictionary<string, string>();
+            var pathResolver = new PathResolver(Platform, directoryMap);
+            using var pathResolverToken = host.GetService<IPathResolverContext>().Register(pathResolver);
             var valueResolver = host.GetService<IWellknownValueResolver>();
+
+            var processInfo = Process.GetStartInfo(host);
             var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? valueResolver.Resolve(WellknownValue.DockerExecutablePath) : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"docker run {Image} {processInfo.ShortName}")
                 .WithWorkingDirectory(WorkingDirectory)
@@ -115,38 +120,42 @@ namespace Docker
                 .AddArgs(Args.ToArray())
                 .AddValues("-e", "=", processInfo.Vars.ToArray());
 
-            var additionalVolums = new HashSet<(string, string)>();
-            var args = processInfo.Args.ToArray();
-
-            var rootDirectory = Platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
-            var integrationDirectory = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}";
-            (string fromDir, string toDir)[] directoryMap = {
-                (valueResolver.Resolve(WellknownValue.DotnetLoggerDirectory), $"{integrationDirectory}")
-            };
-
-            for (var i = 0; i < args.Length; i++)
-            {
-                var arg = args[i];
-                foreach (var (fromDir, toDir) in directoryMap)
-                {
-                    if (arg.Contains(fromDir))
-                    {
-                        args[i] = arg.Replace(fromDir, toDir);
-                        additionalVolums.Add((fromDir, toDir));
-                    }
-                }
-            }
-
+            var additionalVolums = directoryMap.Select(i => (i.Key, i.Value));
             return cmd
                 .AddValues("-v", ":", additionalVolums.ToArray())
                 .AddValues("-v", ":", Volumes.ToArray())
                 .AddArgs(Options.ToArray())
                 .AddArgs(Image)
                 .AddArgs(processInfo.ExecutablePath)
-                .WithVars(Vars)
-                .AddArgs(args);
+                .AddArgs(processInfo.Args.ToArray())
+                .WithVars(Vars.ToArray());
         }
 
         public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
+        
+        private class PathResolver: IPathResolver
+        {
+            private readonly string _platform;
+            private readonly IDictionary<string, string> _directoryMap;
+
+            public PathResolver(string platform, IDictionary<string, string> directoryMap)
+            {
+                _platform = platform;
+                _directoryMap = directoryMap;
+            }
+
+            public string Resolve(IHost host, string path, IPathResolver nextResolver)
+            {
+                path = Path.GetFullPath(path);
+                if (!_directoryMap.TryGetValue(path, out var toPath))
+                {
+                    var rootDirectory = _platform.Contains("windows", StringComparison.OrdinalIgnoreCase) ? "c:" : string.Empty;
+                    toPath = $"{rootDirectory}/.{Guid.NewGuid().ToString()[..8]}";
+                    _directoryMap.Add(path, toPath);
+                }
+
+                return toPath;
+            }
+        }
     }
 }

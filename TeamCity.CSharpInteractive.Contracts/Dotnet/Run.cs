@@ -37,7 +37,7 @@ namespace Dotnet
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet run")
                 .WithArgs("run")
                 .WithWorkingDirectory(WorkingDirectory)
-                .WithVars(Vars)
+                .WithVars(Vars.ToArray())
                 .AddArgs(
                     ("--framework", Framework),
                     ("--configuration", Configuration),

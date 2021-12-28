@@ -32,8 +32,8 @@ namespace Dotnet
             new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath))
                 .WithWorkingDirectory(WorkingDirectory)
-                .WithVars(Vars)
-                .WithArgs(Args);
+                .WithVars(Vars.ToArray())
+                .WithArgs(Args.ToArray());
 
         public ProcessState GetState(int exitCode) => ProcessState.Unknown;
     }

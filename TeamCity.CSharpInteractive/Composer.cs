@@ -102,6 +102,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<MemoryPool<TT>>().To(_ => MemoryPool<TT>.Shared)
                 .Bind<IMessageIndicesReader>().To<MessageIndicesReader>()
                 .Bind<IMessagesReader>().To<MessagesReader>()
+                .Bind<Cmd.IPathResolverContext>().Bind<Cmd.IVirtualContext>().To<PathResolverContext>()
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()
