@@ -15,6 +15,7 @@ namespace TeamCity.CSharpInteractive
     {
         private readonly ITeamCitySettings _teamCitySettings;
         private readonly IFileSystem _fileSystem;
+        private readonly IMessagesReader _messagesReader;
         private readonly IServiceMessageParser _serviceMessageParser;
         private readonly IBuildResult _baseBuildResult;
         private readonly Dictionary<string, IStartInfo> _sources = new();
@@ -22,11 +23,13 @@ namespace TeamCity.CSharpInteractive
         public ReliableBuildResult(
             ITeamCitySettings teamCitySettings,
             IFileSystem fileSystem,
+            IMessagesReader messagesReader,
             IServiceMessageParser serviceMessageParser,
             [Tag("base")] IBuildResult baseBuildResult)
         {
             _teamCitySettings = teamCitySettings;
             _fileSystem = fileSystem;
+            _messagesReader = messagesReader;
             _serviceMessageParser = serviceMessageParser;
             _baseBuildResult = baseBuildResult;
         }
@@ -38,9 +41,10 @@ namespace TeamCity.CSharpInteractive
         {
             var items = 
                 from source in _sources
-                let sourceFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key + ".msg")
-                where _fileSystem.IsFileExist(sourceFile)
-                from line in _fileSystem.ReadAllLines(sourceFile)
+                let indicesFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key)
+                let messagesFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key + ".msg")
+                where _fileSystem.IsFileExist(indicesFile) && _fileSystem.IsFileExist(messagesFile)
+                from line in _messagesReader.Read(indicesFile, messagesFile)
                 where !string.IsNullOrWhiteSpace(line)
                 from message in _serviceMessageParser.ParseServiceMessages(line)
                 select (line, message, StartInfoFactory: source.Value);
@@ -52,7 +56,7 @@ namespace TeamCity.CSharpInteractive
             
             return _baseBuildResult.CreateResult(exitCode);
         }
-        
+
         private IEnumerable<BuildMessage> ProcessMessageInternal(IStartInfo startInfo, IServiceMessage message)
         {
             {

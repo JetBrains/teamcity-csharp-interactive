@@ -14,7 +14,7 @@ namespace TeamCity.CSharpInteractive
         private readonly Text _stdOutPrefix;
         private readonly Text _stdErrPrefix;
         private readonly Process _process;
-        private Text _processIdText;
+        private string _processId = string.Empty;
         private int _disposed;
         private IStartInfo? _processInfo;
 
@@ -61,7 +61,7 @@ namespace TeamCity.CSharpInteractive
                 // ignored
             }
 
-            _processIdText = new Text(Id.ToString().PadRight(5));
+            _processId = Id.ToString().PadRight(5);
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
             return true;
@@ -91,7 +91,7 @@ namespace TeamCity.CSharpInteractive
             var output = new Output(_processInfo!, isError, line);
             if (handler != default)
             {
-                _log.Trace(() => new []{_processIdText, isError ? _stdErrPrefix : _stdOutPrefix, new Text(line)}, "=>");
+                _log.Trace(() => new []{isError ? _stdErrPrefix : _stdOutPrefix, new Text(line)}, _processId);
                 handler(output);
             }
             else

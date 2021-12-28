@@ -2,12 +2,20 @@
 namespace TeamCity.CSharpInteractive
 {
     using Dotnet;
+    using JetBrains.TeamCity.ServiceMessages.Write;
 
     internal class BuildMessageLogWriter : IBuildMessageLogWriter
     {
         private readonly ILog<BuildMessageLogWriter> _log;
+        private readonly IServiceMessageFormatter _serviceMessageFormatter;
 
-        public BuildMessageLogWriter(ILog<BuildMessageLogWriter> log) => _log = log;
+        public BuildMessageLogWriter(
+            ILog<BuildMessageLogWriter> log,
+            IServiceMessageFormatter serviceMessageFormatter)
+        {
+            _log = log;
+            _serviceMessageFormatter = serviceMessageFormatter;
+        }
 
         public void Write(BuildMessage message)
         {
@@ -17,7 +25,7 @@ namespace TeamCity.CSharpInteractive
                 case BuildMessageState.ServiceMessage:
                     if(message.ServiceMessage != default)
                     {
-                        _log.Trace(() => new []{ new Text(message.ServiceMessage.ToString() ?? "Empty service message.") }, string.Empty);
+                        _log.Trace(() => new []{ new Text(_serviceMessageFormatter.FormatMessage(message.ServiceMessage) ?? "Empty service message.") }, string.Empty);
                     }
 
                     break;

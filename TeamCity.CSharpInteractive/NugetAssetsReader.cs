@@ -18,15 +18,18 @@ namespace TeamCity.CSharpInteractive
         private readonly ILog<NugetAssetsReader> _log;
         private readonly ILogger _logger;
         private readonly IDotnetEnvironment _dotnetEnvironment;
+        private readonly IFileSystem _fileSystem;
 
         public NugetAssetsReader(
             ILog<NugetAssetsReader> log,
             ILogger logger,
-            IDotnetEnvironment dotnetEnvironment)
+            IDotnetEnvironment dotnetEnvironment,
+            IFileSystem fileSystem)
         {
             _log = log;
             _logger = logger;
             _dotnetEnvironment = dotnetEnvironment;
+            _fileSystem = fileSystem;
         }
 
         public IEnumerable<NuGetPackage> ReadPackages(string packagesPath, string projectAssetsJson)
@@ -81,7 +84,7 @@ namespace TeamCity.CSharpInteractive
                         {
                             var fullAssemblyPath = Path.Combine(folder, baseAssemblyPath);
                             _log.Trace(() => new []{new Text($"Full assembly path is \"{fullAssemblyPath}\".")});
-                            if (!File.Exists(fullAssemblyPath))
+                            if (!_fileSystem.IsFileExist(fullAssemblyPath))
                             {
                                 _log.Trace(() => new []{new Text($"File \"{baseAssemblyPath}\" does not exist.")});
                                 continue;

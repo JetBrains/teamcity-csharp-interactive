@@ -4,6 +4,7 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Buffers;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
@@ -71,7 +72,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ICommandSource>().To<CommandSource>()
                 .Bind<IStringService>().To<StringService>()
                 .Bind<IStatistics>().To<Statistics>()
-                .Bind<IFileTextReader>().To<FileTextReader>()
                 .Bind<IPresenter<IEnumerable<ITraceSource>>>().To<TracePresenter>()
                 .Bind<IPresenter<IStatistics>>().To<StatisticsPresenter>()
                 .Bind<IPresenter<CompilationDiagnostics>>().To<DiagnosticsPresenter>()
@@ -99,6 +99,9 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
                 .Bind<ITeamCityParameters>().To<TeamCityParameters>()
                 .Bind<IJavaPropertiesParser>().To<JavaPropertiesParser>()
+                .Bind<MemoryPool<TT>>().To(ctx => MemoryPool<TT>.Shared)
+                .Bind<IMessageIndicesReader>().To<MessageIndicesReader>()
+                .Bind<IMessagesReader>().To<MessagesReader>()
 
                 // Script options factory
                 .Bind<IScriptOptionsFactory>()

@@ -5,10 +5,10 @@ namespace TeamCity.CSharpInteractive
 
     internal class CommandLineParser : ICommandLineParser
     {
-        private readonly IFileTextReader _fileReader;
+        private readonly IFileSystem _fileSystem;
 
-        public CommandLineParser(IFileTextReader fileReader) => 
-            _fileReader = fileReader;
+        public CommandLineParser(IFileSystem fileSystem) => 
+            _fileSystem = fileSystem;
 
         public IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments)
         {
@@ -61,7 +61,7 @@ namespace TeamCity.CSharpInteractive
                     {
                         if (argument.StartsWith('@'))
                         {
-                            enumerators.Insert(0, _fileReader.ReadLines(argument[1..]).GetEnumerator());
+                            enumerators.Insert(0, _fileSystem.ReadAllLines(argument[1..]).GetEnumerator());
                             continue;
                         }
 

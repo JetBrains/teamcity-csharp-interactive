@@ -7,9 +7,9 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class CommandLineParserTests
     {
-        private readonly Mock<IFileTextReader> _fileReader;
+        private readonly Mock<IFileSystem> _fileSystem;
 
-        public CommandLineParserTests() => _fileReader = new Mock<IFileTextReader>();
+        public CommandLineParserTests() => _fileSystem = new Mock<IFileSystem>();
 
         [Theory]
         [MemberData(nameof(Data))]
@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var parser = CreateInstance();
-            _fileReader.Setup(i => i.ReadLines("rspFile")).Returns(new [] {"-S", "Src2", "/Source", "Src3"});
+            _fileSystem.Setup(i => i.ReadAllLines("rspFile")).Returns(new [] {"-S", "Src2", "/Source", "Src3"});
 
             // When
             var actualArguments = parser.Parse(arguments);
@@ -206,6 +206,6 @@ namespace TeamCity.CSharpInteractive.Tests
         };
 
         private CommandLineParser CreateInstance() =>
-            new(_fileReader.Object);
+            new(_fileSystem.Object);
     }
 }

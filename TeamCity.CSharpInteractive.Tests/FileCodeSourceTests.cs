@@ -9,7 +9,7 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class FileCodeSourceTests
     {
-        private readonly Mock<IFileTextReader> _reader;
+        private readonly Mock<IFileSystem> _fileSystem;
         private readonly Mock<ILog<FileCodeSource>> _log;
         private readonly Mock<IFilePathResolver> _filePathResolver;
         private readonly Mock<IScriptContext> _workingDirectoryContext;
@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests
 
         public FileCodeSourceTests()
         {
-            _reader = new Mock<IFileTextReader>();
+            _fileSystem = new Mock<IFileSystem>();
             _log = new Mock<ILog<FileCodeSource>>();
             _filePathResolver = new Mock<IFilePathResolver>();
             _workingDirectoryToken = new Mock<IDisposable>();
@@ -31,7 +31,7 @@ namespace TeamCity.CSharpInteractive.Tests
             // Given
             var fullPath = Path.Combine("wd", "zx", "Abc");
             _filePathResolver.Setup(i => i.TryResolve(Path.Combine("zx", "Abc"), out fullPath)).Returns(true);
-            _reader.Setup(i => i.ReadLines( Path.Combine("wd", "zx", "Abc"))).Returns(new [] {"content"});
+            _fileSystem.Setup(i => i.ReadLines( Path.Combine("wd", "zx", "Abc"))).Returns(new [] {"content"});
             var source = CreateInstance(Path.Combine("zx", "Abc"));
 
             // When
@@ -50,7 +50,7 @@ namespace TeamCity.CSharpInteractive.Tests
             var error = new Exception("test");
             var fullPath = Path.Combine("wd", "Abc");
             _filePathResolver.Setup(i => i.TryResolve("Abc", out fullPath)).Returns(true);
-            _reader.Setup(i => i.ReadLines( Path.Combine("wd", "Abc"))).Throws(error);
+            _fileSystem.Setup(i => i.ReadAllLines(Path.Combine("wd", "Abc"))).Throws(error);
             var source = CreateInstance("Abc");
 
             // When
@@ -62,6 +62,6 @@ namespace TeamCity.CSharpInteractive.Tests
         }
 
         private FileCodeSource CreateInstance(string fileName) => 
-            new(_log.Object, _reader.Object, _filePathResolver.Object, _workingDirectoryContext.Object) { FileName = fileName};
+            new(_log.Object, _fileSystem.Object, _filePathResolver.Object, _workingDirectoryContext.Object) { FileName = fileName};
     }
 }

@@ -10,19 +10,19 @@ namespace TeamCity.CSharpInteractive
     internal class FileCodeSource: ICodeSource
     {
         private readonly ILog<FileCodeSource> _log;
-        private readonly IFileTextReader _fileTextReader;
+        private readonly IFileSystem _fileSystem;
         private readonly IFilePathResolver _filePathResolver;
         private readonly IScriptContext _scriptContext;
         private string _fileName = "";
 
         public FileCodeSource(
             ILog<FileCodeSource> log,
-            IFileTextReader fileTextReader,
+            IFileSystem fileSystem,
             IFilePathResolver filePathResolver,
             IScriptContext scriptContext)
         {
             _log = log;
-            _fileTextReader = fileTextReader;
+            _fileSystem = fileSystem;
             _filePathResolver = filePathResolver;
             _scriptContext = scriptContext;
         }
@@ -51,7 +51,7 @@ namespace TeamCity.CSharpInteractive
             try
             {
                 _log.Trace(() => new []{new Text($@"Read file ""{FileName}"".")});
-                return new LinesEnumerator(_fileTextReader.ReadLines(FileName).GetEnumerator(), () => resource.Dispose());
+                return new LinesEnumerator(_fileSystem.ReadAllLines(FileName).GetEnumerator(), () => resource.Dispose());
             }
             catch (Exception e)
             {

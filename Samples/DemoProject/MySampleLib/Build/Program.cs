@@ -1,5 +1,4 @@
-﻿#l diagnostic
-using NuGet;
+﻿using NuGet;
 using Dotnet;
 using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;

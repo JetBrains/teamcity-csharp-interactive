@@ -19,5 +19,7 @@ namespace TeamCity.CSharpInteractive
         public IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
 
         public IEnumerable<string> ReadAllLines(string file) => File.ReadAllLines(file);
+
+        public IFileReader OpenReader(string file) => new FileReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
     }
 }

@@ -1,3 +1,5 @@
+#l diagnostic
+
 using Dotnet;
 
 var build = GetService<IBuild>();
