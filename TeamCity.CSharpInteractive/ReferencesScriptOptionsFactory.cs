@@ -3,10 +3,12 @@ namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Scripting;
 
+    [ExcludeFromCodeCoverage]
     internal class ReferencesScriptOptionsFactory: IScriptOptionsFactory, IReferenceRegistry
     {
         private readonly ILog<ReferencesScriptOptionsFactory> _log;

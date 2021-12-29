@@ -25,8 +25,9 @@ namespace TeamCity.CSharpInteractive
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Local
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, IServiceMessage message) =>
-            message.Name.ToLowerInvariant() switch
+        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, IServiceMessage message)
+        {
+            return message.Name.ToLowerInvariant() switch
             {
                 "teststdout" => OnStdOut(message, startInfo).ToArray(),
                 "teststderr" => OnStdErr(message, startInfo).ToArray(),
@@ -37,8 +38,12 @@ namespace TeamCity.CSharpInteractive
                 "testfailed" => OnTestFailed(message).ToArray(),
                 "message" => OnMessage(message).ToArray(),
                 "buildproblem" => OnBuildProblem(message).ToArray(),
-                _ => new[] { new BuildMessage(BuildMessageState.ServiceMessage, message) }
+                _ => new[]
+                {
+                    new BuildMessage(BuildMessageState.ServiceMessage, message)
+                }
             };
+        }
 
         public Dotnet.BuildResult CreateResult(int? exitCode) =>
             new(exitCode, _messages.AsReadOnly(), _tests.AsReadOnly());
@@ -48,7 +53,6 @@ namespace TeamCity.CSharpInteractive
             var testKey = CreateKey(message);
             var output = message.GetValue("out") ?? string.Empty;
             GetTestContext(testKey).AddStdOut(startInfo, output);
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
             yield return new BuildMessage(BuildMessageState.Info).WithText(output);
         }
 
@@ -57,7 +61,6 @@ namespace TeamCity.CSharpInteractive
             var testKey = CreateKey(message);
             var output = message.GetValue("out") ?? string.Empty;
             GetTestContext(testKey).AddStdErr(info, output);
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
             yield return new BuildMessage(BuildMessageState.Error).WithText(output);
         }
 
@@ -72,7 +75,7 @@ namespace TeamCity.CSharpInteractive
             }
             
             names.AddLast(name);
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
+            yield break;
         }
         
         private IEnumerable<BuildMessage> OnTestSuiteFinished(IServiceMessage message)
@@ -84,7 +87,7 @@ namespace TeamCity.CSharpInteractive
                 names.RemoveLast();
             }
             
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
+            yield break;
         }
 
         private IEnumerable<BuildMessage> OnTestFinished(IServiceMessage message)
@@ -113,8 +116,6 @@ namespace TeamCity.CSharpInteractive
                     string.Empty,
                     duration,
                     ctx.Output));
-            
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
         }
 
         private IEnumerable<BuildMessage> OnTestIgnored(IServiceMessage message)
@@ -133,7 +134,7 @@ namespace TeamCity.CSharpInteractive
                     TimeSpan.Zero,
                     ctx.Output));
             
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
+            yield break;
         }
 
         private IEnumerable<BuildMessage> OnTestFailed(IServiceMessage message)
@@ -152,7 +153,7 @@ namespace TeamCity.CSharpInteractive
                     TimeSpan.Zero,
                     ctx.Output));
             
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
+            yield break;
         }
 
         private IEnumerable<BuildMessage> OnMessage(IServiceMessage message)

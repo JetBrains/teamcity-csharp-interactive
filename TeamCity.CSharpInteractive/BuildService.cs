@@ -77,7 +77,7 @@ namespace TeamCity.CSharpInteractive
         {
             var startInfo = output.StartInfo;
             var messages = _serviceMessageParser.ParseServiceMessages(output.Line)
-                .SelectMany(message => result.ProcessMessage(startInfo, message))
+                .SelectMany(message => Enumerable.Repeat(new BuildMessage(BuildMessageState.ServiceMessage, message), 1).Concat(result.ProcessMessage(startInfo, message)))
                 .DefaultIfEmpty(new BuildMessage(output.IsError ? BuildMessageState.Error : BuildMessageState.Info, default, output.Line));
 
             if (handler != default)

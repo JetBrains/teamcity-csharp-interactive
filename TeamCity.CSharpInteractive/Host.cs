@@ -3,8 +3,10 @@
 namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using Contracts;
 
+    [ExcludeFromCodeCoverage]
     public static class Host
     {
         private static readonly IHost BaseHost = Composer.ResolveIHost();

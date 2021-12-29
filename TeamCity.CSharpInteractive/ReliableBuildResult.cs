@@ -2,6 +2,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -16,7 +17,6 @@ namespace TeamCity.CSharpInteractive
         private readonly ITeamCitySettings _teamCitySettings;
         private readonly IFileSystem _fileSystem;
         private readonly IMessagesReader _messagesReader;
-        private readonly IServiceMessageParser _serviceMessageParser;
         private readonly IBuildResult _baseBuildResult;
         private readonly Dictionary<string, IStartInfo> _sources = new();
 
@@ -24,56 +24,43 @@ namespace TeamCity.CSharpInteractive
             ITeamCitySettings teamCitySettings,
             IFileSystem fileSystem,
             IMessagesReader messagesReader,
-            IServiceMessageParser serviceMessageParser,
             [Tag("base")] IBuildResult baseBuildResult)
         {
             _teamCitySettings = teamCitySettings;
             _fileSystem = fileSystem;
             _messagesReader = messagesReader;
-            _serviceMessageParser = serviceMessageParser;
             _baseBuildResult = baseBuildResult;
         }
 
-        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, IServiceMessage message) =>
-            ProcessMessageInternal(startInfo, message).ToArray();
+        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, IServiceMessage message)
+        {
+            var source = message.GetValue("source");
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                return _baseBuildResult.ProcessMessage(startInfo, message).ToArray();
+            }
+
+            _sources.TryAdd(source, startInfo);
+            return Array.Empty<BuildMessage>();
+        }
 
         public Dotnet.BuildResult CreateResult(int? exitCode)
         {
             var items = 
                 from source in _sources
                 let indicesFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key)
-                let messagesFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key + ".msg")
-                where _fileSystem.IsFileExist(indicesFile) && _fileSystem.IsFileExist(messagesFile)
-                from line in _messagesReader.Read(indicesFile, messagesFile)
-                where !string.IsNullOrWhiteSpace(line)
-                from message in _serviceMessageParser.ParseServiceMessages(line)
-                select (line, message, StartInfoFactory: source.Value);
+                where _fileSystem.IsFileExist(indicesFile)
+                let messagesFile = indicesFile + ".msg"
+                where _fileSystem.IsFileExist(messagesFile)
+                from message in _messagesReader.Read(indicesFile, messagesFile)
+                select (message, startInfoFactory: source.Value);
 
-            foreach (var (_, message, startInfoFactory) in items)
+            foreach (var (message, startInfoFactory) in items)
             {
                 _baseBuildResult.ProcessMessage(startInfoFactory, message);
             }
             
             return _baseBuildResult.CreateResult(exitCode);
-        }
-
-        private IEnumerable<BuildMessage> ProcessMessageInternal(IStartInfo startInfo, IServiceMessage message)
-        {
-            {
-                var source = message.GetValue("source");
-                if (string.IsNullOrWhiteSpace(source))
-                {
-                    foreach (var buildMessage in _baseBuildResult.ProcessMessage(startInfo, message))
-                    {
-                        yield return buildMessage;
-                    }
-                }
-                else
-                {
-                    _sources.TryAdd(source, startInfo);
-                    yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
-                }
-            }
         }
     }
 }

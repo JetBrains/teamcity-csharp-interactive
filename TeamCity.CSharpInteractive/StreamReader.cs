@@ -10,20 +10,20 @@ namespace TeamCity.CSharpInteractive
 
         public StreamReader(Stream stream) => _stream = stream;
 
-        public int Read(Span<byte> buffer)
+        public int Read(Memory<byte> buffer)
         {
             lock (_lockObject)
             {
-                return _stream.Read(buffer);
+                return _stream.Read(buffer.Span);
             }
         }
 
-        public int Read(Span<byte> buffer, long offset)
+        public int Read(Memory<byte> buffer, long offset)
         {
             lock (_lockObject)
             {
                 _stream.Seek(offset, SeekOrigin.Begin);
-                return _stream.Read(buffer);
+                return _stream.Read(buffer.Span);
             }
         }
 
@@ -33,6 +33,8 @@ namespace TeamCity.CSharpInteractive
             {
                 _stream.Dispose();
             }
+            
+            GC.SuppressFinalize(this);
         }
     }
 }

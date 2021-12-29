@@ -3,10 +3,12 @@ namespace TeamCity.CSharpInteractive;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
+[ExcludeFromCodeCoverage]
 internal class AssembliesProvider : IAssembliesProvider
 {
     private readonly IFileSystem _fileSystem;
@@ -41,7 +43,7 @@ internal class AssembliesProvider : IAssembliesProvider
             select (string)basePath!)
         .Distinct();
 
-    private Assembly? LoadAssemblySafely(string assemblyFile)
+    private static Assembly? LoadAssemblySafely(string assemblyFile)
     {
         try
         {

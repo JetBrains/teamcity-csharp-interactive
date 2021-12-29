@@ -26,13 +26,22 @@ namespace TeamCity.CSharpInteractive
             using var reader = _fileSystem.OpenReader(indicesFile);
             using var bufferOwner = _memoryPool.Rent(sizeof(ulong));
             var buffer = bufferOwner.Memory[..sizeof(ulong)];
-            var size = 0;
-            while ((size = reader.Read(buffer.Span)) == sizeof(ulong))
+            int size;
+            var prevIndex = 0UL;
+            var number = 0UL;
+            while ((size = reader.Read(buffer)) == sizeof(ulong))
             {
-                var bytes = buffer.ToArray();
-                Array.Reverse(bytes);
-                var val = BitConverter.ToUInt64(bytes);
-                yield return val;
+                buffer.Span.Reverse();
+                var index = BitConverter.ToUInt64(buffer.Span);
+                if (index <= prevIndex)
+                {
+                    _log.Warning($"Corrupted file \"{indicesFile}\", invalid index {index} at offset {number * sizeof(ulong)}.");
+                    break;
+                }
+
+                prevIndex = index;
+                number++;
+                yield return index;
             }
 
             if (size != 0)

@@ -39,7 +39,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<CancellationToken>().As(Transient).To(ctx => ctx.Resolve<CancellationTokenSource>().Token)
                 .Bind<IActive>(typeof(ExitManager)).To<ExitManager>()
                 .Bind<IHostEnvironment>().To<HostEnvironment>()
-                .Bind<ITeamCitySettings>().To<TeamCitySettings>()
                 .Bind<IColorTheme>().To<ColorTheme>()
                 .Bind<ITeamCityLineFormatter>().To<TeamCityLineFormatter>()
                 .Bind<ITeamCitySpecific<TT>>().To<TeamCitySpecific<TT>>()
@@ -103,6 +102,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IMessageIndicesReader>().To<MessageIndicesReader>()
                 .Bind<IMessagesReader>().To<MessagesReader>()
                 .Bind<Cmd.IPathResolverContext>().Bind<Cmd.IVirtualContext>().To<PathResolverContext>()
+                .Bind<IEncoding>().To<Utf8Encoding>()
 
                 // Script options factory
                 .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))

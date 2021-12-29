@@ -16,14 +16,14 @@ public class StreamReaderTests
         var instance = CreateInstance(stream);
         var pool = MemoryPool<byte>.Shared;
         using var owner = pool.Rent(2);
-        var buffer = owner.Memory[..2].Span;
+        var buffer = owner.Memory[..2];
 
         // When
         instance.Read(buffer).ShouldBe(2);
 
         // Then
-        buffer[0].ShouldBe((byte)1);
-        buffer[1].ShouldBe((byte)2);
+        buffer.Span[0].ShouldBe((byte)1);
+        buffer.Span[1].ShouldBe((byte)2);
     }
     
     [Fact]
@@ -34,14 +34,14 @@ public class StreamReaderTests
         var instance = CreateInstance(stream);
         var pool = MemoryPool<byte>.Shared;
         using var owner = pool.Rent(2);
-        var buffer = owner.Memory[..2].Span;
+        var buffer = owner.Memory[..2];
 
         // When
         instance.Read(buffer).ShouldBe(2);
         instance.Read(buffer).ShouldBe(1);
 
         // Then
-        buffer[0].ShouldBe((byte)3);
+        buffer.Span[0].ShouldBe((byte)3);
     }
     
     [Fact]
@@ -52,15 +52,15 @@ public class StreamReaderTests
         var instance = CreateInstance(stream);
         var pool = MemoryPool<byte>.Shared;
         using var owner = pool.Rent(4);
-        var buffer = owner.Memory[..4].Span;
+        var buffer = owner.Memory[..4];
 
         // When
         instance.Read(buffer).ShouldBe(3);
 
         // Then
-        buffer[0].ShouldBe((byte)1);
-        buffer[1].ShouldBe((byte)2);
-        buffer[2].ShouldBe((byte)3);
+        buffer.Span[0].ShouldBe((byte)1);
+        buffer.Span[1].ShouldBe((byte)2);
+        buffer.Span[2].ShouldBe((byte)3);
     }
     
     [Fact]
@@ -71,14 +71,14 @@ public class StreamReaderTests
         var instance = CreateInstance(stream);
         var pool = MemoryPool<byte>.Shared;
         using var owner = pool.Rent(2);
-        var buffer = owner.Memory[..2].Span;
+        var buffer = owner.Memory[..2];
 
         // When
         instance.Read(buffer, 1).ShouldBe(2);
 
         // Then
-        buffer[0].ShouldBe((byte)2);
-        buffer[1].ShouldBe((byte)3);
+        buffer.Span[0].ShouldBe((byte)2);
+        buffer.Span[1].ShouldBe((byte)3);
     }
     
     [Fact]
@@ -89,14 +89,14 @@ public class StreamReaderTests
         var instance = CreateInstance(stream);
         var pool = MemoryPool<byte>.Shared;
         using var owner = pool.Rent(3);
-        var buffer = owner.Memory[..3].Span;
+        var buffer = owner.Memory[..3];
 
         // When
         instance.Read(buffer, 1).ShouldBe(2);
 
         // Then
-        buffer[0].ShouldBe((byte)2);
-        buffer[1].ShouldBe((byte)3);
+        buffer.Span[0].ShouldBe((byte)2);
+        buffer.Span[1].ShouldBe((byte)3);
     }
     
     [Fact]
@@ -107,14 +107,14 @@ public class StreamReaderTests
         var instance = CreateInstance(stream);
         var pool = MemoryPool<byte>.Shared;
         using var owner = pool.Rent(2);
-        var buffer = owner.Memory[..2].Span;
+        var buffer = owner.Memory[..2];
 
         // When
         instance.Read(buffer, 0).ShouldBe(2);
         instance.Read(buffer).ShouldBe(1);
 
         // Then
-        buffer[0].ShouldBe((byte)3);
+        buffer.Span[0].ShouldBe((byte)3);
     }
 
     private static StreamReader CreateInstance(Stream stream) =>
