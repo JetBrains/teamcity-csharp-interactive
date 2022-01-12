@@ -13,7 +13,7 @@ internal class AssembliesScriptOptionsProvider: IScriptOptionsFactory, IActive
 {
     [SuppressMessage("ReSharper", "RedundantNameQualifier")]
     [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-    private static readonly (string ns, Type? type)[] Refs =
+    internal static readonly (string ns, Type? type)[] Refs =
     {
         ("System", typeof(System.String)),
         ("System.Collections.Generic", typeof(System.Collections.Generic.List<string>)),
@@ -59,6 +59,7 @@ internal class AssembliesScriptOptionsProvider: IScriptOptionsFactory, IActive
         var assemblies = _assembliesProvider
             .GetAssemblies(Refs.Where(i => i.type != default).Select(i => i.type!))
             .Where(_ => !_cancellationToken.IsCancellationRequested)
+            .Where(i => !string.IsNullOrWhiteSpace(i.Location))
             .ToHashSet();
         
         _log.Trace(() => new [] {new Text($"{assemblies.Count} assemblies were loaded:")}.Concat(assemblies.Select(i => new [] {Text.NewLine, new Text(i.ToString())}).SelectMany(i => i)).ToArray());
