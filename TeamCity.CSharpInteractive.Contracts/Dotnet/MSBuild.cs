@@ -42,7 +42,7 @@ namespace Dotnet
             bool Version = false,
             Verbosity? Verbosity = default,
             string ShortName = "")
-        : IProcess
+        : IProcess, IProcessStateProvider
     {
         public MSBuild()
             : this(string.Empty)
@@ -88,6 +88,6 @@ namespace Dotnet
                 .AddProps("/p", Props.ToArray())
                 .AddArgs(Args.ToArray());
 
-        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
+        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

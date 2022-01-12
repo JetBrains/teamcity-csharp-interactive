@@ -35,7 +35,7 @@ namespace Dotnet
         bool InIsolation = false,
         Verbosity? Verbosity = default,
         string ShortName = "")
-        : IProcess
+        : IProcess, IProcessStateProvider
     {
         public VSTest(params string[] testFileNames)
             : this(testFileNames, Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty< string>())
@@ -81,6 +81,6 @@ namespace Dotnet
                 return cmd;
         }
 
-        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
+        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

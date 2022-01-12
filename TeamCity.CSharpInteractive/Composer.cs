@@ -11,6 +11,7 @@ namespace TeamCity.CSharpInteractive
     using System.Reflection;
     using System.Runtime.Versioning;
     using System.Threading;
+    using Cmd;
     using JetBrains.TeamCity.ServiceMessages.Read;
     using JetBrains.TeamCity.ServiceMessages.Write;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
@@ -104,6 +105,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IMessagesReader>().To<MessagesReader>()
                 .Bind<Cmd.IPathResolverContext>().Bind<Cmd.IVirtualContext>().To<PathResolverContext>()
                 .Bind<IEncoding>().To<Utf8Encoding>()
+                .Bind<IProcessMonitor>().As(Transient).To<ProcessMonitor>()
 
                 // Script options factory
                 .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))
@@ -155,8 +157,9 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IHost>().To<HostService>()
                 .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
                 .Bind<NuGet.INuGet>().To<NuGetService>()
-                .Bind<Cmd.ICommandLine>().Bind<IProcessRunner>().Tags("base").To<CommandLineService>()
-                .Bind<Cmd.ICommandLine>().Bind<IProcessRunner>().To<CommandLineInFlowService>()
+                .Bind<IProcessRunner>().Tags("base").To<ProcessRunner>()
+                .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
+                .Bind<ICommandLine>().To<CommandLineService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
                 .Bind<ITeamCity>().Bind<ITeamCityContext>().To<TeamCityService>()
 

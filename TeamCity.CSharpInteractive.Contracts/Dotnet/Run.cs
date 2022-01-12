@@ -54,7 +54,5 @@ namespace Dotnet
                     ("--force", Force)
                 )
                 .AddArgs(Args.ToArray());
-
-        public ProcessState GetState(int exitCode) => ProcessState.Unknown;
     }
 }

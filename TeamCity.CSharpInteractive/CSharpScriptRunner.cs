@@ -3,11 +3,13 @@ namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Contracts;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
+    [ExcludeFromCodeCoverage]
     internal class CSharpScriptRunner : ICSharpScriptRunner
     {
         private readonly ILog<CSharpScriptRunner> _log;

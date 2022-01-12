@@ -1,7 +1,7 @@
 // ReSharper disable CheckNamespace
 namespace Cmd
 {
-    public interface IProcessState
+    internal interface IProcessStateProvider
     {
         ProcessState GetState(int exitCode);
     }

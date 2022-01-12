@@ -42,10 +42,10 @@ namespace TeamCity.CSharpInteractive
 
         public int ExitCode => _process.ExitCode;
 
-        public bool Start(IStartInfo info, out ProcessStartInfo startInfo)
+        public bool Start(IStartInfo info)
         {
             _processInfo = info;
-            startInfo = _process.StartInfo = _startInfoFactory.Create(info);
+            _process.StartInfo = _startInfoFactory.Create(info);
             if (!_process.Start())
             {
                 return false;
@@ -70,7 +70,22 @@ namespace TeamCity.CSharpInteractive
 
         public bool WaitForExit(TimeSpan timeout) => _process.WaitForExit((int)timeout.TotalMilliseconds);
 
-        public void Kill() => _process.Kill();
+        public bool TryKill()
+        {
+            try
+            {
+                _log.Trace(() => new []{new Text($"Try to kill process {_processId}.")});
+                _process.Kill();
+                _log.Trace(() => new []{new Text($"{_processId} was killed.")});
+            }
+            catch (Exception ex)
+            {
+                _log.Warning(new Text($"Failed to kill {_processId}: {ex.Message}."));
+                return false;
+            }
+
+            return true;
+        }
 
         private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, false);
 

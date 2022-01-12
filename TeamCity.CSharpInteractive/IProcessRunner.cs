@@ -7,8 +7,8 @@ namespace TeamCity.CSharpInteractive
 
     internal interface IProcessRunner
     {
-        int? Run(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, TimeSpan timeout = default);
+        int? Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout);
 
-        Task<int?> RunAsync(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, CancellationToken cancellationToken = default);
+        Task<int?> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken);
     }
 }

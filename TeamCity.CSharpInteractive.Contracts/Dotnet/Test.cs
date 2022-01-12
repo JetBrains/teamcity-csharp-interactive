@@ -34,7 +34,7 @@ namespace Dotnet
         bool NoRestore = false,
         Verbosity? Verbosity = default,
         string ShortName = "")
-        : IProcess
+        : IProcess, IProcessStateProvider
     {
         public Test()
             : this(Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>())
@@ -72,6 +72,6 @@ namespace Dotnet
                 .AddProps("/p", Props.ToArray())
                 .AddArgs(Args.ToArray());
 
-        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
+        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
     }
 }

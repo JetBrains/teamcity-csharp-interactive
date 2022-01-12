@@ -34,7 +34,5 @@ namespace Dotnet
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars.ToArray())
                 .WithArgs(Args.ToArray());
-
-        public ProcessState GetState(int exitCode) => ProcessState.Unknown;
     }
 }

@@ -7,53 +7,43 @@ namespace TeamCity.CSharpInteractive
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
-    using Contracts;
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Pure.DI;
 
-    internal class CommandLineInFlowService: IProcessRunner, ICommandLine
+    internal class ProcessInFlowRunner: IProcessRunner
     {
-        private readonly ILog<CommandLineInFlowService> _log;
-        private readonly IHost _host;
+        private readonly ILog<ProcessInFlowRunner> _log;
         private readonly IProcessRunner _baseProcessRunner;
         private readonly ITeamCitySettings _teamCitySettings;
         private readonly ITeamCityWriter _teamCityWriter;
         private readonly IFlowContext _flowContext;
 
-        public CommandLineInFlowService(
-            ILog<CommandLineInFlowService> log,
-            IHost host,
+        public ProcessInFlowRunner(
+            ILog<ProcessInFlowRunner> log,
             [Tag("base")] IProcessRunner baseProcessRunner,
             ITeamCitySettings teamCitySettings,
             ITeamCityWriter teamCityWriter,
             IFlowContext flowContext)
         {
             _log = log;
-            _host = host;
             _baseProcessRunner = baseProcessRunner;
             _teamCitySettings = teamCitySettings;
             _teamCityWriter = teamCityWriter;
             _flowContext = flowContext;
         }
         
-        public int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default) =>
-            Run(process.GetStartInfo(_host.Host), process, handler, timeout);
-
-        public int? Run(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, TimeSpan timeout = default)
+        public int? Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
         {
             using var flow = CreateFlow();
             using var block = CreateBlock(startInfo);
-            return _baseProcessRunner.Run(WrapInFlow(startInfo), state, handler, timeout);
+            return _baseProcessRunner.Run(WrapInFlow(startInfo), handler, stateProvider, monitor, timeout);
         }
         
-        public Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default) =>
-            RunAsync(process.GetStartInfo(_host.Host), process, handler, cancellationToken);
-        
-        public Task<int?> RunAsync(IStartInfo startInfo, IProcessState state, Action<Output>? handler = default, CancellationToken cancellationToken = default)
+        public Task<int?> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
         {
             var flow = CreateFlow();
             var block = CreateBlock(startInfo);
-            return _baseProcessRunner.RunAsync(WrapInFlow(startInfo), state, handler, cancellationToken)
+            return _baseProcessRunner.RunAsync(WrapInFlow(startInfo), handler, stateProvider, monitor, cancellationToken)
                 .ContinueWith(
                     task =>
                     {

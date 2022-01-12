@@ -25,6 +25,7 @@ namespace TeamCity.CSharpInteractive
         private readonly IProcessOutputWriter _processOutputWriter;
         private readonly IBuildMessageLogWriter _buildMessageLogWriter;
         private readonly IServiceMessageParser _serviceMessageParser;
+        private readonly Func<IProcessMonitor> _monitorFactory;
 
         public BuildService(
             IProcessRunner processRunner,
@@ -34,7 +35,8 @@ namespace TeamCity.CSharpInteractive
             ITeamCitySettings teamCitySettings,
             IProcessOutputWriter processOutputWriter,
             IBuildMessageLogWriter buildMessageLogWriter,
-            IServiceMessageParser serviceMessageParser)
+            IServiceMessageParser serviceMessageParser,
+            Func<IProcessMonitor> monitorFactory)
         {
             _processRunner = processRunner;
             _host = host;
@@ -44,19 +46,20 @@ namespace TeamCity.CSharpInteractive
             _processOutputWriter = processOutputWriter;
             _buildMessageLogWriter = buildMessageLogWriter;
             _serviceMessageParser = serviceMessageParser;
+            _monitorFactory = monitorFactory;
         }
 
         public Dotnet.BuildResult Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
         {
             var ctx = _resultFactory();
-            var exitCode = _processRunner.Run(CreateStartInfo(process), process, output => Handle(output.StartInfo, handler, output, ctx), timeout);
+            var exitCode = _processRunner.Run(CreateStartInfo(process), output => Handle(output.StartInfo, handler, output, ctx), process as IProcessStateProvider, _monitorFactory(), timeout);
             return ctx.CreateResult(exitCode);
         }
 
         public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
             var ctx = _resultFactory();
-            var exitCode = await _processRunner.RunAsync(CreateStartInfo(process), process, output => Handle(output.StartInfo, handler, output, ctx), cancellationToken);
+            var exitCode = await _processRunner.RunAsync(CreateStartInfo(process), output => Handle(output.StartInfo, handler, output, ctx), process as IProcessStateProvider, _monitorFactory(), cancellationToken);
             return ctx.CreateResult(exitCode);
         }
 

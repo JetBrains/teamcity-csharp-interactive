@@ -29,8 +29,6 @@ namespace Cmd
 
         public IStartInfo GetStartInfo(IHost host) => this;
 
-        public ProcessState GetState(int exitCode) => ProcessState.Unknown;
-
         public override string ToString()
         {
             var sb = new StringBuilder();

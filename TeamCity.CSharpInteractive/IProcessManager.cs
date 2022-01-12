@@ -14,12 +14,12 @@ namespace TeamCity.CSharpInteractive
 
         int ExitCode { get; }
 
-        bool Start(IStartInfo info, out ProcessStartInfo startInfo);
+        bool Start(IStartInfo info);
 
         void WaitForExit();
         
         bool WaitForExit(TimeSpan timeout);
         
-        void Kill();
+        bool TryKill();
     }
 }

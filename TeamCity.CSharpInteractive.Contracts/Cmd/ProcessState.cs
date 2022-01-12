@@ -5,6 +5,7 @@ namespace Cmd
     {
         Unknown,
         Success,
-        Fail
+        Fail,
+        Cancel
     }
 }

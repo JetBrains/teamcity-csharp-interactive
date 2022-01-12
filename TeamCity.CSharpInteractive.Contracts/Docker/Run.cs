@@ -66,7 +66,7 @@ namespace Docker
         // A file with environment variables inside the container
         string EnvFile = "",
         string ShortName = "")
-        : IProcess
+        : IProcess, IProcessStateProvider
     {
         public Run(): this(new CommandLine(string.Empty), string.Empty) 
         { }
@@ -131,7 +131,7 @@ namespace Docker
                 .WithVars(Vars.ToArray());
         }
 
-        public ProcessState GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
+        ProcessState IProcessStateProvider.GetState(int exitCode) => (Process as IProcessStateProvider)?.GetState(exitCode) ?? ProcessState.Unknown;
         
         private class PathResolver: IPathResolver
         {
