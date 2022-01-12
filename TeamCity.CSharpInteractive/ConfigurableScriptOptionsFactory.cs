@@ -1,11 +1,13 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
+[ExcludeFromCodeCoverage]
 internal class ConfigurableScriptOptionsFactory: IScriptOptionsFactory
 {
     private readonly ISettingGetter<LanguageVersion> _languageVersion;

@@ -6,6 +6,7 @@ namespace TeamCity.CSharpInteractive
     using System;
     using System.Buffers;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Runtime.Versioning;
@@ -35,6 +36,8 @@ namespace TeamCity.CSharpInteractive
                 .Bind<Program>().To<Program>()
                 .Bind<Assembly>().To(_ => Assembly.GetEntryAssembly())
                 .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
+                .Bind<Process>().To(_ => System.Diagnostics.Process.GetCurrentProcess())
+                .Bind<string>("ModuleFile").To(ctx => ctx.Resolve<Process>().MainModule?.FileName ?? string.Empty)
                 .Bind<CancellationTokenSource>().To(_ => new CancellationTokenSource())
                 .Bind<CancellationToken>().As(Transient).To(ctx => ctx.Resolve<CancellationTokenSource>().Token)
                 .Bind<IActive>(typeof(ExitManager)).To<ExitManager>()
@@ -96,8 +99,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IFileExplorer>().To<FileExplorer>()
                 .Bind<IProcessOutputWriter>().To<ProcessOutputWriter>()
                 .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
-                .Bind<ITeamCityParameters>().To<TeamCityParameters>()
-                .Bind<IJavaPropertiesParser>().To<JavaPropertiesParser>()
                 .Bind<MemoryPool<TT>>().To(_ => MemoryPool<TT>.Shared)
                 .Bind<IMessageIndicesReader>().To<MessageIndicesReader>()
                 .Bind<IMessagesReader>().To<MessagesReader>()

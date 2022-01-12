@@ -2,7 +2,6 @@
 // ReSharper disable UnusedMember.Global
 namespace TeamCity.CSharpInteractive
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -10,28 +9,34 @@ namespace TeamCity.CSharpInteractive
 
     internal class DockerEnvironment : ITraceSource, IDockerEnvironment
     {
+        private readonly IEnvironment _environment;
+        private readonly IFileExplorer _fileExplorer;
+
         public DockerEnvironment(
             IEnvironment environment,
             IFileExplorer fileExplorer)
         {
-            Path = environment.OperatingSystemPlatform == Platform.Windows ? "docker.exe" : "docker";
-            try
-            {
-                var processFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
-                if (System.IO.Path.GetFileName(processFileName).Equals(Path, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Path = processFileName;
-                }
+            _environment = environment;
+            _fileExplorer = fileExplorer;
+        }
 
-                Path = fileExplorer.FindFiles(Path, "DOCKER_HOME").FirstOrDefault() ?? Path;
-            }
-            catch
+        public string Path
+        {
+            get
             {
-                // ignored
+                var executable = _environment.OperatingSystemPlatform == Platform.Windows ? "docker.exe" : "docker";
+                try
+                {
+                    return _fileExplorer.FindFiles(executable, "DOCKER_HOME").FirstOrDefault() ?? executable;
+                }
+                catch
+                {
+                    // ignored
+                }
+                
+                return executable;
             }
         }
-        
-        public string Path { get; }
 
         [ExcludeFromCodeCoverage]
         public IEnumerable<Text> Trace

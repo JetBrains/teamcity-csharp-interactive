@@ -12,30 +12,43 @@ namespace TeamCity.CSharpInteractive
 
     internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
     {
+        private readonly string _moduleFile;
+        private readonly IEnvironment _environment;
+        private readonly IFileExplorer _fileExplorer;
         public DotnetEnvironment(
             [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
+            [Tag("ModuleFile")] string moduleFile,
             IEnvironment environment,
             IFileExplorer fileExplorer)
         {
+            _moduleFile = moduleFile;
+            _environment = environment;
+            _fileExplorer = fileExplorer;
             TargetFrameworkMoniker = targetFrameworkMoniker;
-            Path = environment.OperatingSystemPlatform == Platform.Windows ? "dotnet.exe" : "dotnet";
-            try
+        }
+
+        public string Path
+        {
+            get
             {
-                var processFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
-                if (System.IO.Path.GetFileName(processFileName).Equals(Path, StringComparison.InvariantCultureIgnoreCase))
+                var executable = _environment.OperatingSystemPlatform == Platform.Windows ? "dotnet.exe" : "dotnet";
+                try
                 {
-                    Path = processFileName;
+                    if (System.IO.Path.GetFileName(_moduleFile).Equals(executable, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return _moduleFile;
+                    }
+
+                    return _fileExplorer.FindFiles(executable, "DOTNET_HOME").FirstOrDefault() ?? executable;
+                }
+                catch
+                {
+                    // ignored
                 }
 
-                Path = fileExplorer.FindFiles(Path, "DOTNET_HOME").FirstOrDefault() ?? Path;
-            }
-            catch
-            {
-                // ignored
+                return executable;
             }
         }
-        
-        public string Path { get; }
 
         public string TargetFrameworkMoniker { get; }
 
