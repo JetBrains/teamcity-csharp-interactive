@@ -1,3 +1,4 @@
+// ReSharper disable RedundantNameQualifier
 namespace TeamCity.CSharpInteractive.Tests;
 
 using System;

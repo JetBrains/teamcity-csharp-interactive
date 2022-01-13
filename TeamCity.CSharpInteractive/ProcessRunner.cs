@@ -21,7 +21,7 @@ namespace TeamCity.CSharpInteractive
             _cancellationTokenSource = cancellationTokenSource;
         }
 
-        public int? Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
+        public ProcessResult Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
         {
             using var processManager = _processManagerFactory();
             if (handler != default)
@@ -29,18 +29,16 @@ namespace TeamCity.CSharpInteractive
                 processManager.OnOutput += handler;
             }
 
-            monitor.Starting(startInfo, processManager.Id);
-            
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             if (!processManager.Start(startInfo))
             {
                 stopwatch.Stop();
                 monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Fail);
-                return default;
+                return new ProcessResult(ProcessState.Fail);
             }
 
-            monitor.Started();
+            monitor.Started(startInfo, processManager.Id);
             var finished = true;
             if (timeout == TimeSpan.Zero)
             {
@@ -54,18 +52,19 @@ namespace TeamCity.CSharpInteractive
             if (finished)
             {
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, stateProvider?.GetState(processManager.ExitCode) ?? ProcessState.Unknown, processManager.ExitCode);
-                return processManager.ExitCode;
+                var state = stateProvider?.GetState(processManager.ExitCode) ?? ProcessState.Unknown;
+                monitor.Finished(stopwatch.ElapsedMilliseconds, state, processManager.ExitCode);
+                return new ProcessResult(state, processManager.ExitCode);
             }
 
             processManager.TryKill();
             stopwatch.Stop();
             monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Cancel);
 
-            return default;
+            return new ProcessResult(ProcessState.Cancel);
         }
 
-        public async Task<int?> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
+        public async Task<ProcessResult> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
         {
             if (cancellationToken == default)
             {
@@ -78,22 +77,19 @@ namespace TeamCity.CSharpInteractive
                 processManager.OnOutput += handler;
             }
             
-            monitor.Starting(startInfo, processManager.Id);
-
             var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
             // ReSharper disable once AccessToDisposedClosure
             processManager.OnExit += () => completionSource.TrySetResult(processManager.ExitCode);
             var stopwatch = new Stopwatch();
-            stopwatch.Start();
             if (!processManager.Start(startInfo))
             {
                 stopwatch.Stop();
                 monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Fail);
                 processManager.Dispose();
-                return default;
+                return new ProcessResult(ProcessState.Fail);
             }
             
-            monitor.Started();
+            monitor.Started(startInfo, processManager.Id);
             void Cancel()
             {
                 if (processManager.TryKill())
@@ -112,8 +108,9 @@ namespace TeamCity.CSharpInteractive
                 {
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
                     stopwatch.Start();
-                    monitor.Finished(stopwatch.ElapsedMilliseconds, stateProvider?.GetState(exitCode) ?? ProcessState.Unknown, exitCode);
-                    return exitCode;
+                    var state = stateProvider?.GetState(exitCode) ?? ProcessState.Unknown;
+                    monitor.Finished(stopwatch.ElapsedMilliseconds, state, exitCode);
+                    return new ProcessResult(state, exitCode);
                 }
             }
         }

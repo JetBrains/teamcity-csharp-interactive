@@ -16,6 +16,7 @@ public class ProcessInBlockRunnerTests
     private readonly Mock<IProcessStateProvider> _stateProvider = new();
     private readonly Mock<IProcessMonitor> _monitor = new();
     private readonly Mock<IDisposable> _token = new();
+    private static readonly ProcessResult ProcessResult = new(ProcessState.Success, 33);
 
     public ProcessInBlockRunnerTests()
     {
@@ -27,16 +28,16 @@ public class ProcessInBlockRunnerTests
     public void ShouldRunInBlock()
     {
         // Given
-        _baseProcessRunner.Setup(i => i.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, TimeSpan.FromDays(1))).Returns(33);
+        _baseProcessRunner.Setup(i => i.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, TimeSpan.FromDays(1))).Returns(ProcessResult);
         var runner = CreateInstance();
 
         // When
-        var exitCode = runner.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, TimeSpan.FromDays(1));
+        var result = runner.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, TimeSpan.FromDays(1));
 
         // Then
         _log.Verify(i => i.Block(It.Is<Text[]>(text => text.Length == 1 && text[0].Value == "Abc")));
         _token.Verify(i => i.Dispose());
-        exitCode.ShouldBe(33);
+        result.ShouldBe(ProcessResult);
     }
     
     [Fact]
@@ -45,16 +46,16 @@ public class ProcessInBlockRunnerTests
         // Given
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        _baseProcessRunner.Setup(i => i.RunAsync(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, token)).Returns(Task.FromResult((int?)33));
+        _baseProcessRunner.Setup(i => i.RunAsync(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, token)).Returns(Task.FromResult(ProcessResult));
         var runner = CreateInstance();
 
         // When
-        var exitCode = await runner.RunAsync(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, token);
+        var result = await runner.RunAsync(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, token);
 
         // Then
         _log.Verify(i => i.Block(It.Is<Text[]>(text => text.Length == 1 && text[0].Value == "Abc")));
         _token.Verify(i => i.Dispose());
-        exitCode.ShouldBe(33);
+        result.ShouldBe(ProcessResult);
     }
 
     private static void Handler(Output obj) { }

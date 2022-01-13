@@ -45,8 +45,8 @@ namespace TeamCity.CSharpInteractive
             };
         }
 
-        public Dotnet.BuildResult CreateResult(int? exitCode) =>
-            new(exitCode, _messages.AsReadOnly(), _tests.AsReadOnly());
+        public Dotnet.BuildResult Create() =>
+            new(_messages.AsReadOnly(), _tests.AsReadOnly());
 
         private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo)
         {
@@ -158,25 +158,23 @@ namespace TeamCity.CSharpInteractive
 
         private IEnumerable<BuildMessage> OnMessage(IServiceMessage message)
         {
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
             var text = message.GetValue("text") ?? string.Empty;
-            var statusStr = message.GetValue("status");
-            if (Enum.TryParse<BuildMessageState>(statusStr, false, out var status))
+            var state = message.GetValue("status").ToUpperInvariant() switch
             {
-                var errorDetails = message.GetValue("errorDetails") ?? string.Empty;
-                var buildMessage = new BuildMessage(status, default, text, errorDetails);
-                _messages.Add(buildMessage);
-                yield return buildMessage;
-            }
-            else
-            {
-                yield return new BuildMessage(BuildMessageState.Info).WithText(text);
-            }
+                "WARNING" => BuildMessageState.Warning,
+                "FAILURE" => BuildMessageState.Failure,
+                "ERROR" => BuildMessageState.Error,
+                _ => BuildMessageState.Info
+            };
+
+            var errorDetails = message.GetValue("errorDetails") ?? string.Empty;
+            var buildMessage = new BuildMessage(state, default, text, errorDetails);
+            _messages.Add(buildMessage);
+            yield return buildMessage;
         }
 
         private IEnumerable<BuildMessage> OnBuildProblem(IServiceMessage message)
         {
-            yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
             var description = message.GetValue("description") ?? string.Empty;
             var identity = message.GetValue("identity") ?? string.Empty;
             var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, default, description, identity);

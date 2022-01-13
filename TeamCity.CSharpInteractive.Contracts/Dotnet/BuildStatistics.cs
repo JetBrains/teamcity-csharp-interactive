@@ -5,6 +5,7 @@ namespace Dotnet;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Cmd;
 
 public record BuildStatistics
 {
@@ -29,7 +30,7 @@ public record BuildStatistics
         PassedTests = tests.Count(i => i.State == TestState.Passed);
         
         Success =
-            buildResult.ExitCode == 0
+            buildResult.State == ProcessState.Success || buildResult.State == ProcessState.Unknown
             && FailedTests == 0
             && buildResult.Messages.All(i => i.State <= BuildMessageState.Warning);
     }

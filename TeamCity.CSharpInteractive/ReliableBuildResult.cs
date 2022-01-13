@@ -9,7 +9,6 @@ namespace TeamCity.CSharpInteractive
     using Cmd;
     using Dotnet;
     using JetBrains.TeamCity.ServiceMessages;
-    using JetBrains.TeamCity.ServiceMessages.Read;
     using Pure.DI;
 
     internal class ReliableBuildResult: IBuildResult
@@ -37,14 +36,14 @@ namespace TeamCity.CSharpInteractive
             var source = message.GetValue("source");
             if (string.IsNullOrWhiteSpace(source))
             {
-                return _baseBuildResult.ProcessMessage(startInfo, message).ToArray();
+                return _baseBuildResult.ProcessMessage(startInfo, message);
             }
 
             _sources.TryAdd(source, startInfo);
             return Array.Empty<BuildMessage>();
         }
 
-        public Dotnet.BuildResult CreateResult(int? exitCode)
+        public Dotnet.BuildResult Create()
         {
             var items = 
                 from source in _sources
@@ -55,12 +54,12 @@ namespace TeamCity.CSharpInteractive
                 from message in _messagesReader.Read(indicesFile, messagesFile)
                 select (message, startInfoFactory: source.Value);
 
-            foreach (var (message, startInfoFactory) in items)
+            foreach (var (message, startInfo) in items)
             {
-                _baseBuildResult.ProcessMessage(startInfoFactory, message);
+                _baseBuildResult.ProcessMessage(startInfo, message);
             }
             
-            return _baseBuildResult.CreateResult(exitCode);
+            return _baseBuildResult.Create();
         }
     }
 }

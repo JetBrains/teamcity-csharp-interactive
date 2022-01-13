@@ -2,7 +2,6 @@ namespace TeamCity.CSharpInteractive.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
@@ -23,7 +22,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.FromSeconds(5);
-            ProcessStartInfo startInfo = new();
             _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
             _processManager.Setup(i => i.WaitForExit(timeout)).Returns(false);
             _processManager.SetupGet(i => i.Id).Returns(99);
@@ -33,10 +31,11 @@ namespace TeamCity.CSharpInteractive.Tests
             var result = instance.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, timeout);
 
             // Then
-            result.HasValue.ShouldBeFalse();
+            result.ExitCode.HasValue.ShouldBeFalse();
+            result.State.ShouldBe(ProcessState.Cancel);
             _processManager.Verify(i => i.WaitForExit(timeout));
             _processManager.Verify(i => i.TryKill());
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
+            _monitor.Verify(i => i.Started(_startInfo.Object, 99));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Cancel, default));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, It.IsAny<int>()), Times.Never);
         }
@@ -46,7 +45,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.FromSeconds(5);
-            ProcessStartInfo startInfo = new();
             _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
             _processManager.Setup(i => i.WaitForExit(timeout)).Returns(true);
             _processManager.SetupGet(i => i.ExitCode).Returns(1);
@@ -57,12 +55,12 @@ namespace TeamCity.CSharpInteractive.Tests
             var result = instance.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, timeout);
 
             // Then
-            result.HasValue.ShouldBeTrue();
-            result!.Value.ShouldBe(1);
+            result.ExitCode.HasValue.ShouldBeTrue();
+            result.ExitCode!.Value.ShouldBe(1);
+            result.State.ShouldBe(ProcessState.Unknown);
             _processManager.Verify(i => i.WaitForExit(timeout));
             _processManager.Verify(i => i.TryKill(), Times.Never);
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Started());
+            _monitor.Verify(i => i.Started(_startInfo.Object, 99));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, 1));
         }
         
@@ -71,7 +69,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.Zero;
-            ProcessStartInfo startInfo = new();
             _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
             _processManager.SetupGet(i => i.ExitCode).Returns(1);
             _processManager.SetupGet(i => i.Id).Returns(99);
@@ -81,12 +78,12 @@ namespace TeamCity.CSharpInteractive.Tests
             var result = instance.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, timeout);
 
             // Then
-            result.HasValue.ShouldBeTrue();
-            result!.Value.ShouldBe(1);
+            result.ExitCode.HasValue.ShouldBeTrue();
+            result.ExitCode!.Value.ShouldBe(1);
+            result.State.ShouldBe(ProcessState.Unknown);
             _processManager.Verify(i => i.WaitForExit());
             _processManager.Verify(i => i.TryKill(), Times.Never);
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Started());
+            _monitor.Verify(i => i.Started(_startInfo.Object, 99));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, 1));
         }
         
@@ -95,7 +92,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.Zero;
-            ProcessStartInfo startInfo = new();
             _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(false);
             _processManager.SetupGet(i => i.Id).Returns(99);
             var instance = CreateInstance(new CancellationTokenSource());
@@ -104,10 +100,9 @@ namespace TeamCity.CSharpInteractive.Tests
             var result = instance.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, timeout);
 
             // Then
-            result.HasValue.ShouldBeFalse();
+            result.ExitCode.HasValue.ShouldBeFalse();
+            result.State.ShouldBe(ProcessState.Fail);
             _processManager.Verify(i => i.WaitForExit(), Times.Never);
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Started(), Times.Never);
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Fail, default));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, It.IsAny<int>()), Times.Never);
         }
@@ -117,7 +112,6 @@ namespace TeamCity.CSharpInteractive.Tests
         {
             // Given
             var timeout = TimeSpan.Zero;
-            ProcessStartInfo startInfo = new();
             _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
             _processManager.SetupGet(i => i.ExitCode).Returns(1);
             _processManager.SetupAdd(i => i.OnOutput += Handler).Callback<Action<Output>>(i => i(new Output(_startInfo.Object, false, "out")));
@@ -143,14 +137,14 @@ namespace TeamCity.CSharpInteractive.Tests
             var instance = CreateInstance(new CancellationTokenSource());
 
             // When
-            var exitCode = instance.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, TimeSpan.FromDays(1));
+            var result = instance.Run(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, TimeSpan.FromDays(1));
 
             // Then
-            exitCode.HasValue.ShouldBeTrue();
-            exitCode!.Value.ShouldBe(1);
+            result.ExitCode.HasValue.ShouldBeTrue();
+            result.ExitCode!.Value.ShouldBe(1);
+            result.State.ShouldBe(ProcessState.Success);
             _processManager.Verify(i => i.TryKill(), Times.Never);
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Started());
+            _monitor.Verify(i => i.Started(_startInfo.Object, 99));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Success, 1));
         }
         
@@ -162,18 +156,17 @@ namespace TeamCity.CSharpInteractive.Tests
             _processManager.Setup(i => i.WaitForExit(TimeSpan.FromDays(1))).Returns(true);
             _processManager.SetupGet(i => i.ExitCode).Returns(1);
             _processManager.SetupGet(i => i.Id).Returns(99);
-            _stateProvider.Setup(i => i.GetState(1)).Returns(ProcessState.Success);
             var instance = CreateInstance(new CancellationTokenSource());
 
             // When
-            var exitCode = instance.Run(_startInfo.Object, Handler, default, _monitor.Object, TimeSpan.FromDays(1));
+            var result = instance.Run(_startInfo.Object, Handler, default, _monitor.Object, TimeSpan.FromDays(1));
 
             // Then
-            exitCode.HasValue.ShouldBeTrue();
-            exitCode!.Value.ShouldBe(1);
+            result.ExitCode.HasValue.ShouldBeTrue();
+            result.ExitCode!.Value.ShouldBe(1);
+            result.State.ShouldBe(ProcessState.Unknown);
             _processManager.Verify(i => i.TryKill(), Times.Never);
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Started());
+            _monitor.Verify(i => i.Started(_startInfo.Object, 99));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, 1));
         }
         
@@ -190,14 +183,14 @@ namespace TeamCity.CSharpInteractive.Tests
             var instance = CreateInstance(new CancellationTokenSource());
 
             // When
-            var exitCode = await instance.RunAsync(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, cancellationTokenSource.Token);
+            var result = await instance.RunAsync(_startInfo.Object, Handler, _stateProvider.Object, _monitor.Object, cancellationTokenSource.Token);
 
             // Then
-            exitCode.HasValue.ShouldBeTrue();
-            exitCode!.Value.ShouldBe(2);
+            result.ExitCode.HasValue.ShouldBeTrue();
+            result.ExitCode!.Value.ShouldBe(2);
+            result.State.ShouldBe(ProcessState.Unknown);
             _processManager.Verify(i => i.TryKill(), Times.Never);
-            _monitor.Verify(i => i.Starting(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Started());
+            _monitor.Verify(i => i.Started(_startInfo.Object, 99));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, 2));
         }
 

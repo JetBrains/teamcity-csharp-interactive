@@ -29,13 +29,13 @@ namespace TeamCity.CSharpInteractive
             _flowContext = flowContext;
         }
         
-        public int? Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
+        public ProcessResult Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
         {
             using var flow = CreateFlow();
             return _baseProcessRunner.Run(WrapInFlow(startInfo), handler, stateProvider, monitor, timeout);
         }
         
-        public Task<int?> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
+        public Task<ProcessResult> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
         {
             var flow = CreateFlow();
             return _baseProcessRunner.RunAsync(WrapInFlow(startInfo), handler, stateProvider, monitor, cancellationToken)

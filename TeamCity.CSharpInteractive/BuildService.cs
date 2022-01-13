@@ -7,13 +7,12 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
     using Contracts;
     using Dotnet;
-    using JetBrains.TeamCity.ServiceMessages.Read;
+    using Pure.DI;
 
     internal class BuildService: IBuild
     {
@@ -21,46 +20,43 @@ namespace TeamCity.CSharpInteractive
         private readonly IHost _host;
         private readonly ITeamCityContext _teamCityContext;
         private readonly Func<IBuildResult> _resultFactory;
-        private readonly ITeamCitySettings _teamCitySettings;
-        private readonly IProcessOutputWriter _processOutputWriter;
-        private readonly IBuildMessageLogWriter _buildMessageLogWriter;
-        private readonly IServiceMessageParser _serviceMessageParser;
+        private readonly IBuildOutputConverter _buildOutputConverter;
         private readonly Func<IProcessMonitor> _monitorFactory;
+        private readonly IBuildMessagesProcessor _defaultBuildMessagesProcessor;
+        private readonly IBuildMessagesProcessor _customBuildMessagesProcessor;
 
         public BuildService(
             IProcessRunner processRunner,
             IHost host,
             ITeamCityContext teamCityContext,
             Func<IBuildResult> resultFactory,
-            ITeamCitySettings teamCitySettings,
-            IProcessOutputWriter processOutputWriter,
-            IBuildMessageLogWriter buildMessageLogWriter,
-            IServiceMessageParser serviceMessageParser,
-            Func<IProcessMonitor> monitorFactory)
+            IBuildOutputConverter buildOutputConverter,
+            Func<IProcessMonitor> monitorFactory,
+            [Tag("default")] IBuildMessagesProcessor defaultBuildMessagesProcessor,
+            [Tag("custom")] IBuildMessagesProcessor customBuildMessagesProcessor)
         {
             _processRunner = processRunner;
             _host = host;
             _teamCityContext = teamCityContext;
             _resultFactory = resultFactory;
-            _teamCitySettings = teamCitySettings;
-            _processOutputWriter = processOutputWriter;
-            _buildMessageLogWriter = buildMessageLogWriter;
-            _serviceMessageParser = serviceMessageParser;
+            _buildOutputConverter = buildOutputConverter;
             _monitorFactory = monitorFactory;
+            _defaultBuildMessagesProcessor = defaultBuildMessagesProcessor;
+            _customBuildMessagesProcessor = customBuildMessagesProcessor;
         }
 
         public Dotnet.BuildResult Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
         {
-            var ctx = _resultFactory();
-            var exitCode = _processRunner.Run(CreateStartInfo(process), output => Handle(output.StartInfo, handler, output, ctx), process as IProcessStateProvider, _monitorFactory(), timeout);
-            return ctx.CreateResult(exitCode);
+            var buildResult = _resultFactory();
+            var (processState, exitCode) = _processRunner.Run(CreateStartInfo(process), output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), timeout);
+            return buildResult.Create().WithExitCode(exitCode).WithState(processState);
         }
 
         public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
         {
-            var ctx = _resultFactory();
-            var exitCode = await _processRunner.RunAsync(CreateStartInfo(process), output => Handle(output.StartInfo, handler, output, ctx), process as IProcessStateProvider, _monitorFactory(), cancellationToken);
-            return ctx.CreateResult(exitCode);
+            var buildResult = _resultFactory();
+            var (processState, exitCode) = await _processRunner.RunAsync(CreateStartInfo(process), output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), cancellationToken);
+            return buildResult.Create().WithExitCode(exitCode).WithState(processState);
         }
 
         private IStartInfo CreateStartInfo(IProcess process)
@@ -76,35 +72,19 @@ namespace TeamCity.CSharpInteractive
             }
         }
         
-        private void Handle(IStartInfo info, Action<Output>? handler, in Output output, IBuildResult result)
+        private void Handle(Action<Output>? handler, in Output output, IBuildResult result)
         {
-            var startInfo = output.StartInfo;
-            var messages = _serviceMessageParser.ParseServiceMessages(output.Line)
-                .SelectMany(message => Enumerable.Repeat(new BuildMessage(BuildMessageState.ServiceMessage, message), 1).Concat(result.ProcessMessage(startInfo, message)))
-                .DefaultIfEmpty(new BuildMessage(output.IsError ? BuildMessageState.Error : BuildMessageState.Info, default, output.Line));
-
+            var messages = _buildOutputConverter.Convert(output, result);
             if (handler != default)
             {
-                foreach (var buildMessage in messages)
-                {
-                    handler(new Output(info, buildMessage.State > BuildMessageState.Warning, buildMessage.Text));
-                }
+                _customBuildMessagesProcessor.ProcessMessages(output, messages, handler);
             }
             else
             {
-                var curMessages = messages.ToArray();
-                if (_teamCitySettings.IsUnderTeamCity && curMessages.Any(i => i.State == BuildMessageState.ServiceMessage))
-                {
-                    _processOutputWriter.Write(output);
-                }
-                else
-                {
-                    foreach (var buildMessage in curMessages)
-                    {
-                        _buildMessageLogWriter.Write(buildMessage);
-                    }
-                }
+                _defaultBuildMessagesProcessor.ProcessMessages(output, messages, EmptyHandler);
             }
         }
+
+        private static void EmptyHandler(Output obj) { }
     }
 }

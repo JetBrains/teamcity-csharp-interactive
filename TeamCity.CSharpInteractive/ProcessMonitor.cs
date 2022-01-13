@@ -1,7 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,19 +10,31 @@ using Contracts;
 internal class ProcessMonitor : IProcessMonitor
 {
     private readonly ILog<ProcessMonitor> _log;
+    private readonly IEnvironment _environment;
     private Text _info = Text.Empty;
-    private Text[] _header = Array.Empty<Text>();
     private int _processId;
 
-    public ProcessMonitor(ILog<ProcessMonitor> log) => _log = log;
+    public ProcessMonitor(
+        ILog<ProcessMonitor> log,
+        IEnvironment environment)
+    {
+        _log = log;
+        _environment = environment;
+    }
 
-    public void Starting(IStartInfo startInfo, int processId)
+    public void Started(IStartInfo startInfo, int processId)
     {
         _processId = processId;
-        var sb = new StringBuilder();
-        if (!string.IsNullOrWhiteSpace(startInfo.WorkingDirectory))
+        var workingDirectory = startInfo.WorkingDirectory;
+        if (string.IsNullOrWhiteSpace(workingDirectory))
         {
-            sb.Append(Escape(startInfo.WorkingDirectory));
+            workingDirectory = _environment.GetPath(SpecialFolder.Working);
+        }
+
+        var sb = new StringBuilder();
+        if (!string.IsNullOrWhiteSpace(workingDirectory))
+        {
+            sb.Append(Escape(workingDirectory));
             sb.Append(" => ");
         }
 
@@ -51,10 +62,24 @@ internal class ProcessMonitor : IProcessMonitor
         }
 
         _info = new Text(sb.ToString());
-        _header = GetHeader(startInfo).ToArray();
-    }
+        var executable = new List<Text>
+        {
+            new($"Starting process {_processId}: ", Color.Header),
+            new(Escape(startInfo.ExecutablePath), Color.Header)
+        };
 
-    public void Started() => _log.Info(_header);
+        foreach (var arg in startInfo.Args)
+        {
+            executable.Add(Text.Space);
+            executable.Add(new Text(Escape(arg)));
+        }
+
+        _log.Info(executable.ToArray());
+        if (!string.IsNullOrWhiteSpace(workingDirectory))
+        {
+            _log.Info(new Text("in directory: "), new Text(Escape(workingDirectory)));
+        }
+    }
 
     public void Finished(long elapsedMilliseconds, ProcessState state, int? exitCode = default)
     {
@@ -88,21 +113,6 @@ internal class ProcessMonitor : IProcessMonitor
         }
     }
     
-    private IEnumerable<Text> GetHeader(IStartInfo startInfo)
-    {
-        yield return new Text($"Starting process {_processId}: ", Color.Header);
-        yield return new Text(Escape(startInfo.ExecutablePath), Color.Header);
-        foreach (var arg in startInfo.Args)
-        {
-            yield return Text.Space;
-            yield return new Text(Escape(arg));
-        }
-            
-        yield return Text.NewLine;
-        yield return new Text("in directory: ");
-        yield return new Text(Escape(startInfo.WorkingDirectory));
-    }
-
     private IEnumerable<Text> GetFooter(int exitCode, long elapsedMilliseconds, ProcessState? state)
     {
         var stateText = state switch

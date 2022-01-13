@@ -32,7 +32,7 @@ public class ProcessOutputWriterTests
         writer.Write(new Output(Mock.Of<IStartInfo>(), true, "Err"));
 
         // Then
-        _console.Verify(i => i.WriteToErr("Err", System.Environment.NewLine));
+        _console.Verify(i => i.WriteToErr("Err", Environment.NewLine));
     }
 
     private ProcessOutputWriter CreateInstance() =>

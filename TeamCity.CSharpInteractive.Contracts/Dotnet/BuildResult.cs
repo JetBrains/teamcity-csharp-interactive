@@ -6,12 +6,14 @@
 namespace Dotnet
 {
     using System.Collections.Generic;
+    using Cmd;
 
     [Immutype.Target]
     public record BuildResult(
-        int? ExitCode,
         IReadOnlyList<BuildMessage> Messages,
-        IReadOnlyList<TestResult> Tests)
+        IReadOnlyList<TestResult> Tests,
+        int? ExitCode = default,
+        ProcessState State = ProcessState.Unknown)
     {
         private readonly object _lockObject = new();
         private BuildStatistics? _statistics;

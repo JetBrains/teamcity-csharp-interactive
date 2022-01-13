@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.Diagnostics;
     using Cmd;
 
     internal interface IProcessManager: IDisposable

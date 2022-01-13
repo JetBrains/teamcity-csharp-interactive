@@ -9,6 +9,7 @@ using Xunit;
 public class ProcessMonitorTests
 {
     private readonly Mock<ILog<ProcessMonitor>> _log = new();
+    private readonly Mock<IEnvironment> _environment = new();
     private readonly Mock<IStartInfo> _startInfo = new();
 
     public ProcessMonitorTests()
@@ -20,50 +21,69 @@ public class ProcessMonitorTests
     }
 
     [Fact]
-    public void ShouldNotLogBeforeStart()
+    public void ShouldLogHeaderOnStart()
     {
         // Given
         var monitor = CreateInstance();
 
         // When
-        monitor.Starting(_startInfo.Object, 99);
-
-        // Then
-        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
-        _log.Verify(i => i.Info(It.IsAny<Text[]>()), Times.Never);
-        _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
-        _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
-    }
-    
-    [Fact]
-    public void ShouldLogHeaderAfterStart()
-    {
-        // Given
-        var monitor = CreateInstance();
-        monitor.Starting(_startInfo.Object, 99);
-
-        // When
-        monitor.Started();
+        monitor.Started(_startInfo.Object, 99);
 
         // Then
         _log.Verify(i => i.Info(It.Is<Text[]>(text => 
-            text.Length == 9
+            text.Length == 6
             && text[0].Value == "Starting process 99: "
             && text[1].Value == "\"Cm d\""
             && text[2] == Text.Space
             && text[3].Value == "Arg1"
             && text[4] == Text.Space
             && text[5].Value == "\"Arg 2\""
-            && text[6] == Text.NewLine
-            && text[7].Value == "in directory: "
-            && text[8].Value == "\"W d\""
         )));
-
+        
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
+            text.Length == 2
+            && text[0].Value == "in directory: "
+            && text[1].Value == "\"W d\""
+        )));
+        
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
     }
     
+    [Fact]
+    public void ShouldLogCurrentWorkingDirectoryWhenWasNotSpecified()
+    {
+        // Given
+        _startInfo.SetupGet(i => i.WorkingDirectory).Returns(string.Empty);
+        _environment.Setup(i => i.GetPath(SpecialFolder.Working)).Returns("Cur Wd");
+        var monitor = CreateInstance();
+
+        // When
+        monitor.Started(_startInfo.Object, 99);
+
+        // Then
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
+            text.Length == 6
+            && text[0].Value == "Starting process 99: "
+            && text[1].Value == "\"Cm d\""
+            && text[2] == Text.Space
+            && text[3].Value == "Arg1"
+            && text[4] == Text.Space
+            && text[5].Value == "\"Arg 2\""
+        )));
+        
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
+            text.Length == 2
+            && text[0].Value == "in directory: "
+            && text[1].Value == "\"Cur Wd\""
+        )));
+        
+        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
+        _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
+        _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
+    }
+
     [Theory]
     [InlineData(ProcessState.Success, "finished successfully", Color.Success)]
     [InlineData(ProcessState.Unknown, "finished", Color.Highlighted)]
@@ -71,8 +91,7 @@ public class ProcessMonitorTests
     {
         // Given
         var monitor = CreateInstance();
-        monitor.Starting(_startInfo.Object, 99);
-        monitor.Started();
+        monitor.Started(_startInfo.Object, 99);
 
         // When
         monitor.Finished(22, state, 33);
@@ -95,8 +114,7 @@ public class ProcessMonitorTests
     {
         // Given
         var monitor = CreateInstance();
-        monitor.Starting(_startInfo.Object, 99);
-        monitor.Started();
+        monitor.Started(_startInfo.Object, 99);
 
         // When
         monitor.Finished(22, ProcessState.Fail, 33);
@@ -118,8 +136,7 @@ public class ProcessMonitorTests
     {
         // Given
         var monitor = CreateInstance();
-        monitor.Starting(_startInfo.Object, 99);
-        monitor.Started();
+        monitor.Started(_startInfo.Object, 99);
 
         // When
         monitor.Finished(22, ProcessState.Fail);
@@ -139,8 +156,7 @@ public class ProcessMonitorTests
     {
         // Given
         var monitor = CreateInstance();
-        monitor.Starting(_startInfo.Object, 99);
-        monitor.Started();
+        monitor.Started(_startInfo.Object, 99);
 
         // When
         monitor.Finished(22, ProcessState.Cancel);
@@ -156,5 +172,5 @@ public class ProcessMonitorTests
     }
     
     private ProcessMonitor CreateInstance() =>
-        new(_log.Object);
+        new(_log.Object, _environment.Object);
 }
