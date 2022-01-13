@@ -12,20 +12,17 @@ namespace TeamCity.CSharpInteractive
 
     internal class ProcessInFlowRunner: IProcessRunner
     {
-        private readonly ILog<ProcessInFlowRunner> _log;
         private readonly IProcessRunner _baseProcessRunner;
         private readonly ITeamCitySettings _teamCitySettings;
         private readonly ITeamCityWriter _teamCityWriter;
         private readonly IFlowContext _flowContext;
 
         public ProcessInFlowRunner(
-            ILog<ProcessInFlowRunner> log,
-            [Tag("base")] IProcessRunner baseProcessRunner,
+            [Tag("inBlock")] IProcessRunner baseProcessRunner,
             ITeamCitySettings teamCitySettings,
             ITeamCityWriter teamCityWriter,
             IFlowContext flowContext)
         {
-            _log = log;
             _baseProcessRunner = baseProcessRunner;
             _teamCitySettings = teamCitySettings;
             _teamCityWriter = teamCityWriter;
@@ -35,19 +32,16 @@ namespace TeamCity.CSharpInteractive
         public int? Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
         {
             using var flow = CreateFlow();
-            using var block = CreateBlock(startInfo);
             return _baseProcessRunner.Run(WrapInFlow(startInfo), handler, stateProvider, monitor, timeout);
         }
         
         public Task<int?> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
         {
             var flow = CreateFlow();
-            var block = CreateBlock(startInfo);
             return _baseProcessRunner.RunAsync(WrapInFlow(startInfo), handler, stateProvider, monitor, cancellationToken)
                 .ContinueWith(
                     task =>
                     {
-                        block.Dispose();
                         flow.Dispose();
                         return task.Result;
                     }, cancellationToken);
@@ -58,9 +52,6 @@ namespace TeamCity.CSharpInteractive
                 ? new StartInfoInFlow(startInfo, _flowContext.CurrentFlowId)
                 : startInfo;
         
-        private IDisposable CreateBlock(IStartInfo startInfo) =>
-            _log.Block(new []{new Text(startInfo.ShortName)});
-
         private IDisposable CreateFlow() =>
             _teamCitySettings.IsUnderTeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
 
