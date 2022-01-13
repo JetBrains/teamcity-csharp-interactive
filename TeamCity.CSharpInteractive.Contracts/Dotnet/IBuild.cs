@@ -1,6 +1,8 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable CheckNamespace
+// ReSharper disable UnusedMethodReturnValue.Global
+// ReSharper disable UnusedMemberInSuper.Global
 namespace Dotnet
 {
     using System;

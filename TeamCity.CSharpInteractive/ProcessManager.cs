@@ -105,7 +105,7 @@ namespace TeamCity.CSharpInteractive
             var output = new Output(_processInfo!, isError, line);
             if (handler != default)
             {
-                _log.Trace(() => new []{Text.Tab, isError ? StdErrPrefix : StdOutPrefix, new Text(line)}, _processId);
+                _log.Trace(() => new []{ Text.Tab, isError ? StdErrPrefix : StdOutPrefix, new Text(line) }, _processId);
                 handler(output);
             }
             else

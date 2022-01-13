@@ -77,7 +77,7 @@ internal class ProcessMonitor : IProcessMonitor
         _log.Info(executable.ToArray());
         if (!string.IsNullOrWhiteSpace(workingDirectory))
         {
-            _log.Info(new Text("in directory: "), new Text(Escape(workingDirectory)));
+            _log.Info(new Text("in directory: ", Color.Header), new Text(Escape(workingDirectory), Color.Header));
         }
     }
 

@@ -3,10 +3,10 @@ namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
 
     internal class TextToColorStrings : ITextToColorStrings
     {
-        private const string ColorPrefix = "\x001B[";
         private static readonly Dictionary<int, ConsoleColor?> Colors = new()
         {
             {39, default},
@@ -30,41 +30,103 @@ namespace TeamCity.CSharpInteractive
         
         public IEnumerable<(ConsoleColor? color, string text)> Convert(string text, ConsoleColor? defaultColor)
         {
-            if (!text.Contains('\x001B'))
+            var curColor = defaultColor;
+            foreach (var (color, str) in Split(text))
             {
-                yield return (defaultColor, text);
-                yield break;
-            }
-            
-            foreach (var item in text.Split(ColorPrefix, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var str = item;
-                var ansiColorFinish = str.IndexOf('m');
-                var color = defaultColor;
-                if (ansiColorFinish >= 0)
+                if (!string.IsNullOrWhiteSpace(color))
                 {
-                    foreach (var colorStr in str[..ansiColorFinish].Split(';', StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var colorStr in color.Split(';', StringSplitOptions.RemoveEmptyEntries))
                     {
-                        if (int.TryParse(colorStr, out var colorId))
+                        if (!int.TryParse(colorStr, out var colorId) || !Colors.TryGetValue(colorId, out var colorVal) || !colorVal.HasValue)
                         {
-                            // ReSharper disable once InvertIf
-                            if (Colors.TryGetValue(colorId, out var curColor))
-                            {
-                                color = curColor;
-                                break;
-                            }
+                            continue;
+                        }
+
+                        curColor = colorVal.Value;
+                        break;
+                    }
+                }
+
+                yield return (curColor, str);
+            }
+        }
+
+        internal static IEnumerable<(string color, string text)> Split(string text)
+        {
+            var sb = new StringBuilder(text.Length);
+            var isColor = false;
+            var color = string.Empty;
+            foreach (var ch in text)
+            {
+                switch (ch)
+                {
+                    case '\x001B':
+                        if (!isColor)
+                        {
+                            isColor = true;
                         }
                         else
                         {
+                            sb.Append(ch);
+                        }
+
+                        break;
+
+                    case '[':
+                        if (sb.Length > 0 && sb[^1] == ch)
+                        {
+                            sb.Append(ch);
+                            isColor = false;
                             break;
                         }
-                    }
+                        
+                        if (isColor && sb.Length > 0)
+                        {
+                            yield return (color, sb.ToString());
+                            color = string.Empty;
+                            sb.Clear();
+                        }
+
+                        sb.Append(ch);
+                        break;
                     
-                    str = str.Substring(ansiColorFinish + 1, str.Length - ansiColorFinish - 1);
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                    case ';':
+                        sb.Append(ch);
+                        break;
+                    
+                    case 'm':
+                        if (isColor && sb.Length > 1)
+                        {
+                            color = sb.ToString()[1..];
+                            sb.Clear();
+                            isColor = false;
+                        }
+                        else
+                        {
+                            sb.Append(ch);
+                            isColor = false;
+                        }
+
+                        break;
+
+                    default:
+                        isColor = false;
+                        sb.Append(ch);
+                        break;
                 }
-                
-                yield return (color, str);
             }
+            
+            yield return (color, sb.ToString());
         }
     }
 }

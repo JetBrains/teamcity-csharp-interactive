@@ -7,29 +7,18 @@ namespace TeamCity.CSharpInteractive
     internal class BuildMessageLogWriter : IBuildMessageLogWriter
     {
         private readonly ILog<BuildMessageLogWriter> _log;
-        private readonly IServiceMessageFormatter _serviceMessageFormatter;
 
         public BuildMessageLogWriter(
-            ILog<BuildMessageLogWriter> log,
-            IServiceMessageFormatter serviceMessageFormatter)
+            ILog<BuildMessageLogWriter> log)
         {
             _log = log;
-            _serviceMessageFormatter = serviceMessageFormatter;
         }
 
         public void Write(BuildMessage message)
         {
-            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (message.State)
             {
-                case BuildMessageState.ServiceMessage:
-                    if(message.ServiceMessage != default)
-                    {
-                        _log.Trace(() => new []{ new Text(_serviceMessageFormatter.FormatMessage(message.ServiceMessage) ?? "Empty service message.") }, string.Empty);
-                    }
-
-                    break;
-
                 case BuildMessageState.Info:
                     _log.Info(message.Text);
                     break;

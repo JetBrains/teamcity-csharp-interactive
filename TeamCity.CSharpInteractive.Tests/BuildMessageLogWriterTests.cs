@@ -1,35 +1,13 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
 using Dotnet;
-using JetBrains.TeamCity.ServiceMessages.Write;
 using Moq;
 using Xunit;
 
 public class BuildMessageLogWriterTests
 {
-    private readonly Mock<ILog<BuildMessageLogWriter>> _log;
-    private readonly Mock<IServiceMessageFormatter> _serviceMessageFormatter;
+    private readonly Mock<ILog<BuildMessageLogWriter>> _log = new();
 
-    public BuildMessageLogWriterTests()
-    {
-        _log = new Mock<ILog<BuildMessageLogWriter>>();
-        _serviceMessageFormatter = new Mock<IServiceMessageFormatter>();
-    }
-
-    [Fact]
-    public void ShouldWriteServiceMessagesToTrace()
-    {
-        // Given
-        var writer = CreateInstance();
-
-        // When
-        writer.Write(new BuildMessage(BuildMessageState.ServiceMessage, new ServiceMessage("Abc")));
-
-        // Then
-        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), string.Empty));
-    }
-    
     [Fact]
     public void ShouldWriteInfo()
     {
@@ -73,5 +51,5 @@ public class BuildMessageLogWriterTests
     }
 
     private BuildMessageLogWriter CreateInstance() =>
-        new(_log.Object, _serviceMessageFormatter.Object);
+        new(_log.Object);
 }
