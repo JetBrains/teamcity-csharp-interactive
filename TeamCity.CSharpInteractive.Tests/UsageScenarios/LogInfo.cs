@@ -13,7 +13,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
             
             // $visible=true
-            // $tag=09 Build log API
+            // $tag=09 Logging
             // $priority=04
             // $description=Log information to a build log
             // {

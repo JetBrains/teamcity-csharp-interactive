@@ -20,7 +20,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=04
             // $description=Run and process output
             // {
-            // Adds the namespace "Cmd" to use ICommandLine
+            // Adds the namespace "Cmd" to use Command Line API
             // ## using Cmd;
 
             var lines = new System.Collections.Generic.List<string>();

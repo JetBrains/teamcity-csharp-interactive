@@ -6,7 +6,7 @@
   - [Using _Props_ dictionary](#using-_props_-dictionary)
   - [Using the _Host_ property](#using-the-_host_-property)
   - [Get services](#get-services)
-- Build log API
+- Logging
   - [Write a line to a build log](#write-a-line-to-a-build-log)
   - [Write a line highlighted with "Header" color to a build log](#write-a-line-highlighted-with-"header"-color-to-a-build-log)
   - [Write an empty line to a build log](#write-an-empty-line-to-a-build-log)
@@ -22,6 +22,21 @@
   - [Run asynchronously in parallel](#run-asynchronously-in-parallel)
   - [Cancellation of asynchronous run](#cancellation-of-asynchronous-run)
   - [Run timeout](#run-timeout)
+- Docker API
+  - [Running in docker](#running-in-docker)
+  - [Build a project in a docker container](#build-a-project-in-a-docker-container)
+- .NET build API
+  - [Build a project](#build-a-project)
+  - [Build a project using MSBuild](#build-a-project-using-msbuild)
+  - [Clean a project](#clean-a-project)
+  - [Pack a project](#pack-a-project)
+  - [Publish a project](#publish-a-project)
+  - [Restore a project](#restore-a-project)
+  - [Run a custom .NET command](#run-a-custom-.net-command)
+  - [Run a project](#run-a-project)
+  - [Test a project](#test-a-project)
+  - [Test an assembly](#test-an-assembly)
+  - [Parallel builds](#parallel-builds)
 - NuGet API
   - [Restore NuGet a package of newest version](#restore-nuget-a-package-of-newest-version)
   - [Restore a NuGet package by a version range for the specified .NET and path](#restore-a-nuget-package-by-a-version-range-for-the-specified-.net-and-path)
@@ -160,7 +175,7 @@ Trace("Some trace info");
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use CommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 // Creates a simple command line from just the name of the executable 
@@ -193,7 +208,7 @@ new CommandLine("cmd", "/c", "echo", "Hello")
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
@@ -206,7 +221,7 @@ int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all")
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
@@ -219,7 +234,7 @@ int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoam
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 var lines = new System.Collections.Generic.List<string>();
@@ -237,7 +252,7 @@ lines.ShouldContain("MyEnv=MyVal");
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
@@ -252,7 +267,7 @@ task.Wait();
 The cancellation will kill a related process.
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 var cancellationTokenSource = new CancellationTokenSource();
@@ -272,7 +287,7 @@ task.IsCompleted.ShouldBeFalse();
 If timeout expired a process will be killed.
 
 ``` CSharp
-// Adds the namespace "Cmd" to use ICommandLine
+// Adds the namespace "Cmd" to use Command Line API
 using Cmd;
 
 int? exitCode = GetService<ICommandLine>().Run(
@@ -281,6 +296,310 @@ int? exitCode = GetService<ICommandLine>().Run(
     TimeSpan.FromMilliseconds(1));
 
 exitCode.HasValue.ShouldBeFalse();
+```
+
+
+
+### Build a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+result.Success.ShouldBeTrue();
+
+// Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
+result = build.Run(new Build().WithWorkingDirectory("MyLib"));
+
+// The "result" variable provides details about a build
+result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Clean a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+result.Success.ShouldBeTrue();
+
+// Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
+result = build.Run(new Build().WithWorkingDirectory("MyLib"));
+result.Success.ShouldBeTrue();
+
+// Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
+result = build.Run(new Clean().WithWorkingDirectory("MyLib"));
+
+// The "result" variable provides details about a build
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Run a custom .NET command
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Gets the dotnet version, running a command like: "dotnet --version"
+Version? version = default;
+var result = build.Run(
+    new Custom("--version"),
+    output => Version.TryParse(output.Line, out version));
+
+result.Success.ShouldBeTrue();
+version.ShouldNotBeNull();
+```
+
+
+
+### Build a project using MSBuild
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+result.Success.ShouldBeTrue();
+
+// Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
+result = build.Run(
+    new MSBuild()
+        .WithWorkingDirectory("MyLib")
+        .WithTarget("Build")
+        .WithRestore(true)
+        .AddProps(("configuration", "Release"))
+        .WithVerbosity(Verbosity.Detailed));
+
+// The "result" variable provides details about a build
+result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Pack a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+result.Success.ShouldBeTrue();
+
+// Creates a NuGet package of version 1.2.3 for the project, running a command like: "dotnet pack /p:version=1.2.3" from the directory "MyLib"
+result = build.Run(
+    new Pack()
+        .WithWorkingDirectory("MyLib")
+        .AddProps(("version", "1.2.3")));
+
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Publish a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+result.Success.ShouldBeTrue();
+
+// Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
+result = build.Run(new Publish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Restore a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+result.Success.ShouldBeTrue();
+
+// Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
+result = build.Run(new Restore().WithWorkingDirectory("MyLib"));
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Run a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
+var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
+result.Success.ShouldBeTrue();
+
+// Runs the console project using a command like: "dotnet run" from the directory "MyApp"
+var stdOut = new List<string>(); 
+result = build.Run(new Run().WithWorkingDirectory("MyApp"), output => stdOut.Add(output.Line));
+result.Success.ShouldBeTrue();
+// Checks StdOut
+stdOut.ShouldBe(new []{ "Hello, World!" });
+```
+
+
+
+### Test a project
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
+var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
+result.Success.ShouldBeTrue();
+
+// Runs tests via a command like: "dotnet test" from the directory "MyTests"
+result = build.Run(new Test().WithWorkingDirectory("MyTests"));
+
+// The "result" variable provides details about a build
+result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Test an assembly
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
+var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
+result.Success.ShouldBeTrue();
+
+// Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
+result = build.Run(new Build().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
+result.Success.ShouldBeTrue();
+
+// Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
+result = build.Run(
+    new VSTest()
+        .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
+        .WithWorkingDirectory("MyTests"));
+
+// The "result" variable provides details about a build
+result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
+result.Success.ShouldBeTrue();
+```
+
+
+
+### Parallel builds
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a new test project, running a command like: "dotnet new mstest -n MSTestTests --force"
+var createMSTestTask = build.RunAsync(new Custom("new", "mstest", "-n", "MSTestTests", "--force"));
+
+// Runs tests via a command like: "dotnet test" from the directory "MSTestTests"
+var runMSTestTask = build.RunAsync(new Test().WithWorkingDirectory("MSTestTests"));
+
+// Creates a another test project, running a command like: "dotnet new xunit -n XUnitTests --force"
+var createXUnitTask = build.RunAsync(new Custom("new", "xunit", "-n", "XUnitTests", "--force"));
+
+// Runs tests via a command like: "dotnet test" from the directory "XUnitTests"
+var runXUnitTask = build.RunAsync(new Test().WithWorkingDirectory("XUnitTests"));
+
+// Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
+var createLibTask = build.RunAsync(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+
+// Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
+var publishLibTask = build.RunAsync(new Publish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
+
+// Runs pipelines in parallel
+var results = await Task.WhenAll(
+    // MSTest tests pipeline
+    createMSTestTask.ContinueWith(_ => runMSTestTask.Result),
+    // XUnit tests pipeline
+    createXUnitTask.ContinueWith(_ => runXUnitTask.Result),
+    // Publish pipeline
+    createLibTask.ContinueWith(_ => publishLibTask.Result));
+
+// The "results" variable provides details about all builds
+results.Length.ShouldBe(3);
+results.All(result => result.Success).ShouldBeTrue();
 ```
 
 
@@ -315,6 +634,65 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(
     "[1.3, 1.3.8)",
     "net5.0",
     packagesPath);
+```
+
+
+
+### Running in docker
+
+
+
+``` CSharp
+// Adds the namespace "Cmd" to use Command Line API
+using Cmd;
+// Adds the namespace "Docker" to use Docker API
+using Docker;
+
+// Resolves a build service
+var commandLine = GetService<ICommandLine>();
+
+// Creates some command line to run in a docker container
+var cmd = new CommandLine("whoami");
+
+// Runs the command line in a docker container
+var result = commandLine.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
+result.ShouldBe(0);
+```
+
+
+
+### Build a project in a docker container
+
+
+
+``` CSharp
+// Adds the namespace "Dotnet" to use .NET build API
+using Dotnet;
+// Adds the namespace "Docker" to use Docker API
+using Docker;
+
+// Resolves a build service
+var build = GetService<IBuild>();
+
+// Creates a base docker command line
+var baseDockerCmd = new Docker.Run()
+    .WithImage("mcr.microsoft.com/dotnet/sdk")
+    .WithPlatform("linux")
+    .WithContainerWorkingDirectory("/MyProjects")
+    .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
+
+// Creates a new library project in a docker container
+var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
+var result = build.Run(baseDockerCmd.WithProcess(customCmd));
+result.Success.ShouldBeTrue();
+
+// Builds the library project in a docker container
+var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
+result = build.Run(baseDockerCmd.WithProcess(buildCmd), output => {});
+
+// The "result" variable provides details about a build
+result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Success.ShouldBeTrue();
 ```
 
 

@@ -19,7 +19,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=00
             // $description=Build command lines
             // {
-            // Adds the namespace "Cmd" to use CommandLine
+            // Adds the namespace "Cmd" to use Command Line API
             // ## using Cmd;
             
             // Creates a simple command line from just the name of the executable 

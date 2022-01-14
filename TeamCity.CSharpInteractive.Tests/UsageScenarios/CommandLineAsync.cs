@@ -21,7 +21,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=02
             // $description=Run a command line asynchronously
             // {
-            // Adds the namespace "Cmd" to use ICommandLine
+            // Adds the namespace "Cmd" to use Command Line API
             // ## using Cmd;
 
             int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));

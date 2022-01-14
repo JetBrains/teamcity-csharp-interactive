@@ -88,7 +88,7 @@ namespace TeamCity.CSharpInteractive
 
         private static string GetWorkingDirectory() => Directory.GetCurrentDirectory();
 
-        private string GetBinDirectory() => Path.GetDirectoryName(System.Environment.GetCommandLineArgs()[0]) ?? GetScriptDirectory();
+        private string GetBinDirectory() => Path.GetDirectoryName(typeof(Environment).Assembly.Location) ?? GetScriptDirectory();
 
         private string GetScriptDirectory() => _scriptDirectories.Count > 0 ? _scriptDirectories.Last!.Value : GetWorkingDirectory();
     }

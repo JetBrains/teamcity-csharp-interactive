@@ -23,7 +23,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $description=Cancellation of asynchronous run
             // $header=The cancellation will kill a related process.
             // {
-            // Adds the namespace "Cmd" to use ICommandLine
+            // Adds the namespace "Cmd" to use Command Line API
             // ## using Cmd;
 
             var cancellationTokenSource = new CancellationTokenSource();

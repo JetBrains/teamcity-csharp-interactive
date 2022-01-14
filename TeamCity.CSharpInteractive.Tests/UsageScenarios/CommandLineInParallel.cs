@@ -22,7 +22,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=05
             // $description=Run asynchronously in parallel
             // {
-            // Adds the namespace "Cmd" to use ICommandLine
+            // Adds the namespace "Cmd" to use Command Line API
             // ## using Cmd;
 
             Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));

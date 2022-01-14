@@ -11,7 +11,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
         public void Run()
         {
             // $visible=true
-            // $tag=09 Build log API
+            // $tag=09 Logging
             // $priority=01
             // $description=Write a line highlighted with "Header" color to a build log
             // {

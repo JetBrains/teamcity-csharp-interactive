@@ -21,7 +21,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $description=Run timeout
             // $header=If timeout expired a process will be killed.
             // {
-            // Adds the namespace "Cmd" to use ICommandLine
+            // Adds the namespace "Cmd" to use Command Line API
             // ## using Cmd;
 
             int? exitCode = GetService<ICommandLine>().Run(

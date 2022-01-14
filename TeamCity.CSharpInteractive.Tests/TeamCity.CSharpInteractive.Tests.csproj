@@ -39,6 +39,7 @@
         <None Update="README_TEMPLATE.md">
           <DependentUpon>README_TEMPLATE.tt</DependentUpon>
         </None>
+        <Content Include="$(OutDir)/Integration/*.*" />
     </ItemGroup>
 
 </Project>
