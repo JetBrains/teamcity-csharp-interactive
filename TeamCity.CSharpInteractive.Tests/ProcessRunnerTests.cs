@@ -32,11 +32,11 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // Then
             result.ExitCode.HasValue.ShouldBeFalse();
-            result.State.ShouldBe(ProcessState.Cancel);
+            result.State.ShouldBe(ProcessState.Canceled);
             _processManager.Verify(i => i.WaitForExit(timeout));
             _processManager.Verify(i => i.TryKill());
             _monitor.Verify(i => i.Started(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Cancel, default));
+            _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Canceled, default));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, It.IsAny<int>()), Times.Never);
         }
         
@@ -101,9 +101,9 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // Then
             result.ExitCode.HasValue.ShouldBeFalse();
-            result.State.ShouldBe(ProcessState.Fail);
+            result.State.ShouldBe(ProcessState.Failed);
             _processManager.Verify(i => i.WaitForExit(), Times.Never);
-            _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Fail, default));
+            _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Failed, default));
             _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Unknown, It.IsAny<int>()), Times.Never);
         }
         
@@ -133,7 +133,7 @@ namespace TeamCity.CSharpInteractive.Tests
             _processManager.Setup(i => i.WaitForExit(TimeSpan.FromDays(1))).Returns(true);
             _processManager.SetupGet(i => i.ExitCode).Returns(1);
             _processManager.SetupGet(i => i.Id).Returns(99);
-            _stateProvider.Setup(i => i.GetState(1)).Returns(ProcessState.Success);
+            _stateProvider.Setup(i => i.GetState(1)).Returns(ProcessState.Succeeded);
             var instance = CreateInstance(new CancellationTokenSource());
 
             // When
@@ -142,10 +142,10 @@ namespace TeamCity.CSharpInteractive.Tests
             // Then
             result.ExitCode.HasValue.ShouldBeTrue();
             result.ExitCode!.Value.ShouldBe(1);
-            result.State.ShouldBe(ProcessState.Success);
+            result.State.ShouldBe(ProcessState.Succeeded);
             _processManager.Verify(i => i.TryKill(), Times.Never);
             _monitor.Verify(i => i.Started(_startInfo.Object, 99));
-            _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Success, 1));
+            _monitor.Verify(i => i.Finished(It.IsAny<long>(), ProcessState.Succeeded, 1));
         }
         
         [Fact]

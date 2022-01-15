@@ -1,16 +1,19 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable CheckNamespace
+// ReSharper disable ReturnTypeCanBeEnumerable.Global
 namespace Cmd
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Text;
     using TeamCity.CSharpInteractive.Contracts;
 
     [Immutype.Target]
+    [DebuggerTypeProxy(typeof(StartInfoDebugView))]
     public record CommandLine(
         string ExecutablePath,
         string WorkingDirectory,
@@ -32,47 +35,41 @@ namespace Cmd
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append('[');
+            if (!string.IsNullOrWhiteSpace(ShortName))
+            {
+                sb.Append(ShortName);
+                sb.Append(": ");
+            }
+
             sb.Append(Escape(ExecutablePath));
             foreach (var arg in Args)
             {
                 sb.Append(' ');
                 sb.Append(Escape(arg));
             }
-            sb.Append(']');
-
-            if (!string.IsNullOrWhiteSpace(WorkingDirectory))
-            {
-                sb.Append(" in ");
-                sb.Append(Escape(WorkingDirectory));
-            }
-
-            // ReSharper disable once InvertIf
-            if (Vars.Any())
-            {
-                sb.Append(" with variables [");
-                var first = true;
-                foreach (var (name, value) in Vars)
-                {
-                    if (first)
-                    {
-                        first = false;
-                    }
-                    else
-                    {
-                        sb.Append(", ");
-                    }
-                    
-                    sb.Append(name);
-                    sb.Append('=');
-                    sb.Append(Escape(value));
-                }
-                sb.Append(']');
-            }
-
+            
             return sb.ToString();
         }
         
         private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
+        
+        internal class StartInfoDebugView
+        {
+            private readonly IStartInfo _startInfo;
+
+            public StartInfoDebugView(IStartInfo startInfo) => _startInfo = startInfo;
+
+            public string ShortName => _startInfo.ShortName;
+
+            public string ExecutablePath => _startInfo.ExecutablePath;
+
+            public string WorkingDirectory => _startInfo.WorkingDirectory;
+
+            [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+            public IReadOnlyList<string> Args => _startInfo.Args;
+
+            [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+            public IReadOnlyList<(string name, string value)> Vars => _startInfo.Vars;
+        }
     }
 }

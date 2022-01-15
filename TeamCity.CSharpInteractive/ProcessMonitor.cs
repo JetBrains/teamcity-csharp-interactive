@@ -86,11 +86,11 @@ internal class ProcessMonitor : IProcessMonitor
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (state)
         {
-            case ProcessState.Success:
+            case ProcessState.Succeeded:
                 _log.Info(GetFooter(exitCode ?? 0, elapsedMilliseconds, state).ToArray().WithDefaultColor(Color.Success));
                 break;
 
-            case ProcessState.Fail:
+            case ProcessState.Failed:
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (exitCode.HasValue)
                 {
@@ -103,7 +103,7 @@ internal class ProcessMonitor : IProcessMonitor
 
                 break;
             
-            case ProcessState.Cancel:
+            case ProcessState.Canceled:
                 _log.Warning(_info, new Text(" - canceled."));
                 break;
 
@@ -117,8 +117,8 @@ internal class ProcessMonitor : IProcessMonitor
     {
         var stateText = state switch
         {
-            ProcessState.Success => "finished successfully",
-            ProcessState.Fail => "failed",
+            ProcessState.Succeeded => "finished successfully",
+            ProcessState.Failed => "failed",
             _ => "finished"
         };
 

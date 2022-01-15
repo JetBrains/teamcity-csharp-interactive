@@ -12,16 +12,22 @@ namespace TeamCity.CSharpInteractive
 
     internal class BuildResult : IBuildResult
     {
+        private readonly IStatisticsCalculator _statisticsCalculator;
         private readonly ITestDisplayNameToFullyQualifiedNameConverter _testDisplayNameToFullyQualifiedNameConverter;
-        private readonly List<BuildMessage> _messages = new();
+        private readonly List<BuildMessage> _errors = new();
+        private readonly List<BuildMessage> _warnings = new();
         private readonly List<TestResult> _tests = new();
         private readonly HashSet<TestKey> _testKeys = new();
         private readonly Dictionary<TestKey, TestContext> _currentTests = new();
         private readonly Dictionary<string, LinkedList<string>> _assemblies = new();
 
         public BuildResult(
-            ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter) =>
+            IStatisticsCalculator statisticsCalculator,
+            ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter)
+        {
+            _statisticsCalculator = statisticsCalculator;
             _testDisplayNameToFullyQualifiedNameConverter = testDisplayNameToFullyQualifiedNameConverter;
+        }
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Local
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -45,8 +51,25 @@ namespace TeamCity.CSharpInteractive
             };
         }
 
-        public Dotnet.BuildResult Create() =>
-            new(_messages.AsReadOnly(), _tests.AsReadOnly());
+        public Dotnet.BuildResult Create(IStartInfo startInfo, ProcessState state, int? exitCode)
+        {
+            var buildState = state switch
+            {
+                ProcessState.Failed => BuildState.Failed,
+                ProcessState.Canceled => BuildState.Canceled,
+                ProcessState.Succeeded => BuildState.Succeeded,
+                _ => BuildState.Succeeded
+            };
+
+            return new Dotnet.BuildResult(
+                buildState,
+                _statisticsCalculator,
+                _errors.AsReadOnly(),
+                _warnings.AsReadOnly(),
+                _tests.AsReadOnly(),
+                new []{ new CommandLineResult(startInfo, exitCode) },
+                Array.Empty<Dotnet.BuildResult>());
+        }
 
         private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo)
         {
@@ -169,7 +192,21 @@ namespace TeamCity.CSharpInteractive
 
             var errorDetails = message.GetValue("errorDetails") ?? string.Empty;
             var buildMessage = new BuildMessage(state, default, text, errorDetails);
-            _messages.Add(buildMessage);
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+            switch (state)
+            {
+                case BuildMessageState.Warning:
+                    _warnings.Add(buildMessage);
+                    break;
+
+                case BuildMessageState.Failure:
+                case BuildMessageState.Error:
+                // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
+                case BuildMessageState.BuildProblem:
+                    _errors.Add(buildMessage);
+                    break;
+            }
+
             yield return buildMessage;
         }
 
@@ -178,7 +215,7 @@ namespace TeamCity.CSharpInteractive
             var description = message.GetValue("description") ?? string.Empty;
             var identity = message.GetValue("identity") ?? string.Empty;
             var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, default, description, identity);
-            _messages.Add(buildMessage);
+            _errors.Add(buildMessage);
             yield return buildMessage;
         }
         

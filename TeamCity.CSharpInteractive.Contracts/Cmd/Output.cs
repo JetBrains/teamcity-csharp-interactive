@@ -1,5 +1,8 @@
 // ReSharper disable CheckNamespace
 namespace Cmd
 {
-    public readonly record struct Output(IStartInfo StartInfo, bool IsError, string Line);
+    public readonly record struct Output(IStartInfo StartInfo, bool IsError, string Line)
+    {
+        public override string ToString() => !IsError ? Line : $"Error \"{Line}\"";
+    }
 }

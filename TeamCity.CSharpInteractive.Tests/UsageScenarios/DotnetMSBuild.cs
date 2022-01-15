@@ -5,6 +5,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Linq;
+    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
@@ -27,7 +28,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
             var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-            result.Success.ShouldBeTrue();
+            result.State.ShouldBe(BuildState.Succeeded);
 
             // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
             result = build.Run(
@@ -39,8 +40,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
                     .WithVerbosity(Verbosity.Detailed));
             
             // The "result" variable provides details about a build
-            result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
-            result.Success.ShouldBeTrue();
+            result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+            result.State.ShouldBe(BuildState.Succeeded);
             // }
         }
     }

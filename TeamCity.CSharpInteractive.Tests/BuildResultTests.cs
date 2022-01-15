@@ -12,6 +12,7 @@ using BuildResult = BuildResult;
 
 public class BuildResultTests
 {
+    private readonly Mock<IStatisticsCalculator> _statisticsCalculator = new();
     private readonly Mock<ITestDisplayNameToFullyQualifiedNameConverter> _testDisplayNameToFullyQualifiedNameConverter = new();
     private readonly Mock<IStartInfo> _startInfo = new();
 
@@ -64,7 +65,7 @@ public class BuildResultTests
         result.ProcessMessage(_startInfo.Object, testStderr).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Error).WithText("Some error")});
         result.ProcessMessage(_startInfo.Object, testFinished).ShouldBeEmpty();
         result.ProcessMessage(_startInfo.Object, testSuiteFinished).ShouldBeEmpty();
-        var buildResult = result.Create();
+        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
@@ -120,7 +121,7 @@ public class BuildResultTests
         result.ProcessMessage(_startInfo.Object, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Info).WithText("Some output")});
         result.ProcessMessage(_startInfo.Object, testFailed).ShouldBeEmpty();
         result.ProcessMessage(_startInfo.Object, testSuiteFinished).ShouldBeEmpty();
-        var buildResult = result.Create();
+        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
@@ -171,7 +172,7 @@ public class BuildResultTests
         result.ProcessMessage(_startInfo.Object, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Info).WithText("Some output")});
         result.ProcessMessage(_startInfo.Object, testIgnored).ShouldBeEmpty();
         result.ProcessMessage(_startInfo.Object, testSuiteFinished).ShouldBeEmpty();
-        var buildResult = result.Create();
+        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
@@ -191,8 +192,14 @@ public class BuildResultTests
     [InlineData("normal", BuildMessageState.Info)]
     [InlineData("NORMAL", BuildMessageState.Info)]
     [InlineData("Warning", BuildMessageState.Warning)]
+    [InlineData("warning", BuildMessageState.Warning)]
+    [InlineData("WARNING", BuildMessageState.Warning)]
     [InlineData("Failure", BuildMessageState.Failure)]
+    [InlineData("failure", BuildMessageState.Failure)]
+    [InlineData("FAILURE", BuildMessageState.Failure)]
     [InlineData("Error", BuildMessageState.Error)]
+    [InlineData("error", BuildMessageState.Error)]
+    [InlineData("ERROR", BuildMessageState.Error)]
     public void ShouldProcessMessage(string status, BuildMessageState state)
     {
         // Given
@@ -208,11 +215,28 @@ public class BuildResultTests
 
         // When
         result.ProcessMessage(_startInfo.Object, message).ShouldBe(new []{ buildMessage });
-        var buildResult = result.Create();
+        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(0);
-        buildResult.Messages.ShouldBe(new []{ buildMessage });
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        switch (state)
+        {
+            case BuildMessageState.ServiceMessage:
+            case BuildMessageState.Info:
+                buildResult.Errors.ShouldBe(Array.Empty<BuildMessage>());
+                break;
+
+            case BuildMessageState.Warning:
+                buildResult.Warnings.ShouldBe(new[] { buildMessage });
+                break;
+
+            case BuildMessageState.Failure:
+            case BuildMessageState.Error:
+            case BuildMessageState.BuildProblem:
+                buildResult.Errors.ShouldBe(new[] { buildMessage });
+                break;
+        }
     }
     
     [Fact]
@@ -230,13 +254,13 @@ public class BuildResultTests
 
         // When
         result.ProcessMessage(_startInfo.Object, buildProblem).ShouldBe(new []{ buildMessage });
-        var buildResult = result.Create();
+        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(0);
-        buildResult.Messages.ShouldBe(new []{ buildMessage });
+        buildResult.Errors.ShouldBe(new []{ buildMessage });
     }
 
     private BuildResult CreateInstance() =>
-        new(_testDisplayNameToFullyQualifiedNameConverter.Object);
+        new(_statisticsCalculator.Object, _testDisplayNameToFullyQualifiedNameConverter.Object);
 }

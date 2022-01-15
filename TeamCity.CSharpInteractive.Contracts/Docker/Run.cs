@@ -93,7 +93,7 @@ namespace Docker
 
             var processInfo = Process.GetStartInfo(host);
             var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? valueResolver.Resolve(WellknownValue.DockerExecutablePath) : ExecutablePath)
-                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"docker run {Image} {processInfo.ShortName}")
+                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{processInfo.ShortName} in the docker container {Image}")
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithArgs("run")
                 .AddBooleanArgs(

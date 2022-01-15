@@ -16,7 +16,7 @@ public class ProcessInBlockRunnerTests
     private readonly Mock<IProcessStateProvider> _stateProvider = new();
     private readonly Mock<IProcessMonitor> _monitor = new();
     private readonly Mock<IDisposable> _token = new();
-    private static readonly ProcessResult ProcessResult = new(ProcessState.Success, 33);
+    private static readonly ProcessResult ProcessResult = new(ProcessState.Succeeded, 33);
 
     public ProcessInBlockRunnerTests()
     {

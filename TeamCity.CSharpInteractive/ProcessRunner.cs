@@ -34,8 +34,8 @@ namespace TeamCity.CSharpInteractive
             if (!processManager.Start(startInfo))
             {
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Fail);
-                return new ProcessResult(ProcessState.Fail);
+                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Failed);
+                return new ProcessResult(ProcessState.Failed);
             }
 
             monitor.Started(startInfo, processManager.Id);
@@ -59,14 +59,14 @@ namespace TeamCity.CSharpInteractive
 
             processManager.TryKill();
             stopwatch.Stop();
-            monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Cancel);
+            monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
 
-            return new ProcessResult(ProcessState.Cancel);
+            return new ProcessResult(ProcessState.Canceled);
         }
 
         public async Task<ProcessResult> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
         {
-            if (cancellationToken == default)
+            if (cancellationToken == default || cancellationToken == CancellationToken.None)
             {
                 cancellationToken = _cancellationTokenSource.Token;
             }
@@ -84,9 +84,9 @@ namespace TeamCity.CSharpInteractive
             if (!processManager.Start(startInfo))
             {
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Fail);
+                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Failed);
                 processManager.Dispose();
-                return new ProcessResult(ProcessState.Fail);
+                return new ProcessResult(ProcessState.Failed);
             }
             
             monitor.Started(startInfo, processManager.Id);
@@ -99,7 +99,7 @@ namespace TeamCity.CSharpInteractive
                 
                 processManager.Dispose();
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Cancel);
+                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
             }
 
             await using (cancellationToken.Register(Cancel, false))

@@ -3,6 +3,7 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
+    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
@@ -25,11 +26,11 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
             var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-            result.Success.ShouldBeTrue();
+            result.State.ShouldBe(BuildState.Succeeded);
 
             // Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
             result = build.Run(new Restore().WithWorkingDirectory("MyLib"));
-            result.Success.ShouldBeTrue();
+            result.State.ShouldBe(BuildState.Succeeded);
             // }
         }
     }

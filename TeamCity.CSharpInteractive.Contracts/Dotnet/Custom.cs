@@ -30,7 +30,7 @@ namespace Dotnet
         
         public IStartInfo GetStartInfo(IHost host) =>
             new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
-                .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath))
+                .WithShortName(string.IsNullOrWhiteSpace(ShortName) ? ((ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath)) + " " + Args.FirstOrDefault()).TrimEnd() : ShortName)
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars.ToArray())
                 .WithArgs(Args.ToArray());

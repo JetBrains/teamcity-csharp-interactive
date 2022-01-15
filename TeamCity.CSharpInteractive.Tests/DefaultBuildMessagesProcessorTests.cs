@@ -26,7 +26,7 @@ public class DefaultBuildMessagesProcessorTests
         };
 
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
-        var nextHandler = new Mock<Action<Output>>();
+        var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 
         // When
@@ -34,7 +34,7 @@ public class DefaultBuildMessagesProcessorTests
 
         // Then
         _processOutputWriter.Verify(i => i.Write(output));
-        nextHandler.Verify(i => i(It.IsAny<Output>()), Times.Never);
+        nextHandler.Verify(i => i(It.IsAny<BuildMessage>()), Times.Never);
     }
     
     [Fact]
@@ -46,7 +46,7 @@ public class DefaultBuildMessagesProcessorTests
         var msg2 = new BuildMessage(BuildMessageState.ServiceMessage, Mock.Of<IServiceMessage?>());
 
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(false);
-        var nextHandler = new Mock<Action<Output>>();
+        var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 
         // When
@@ -56,7 +56,7 @@ public class DefaultBuildMessagesProcessorTests
         _buildMessageLogWriter.Verify(i => i.Write(msg1));
         _buildMessageLogWriter.Verify(i => i.Write(msg2));
         _processOutputWriter.Verify(i => i.Write(It.IsAny<Output>()), Times.Never);
-        nextHandler.Verify(i => i(It.IsAny<Output>()), Times.Never);
+        nextHandler.Verify(i => i(It.IsAny<BuildMessage>()), Times.Never);
     }
     
     [Fact]
@@ -68,7 +68,7 @@ public class DefaultBuildMessagesProcessorTests
         var msg2 = new BuildMessage(BuildMessageState.Error, default, "Error");
 
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
-        var nextHandler = new Mock<Action<Output>>();
+        var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 
         // When
@@ -78,7 +78,7 @@ public class DefaultBuildMessagesProcessorTests
         _buildMessageLogWriter.Verify(i => i.Write(msg1));
         _buildMessageLogWriter.Verify(i => i.Write(msg2));
         _processOutputWriter.Verify(i => i.Write(It.IsAny<Output>()), Times.Never);
-        nextHandler.Verify(i => i(It.IsAny<Output>()), Times.Never);
+        nextHandler.Verify(i => i(It.IsAny<BuildMessage>()), Times.Never);
     }
 
     private DefaultBuildMessagesProcessor CreateInstance() =>

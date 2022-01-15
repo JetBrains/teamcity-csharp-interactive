@@ -4,6 +4,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
+    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
@@ -28,9 +29,9 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             Version? version = default;
             var result = build.Run(
                 new Custom("--version"),
-                output => Version.TryParse(output.Line, out version));
+                message => Version.TryParse(message.Text, out version));
 
-            result.Success.ShouldBeTrue();
+            result.State.ShouldBe(BuildState.Succeeded);
             version.ShouldNotBeNull();
             // }
         }

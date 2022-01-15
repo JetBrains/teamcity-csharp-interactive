@@ -7,6 +7,7 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
+    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
@@ -45,18 +46,20 @@ namespace TeamCity.CSharpInteractive
             _customBuildMessagesProcessor = customBuildMessagesProcessor;
         }
 
-        public Dotnet.BuildResult Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default)
+        public Dotnet.BuildResult Run(IProcess process, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
         {
             var buildResult = _resultFactory();
-            var (processState, exitCode) = _processRunner.Run(CreateStartInfo(process), output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), timeout);
-            return buildResult.Create().WithExitCode(exitCode).WithState(processState);
+            var startInfo = CreateStartInfo(process);
+            var (processState, exitCode) = _processRunner.Run(startInfo, output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), timeout);
+            return buildResult.Create(startInfo, processState, exitCode);
         }
 
-        public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default)
+        public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default)
         {
             var buildResult = _resultFactory();
-            var (processState, exitCode) = await _processRunner.RunAsync(CreateStartInfo(process), output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), cancellationToken);
-            return buildResult.Create().WithExitCode(exitCode).WithState(processState);
+            var startInfo = CreateStartInfo(process);
+            var (processState, exitCode) = await _processRunner.RunAsync(startInfo, output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), cancellationToken);
+            return buildResult.Create(startInfo, processState, exitCode);
         }
 
         private IStartInfo CreateStartInfo(IProcess process)
@@ -72,7 +75,7 @@ namespace TeamCity.CSharpInteractive
             }
         }
         
-        private void Handle(Action<Output>? handler, in Output output, IBuildResult result)
+        private void Handle(Action<BuildMessage>? handler, in Output output, IBuildResult result)
         {
             var messages = _buildOutputConverter.Convert(output, result);
             if (handler != default)
@@ -85,6 +88,6 @@ namespace TeamCity.CSharpInteractive
             }
         }
 
-        private static void EmptyHandler(Output obj) { }
+        private static void EmptyHandler(BuildMessage obj) { }
     }
 }

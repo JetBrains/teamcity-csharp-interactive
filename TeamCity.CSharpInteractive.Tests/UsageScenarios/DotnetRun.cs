@@ -4,6 +4,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Collections.Generic;
+    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
@@ -26,12 +27,13 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
             var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
-            result.Success.ShouldBeTrue();
+            result.State.ShouldBe(BuildState.Succeeded);
 
             // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
             var stdOut = new List<string>(); 
-            result = build.Run(new Run().WithWorkingDirectory("MyApp"), output => stdOut.Add(output.Line));
-            result.Success.ShouldBeTrue();
+            result = build.Run(new Run().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
+            result.State.ShouldBe(BuildState.Succeeded);
+            
             // Checks StdOut
             stdOut.ShouldBe(new []{ "Hello, World!" });
             // }

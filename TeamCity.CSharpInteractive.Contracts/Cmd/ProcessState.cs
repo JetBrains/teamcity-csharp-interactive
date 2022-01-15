@@ -4,8 +4,8 @@ namespace Cmd
     public enum ProcessState
     {
         Unknown,
-        Success,
-        Fail,
-        Cancel
+        Succeeded,
+        Failed,
+        Canceled
     }
 }

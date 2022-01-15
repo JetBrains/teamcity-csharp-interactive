@@ -1,4 +1,5 @@
-﻿using NuGet;
+﻿using Cmd;
+using NuGet;
 using Dotnet;
 using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
@@ -47,7 +48,7 @@ var build = GetService<IBuild>();
 
 Info($"Check the required .NET SDK version {requiredSdkVersion}.");
 var sdkVersion = new Version();
-if (build.Run(new Custom("--version"), output => Version.TryParse(output.Line, out sdkVersion)).Success)
+if (build.Run(new Custom("--version"), message => Version.TryParse(message.Text, out sdkVersion)).State == BuildState.Succeeded)
 {
     if (sdkVersion.Major != requiredSdkVersion.Major && sdkVersion.Minor != requiredSdkVersion.Minor)
     {
@@ -62,7 +63,7 @@ else
 }
 
 var cleanResult = build.Run(new Clean());
-if (!cleanResult.Success)
+if (cleanResult.State != BuildState.Succeeded)
 {
     Error(cleanResult);
     return;
@@ -70,14 +71,14 @@ if (!cleanResult.Success)
 
 var msbuildResult = build.Run(
     new MSBuild()
-        .WithShortName("Rebuild solution")
+        .WithShortName("Rebuilding the solution")
         .WithProject("MySampleLib.sln")
         .WithTarget("Rebuild")
         .WithRestore(true)
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (!msbuildResult.Success)
+if (msbuildResult.State != BuildState.Succeeded)
 {
     Error(msbuildResult);
     return;
@@ -87,8 +88,8 @@ Info($"Running flaky tests with {testAttempts} attempts.");
 var failedTests =
     Enumerable.Repeat(new Test().WithNoBuild(true).AddProps(commonProps), testAttempts)
     // Passing an output handler to avoid reporting to CI
-    .Select((test, index) => build.Run(test.WithShortName($"Test - attempt {index + 1}"), _ => {}))
-    .TakeWhile(test => !test.Success)
+    .Select((test, index) => build.Run(test.WithShortName($"Testing (attempt {index + 1})"), _ => {}))
+    .TakeWhile(result => result.Totals.FailedTests > 0)
     .ToList();
 
 if (failedTests.Count == testAttempts)
@@ -108,13 +109,13 @@ var flakyTests =
 
 var buildResult = build.Run(
     new Build()
-        .WithShortName($"Build a {configuration} version.")
+        .WithShortName($"Building of the {configuration} version")
         .WithConfiguration(configuration)
         .WithOutput(outputDir)
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (!buildResult.Success)
+if (buildResult.State != BuildState.Succeeded)
 {
     Error(buildResult);
     return;
@@ -133,13 +134,13 @@ var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outp
 Task.WaitAll(testInContainerTask, vsTestTask);
 WriteLine($"Parallel tests completed.");
 
-if (!testInContainerTask.Result.Success)
+if (testInContainerTask.Result.State != BuildState.Succeeded)
 {
     Error(testInContainerTask.Result);
     return;
 }
 
-if (!vsTestTask.Result.Success)
+if (vsTestTask.Result.State != BuildState.Succeeded)
 {
     Error(vsTestTask.Result);
     return;
@@ -147,7 +148,7 @@ if (!vsTestTask.Result.Success)
 
 var packResult = build.Run(
     new Pack()
-        .WithShortName($"Pack {configuration} version.")
+        .WithShortName($"The packing of the {configuration} version")
         .WithConfiguration(configuration)
         .WithOutput(outputDir)
         .WithIncludeSymbols(true)
@@ -155,7 +156,7 @@ var packResult = build.Run(
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (!packResult.Success)
+if (packResult.State != BuildState.Succeeded)
 {
     Error(packResult);
     return;

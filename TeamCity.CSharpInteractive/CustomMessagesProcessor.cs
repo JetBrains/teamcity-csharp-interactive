@@ -8,11 +8,11 @@ using Dotnet;
 
 internal class CustomMessagesProcessor : IBuildMessagesProcessor
 {
-    public void ProcessMessages(in Output output, IEnumerable<BuildMessage> messages, Action<Output> nextHandler)
+    public void ProcessMessages(in Output output, IEnumerable<BuildMessage> messages, Action<BuildMessage> nextHandler)
     {
         foreach (var buildMessage in messages)
         {
-            nextHandler(new Output(output.StartInfo, buildMessage.State > BuildMessageState.Warning, buildMessage.Text));
+            nextHandler(buildMessage);
         }
     }
 }

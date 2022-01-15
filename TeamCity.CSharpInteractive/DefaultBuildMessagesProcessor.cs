@@ -23,7 +23,7 @@ internal class DefaultBuildMessagesProcessor : IBuildMessagesProcessor
         _buildMessageLogWriter = buildMessageLogWriter;
     }
 
-    public void ProcessMessages(in Output output, IEnumerable<BuildMessage> messages, Action<Output> nextHandler)
+    public void ProcessMessages(in Output output, IEnumerable<BuildMessage> messages, Action<BuildMessage> nextHandler)
     {
         var curMessages = messages.ToArray();
         if (_teamCitySettings.IsUnderTeamCity && curMessages.Any(i => i.State == BuildMessageState.ServiceMessage))

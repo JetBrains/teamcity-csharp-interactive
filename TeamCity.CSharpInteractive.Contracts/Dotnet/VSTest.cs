@@ -81,6 +81,6 @@ namespace Dotnet
                 return cmd;
         }
 
-        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Success : ProcessState.Fail;
+        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Succeeded : ProcessState.Failed;
     }
 }

@@ -15,21 +15,18 @@ public class CustomMessagesProcessorTests
     {
         // Given
         var output = new Output(_startInfo.Object, false, "Output");
-        var messages = new BuildMessage[]
-        {
-            new(BuildMessageState.Info, default, "Msg1"),
-            new(BuildMessageState.Error, default, "Msg2")
-        };
-        
-        var nextHandler = new Mock<Action<Output>>();
+        var msg1 = new BuildMessage(BuildMessageState.Info, default, "Msg1");
+        var msg2 = new BuildMessage(BuildMessageState.Error, default, "Msg2");
+        var messages = new[] { msg1, msg2 };
+        var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 
         // When
         processor.ProcessMessages(output, messages, nextHandler.Object);
 
         // Then
-        nextHandler.Verify(i => i(new Output(_startInfo.Object, false, "Msg1")));
-        nextHandler.Verify(i => i(new Output(_startInfo.Object, true, "Msg2")));
+        nextHandler.Verify(i => i(msg1));
+        nextHandler.Verify(i => i(msg2));
     }
 
     private static CustomMessagesProcessor CreateInstance() =>

@@ -23,15 +23,15 @@ public class BuildServiceTests
     private readonly Func<IProcessMonitor> _monitorFactory;
     private readonly Mock<IStartInfo> _startInfo = new();
     private readonly Mock<IProcess> _process = new();
-    private static readonly ProcessResult ProcessResult = new(ProcessState.Success, 33);
-    private static readonly BuildResult BuildResult = new(Array.Empty<BuildMessage>(), Array.Empty<TestResult>(), 33, ProcessState.Success);
-    
+    private static readonly ProcessResult ProcessResult = new(ProcessState.Succeeded, 33);
+
     public BuildServiceTests()
     {
+        var buildResult = new BuildResult(BuildState.Succeeded).AddCommandLines(new CommandLineResult(_startInfo.Object, 33));
         _process.Setup(i => i.GetStartInfo(_host.Object)).Returns(_startInfo.Object);
         _resultFactory = () => _buildResult.Object;
         _monitorFactory = () => _processMonitor.Object;
-        _buildResult.Setup(i => i.Create()).Returns(BuildResult);
+        _buildResult.Setup(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33)).Returns(buildResult);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class BuildServiceTests
     {
         // Given
         var stateProvider = _process.As<IProcessStateProvider>();
-        stateProvider.Setup(i => i.GetState(It.IsAny<int>())).Returns(ProcessState.Success);
+        stateProvider.Setup(i => i.GetState(It.IsAny<int>())).Returns(ProcessState.Succeeded);
         var buildMessages = new BuildMessage[]
         {
             new(),
@@ -54,7 +54,7 @@ public class BuildServiceTests
             .Callback<IStartInfo, Action<Output>?, IProcessStateProvider?, IProcessMonitor, TimeSpan>((_, handler, _, _, _) => handler!(output))
             .Returns(ProcessResult);
         
-        var customHandler = Mock.Of<Action<Output>>();
+        var customHandler = Mock.Of<Action<BuildMessage>>();
 
         // When
         buildService.Run(_process.Object, customHandler, TimeSpan.FromSeconds(1));
@@ -70,7 +70,7 @@ public class BuildServiceTests
     {
         // Given
         var stateProvider = _process.As<IProcessStateProvider>();
-        stateProvider.Setup(i => i.GetState(It.IsAny<int>())).Returns(ProcessState.Success);
+        stateProvider.Setup(i => i.GetState(It.IsAny<int>())).Returns(ProcessState.Succeeded);
         var buildMessages = new BuildMessage[]
         {
             new(),
@@ -89,7 +89,7 @@ public class BuildServiceTests
         buildService.Run(_process.Object, default, TimeSpan.FromSeconds(1));
 
         // Then
-        _defaultBuildMessagesProcessor.Verify(i => i.ProcessMessages(output, buildMessages, It.IsAny<Action<Output>>()));
+        _defaultBuildMessagesProcessor.Verify(i => i.ProcessMessages(output, buildMessages, It.IsAny<Action<BuildMessage>>()));
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = true);
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = false);
     }
@@ -105,7 +105,7 @@ public class BuildServiceTests
         _processRunner.Setup(i => i.RunAsync(_startInfo.Object, It.IsAny<Action<Output>?>(), stateProvider.Object, It.IsAny<IProcessMonitor>(), token)).Returns(Task.FromResult(ProcessResult));
 
         // When
-        await buildService.RunAsync(_process.Object, Mock.Of<Action<Output>?>(), token);
+        await buildService.RunAsync(_process.Object, Mock.Of<Action<BuildMessage>?>(), token);
 
         // Then
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = true);

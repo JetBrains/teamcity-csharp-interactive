@@ -43,7 +43,7 @@ namespace TeamCity.CSharpInteractive
             return Array.Empty<BuildMessage>();
         }
 
-        public Dotnet.BuildResult Create()
+        public Dotnet.BuildResult Create(IStartInfo startInfo, ProcessState state, int? exitCode)
         {
             var items = 
                 from source in _sources
@@ -54,12 +54,12 @@ namespace TeamCity.CSharpInteractive
                 from message in _messagesReader.Read(indicesFile, messagesFile)
                 select (message, startInfoFactory: source.Value);
 
-            foreach (var (message, startInfo) in items)
+            foreach (var (message, messageStartInfo) in items)
             {
-                _baseBuildResult.ProcessMessage(startInfo, message);
+                _baseBuildResult.ProcessMessage(messageStartInfo, message);
             }
             
-            return _baseBuildResult.Create();
+            return _baseBuildResult.Create(startInfo, state, exitCode);
         }
     }
 }

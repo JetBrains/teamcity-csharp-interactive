@@ -22,7 +22,7 @@ public class ProcessInFlowRunnerTests
     private readonly Mock<IProcessMonitor> _monitor = new();
     private static readonly (string name, string value)[] InitialVars = { ("Var1", "Val 1") }; 
     private static readonly (string name, string value)[] ModifiedVars = new (string name, string value)[]{ (TeamCitySettings.FlowIdEnvironmentVariableName, "FlowId123") }.Concat(InitialVars).ToArray();
-    private static readonly ProcessResult ProcessResult = new(ProcessState.Success, 33);
+    private static readonly ProcessResult ProcessResult = new(ProcessState.Succeeded, 33);
 
     public ProcessInFlowRunnerTests()
     {

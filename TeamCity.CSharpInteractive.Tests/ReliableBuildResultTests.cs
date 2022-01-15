@@ -39,10 +39,10 @@ public class ReliableBuildResultTests
     {
         // Given
         var result = CreateInstance();
-        var buildResult = new BuildResult(Array.Empty<BuildMessage>(), Array.Empty<TestResult>());
+        var buildResult = new BuildResult(BuildState.Succeeded).AddCommandLines(new CommandLineResult(_startInfo.Object, 33));
         var messages = Mock.Of<IReadOnlyList<BuildMessage>>();
         _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, It.IsAny<IServiceMessage>())).Returns(messages);
-        _baseBuildResult.Setup(i => i.Create()).Returns(buildResult);
+        _baseBuildResult.Setup(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33)).Returns(buildResult);
         _teamCitySettings.SetupGet(i => i.ServiceMessagesPath).Returns("Messages");
         
         var message1 = new ServiceMessage("some message") { { "source", "Abc" }};
@@ -76,11 +76,11 @@ public class ReliableBuildResultTests
         result.ProcessMessage(_startInfo.Object, message4).ShouldBeEmpty();
         result.ProcessMessage(_startInfo.Object, message2).ShouldBeEmpty();
         result.ProcessMessage(_startInfo.Object, message5).ShouldBeEmpty();
-        var actualBuildResult = result.Create();
+        var actualBuildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
         
         // Then
         actualBuildResult.ShouldBe(buildResult);
-        _baseBuildResult.Verify(i => i.Create());
+        _baseBuildResult.Verify(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33));
         _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, msg1));
         _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, msg11));
         _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, msg2));

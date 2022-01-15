@@ -85,7 +85,7 @@ public class ProcessMonitorTests
     }
 
     [Theory]
-    [InlineData(ProcessState.Success, "finished successfully", Color.Success)]
+    [InlineData(ProcessState.Succeeded, "finished successfully", Color.Success)]
     [InlineData(ProcessState.Unknown, "finished", Color.Highlighted)]
     public void ShouldLogWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
     {
@@ -117,7 +117,7 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, ProcessState.Fail, 33);
+        monitor.Finished(22, ProcessState.Failed, 33);
 
         // Then
         _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => 
@@ -139,7 +139,7 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, ProcessState.Fail);
+        monitor.Finished(22, ProcessState.Failed);
 
         // Then
         _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => 
@@ -159,7 +159,7 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, ProcessState.Cancel);
+        monitor.Finished(22, ProcessState.Canceled);
 
         // Then
         _log.Verify(i => i.Warning(It.Is<Text[]>(text => 

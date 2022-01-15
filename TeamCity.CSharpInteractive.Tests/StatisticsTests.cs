@@ -16,7 +16,7 @@ namespace TeamCity.CSharpInteractive.Tests
             // When
             using (statistics.Start())
             {
-                System.Threading.Thread.Sleep(2);                
+                System.Threading.Thread.Sleep(2);
             }
             
             // Then

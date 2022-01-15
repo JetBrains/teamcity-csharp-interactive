@@ -7,5 +7,5 @@ using Dotnet;
 
 internal interface IBuildMessagesProcessor
 {
-    void ProcessMessages(in Output output, IEnumerable<BuildMessage> messages, Action<Output> nextHandler);
+    void ProcessMessages(in Output output, IEnumerable<BuildMessage> messages, Action<BuildMessage> nextHandler);
 }

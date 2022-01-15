@@ -3,6 +3,7 @@ namespace TeamCity.CSharpInteractive
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -55,6 +56,7 @@ namespace TeamCity.CSharpInteractive
         private IDisposable CreateFlow() =>
             _teamCitySettings.IsUnderTeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
 
+        [DebuggerTypeProxy(typeof(CommandLine.StartInfoDebugView))]
         private class StartInfoInFlow: IStartInfo
         {
             private readonly IStartInfo _baseStartIfo;
@@ -77,6 +79,8 @@ namespace TeamCity.CSharpInteractive
             public IReadOnlyList<(string name, string value)> Vars => 
                 new []{ (TeamCitySettings.FlowIdEnvironmentVariableName, _flowId) }
                     .Concat(_baseStartIfo.Vars).ToArray();
+
+            public override string? ToString() => _baseStartIfo.ToString();
         }
     }
 }

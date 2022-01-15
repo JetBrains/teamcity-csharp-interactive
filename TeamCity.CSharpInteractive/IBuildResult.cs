@@ -10,6 +10,6 @@ namespace TeamCity.CSharpInteractive
     {
         IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, IServiceMessage message);
         
-        Dotnet.BuildResult Create();
+        Dotnet.BuildResult Create(IStartInfo startInfo, ProcessState state, int? exitCode);
     }
 }
