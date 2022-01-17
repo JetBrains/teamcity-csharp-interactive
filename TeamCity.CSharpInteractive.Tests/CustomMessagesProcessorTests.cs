@@ -14,7 +14,7 @@ public class CustomMessagesProcessorTests
     public void ShouldProcessMessages()
     {
         // Given
-        var output = new Output(_startInfo.Object, false, "Output");
+        var output = new Output(_startInfo.Object, false, "Output", 11);
         var msg1 = new BuildMessage(BuildMessageState.Info, default, "Msg1");
         var msg2 = new BuildMessage(BuildMessageState.Error, default, "Msg2");
         var messages = new[] { msg1, msg2 };

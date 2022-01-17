@@ -159,7 +159,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "This build is succeeded"
+            "This build is succeeded."
         };
 
         yield return new object[]
@@ -168,7 +168,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "This build is failed"
+            "This build is failed."
         };
 
         yield return new object[]
@@ -177,7 +177,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "This build is canceled"
+            "This build is canceled."
         };
 
         // Empty summary and totals, no results, has command lines
@@ -195,7 +195,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "\"Cmd 1\" is succeeded"
+            "\"Cmd 1\" is succeeded."
         };
         
         yield return new object[]
@@ -204,7 +204,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "\"Cmd 1\" is succeeded"
+            "\"Cmd 1\" is succeeded."
         };
         
         yield return new object[]
@@ -213,7 +213,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "\"Cmd 1\", \"Cmd 2\" are succeeded"
+            "\"Cmd 1\", \"Cmd 2\" are succeeded."
         };
         
         yield return new object[]
@@ -222,7 +222,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty,
             BuildStatistics.Empty,
-            "\"Cmd 1\", \"Cmd 2\" are succeeded"
+            "\"Cmd 1\", \"Cmd 2\" are succeeded."
         };
 
         // Has summary and has no totals, no results
@@ -232,7 +232,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty.WithErrors(1),
             BuildStatistics.Empty,
-            "This build is succeeded with 1 error"
+            "This build is succeeded with 1 error."
         };
 
         yield return new object[]
@@ -241,7 +241,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty.WithErrors(2),
             BuildStatistics.Empty,
-            "This build is succeeded with 2 errors"
+            "This build is succeeded with 2 errors."
         };
 
         yield return new object[]
@@ -250,7 +250,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty.WithWarnings(1),
             BuildStatistics.Empty,
-            "This build is succeeded with 1 warning"
+            "This build is succeeded with 1 warning."
         };
 
         yield return new object[]
@@ -259,7 +259,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty.WithErrors(3).WithWarnings(2),
             BuildStatistics.Empty,
-            "This build is succeeded with 3 errors and 2 warnings"
+            "This build is succeeded with 3 errors and 2 warnings."
         };
         
         yield return new object[]
@@ -268,7 +268,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty.WithErrors(3).WithWarnings(2),
             BuildStatistics.Empty,
-            "\"Cmd 1\", \"Cmd 2\" are succeeded with 3 errors and 2 warnings"
+            "\"Cmd 1\", \"Cmd 2\" are succeeded with 3 errors and 2 warnings."
         };
         
         yield return new object[]
@@ -277,7 +277,7 @@ public class BuildResultTests
             Array.Empty<BuildResult>(),
             BuildStatistics.Empty.WithErrors(1).WithWarnings(2),
             BuildStatistics.Empty,
-            "\"Cmd 1\", \"Cmd 2\" are succeeded with 1 error and 2 warnings"
+            "\"Cmd 1\", \"Cmd 2\" are succeeded with 1 error and 2 warnings."
         };
         
         // Has summary and has totals
@@ -287,7 +287,7 @@ public class BuildResultTests
             new [] { BuildResult.Failed },
             BuildStatistics.Empty.WithErrors(3).WithWarnings(2),
             BuildStatistics.Empty.WithErrors(7).WithWarnings(5),
-            "\"Cmd 1\", \"Cmd 2\", including 1 build before are failed with 3 errors and 2 warnings and with 7 total errors and 5 total warnings"
+            "\"Cmd 1\", \"Cmd 2\", including 1 build before are failed with 3 errors and 2 warnings and with 7 total errors and 5 total warnings."
         };
         
         yield return new object[]
@@ -296,7 +296,7 @@ public class BuildResultTests
             new [] { BuildResult.Succeeded, BuildResult.Failed },
             BuildStatistics.Empty.WithErrors(3).WithWarnings(2),
             BuildStatistics.Empty.WithErrors(7).WithWarnings(5),
-            "\"Cmd 1\", \"Cmd 2\", including 2 builds before are failed with 3 errors and 2 warnings and with 7 total errors and 5 total warnings"
+            "\"Cmd 1\", \"Cmd 2\", including 2 builds before are failed with 3 errors and 2 warnings and with 7 total errors and 5 total warnings."
         };
         
         yield return new object[]
@@ -305,7 +305,7 @@ public class BuildResultTests
             new [] { BuildResult.Succeeded, BuildResult.Canceled },
             BuildStatistics.Empty.WithErrors(3).WithWarnings(2),
             BuildStatistics.Empty.WithErrors(7).WithWarnings(5),
-            "\"Cmd 1\", \"Cmd 2\", including 2 builds before are canceled with 3 errors and 2 warnings and with 7 total errors and 5 total warnings"
+            "\"Cmd 1\", \"Cmd 2\", including 2 builds before are canceled with 3 errors and 2 warnings and with 7 total errors and 5 total warnings."
         };
         
         yield return new object[]
@@ -314,7 +314,7 @@ public class BuildResultTests
             new [] { BuildResult.Succeeded, BuildResult.Canceled },
             BuildStatistics.Empty.WithErrors(3).WithWarnings(2).WithTests(2).WithIgnoredTests(2).WithFailedTests(1),
             BuildStatistics.Empty.WithErrors(7).WithWarnings(5).WithTests(4).WithPassedTests(6).WithFailedTests(3),
-            "\"Cmd 1\", \"Cmd 2\", including 2 builds before are canceled with 3 errors, 2 warnings, 1 failed, 2 ignored and 2 tests and with 7 total errors, 5 total warnings, 3 total failed, 6 total passed and 4 total tests"
+            "\"Cmd 1\", \"Cmd 2\", including 2 builds before are canceled with 3 errors, 2 warnings, 1 failed, 2 ignored and 2 tests and with 7 total errors, 5 total warnings, 3 total failed, 6 total passed and 4 total tests."
         };
     }
 }

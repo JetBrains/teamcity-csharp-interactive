@@ -19,7 +19,7 @@ namespace TeamCity.CSharpInteractive
         private readonly IFlowContext _flowContext;
 
         public ProcessInFlowRunner(
-            [Tag("inBlock")] IProcessRunner baseProcessRunner,
+            [Tag("base")] IProcessRunner baseProcessRunner,
             ITeamCitySettings teamCitySettings,
             ITeamCityWriter teamCityWriter,
             IFlowContext flowContext)

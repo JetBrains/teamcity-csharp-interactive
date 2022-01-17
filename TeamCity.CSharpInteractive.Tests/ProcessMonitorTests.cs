@@ -1,6 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using System;
+using System.Linq;
 using Cmd;
 using Contracts;
 using Moq;
@@ -24,28 +25,15 @@ public class ProcessMonitorTests
     public void ShouldLogHeaderOnStart()
     {
         // Given
+        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         var monitor = CreateInstance();
 
         // When
         monitor.Started(_startInfo.Object, 99);
 
         // Then
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
-            text.Length == 6
-            && text[0].Value == "Starting process 99: "
-            && text[1].Value == "\"Cm d\""
-            && text[2] == Text.Space
-            && text[3].Value == "Arg1"
-            && text[4] == Text.Space
-            && text[5].Value == "\"Arg 2\""
-        )));
-        
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
-            text.Length == 2
-            && text[0].Value == "in directory: "
-            && text[1].Value == "\"W d\""
-        )));
-        
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new [] {new("99 \"Abc xyz\" process started ", Color.Highlighted), new("\"Cm d\""), Text.Space, new("Arg1"), Text.Space, new("\"Arg 2\"")}))));
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("in directory: "), new("\"W d\"")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
@@ -56,6 +44,7 @@ public class ProcessMonitorTests
     {
         // Given
         _startInfo.SetupGet(i => i.WorkingDirectory).Returns(string.Empty);
+        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         _environment.Setup(i => i.GetPath(SpecialFolder.Working)).Returns("Cur Wd");
         var monitor = CreateInstance();
 
@@ -63,47 +52,28 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // Then
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
-            text.Length == 6
-            && text[0].Value == "Starting process 99: "
-            && text[1].Value == "\"Cm d\""
-            && text[2] == Text.Space
-            && text[3].Value == "Arg1"
-            && text[4] == Text.Space
-            && text[5].Value == "\"Arg 2\""
-        )));
-        
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
-            text.Length == 2
-            && text[0].Value == "in directory: "
-            && text[1].Value == "\"Cur Wd\""
-        )));
-        
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new [] {new("99 \"Abc xyz\" process started ", Color.Highlighted), new("\"Cm d\""), Text.Space, new("Arg1"), Text.Space, new("\"Arg 2\"")}))));
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("in directory: "), new("\"Cur Wd\"")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
     }
 
     [Theory]
-    [InlineData(ProcessState.Succeeded, "finished successfully", Color.Success)]
+    [InlineData(ProcessState.Succeeded, "finished successfully", Color.Highlighted)]
     [InlineData(ProcessState.Unknown, "finished", Color.Highlighted)]
     public void ShouldLogWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
     {
         // Given
+        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         var monitor = CreateInstance();
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, state, 33);
-
+        monitor.Finished(_startInfo.Object, 22, state, 33);
+        
         // Then
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => 
-            text.Length == 3
-            && text[0].Value == "Process 99 " && text[0].Color == color
-            && text[1].Value == stateDescription && text[0].Color == color
-            && text[2].Value == $" (in {22} ms) with exit code {33}." && text[0].Color == color
-        )));
-
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process ", color), new(stateDescription, color), new(" (in 22 ms)", Color.Default), new(" with exit code 33", Color.Default), new(".", Color.Default)}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
@@ -114,17 +84,20 @@ public class ProcessMonitorTests
     {
         // Given
         var monitor = CreateInstance();
+        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, ProcessState.Failed, 33);
+        monitor.Finished(_startInfo.Object, 22, ProcessState.Failed, 33);
 
         // Then
         _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => 
-            text.Length == 3
-            && text[0].Value == "Process 99 "
+            text.Length == 5
+            && text[0].Value == "99 \"Abc xyz\" process "
             && text[1].Value == "failed"
-            && text[2].Value == $" (in {22} ms) with exit code {33}."
+            && text[2].Value == $" (in {22} ms)"
+            && text[3].Value == $" with exit code {33}"
+            && text[4].Value == $"."
         )));
 
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
@@ -135,18 +108,14 @@ public class ProcessMonitorTests
     public void ShouldLogErrorWhenFailedToStart()
     {
         // Given
+        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         var monitor = CreateInstance();
-        monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, ProcessState.Failed);
+        monitor.Finished(_startInfo.Object, 22, ProcessState.Failed);
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => 
-            text.Length == 2
-            && text[1].Value == " - failed to start."
-        )));
-
+        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("\"Abc xyz\" process ", Color.Default), new("failed to start", Color.Default), new(" (in 22 ms)", Color.Default), new(".", Color.Default)}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
     }
@@ -155,22 +124,19 @@ public class ProcessMonitorTests
     public void ShouldLogWarningWhenCanceled()
     {
         // Given
+        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         var monitor = CreateInstance();
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(22, ProcessState.Canceled);
+        monitor.Finished(_startInfo.Object, 22, ProcessState.Canceled);
 
         // Then
-        _log.Verify(i => i.Warning(It.Is<Text[]>(text => 
-            text.Length == 2
-            && text[1].Value == " - canceled."
-        )));
-
+        _log.Verify(i => i.Warning(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process ", Color.Default), new("canceled", Color.Default), new(" (in 22 ms)", Color.Default), new(".", Color.Default)}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
     }
-    
+
     private ProcessMonitor CreateInstance() =>
         new(_log.Object, _environment.Object);
 }

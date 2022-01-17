@@ -16,7 +16,7 @@ public class ProcessOutputWriterTests
         var writer = CreateInstance();
 
         // When
-        writer.Write(new Output(Mock.Of<IStartInfo>(), false, "Out"));
+        writer.Write(new Output(Mock.Of<IStartInfo>(), false, "Out", 11));
 
         // Then
         _console.Verify(i => i.WriteToOut(It.Is<(ConsoleColor? color, string output)[]>(items => items.Length == 2 && items[0].output == "Out" && items[1].output == Environment.NewLine)));
@@ -29,7 +29,7 @@ public class ProcessOutputWriterTests
         var writer = CreateInstance();
 
         // When
-        writer.Write(new Output(Mock.Of<IStartInfo>(), true, "Err"));
+        writer.Write(new Output(Mock.Of<IStartInfo>(), true, "Err", 11));
 
         // Then
         _console.Verify(i => i.WriteToErr("Err", Environment.NewLine));

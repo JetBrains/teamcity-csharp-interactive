@@ -3,7 +3,6 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Cmd;
 using Contracts;
 
@@ -11,8 +10,7 @@ internal class ProcessMonitor : IProcessMonitor
 {
     private readonly ILog<ProcessMonitor> _log;
     private readonly IEnvironment _environment;
-    private Text _info = Text.Empty;
-    private int _processId;
+    private int? _processId;
 
     public ProcessMonitor(
         ILog<ProcessMonitor> log,
@@ -25,107 +23,87 @@ internal class ProcessMonitor : IProcessMonitor
     public void Started(IStartInfo startInfo, int processId)
     {
         _processId = processId;
-        var workingDirectory = startInfo.WorkingDirectory;
-        if (string.IsNullOrWhiteSpace(workingDirectory))
-        {
-            workingDirectory = _environment.GetPath(SpecialFolder.Working);
-        }
-
-        var sb = new StringBuilder();
-        if (!string.IsNullOrWhiteSpace(workingDirectory))
-        {
-            sb.Append(Escape(workingDirectory));
-            sb.Append(" => ");
-        }
-
-        sb.Append($"process {processId} [");
-        sb.Append(Escape(startInfo.ExecutablePath));
-        foreach (var arg in startInfo.Args)
-        {
-            sb.Append(' ');
-            sb.Append(Escape(arg));
-        }
-        sb.Append(']');
-
-        // ReSharper disable once InvertIf
-        if (startInfo.Vars.Any())
-        {
-            sb.Append(" with environment variables ");
-            foreach (var (name, value) in startInfo.Vars)
-            {
-                sb.Append('[');
-                sb.Append(name);
-                sb.Append('=');
-                sb.Append(value);
-                sb.Append(']');
-            }
-        }
-
-        _info = new Text(sb.ToString());
         var executable = new List<Text>
         {
-            new($"Starting process {_processId}: ", Color.Header),
-            new(Escape(startInfo.ExecutablePath), Color.Header)
+            new($"{startInfo.GetDescription(processId)} process started ", Color.Highlighted),
+            new(startInfo.ExecutablePath.EscapeArg())
         };
 
         foreach (var arg in startInfo.Args)
         {
             executable.Add(Text.Space);
-            executable.Add(new Text(Escape(arg)));
+            executable.Add(new Text(arg.EscapeArg()));
         }
 
         _log.Info(executable.ToArray());
+
+        var workingDirectory = startInfo.WorkingDirectory;
+        if (string.IsNullOrWhiteSpace(workingDirectory))
+        {
+            workingDirectory = _environment.GetPath(SpecialFolder.Working);
+        }
+        
         if (!string.IsNullOrWhiteSpace(workingDirectory))
         {
-            _log.Info(new Text("in directory: ", Color.Header), new Text(Escape(workingDirectory), Color.Header));
+            _log.Info(new Text("in directory: "), new Text(workingDirectory.EscapeArg()));
         }
     }
 
-    public void Finished(long elapsedMilliseconds, ProcessState state, int? exitCode = default)
+    public void Finished(IStartInfo startInfo, long elapsedMilliseconds, ProcessState state, int? exitCode = default)
     {
+        var footer = GetFooter(startInfo, exitCode, elapsedMilliseconds, state).ToArray();
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        switch (state)
+        {
+            case ProcessState.Failed:
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                _log.Error(ErrorId.Process, footer);
+                break;
+            
+            case ProcessState.Canceled:
+                _log.Warning(footer);
+                break;
+
+            default:
+                _log.Info(footer);
+                break;
+        }
+    }
+
+    private IEnumerable<Text> GetFooter(IStartInfo startInfo, int? exitCode, long elapsedMilliseconds, ProcessState? state)
+    {
+        string? stateText;
+        var color = Color.Default;
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (state)
         {
             case ProcessState.Succeeded:
-                _log.Info(GetFooter(exitCode ?? 0, elapsedMilliseconds, state).ToArray().WithDefaultColor(Color.Success));
+                stateText = "finished successfully";
+                color = Color.Highlighted;
                 break;
 
             case ProcessState.Failed:
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (exitCode.HasValue)
-                {
-                    _log.Error(ErrorId.Process, GetFooter(exitCode.Value, elapsedMilliseconds, state).ToArray());
-                }
-                else
-                {
-                    _log.Error(ErrorId.Process, new[] {_info, new Text(" - failed to start.")}.ToArray());
-                }
-
+                stateText = exitCode.HasValue ? "failed" : "failed to start";
                 break;
             
             case ProcessState.Canceled:
-                _log.Warning(_info, new Text(" - canceled."));
+                stateText = "canceled";
                 break;
 
             default:
-                _log.Info(GetFooter(exitCode ?? 0, elapsedMilliseconds, state).ToArray().WithDefaultColor(Color.Highlighted));
+                stateText = "finished";
+                color = Color.Highlighted;
                 break;
         }
-    }
-    
-    private IEnumerable<Text> GetFooter(int exitCode, long elapsedMilliseconds, ProcessState? state)
-    {
-        var stateText = state switch
-        {
-            ProcessState.Succeeded => "finished successfully",
-            ProcessState.Failed => "failed",
-            _ => "finished"
-        };
 
-        yield return new Text($"Process {_processId} ");
-        yield return new Text(stateText);
-        yield return new Text($" (in {elapsedMilliseconds} ms) with exit code {exitCode}.");
+        yield return new Text($"{startInfo.GetDescription(_processId)} process ", color);
+        yield return new Text(stateText, color);
+        yield return new Text($" (in {elapsedMilliseconds} ms)");
+        if (exitCode.HasValue)
+        {
+            yield return new Text($" with exit code {exitCode}");
+        }
+        
+        yield return new Text(".");
     }
-    
-    private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
 }

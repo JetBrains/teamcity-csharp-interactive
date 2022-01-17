@@ -22,22 +22,6 @@ namespace TeamCity.CSharpInteractive.Tests
             _statistics = new Mock<IStatistics>();
         }
 
-        [Fact]
-        public void ShouldSupportBlock()
-        {
-            // Given
-            var log = CreateInstance();
-            var blockToken = Mock.Of<ITeamCityWriter>();
-            _teamCityWriter.Setup(i => i.OpenBlock("line1line2")).Returns(blockToken);
-
-            // When
-            var actualBlockToken = log.Block(_text);
-
-            // Then
-            _teamCityWriter.Verify(i => i.OpenBlock("line1line2"));
-            actualBlockToken.ShouldBe(blockToken);
-        }
-        
         [Theory]
         [InlineData(VerbosityLevel.Normal)]
         [InlineData(VerbosityLevel.Quiet)]

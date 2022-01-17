@@ -14,15 +14,15 @@ internal class BuildOutputConverter : IBuildOutputConverter
     public BuildOutputConverter(IServiceMessageParser serviceMessageParser) => _serviceMessageParser = serviceMessageParser;
 
     public IEnumerable<BuildMessage> Convert(in Output output, IBuildResult result) =>
-        Convert(output.StartInfo, output.Line, result)
+        Convert(output.StartInfo, output.ProcessId, output.Line, result)
             .DefaultIfEmpty(new BuildMessage(output.IsError ? BuildMessageState.Error : BuildMessageState.Info, default, output.Line));
 
-    private IEnumerable<BuildMessage> Convert(IStartInfo startInfo, string line, IBuildResult result)
+    private IEnumerable<BuildMessage> Convert(IStartInfo startInfo, int processId, string line, IBuildResult result)
     {
         foreach (var message in _serviceMessageParser.ParseServiceMessages(line))
         {
             yield return new BuildMessage(BuildMessageState.ServiceMessage, message);
-            foreach (var buildMessage in result.ProcessMessage(startInfo, message))
+            foreach (var buildMessage in result.ProcessMessage(startInfo, processId, message))
             {
                 yield return buildMessage;
             }

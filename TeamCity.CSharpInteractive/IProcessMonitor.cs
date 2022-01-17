@@ -6,5 +6,5 @@ internal interface IProcessMonitor
 {
     void Started(IStartInfo startInfo, int processId);
     
-    void Finished(long elapsedMilliseconds, ProcessState state, int? exitCode = default);
+    void Finished(IStartInfo startInfo, long elapsedMilliseconds, ProcessState state, int? exitCode = default);
 }

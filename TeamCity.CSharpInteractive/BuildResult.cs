@@ -31,12 +31,12 @@ namespace TeamCity.CSharpInteractive
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Local
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, IServiceMessage message)
+        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, int processId, IServiceMessage message)
         {
             return message.Name.ToLowerInvariant() switch
             {
-                "teststdout" => OnStdOut(message, startInfo).ToArray(),
-                "teststderr" => OnStdErr(message, startInfo).ToArray(),
+                "teststdout" => OnStdOut(message, startInfo, processId).ToArray(),
+                "teststderr" => OnStdErr(message, startInfo, processId).ToArray(),
                 "testsuitestarted" => OnTestSuiteStarted(message).ToArray(),
                 "testsuitefinished" => OnTestSuiteFinished(message).ToArray(),
                 "testfinished" => OnTestFinished(message).ToArray(),
@@ -71,19 +71,19 @@ namespace TeamCity.CSharpInteractive
                 Array.Empty<Dotnet.BuildResult>());
         }
 
-        private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo)
+        private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo, int processId)
         {
             var testKey = CreateKey(message);
             var output = message.GetValue("out") ?? string.Empty;
-            GetTestContext(testKey).AddStdOut(startInfo, output);
+            GetTestContext(testKey).AddStdOut(startInfo, processId, output);
             yield return new BuildMessage(BuildMessageState.Info).WithText(output);
         }
 
-        private IEnumerable<BuildMessage> OnStdErr(IServiceMessage message, IStartInfo info)
+        private IEnumerable<BuildMessage> OnStdErr(IServiceMessage message, IStartInfo info, int processId)
         {
             var testKey = CreateKey(message);
             var output = message.GetValue("out") ?? string.Empty;
-            GetTestContext(testKey).AddStdErr(info, output);
+            GetTestContext(testKey).AddStdErr(info, processId, output);
             yield return new BuildMessage(BuildMessageState.Error).WithText(output);
         }
 
@@ -268,19 +268,19 @@ namespace TeamCity.CSharpInteractive
 
             public TestContext(string name) => Name = name;
 
-            public void AddStdOut(IStartInfo info, string? text)
+            public void AddStdOut(IStartInfo info, int processId, string? text)
             {
                 if (text != default)
                 {
-                    Output.Add(new Output(info, false, text));
+                    Output.Add(new Output(info, false, text, processId));
                 }
             }
 
-            public void AddStdErr(IStartInfo info, string? error)
+            public void AddStdErr(IStartInfo info, int processId, string? error)
             {
                 if (error != default)
                 {
-                    Output.Add(new Output(info, true, error));
+                    Output.Add(new Output(info, true, error, processId));
                 }
             }
         }

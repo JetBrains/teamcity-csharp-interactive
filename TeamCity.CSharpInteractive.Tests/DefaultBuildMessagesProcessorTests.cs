@@ -18,7 +18,7 @@ public class DefaultBuildMessagesProcessorTests
     public void ShouldSendServiceMessagesToTeamCityViaProcessOutputWhenIsUnderTeamCityAndHasNayServiceMessage()
     {
         // Given
-        var output = new Output(_startInfo.Object, false, "Output");
+        var output = new Output(_startInfo.Object, false, "Output", 11);
         var messages = new BuildMessage[]
         {
             new(BuildMessageState.Info, default, "Msg1"),
@@ -41,7 +41,7 @@ public class DefaultBuildMessagesProcessorTests
     public void ShouldProcessBuildMessageWhenIsNotUnderTeamCity()
     {
         // Given
-        var output = new Output(_startInfo.Object, false, "Output");
+        var output = new Output(_startInfo.Object, false, "Output", 11);
         var msg1 = new BuildMessage(BuildMessageState.Info, default, "Msg1");
         var msg2 = new BuildMessage(BuildMessageState.ServiceMessage, Mock.Of<IServiceMessage?>());
 
@@ -63,7 +63,7 @@ public class DefaultBuildMessagesProcessorTests
     public void ShouldProcessBuildMessageWhenHasNotTeamCityServiceMessages()
     {
         // Given
-        var output = new Output(_startInfo.Object, false, "Output");
+        var output = new Output(_startInfo.Object, false, "Output", 11);
         var msg1 = new BuildMessage(BuildMessageState.Info, default, "Msg1");
         var msg2 = new BuildMessage(BuildMessageState.Error, default, "Error");
 

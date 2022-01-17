@@ -16,9 +16,9 @@ namespace TeamCity.CSharpInteractive
         private readonly IProcessOutputWriter _processOutputWriter;
         private readonly IStartInfoFactory _startInfoFactory;
         private readonly Process _process;
-        private string _processId = string.Empty;
         private int _disposed;
-        private IStartInfo? _processInfo;
+        private IStartInfo? _startInfo;
+        private string _description = "The";
 
         public ProcessManager(
             ILog<ProcessManager> log,
@@ -44,13 +44,21 @@ namespace TeamCity.CSharpInteractive
 
         public bool Start(IStartInfo info)
         {
-            _processInfo = info;
+            _startInfo = info;
             _process.StartInfo = _startInfoFactory.Create(info);
-            if (!_process.Start())
+            try
             {
+                if (!_process.Start())
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.Error(ErrorId.Process, e.Message);
                 return false;
             }
-            
+
             try
             {
                  Id = _process.Id;
@@ -60,7 +68,7 @@ namespace TeamCity.CSharpInteractive
                 // ignored
             }
 
-            _processId = Id.ToString().PadRight(5);
+            _description = _startInfo.GetDescription(Id) + " process";
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
             return true;
@@ -70,17 +78,17 @@ namespace TeamCity.CSharpInteractive
 
         public bool WaitForExit(TimeSpan timeout) => _process.WaitForExit((int)timeout.TotalMilliseconds);
 
-        public bool TryKill()
+        public bool Kill()
         {
             try
             {
-                _log.Trace(() => new []{new Text($"Try to kill process {_processId}.")});
+                _log.Trace(() => new []{new Text($"{_description} is terminating.")}, _description);
                 _process.Kill();
-                _log.Trace(() => new []{new Text($"{_processId} was killed.")});
+                _log.Trace(() => new []{new Text($"{_description} was terminated.")}, _description);
             }
             catch (Exception ex)
             {
-                _log.Warning(new Text($"Failed to kill {_processId}: {ex.Message}."));
+                _log.Warning(new Text($"{_description} was not terminated properly with error \"{ex.Message}\"."));
                 return false;
             }
 
@@ -102,10 +110,10 @@ namespace TeamCity.CSharpInteractive
             }
 
             var handler = OnOutput;
-            var output = new Output(_processInfo!, isError, line);
+            var output = new Output(_startInfo!, isError, line, Id);
             if (handler != default)
             {
-                _log.Trace(() => new []{ Text.Tab, isError ? StdErrPrefix : StdOutPrefix, new Text(line) }, _processId);
+                _log.Trace(() => new []{ isError ? StdErrPrefix : StdOutPrefix, new Text(line) }, _description);
                 handler(output);
             }
             else

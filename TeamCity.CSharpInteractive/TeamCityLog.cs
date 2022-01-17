@@ -55,7 +55,5 @@ namespace TeamCity.CSharpInteractive
                 _teamCityWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin, -40}") + traceMessagesFactory()).WithDefaultColor(Color.Trace)));
             }
         }
-
-        public IDisposable Block(Text[] block) => _teamCityWriter.OpenBlock(block.ToSimpleString());
     }
 }

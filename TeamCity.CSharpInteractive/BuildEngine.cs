@@ -23,11 +23,11 @@ namespace TeamCity.CSharpInteractive
             switch (e.Importance)
             {
                 case MessageImportance.High:
-                    _log.Info(new[] {new Text(e.Message, Color.Highlighted)});
+                    _log.Info(new[] {new Text(e.Message)});
                     break;
                 
                 case MessageImportance.Normal:
-                    _log.Info(new[] {new Text(e.Message, Color.Details)});
+                    _log.Info(new[] {new Text(e.Message)});
                     break;
                 
                 default:

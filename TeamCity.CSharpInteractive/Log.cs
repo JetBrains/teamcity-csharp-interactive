@@ -3,16 +3,9 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Contracts;
-
-    [ExcludeFromCodeCoverage]
-    internal class Log
-    {
-        internal static int Tabs;
-    }
 
     [ExcludeFromCodeCoverage]
     internal class Log<T> : ILog<T>
@@ -71,19 +64,6 @@ namespace TeamCity.CSharpInteractive
             }
         }
 
-        public IDisposable Block(Text[] block)
-        {
-            if (_settings.VerbosityLevel < VerbosityLevel.Normal)
-            {
-                return Disposable.Empty;
-            }
-
-            _stdOut.WriteLine(GetMessage(block, Color.Header));
-            Log.Tabs++;
-            return Disposable.Create(() => Log.Tabs--);
-        }
-
-        private static Text[] GetMessage(IEnumerable<Text> message, Color defaultColor) => 
-            Enumerable.Repeat(Text.Tab, Log.Tabs).Concat(message).ToArray().WithDefaultColor(defaultColor);
+        private static Text[] GetMessage(Text[] message, Color defaultColor) => message.WithDefaultColor(defaultColor);
     }
 }

@@ -24,10 +24,10 @@ public class BuildOutputConverterTests
         BuildMessage buildMsg1 = new();
         BuildMessage buildMsg2 = new();
         BuildMessage buildMsg3 = new();
-        var messagesOutput = new Output(_startInfo.Object, false, "Messages");
+        var messagesOutput = new Output(_startInfo.Object, false, "Messages", 33);
         _serviceMessageParser.Setup(i => i.ParseServiceMessages("Messages")).Returns(new [] { msg1.Object, msg2.Object });
-        _buildResult.Setup(i => i.ProcessMessage(_startInfo.Object, msg1.Object)).Returns(new [] { buildMsg1, buildMsg2 });
-        _buildResult.Setup(i => i.ProcessMessage(_startInfo.Object, msg2.Object)).Returns(new [] { buildMsg3 });
+        _buildResult.Setup(i => i.ProcessMessage(_startInfo.Object, 33, msg1.Object)).Returns(new [] { buildMsg1, buildMsg2 });
+        _buildResult.Setup(i => i.ProcessMessage(_startInfo.Object, 33, msg2.Object)).Returns(new [] { buildMsg3 });
         var converter = CreateInstance();
 
         // When
@@ -51,7 +51,7 @@ public class BuildOutputConverterTests
     public void ShouldConvertToSimpleMessageWhenHasNoServiceMessages(bool isError, BuildMessageState state)
     {
         // Given
-        var output = new Output(_startInfo.Object, isError, "some output");
+        var output = new Output(_startInfo.Object, isError, "some output", 33);
         _serviceMessageParser.Setup(i => i.ParseServiceMessages("some output")).Returns(Enumerable.Empty<IServiceMessage>());
         var converter = CreateInstance();
 

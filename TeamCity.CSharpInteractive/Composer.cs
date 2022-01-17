@@ -161,7 +161,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
                 .Bind<NuGet.INuGet>().To<NuGetService>()
                 .Bind<IProcessRunner>("base").To<ProcessRunner>()
-                .Bind<IProcessRunner>("inBlock").To<ProcessInBlockRunner>()
                 .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
                 .Bind<ICommandLine>().To<CommandLineService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
@@ -169,13 +168,12 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITeamCity>().Bind<ITeamCityContext>().To<TeamCityService>()
 
                 // TeamCity Service messages
-                .Bind<ITeamCityWriter>().To<HierarchicalTeamCityWriter>()
                 .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
                 .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
                 .Bind<IFlowIdGenerator>().Bind<IFlowContext>().To<FlowIdGenerator>()
                 .Bind<DateTime>().As(Transient).To(_ => DateTime.Now)
                 .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
-                .Bind<ITeamCityWriter>("Root").As(Transient).To(
+                .Bind<ITeamCityWriter>().To(
                     ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(
                         str => ctx.Resolve<IConsole>().WriteToOut((default, str + "\n"))))
                 .Bind<IServiceMessageParser>().To<ServiceMessageParser>();

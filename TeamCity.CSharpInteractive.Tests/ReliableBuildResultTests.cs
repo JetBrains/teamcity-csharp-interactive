@@ -26,10 +26,10 @@ public class ReliableBuildResultTests
         var messages = Mock.Of<IReadOnlyList<BuildMessage>>();
         var result = CreateInstance();
         var message = new ServiceMessage("some message");
-        _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, message)).Returns(messages);
+        _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, 11, message)).Returns(messages);
 
         // When
-        result.ProcessMessage(_startInfo.Object, message).ShouldBe(messages);
+        result.ProcessMessage(_startInfo.Object, 11, message).ShouldBe(messages);
 
         // Then
     }
@@ -41,7 +41,7 @@ public class ReliableBuildResultTests
         var result = CreateInstance();
         var buildResult = new BuildResult(BuildState.Succeeded).AddCommandLines(new CommandLineResult(_startInfo.Object, 33));
         var messages = Mock.Of<IReadOnlyList<BuildMessage>>();
-        _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, It.IsAny<IServiceMessage>())).Returns(messages);
+        _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, 11, It.IsAny<IServiceMessage>())).Returns(messages);
         _baseBuildResult.Setup(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33)).Returns(buildResult);
         _teamCitySettings.SetupGet(i => i.ServiceMessagesPath).Returns("Messages");
         
@@ -71,19 +71,19 @@ public class ReliableBuildResultTests
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Ccc.msg"))).Returns(false);
 
         // When
-        result.ProcessMessage(_startInfo.Object, message3).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, message1).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, message4).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, message2).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, message5).ShouldBeEmpty();
+        result.ProcessMessage(_startInfo.Object, 11, message3).ShouldBeEmpty();
+        result.ProcessMessage(_startInfo.Object, 11, message1).ShouldBeEmpty();
+        result.ProcessMessage(_startInfo.Object, 11, message4).ShouldBeEmpty();
+        result.ProcessMessage(_startInfo.Object, 11, message2).ShouldBeEmpty();
+        result.ProcessMessage(_startInfo.Object, 11, message5).ShouldBeEmpty();
         var actualBuildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
         
         // Then
         actualBuildResult.ShouldBe(buildResult);
         _baseBuildResult.Verify(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33));
-        _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, msg1));
-        _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, msg11));
-        _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, msg2));
+        _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, 11, msg1));
+        _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, 11, msg11));
+        _baseBuildResult.Verify(i => i.ProcessMessage(_startInfo.Object, 11, msg2));
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Fff"), Path.Combine("Messages", "Fff.msg")), Times.Never);
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Bbb"), Path.Combine("Messages", "Bbb.msg")), Times.Never);
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Ccc"), Path.Combine("Messages", "Ccc.msg")), Times.Never);

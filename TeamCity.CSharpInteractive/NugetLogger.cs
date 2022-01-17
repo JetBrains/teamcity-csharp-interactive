@@ -20,7 +20,7 @@ namespace TeamCity.CSharpInteractive
 
         public void LogInformation(string data) => _log.Info(data);
 
-        public void LogMinimal(string data) => _log.Info(new[] {new Text(data, Color.Highlighted)});
+        public void LogMinimal(string data) => _log.Info(new[] {new Text(data)});
 
         public void LogWarning(string data) => _log.Warning(data);
 

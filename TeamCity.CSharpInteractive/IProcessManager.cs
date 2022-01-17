@@ -19,6 +19,6 @@ namespace TeamCity.CSharpInteractive
         
         bool WaitForExit(TimeSpan timeout);
         
-        bool TryKill();
+        bool Kill();
     }
 }

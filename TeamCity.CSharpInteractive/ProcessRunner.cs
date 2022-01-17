@@ -34,7 +34,7 @@ namespace TeamCity.CSharpInteractive
             if (!processManager.Start(startInfo))
             {
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Failed);
+                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed);
                 return new ProcessResult(ProcessState.Failed);
             }
 
@@ -53,13 +53,13 @@ namespace TeamCity.CSharpInteractive
             {
                 stopwatch.Stop();
                 var state = stateProvider?.GetState(processManager.ExitCode) ?? ProcessState.Unknown;
-                monitor.Finished(stopwatch.ElapsedMilliseconds, state, processManager.ExitCode);
+                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, state, processManager.ExitCode);
                 return new ProcessResult(state, processManager.ExitCode);
             }
 
-            processManager.TryKill();
+            processManager.Kill();
             stopwatch.Stop();
-            monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
+            monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
 
             return new ProcessResult(ProcessState.Canceled);
         }
@@ -84,7 +84,7 @@ namespace TeamCity.CSharpInteractive
             if (!processManager.Start(startInfo))
             {
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Failed);
+                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed);
                 processManager.Dispose();
                 return new ProcessResult(ProcessState.Failed);
             }
@@ -92,14 +92,14 @@ namespace TeamCity.CSharpInteractive
             monitor.Started(startInfo, processManager.Id);
             void Cancel()
             {
-                if (processManager.TryKill())
+                if (processManager.Kill())
                 {
                     completionSource.TrySetCanceled(cancellationToken);
                 }
                 
                 processManager.Dispose();
                 stopwatch.Stop();
-                monitor.Finished(stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
+                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
             }
 
             await using (cancellationToken.Register(Cancel, false))
@@ -109,7 +109,7 @@ namespace TeamCity.CSharpInteractive
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
                     stopwatch.Start();
                     var state = stateProvider?.GetState(exitCode) ?? ProcessState.Unknown;
-                    monitor.Finished(stopwatch.ElapsedMilliseconds, state, exitCode);
+                    monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, state, exitCode);
                     return new ProcessResult(state, exitCode);
                 }
             }

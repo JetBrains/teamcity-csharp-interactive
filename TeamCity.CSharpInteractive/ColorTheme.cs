@@ -60,7 +60,8 @@
                 Color.Success => "32;1",
                 Color.Warning => "33",
                 Color.Error => "31",
-                Color.Details => "36",
+                Color.Details => "34;1",
+                Color.Highlighted => "36",
                 _ => "39"
             };
     }

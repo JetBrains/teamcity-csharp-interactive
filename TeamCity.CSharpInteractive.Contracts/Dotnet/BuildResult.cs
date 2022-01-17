@@ -152,6 +152,7 @@ namespace Dotnet
 
             sb.Append(State.ToString().ToLowerInvariant());
             sb.Append(statistics);
+            sb.Append('.');
             return sb.ToString();
         }
         

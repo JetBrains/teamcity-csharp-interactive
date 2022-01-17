@@ -27,7 +27,7 @@ namespace TeamCity.CSharpInteractive.Tests
             _command = new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)));
             
             _log = new Mock<ILog<AddNuGetReferenceCommandRunner>>();
-            _log.Setup(i => i.Block(It.IsAny<Text[]>())).Returns(Disposable.Empty);
+            _log.Setup(i => i.Info(It.IsAny<Text[]>()));
             
             _nugetEnv = new Mock<INugetEnvironment>();
             _nugetEnv.SetupGet(i => i.Sources).Returns(Sources);

@@ -46,7 +46,7 @@ public class BuildServiceTests
             new()
         };
 
-        var output = new Output(_startInfo.Object, true, "Msg1");
+        var output = new Output(_startInfo.Object, true, "Msg1", 11);
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
         
         var buildService = CreateInstance();
@@ -77,7 +77,7 @@ public class BuildServiceTests
             new()
         };
 
-        var output = new Output(_startInfo.Object, true, "Msg1");
+        var output = new Output(_startInfo.Object, true, "Msg1", 11);
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
         
         var buildService = CreateInstance();
