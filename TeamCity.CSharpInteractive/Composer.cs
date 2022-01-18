@@ -35,7 +35,7 @@ namespace TeamCity.CSharpInteractive
             DI.Setup()
                 .Default(Singleton)
                 .Bind<Program>().To<Program>()
-                .Bind<Assembly>().To(_ => Assembly.GetEntryAssembly())
+                .Bind<Assembly>().To(_ => typeof(Composer).Assembly)
                 .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
                 .Bind<Process>().To(_ => Process.GetCurrentProcess())
                 .Bind<string>("ModuleFile").To(ctx => ctx.Resolve<Process>().MainModule?.FileName ?? string.Empty)

@@ -3,6 +3,7 @@ namespace TeamCity.CSharpInteractive
 {
     using System.IO;
     using Contracts;
+    using NuGet;
 
     internal class AddNuGetReferenceCommandRunner: ICommandRunner
     {
@@ -40,12 +41,14 @@ namespace TeamCity.CSharpInteractive
             var success = true;
             _log.Info(new[] { new Text($"Restoring package {packageName}.", Color.Highlighted) });
             var restoreResult = _nugetRestoreService.TryRestore(
-                addPackageReferenceCommand.PackageId,
-                addPackageReferenceCommand.VersionRange,
-                default,
-                _nugetEnvironment.Sources,
-                _nugetEnvironment.FallbackFolders,
-                _nugetEnvironment.PackagesPath,
+                new RestoreSettings(
+                    addPackageReferenceCommand.PackageId,
+                    _nugetEnvironment.Sources,
+                    _nugetEnvironment.FallbackFolders,
+                    addPackageReferenceCommand.VersionRange,
+                    default,
+                    _nugetEnvironment.PackagesPath
+                ),
                 out var projectAssetsJson);
 
             if (!restoreResult)

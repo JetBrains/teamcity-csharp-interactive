@@ -5,6 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     using System;
     using System.Collections.Generic;
     using NuGet;
+    using NuGet.Versioning;
     using Shouldly;
     using Xunit;
 
@@ -25,11 +26,12 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
                 System.IO.Path.GetTempPath(),
                 Guid.NewGuid().ToString()[..4]);
 
-            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(
-                "IoC.Container",
-                "[1.3, 1.3.8)",
-                "net5.0",
-                packagesPath);
+            var settings = new RestoreSettings("IoC.Container")
+                .WithVersionRange(VersionRange.Parse("[1.3, 1.3.8)"))
+                .WithTargetFrameworkMoniker("net5.0")
+                .WithPackagesPath(packagesPath);
+
+            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
             // }
             
             packages.ShouldNotBeEmpty();

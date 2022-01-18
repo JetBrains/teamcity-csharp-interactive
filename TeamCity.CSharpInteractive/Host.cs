@@ -1,15 +1,48 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 namespace TeamCity.CSharpInteractive
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Runtime.Loader;
     using Contracts;
 
     [ExcludeFromCodeCoverage]
     public static class Host
     {
         private static readonly IHost BaseHost = Composer.ResolveIHost();
+        private static readonly IStatistics Statistics = Composer.ResolveIStatistics();
+        private static readonly IPresenter<IStatistics> StatisticsPresenter = Composer.ResolveIPresenterIStatistics();
+        private static readonly ILog<HostService> Log = Composer.ResolveTeamCitySpecificILogHostService().Instance;
+
+        static Host()
+        {
+            var statisticsToken = Statistics.Start();
+            AssemblyLoadContext.Default.Unloading += _ =>
+            {
+                try
+                {
+                    statisticsToken.Dispose();
+                    StatisticsPresenter.Show(Statistics);
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (Statistics.Errors.Any())
+                    {
+                        Log.Info(new Text("Running FAILED.", Color.Error));
+                    }
+                    else
+                    {
+                        Log.Info(new Text("Running succeeded.", Color.Success));
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            };
+        }
 
         public static IReadOnlyList<string> Args => BaseHost.Args;
 

@@ -35,8 +35,9 @@ namespace TeamCity.CSharpInteractive
             _cleaner = cleaner;
         }
 
-        public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
+        public IEnumerable<NuGetPackage> Restore(RestoreSettings settings)
         {
+            var packagesPath = settings.PackagesPath;
             if (string.IsNullOrWhiteSpace(packagesPath))
             {
                 packagesPath = _nugetEnvironment.PackagesPath;
@@ -46,19 +47,22 @@ namespace TeamCity.CSharpInteractive
             {
                 packagesPath = Path.Combine(_environment.GetPath(SpecialFolder.Working), packagesPath);
             }
-            
-            var restoreResult = _nugetRestoreService.TryRestore(
-                packageId,
-                versionRange != default ? VersionRange.Parse(versionRange) : default,
-                targetFrameworkMoniker,
-                _nugetEnvironment.Sources,
-                _nugetEnvironment.FallbackFolders,
-                packagesPath,
-                out var projectAssetsJson);
 
+            settings = settings.WithPackagesPath(packagesPath);
+            if (!settings.Sources.Any())
+            {
+                settings = settings.WithSources(_nugetEnvironment.Sources);
+            }
+            
+            if (!settings.FallbackFolders.Any())
+            {
+                settings = settings.WithFallbackFolders(_nugetEnvironment.FallbackFolders);
+            }
+            
+            var restoreResult = _nugetRestoreService.TryRestore(settings, out var projectAssetsJson);
             if (restoreResult == false)
             {
-                _log.Warning($"Cannot restore the NuGet package {packageId} {versionRange}.");
+                _log.Warning($"Cannot restore the NuGet package {settings.PackageId} {settings.VersionRange}.");
                 return Enumerable.Empty<NuGetPackage>();
             }
             
@@ -73,6 +77,27 @@ namespace TeamCity.CSharpInteractive
             {
                 return _nugetAssetsReader.ReadPackages(packagesPath, projectAssetsJson);
             }
+        }
+
+        public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
+        {
+            var settings = new RestoreSettings(packageId);
+            if (versionRange != default)
+            {
+                settings = settings.WithVersionRange(VersionRange.Parse(versionRange));
+            }
+
+            if (targetFrameworkMoniker != default)
+            {
+                settings = settings.WithTargetFrameworkMoniker(targetFrameworkMoniker);
+            }
+            
+            if (packagesPath != default)
+            {
+                settings = settings.WithPackagesPath(packagesPath);
+            }
+
+            return Restore(settings);
         }
     }
 }

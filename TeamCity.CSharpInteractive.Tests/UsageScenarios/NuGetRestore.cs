@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Collections.Generic;
     using NuGet;
+    using NuGet.Versioning;
     using Shouldly;
     using Xunit;
 
@@ -20,7 +21,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // Adds the namespace "NuGet" to use INuGet
             // ## using NuGet;
 
-            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container", "*");
+            IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new RestoreSettings("IoC.Container").WithVersionRange(VersionRange.All));
             // }
             
             packages.ShouldNotBeEmpty();

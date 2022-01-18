@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
                 "using System.Linq;",
                 "var build = GetService<IBuild>();",
                 "var result = build.Run(new Custom(\"new\", \"mstest\"));",
-                "WriteLine(\"Custom=\" + result.CommandLines.Single().ExitCode);",
+                "WriteLine(\"Custom=\" + result.ExitCode);",
                 "result = build.Run(new Restore());",
                 "WriteLine(\"Restore=\" + result.Tests.Count());",
                 "result = build.Run(new Build());",

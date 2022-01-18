@@ -2,14 +2,13 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
+    using NuGet;
     using NuGet.Build.Tasks;
-    using NuGet.Versioning;
 
     [ExcludeFromCodeCoverage]
     internal class NugetRestoreService : INugetRestoreService, ISettingSetter<NuGetRestoreSetting>
@@ -47,20 +46,20 @@ namespace TeamCity.CSharpInteractive
             SetSetting(NuGetRestoreSetting.Default);
         }
 
-        public bool TryRestore(
-            string packageId,
-            VersionRange? versionRange,
-            string? targetFrameworkMoniker,
-            IEnumerable<string> sources,
-            IEnumerable<string> fallbackFolders,
-            string packagesPath,
-            out string projectAssetsJson)
+        public bool TryRestore(RestoreSettings settings, out string projectAssetsJson)
         {
             var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
             var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
+            var targetFrameworkMoniker = settings.TargetFrameworkMoniker;
             var tfm = targetFrameworkMoniker ?? _dotnetEnvironment.TargetFrameworkMoniker;
             targetFrameworkMoniker = _targetFrameworkMonikerParser.Parse(tfm);
-            _log.Trace(() => new []{new Text($"Restore nuget package {packageId} {versionRange} to \"{outputPath}\" and \"{packagesPath}\".")});
+            var projectStyle = settings.PackageType switch
+            {
+                PackageType.Tool => "DotnetToolReference ",
+                _ => "PackageReference"
+            };
+
+            _log.Trace(() => new []{new Text($"Restore nuget package {settings.PackageId} {settings.VersionRange} to \"{outputPath}\" and \"{settings.PackagesPath}\".")});
             var restoreGraphItems = new[]
             {
                 CreateTaskItem("RestoreSpec"),
@@ -69,17 +68,19 @@ namespace TeamCity.CSharpInteractive
                 CreateTaskItem(
                     "ProjectSpec",
                     ("ProjectName", Project),
-                    ("ProjectStyle", "PackageReference"),
-                    ("Sources", string.Join(";", sources)),
-                    ("FallbackFolders", string.Join(";", fallbackFolders)),
+                    ("ProjectStyle", projectStyle),
+                    ("Sources", string.Join(";", settings.Sources)),
+                    ("FallbackFolders", string.Join(";", settings.FallbackFolders)),
                     ("OutputPath", outputPath),
-                    ("PackagesPath", packagesPath)),
+                    ("PackagesPath", settings.PackagesPath),
+                    ("ValidateRuntimeAssets", "false")),
 
                 CreateTaskItem(
                     "Dependency",
                     ("TargetFrameworks", tfm),
-                    ("Id", packageId),
-                    ("VersionRange", versionRange?.ToString())),
+                    ("Id", settings.PackageId),
+                    ("VersionRange", settings.VersionRange?.ToString()),
+                    ("IncludeAssets", "All")),
 
                 CreateTaskItem(
                     "TargetFrameworkInformation",
@@ -90,10 +91,10 @@ namespace TeamCity.CSharpInteractive
             projectAssetsJson = Path.Combine(outputPath, "project.assets.json");
             return new RestoreTask
             {
-                RestoreDisableParallel = _restoreDisableParallel,
-                RestoreIgnoreFailedSources = _restoreIgnoreFailedSources,
-                HideWarningsAndErrors = _hideWarningsAndErrors,
-                RestoreNoCache = _restoreNoCache,
+                RestoreDisableParallel = settings.DisableParallel ?? _restoreDisableParallel,
+                RestoreIgnoreFailedSources = settings.IgnoreFailedSources ?? _restoreIgnoreFailedSources,
+                HideWarningsAndErrors = settings.HideWarningsAndErrors ?? _hideWarningsAndErrors,
+                RestoreNoCache = settings.NoCache ?? _restoreNoCache,
                 RestoreForceEvaluate = false,
                 RestorePackagesConfig = false,
                 RestoreRecursive = true,

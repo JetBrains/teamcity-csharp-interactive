@@ -42,7 +42,17 @@ namespace TeamCity.CSharpInteractive
                 return Enumerable.Empty<NuGetPackage>();
             }
             
-            return lockFile.Libraries.Select(i => new NuGetPackage(i.Name, i.Version.Version, i.Type, Path.Combine(packagesPath, i.Path), i.Sha512, i.Files.ToList().AsReadOnly()));
+            return lockFile.Libraries.Select(i => 
+                new NuGetPackage(
+                    i.Name,
+                    i.Version.Version,
+                    i.Version,
+                    i.Type,
+                    Path.Combine(packagesPath, i.Path),
+                    i.Sha512,
+                    i.Files.ToList().AsReadOnly(),
+                    i.HasTools,
+                    i.IsServiceable));
         }
 
         public IEnumerable<ReferencingAssembly> ReadReferencingAssemblies(string projectAssetsJson)

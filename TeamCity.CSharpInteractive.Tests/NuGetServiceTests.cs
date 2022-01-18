@@ -12,8 +12,8 @@ namespace TeamCity.CSharpInteractive.Tests
 
     public class NuGetServiceTests
     {
-        private static readonly NuGetPackage NuGetPackage1 = new("Abc", new Version(1, 2, 3), "package", "AbcPath", "111222", Array.Empty<string>());
-        private static readonly NuGetPackage NuGetPackage2 = new("Abc.Contracts", new Version(3, 2, 1), "package", "AbcContractsPath", "111233", Array.Empty<string>());
+        private static readonly NuGetPackage NuGetPackage1 = new("Abc", new Version(1, 2, 3), new NuGetVersion(1, 2, 3), "package", "AbcPath", "111222", Array.Empty<string>(), false, false);
+        private static readonly NuGetPackage NuGetPackage2 = new("Abc.Contracts", new Version(1, 2, 3), new NuGetVersion(3, 2, 1), "package", "AbcContractsPath", "111233", Array.Empty<string>(), false, false);
         private static readonly IEnumerable<string> Sources = new []{"src1", "src2"};
         private static readonly IEnumerable<string> FallBacks = new []{"fb1", "fb2"};
 
@@ -62,13 +62,21 @@ namespace TeamCity.CSharpInteractive.Tests
             _nugetEnvironment.SetupGet(i => i.PackagesPath).Returns("defaultPackagesPath");
             _fileSystem.Setup(i => i.IsPathRooted(It.IsAny<string>())).Returns(isPathRooted);
             _nugetAssetsReader.Setup(i => i.ReadPackages(expectedNuGtePackagesDir, projectAssetsJson)).Returns(new [] {NuGetPackage1, NuGetPackage2});
-            _nugetRestoreService.Setup(i => i.TryRestore(It.IsAny<string>(), It.IsAny<VersionRange?>(), ".NETCoreApp,Version=v3.1", Sources, FallBacks, expectedNuGtePackagesDir, out projectAssetsJson)).Returns(true);
+            _nugetRestoreService.Setup(i => i.TryRestore(It.IsAny<RestoreSettings>(), out projectAssetsJson)).Returns(true);
 
             // When
             var packages = nuGet.Restore("Abc", "1.2.3", ".NETCoreApp,Version=v3.1", packagesPath).ToArray();
 
             // Then
-            _nugetRestoreService.Verify(i => i.TryRestore("Abc", VersionRange.Parse("1.2.3"), ".NETCoreApp,Version=v3.1", Sources, FallBacks, expectedNuGtePackagesDir, out projectAssetsJson));
+            _nugetRestoreService.Verify(i => i.TryRestore(
+                new RestoreSettings("Abc")
+                    .WithSources(Sources)
+                    .WithFallbackFolders(FallBacks)
+                    .WithVersionRange(VersionRange.Parse("1.2.3"))
+                    .WithTargetFrameworkMoniker(".NETCoreApp,Version=v3.1")
+                    .WithPackagesPath(expectedNuGtePackagesDir),
+                out projectAssetsJson));
+            
             packages.ShouldBe(new []{NuGetPackage1, NuGetPackage2});
             _trackToken.Verify(i => i.Dispose());
         }

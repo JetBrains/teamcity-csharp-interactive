@@ -5,6 +5,8 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
     using System;
     using System.IO;
     using System.Linq;
+    using NuGet;
+    using NuGet.Versioning;
     using Shouldly;
     using Xunit;
 
@@ -19,7 +21,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
 
             // When
             var nuget = Composer.ResolveINuGet();
-            var result = nuget.Restore("IoC.Container", "1.3.6", "net5.0", tempPath).ToList();
+            var result = nuget.Restore(new RestoreSettings("IoC.Container").WithVersionRange(VersionRange.Parse( "1.3.6")).WithTargetFrameworkMoniker("net5.0").WithPackagesPath(tempPath)).ToList();
             
             // Then
             result.Count.ShouldBe(1);
@@ -33,7 +35,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
             
             // When
             var nuget = Composer.ResolveINuGet();
-            var result = nuget.Restore("IoC.Container").ToList();
+            var result = nuget.Restore(new RestoreSettings("IoC.Container")).ToList();
             
             // Then
             result.Count.ShouldBeGreaterThan(0);
