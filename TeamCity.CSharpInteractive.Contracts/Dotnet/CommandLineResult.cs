@@ -1,5 +1,6 @@
 // ReSharper disable NotAccessedPositionalProperty.Global
 // ReSharper disable ReturnTypeCanBeEnumerable.Local
+// ReSharper disable CheckNamespace
 namespace Dotnet
 {
     using System.Collections.Generic;

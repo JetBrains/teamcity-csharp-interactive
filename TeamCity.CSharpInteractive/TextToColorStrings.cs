@@ -51,6 +51,7 @@ namespace TeamCity.CSharpInteractive
             }
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         internal static IEnumerable<(string color, string text)> Split(string text)
         {
             var sb = new StringBuilder(text.Length);

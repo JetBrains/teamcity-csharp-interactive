@@ -46,6 +46,6 @@ public static partial class BuildResultExtensions
     private static IEnumerable<BuildResult> GetFlatResults(IEnumerable<BuildResult> results) =>
         results
             .SelectMany(i => GetFlatResults(i.Results).Concat(Enumerable.Repeat(i, 1)))
-            .Select<BuildResult, BuildResult>(i => i.WithResults(Array.Empty<BuildResult>()))
+            .Select(i => i.WithResults(Array.Empty<BuildResult>()))
             .Distinct();
 }

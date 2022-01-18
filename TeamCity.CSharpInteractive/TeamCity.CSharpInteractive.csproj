@@ -5,6 +5,9 @@
         <TargetFramework>net6.0</TargetFramework>
         <NoWarn>NU1605;NU5118</NoWarn>
         <IsPackable>true</IsPackable>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+        <ImmutypeAPI>False</ImmutypeAPI>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -18,7 +21,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pure.DI" Version="1.1.20">
+        <CompilerVisibleProperty Include="ImmutypeAPI" />
+        <PackageReference Include="Pure.DI" Version="1.1.21">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Immutype" Version="1.0.9">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

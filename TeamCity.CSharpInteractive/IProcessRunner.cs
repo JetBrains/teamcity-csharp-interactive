@@ -3,12 +3,11 @@ namespace TeamCity.CSharpInteractive
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Cmd;
 
     internal interface IProcessRunner
     {
-        ProcessResult Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout);
+        ProcessResult Run(ProcessRun processRun, TimeSpan timeout);
 
-        Task<ProcessResult> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken);
+        Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken);
     }
 }

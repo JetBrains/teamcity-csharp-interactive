@@ -2,6 +2,7 @@
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 // ReSharper disable InconsistentNaming
+// ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Linq;

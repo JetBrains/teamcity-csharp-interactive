@@ -7,7 +7,6 @@
 namespace TeamCity.CSharpInteractive
 {
     using System;
-    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Cmd;
@@ -50,7 +49,8 @@ namespace TeamCity.CSharpInteractive
         {
             var buildResult = _resultFactory();
             var startInfo = CreateStartInfo(process);
-            var (processState, exitCode) = _processRunner.Run(startInfo, output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), timeout);
+            var processInfo = new ProcessRun(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult), process as IProcessStateProvider);
+            var (processState, exitCode) = _processRunner.Run(processInfo, timeout);
             return buildResult.Create(startInfo, processState, exitCode);
         }
 
@@ -58,7 +58,8 @@ namespace TeamCity.CSharpInteractive
         {
             var buildResult = _resultFactory();
             var startInfo = CreateStartInfo(process);
-            var (processState, exitCode) = await _processRunner.RunAsync(startInfo, output => Handle(handler, output, buildResult), process as IProcessStateProvider, _monitorFactory(), cancellationToken);
+            var processInfo = new ProcessRun(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult), process as IProcessStateProvider);
+            var (processState, exitCode) = await _processRunner.RunAsync(processInfo, cancellationToken);
             return buildResult.Create(startInfo, processState, exitCode);
         }
 

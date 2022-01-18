@@ -8,12 +8,14 @@
     [ExcludeFromCodeCoverage]
     internal readonly record struct Text(string Value, Color Color)
     {
+        // ReSharper disable once UnusedMember.Global
         public static readonly Text Empty = new(string.Empty);
         public static readonly Text NewLine = new(System.Environment.NewLine);
         public static readonly Text Space = new(" ");
         public static readonly Text Tab = new("    ");
 
         public Text(string value)
+            // ReSharper disable once IntroduceOptionalParameters.Global
             : this(value, Color.Default)
         { }
 

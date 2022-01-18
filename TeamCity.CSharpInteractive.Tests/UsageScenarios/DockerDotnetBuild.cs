@@ -4,6 +4,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Cmd;
     using Docker;
@@ -14,6 +15,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     public class DockerDotnetBuild: Scenario
     {
         [Fact(Skip = "Linux Docker only")]
+        [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped")]
         //[Fact]
         public void Run()
         {
@@ -44,7 +46,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 
             // Builds the library project in a docker container
             var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
-            result = build.Run(baseDockerCmd.WithProcess(buildCmd), output => {});
+            result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
             
             // The "result" variable provides details about a build
             result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();

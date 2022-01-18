@@ -22,6 +22,7 @@ internal class BuildStatisticsCalculator: IStatisticsCalculator
         foreach (var test in testItems)
         {
             totalTests++;
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (test.State)
             {
                 case TestState.Passed:

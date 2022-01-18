@@ -2,7 +2,6 @@
 namespace TeamCity.CSharpInteractive
 {
     using Dotnet;
-    using JetBrains.TeamCity.ServiceMessages.Write;
 
     internal class BuildMessageLogWriter : IBuildMessageLogWriter
     {

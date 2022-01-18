@@ -1,3 +1,4 @@
+// ReSharper disable StringLiteralTypo
 namespace TeamCity.CSharpInteractive.Tests
 {
     using System;
@@ -71,7 +72,7 @@ namespace TeamCity.CSharpInteractive.Tests
             new object[] { "\x001B\x001B[93mXyz", new[] {("", "\x001B"), ("93", "Xyz")} },
             new object[] { "\x001B\x001B[mXyz", new[] {("", "\x001B"), ("", "\x001B\x001B[mXyz")} },
             new object[] { "\x001B[[93mXyz", new[] {("", "\x001B[[93mXyz")} },
-            new object[] { "\x001B[[[93mXyz", new[] {("", "\x001B[[[93mXyz")} },
+            new object[] { "\x001B[[[93mXyz", new[] {("", "\x001B[[[93mXyz")} }
         };
         
         private static TextToColorStrings CreateInstance() =>

@@ -30,16 +30,16 @@ namespace TeamCity.CSharpInteractive
             _flowContext = flowContext;
         }
         
-        public ProcessResult Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
+        public ProcessResult Run(ProcessRun processRun, TimeSpan timeout)
         {
             using var flow = CreateFlow();
-            return _baseProcessRunner.Run(WrapInFlow(startInfo), handler, stateProvider, monitor, timeout);
+            return _baseProcessRunner.Run(processRun.WithStartInfo(WrapInFlow(processRun.StartInfo)), timeout);
         }
         
-        public Task<ProcessResult> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
+        public Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken)
         {
             var flow = CreateFlow();
-            return _baseProcessRunner.RunAsync(WrapInFlow(startInfo), handler, stateProvider, monitor, cancellationToken)
+            return _baseProcessRunner.RunAsync(processRun.WithStartInfo(WrapInFlow(processRun.StartInfo)), cancellationToken)
                 .ContinueWith(
                     task =>
                     {

@@ -3,7 +3,6 @@ namespace TeamCity.CSharpInteractive
 {
     using System.Collections;
     using System.Diagnostics.CodeAnalysis;
-    using Contracts;
     using Microsoft.Build.Framework;
 
     [ExcludeFromCodeCoverage]

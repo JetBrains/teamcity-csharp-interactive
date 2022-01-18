@@ -8,7 +8,6 @@ namespace Cmd
     using System.Collections.Immutable;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Text;
     using TeamCity.CSharpInteractive.Contracts;
 

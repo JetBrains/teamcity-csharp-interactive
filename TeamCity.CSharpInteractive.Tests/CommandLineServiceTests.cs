@@ -26,9 +26,8 @@ public class CommandLineServiceTests
         var startInfo = new Mock<IStartInfo>();
         var process = new Mock<IProcess>();
         process.Setup(i => i.GetStartInfo(_host.Object)).Returns(startInfo.Object);
-        var stateProvider = process.As<IProcessStateProvider>();
         var cmdService = CreateInstance();
-        _processRunner.Setup(i => i.Run(startInfo.Object, Handler, stateProvider.Object, It.IsAny<IProcessMonitor>(), TimeSpan.FromSeconds(1))).Returns(new ProcessResult(ProcessState.Succeeded, 33));
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessRun>(), TimeSpan.FromSeconds(1))).Returns(new ProcessResult(ProcessState.Succeeded, 33));
 
         // When
         var exitCode = cmdService.Run(process.Object, Handler, TimeSpan.FromSeconds(1));
@@ -46,9 +45,8 @@ public class CommandLineServiceTests
         var startInfo = new Mock<IStartInfo>();
         var process = new Mock<IProcess>();
         process.Setup(i => i.GetStartInfo(_host.Object)).Returns(startInfo.Object);
-        var stateProvider = process.As<IProcessStateProvider>();
         var cmdService = CreateInstance();
-        _processRunner.Setup(i => i.RunAsync(startInfo.Object, Handler, stateProvider.Object, It.IsAny<IProcessMonitor>(), token)).Returns(Task.FromResult(new ProcessResult(ProcessState.Succeeded, 33)));
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessRun>(), token)).Returns(Task.FromResult(new ProcessResult(ProcessState.Succeeded, 33)));
 
         // When
         var exitCode = await cmdService.RunAsync(process.Object, Handler, token);

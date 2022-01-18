@@ -73,7 +73,7 @@ public class ProcessMonitorTests
         monitor.Finished(_startInfo.Object, 22, state, 33);
         
         // Then
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process ", color), new(stateDescription, color), new(" (in 22 ms)", Color.Default), new(" with exit code 33", Color.Default), new(".", Color.Default)}))));
+        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process ", color), new(stateDescription, color), new(" (in 22 ms)"), new(" with exit code 33"), new(".")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
@@ -91,15 +91,7 @@ public class ProcessMonitorTests
         monitor.Finished(_startInfo.Object, 22, ProcessState.Failed, 33);
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => 
-            text.Length == 5
-            && text[0].Value == "99 \"Abc xyz\" process "
-            && text[1].Value == "failed"
-            && text[2].Value == $" (in {22} ms)"
-            && text[3].Value == $" with exit code {33}"
-            && text[4].Value == $"."
-        )));
-
+        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process "), new("failed"), new(" (in 22 ms)"), new(" with exit code 33"), new(".")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
     }
@@ -115,7 +107,7 @@ public class ProcessMonitorTests
         monitor.Finished(_startInfo.Object, 22, ProcessState.Failed);
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("\"Abc xyz\" process ", Color.Default), new("failed to start", Color.Default), new(" (in 22 ms)", Color.Default), new(".", Color.Default)}))));
+        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("\"Abc xyz\" process "), new("failed to start"), new(" (in 22 ms)"), new(".")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
     }
@@ -132,7 +124,7 @@ public class ProcessMonitorTests
         monitor.Finished(_startInfo.Object, 22, ProcessState.Canceled);
 
         // Then
-        _log.Verify(i => i.Warning(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process ", Color.Default), new("canceled", Color.Default), new(" (in 22 ms)", Color.Default), new(".", Color.Default)}))));
+        _log.Verify(i => i.Warning(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process "), new("canceled"), new(" (in 22 ms)"), new(".")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>()), Times.Never);
     }

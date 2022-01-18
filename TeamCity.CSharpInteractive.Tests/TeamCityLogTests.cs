@@ -2,7 +2,6 @@ namespace TeamCity.CSharpInteractive.Tests
 {
     using JetBrains.TeamCity.ServiceMessages.Write.Special;
     using Moq;
-    using Shouldly;
     using Xunit;
 
     public class TeamCityLogTests

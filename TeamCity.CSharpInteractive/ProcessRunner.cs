@@ -21,8 +21,9 @@ namespace TeamCity.CSharpInteractive
             _cancellationTokenSource = cancellationTokenSource;
         }
 
-        public ProcessResult Run(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, TimeSpan timeout)
+        public ProcessResult Run(ProcessRun processRun, TimeSpan timeout)
         {
+            var (startInfo, monitor, handler, stateProvider) = processRun;
             using var processManager = _processManagerFactory();
             if (handler != default)
             {
@@ -64,8 +65,9 @@ namespace TeamCity.CSharpInteractive
             return new ProcessResult(ProcessState.Canceled);
         }
 
-        public async Task<ProcessResult> RunAsync(IStartInfo startInfo, Action<Output>? handler, IProcessStateProvider? stateProvider, IProcessMonitor monitor, CancellationToken cancellationToken)
+        public async Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken)
         {
+            var (startInfo, monitor, handler, stateProvider) = processRun;
             if (cancellationToken == default || cancellationToken == CancellationToken.None)
             {
                 cancellationToken = _cancellationTokenSource.Token;

@@ -50,8 +50,8 @@ public class BuildServiceTests
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
         
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.Run(_startInfo.Object, It.IsAny<Action<Output>?>(), stateProvider.Object, It.IsAny<IProcessMonitor>(), TimeSpan.FromSeconds(1)))
-            .Callback<IStartInfo, Action<Output>?, IProcessStateProvider?, IProcessMonitor, TimeSpan>((_, handler, _, _, _) => handler!(output))
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessRun>(), TimeSpan.FromSeconds(1)))
+            .Callback<ProcessRun, TimeSpan>((processRun, _) => processRun.Handler!(output))
             .Returns(ProcessResult);
         
         var customHandler = Mock.Of<Action<BuildMessage>>();
@@ -81,8 +81,8 @@ public class BuildServiceTests
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
         
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.Run(_startInfo.Object, It.IsAny<Action<Output>?>(), stateProvider.Object, It.IsAny<IProcessMonitor>(), TimeSpan.FromSeconds(1)))
-            .Callback<IStartInfo, Action<Output>?, IProcessStateProvider?, IProcessMonitor, TimeSpan>((_, handler, _, _, _) => handler!(output))
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessRun>(), TimeSpan.FromSeconds(1)))
+            .Callback<ProcessRun, TimeSpan>((processRun, _) => processRun.Handler!(output))
             .Returns(ProcessResult);
         
         // When
@@ -100,9 +100,9 @@ public class BuildServiceTests
         // Given
         using var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
-        var stateProvider = _process.As<IProcessStateProvider>();
+        _process.As<IProcessStateProvider>();
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.RunAsync(_startInfo.Object, It.IsAny<Action<Output>?>(), stateProvider.Object, It.IsAny<IProcessMonitor>(), token)).Returns(Task.FromResult(ProcessResult));
+        _processRunner.Setup(i => i.RunAsync(It.Is<ProcessRun>(processRun => processRun.StateProvider != default), token)).Returns(Task.FromResult(ProcessResult));
 
         // When
         await buildService.RunAsync(_process.Object, Mock.Of<Action<BuildMessage>?>(), token);

@@ -1,6 +1,7 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+// ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using Cmd;
