@@ -8,10 +8,8 @@ namespace Dotnet
 
     [Immutype.Target]
     [DebuggerTypeProxy(typeof(BuildStatisticsDebugView))]
-    public record BuildStatistics(string Name = "", int Errors = default, int Warnings = default, int Tests = default, int FailedTests = default, int IgnoredTests = default, int PassedTests = default)
+    public record BuildStatistics(int Errors = default, int Warnings = default, int Tests = default, int FailedTests = default, int IgnoredTests = default, int PassedTests = default)
     {
-        internal static readonly BuildStatistics Empty = new();
-
         public bool IsEmpty =>
             Errors == 0
                 && Warnings == 0
@@ -28,7 +26,7 @@ namespace Dotnet
             }
             
             var sb = new StringBuilder();
-            foreach (var reason in FormatReasons(GetReasons(this, Name).ToArray()))
+            foreach (var reason in FormatReasons(GetReasons(this).ToArray()))
             {
                 sb.Append(reason);
             }
@@ -58,41 +56,36 @@ namespace Dotnet
             }
         }
         
-        private static IEnumerable<string> GetReasons(BuildStatistics statistics, string name)
+        private static IEnumerable<string> GetReasons(BuildStatistics statistics)
         {
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                name += ' ';
-            }
-
             if (statistics.Errors > 0)
             {
-                yield return $"{statistics.Errors} {name}{GetName("error", statistics.Errors)}";
+                yield return $"{statistics.Errors} {GetName("error", statistics.Errors)}";
             }
 
             if (statistics.Warnings > 0)
             {
-                yield return $"{statistics.Warnings} {name}{GetName("warning", statistics.Warnings)}";
+                yield return $"{statistics.Warnings} {GetName("warning", statistics.Warnings)}";
             }
 
             if (statistics.FailedTests > 0)
             {
-                yield return $"{statistics.FailedTests} {name}failed";
+                yield return $"{statistics.FailedTests} failed";
             }
 
             if (statistics.IgnoredTests > 0)
             {
-                yield return $"{statistics.IgnoredTests} {name}ignored";
+                yield return $"{statistics.IgnoredTests} ignored";
             }
 
             if (statistics.PassedTests > 0)
             {
-                yield return $"{statistics.PassedTests} {name}passed";
+                yield return $"{statistics.PassedTests} passed";
             }
                 
             if (statistics.Tests > 0)
             {
-                yield return $"{statistics.Tests} {name}{GetName("test", statistics.Tests)}";
+                yield return $"{statistics.Tests} total {GetName("test", statistics.Tests)}";
             }
         }
 

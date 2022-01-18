@@ -164,7 +164,6 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
                 .Bind<ICommandLine>().To<CommandLineService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
-                .Bind<Dotnet.IStatisticsCalculator>().To<BuildStatisticsCalculator>()
                 .Bind<ITeamCity>().Bind<ITeamCityContext>().To<TeamCityService>()
 
                 // TeamCity Service messages

@@ -12,7 +12,6 @@ using BuildResult = BuildResult;
 
 public class BuildResultTests
 {
-    private readonly Mock<IStatisticsCalculator> _statisticsCalculator = new();
     private readonly Mock<ITestDisplayNameToFullyQualifiedNameConverter> _testDisplayNameToFullyQualifiedNameConverter = new();
     private readonly Mock<IStartInfo> _startInfo = new();
 
@@ -262,5 +261,5 @@ public class BuildResultTests
     }
 
     private BuildResult CreateInstance() =>
-        new(_statisticsCalculator.Object, _testDisplayNameToFullyQualifiedNameConverter.Object);
+        new(_testDisplayNameToFullyQualifiedNameConverter.Object);
 }

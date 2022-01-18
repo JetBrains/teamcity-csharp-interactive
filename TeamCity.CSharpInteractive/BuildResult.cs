@@ -12,7 +12,6 @@ namespace TeamCity.CSharpInteractive
 
     internal class BuildResult : IBuildResult
     {
-        private readonly IStatisticsCalculator _statisticsCalculator;
         private readonly ITestDisplayNameToFullyQualifiedNameConverter _testDisplayNameToFullyQualifiedNameConverter;
         private readonly List<BuildMessage> _errors = new();
         private readonly List<BuildMessage> _warnings = new();
@@ -21,11 +20,8 @@ namespace TeamCity.CSharpInteractive
         private readonly Dictionary<TestKey, TestContext> _currentTests = new();
         private readonly Dictionary<string, LinkedList<string>> _assemblies = new();
 
-        public BuildResult(
-            IStatisticsCalculator statisticsCalculator,
-            ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter)
+        public BuildResult(ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter)
         {
-            _statisticsCalculator = statisticsCalculator;
             _testDisplayNameToFullyQualifiedNameConverter = testDisplayNameToFullyQualifiedNameConverter;
         }
 
@@ -63,12 +59,11 @@ namespace TeamCity.CSharpInteractive
 
             return new Dotnet.BuildResult(
                 buildState,
-                _statisticsCalculator,
+                startInfo,
                 _errors.AsReadOnly(),
                 _warnings.AsReadOnly(),
                 _tests.AsReadOnly(),
-                new []{ new CommandLineResult(startInfo, exitCode) },
-                Array.Empty<Dotnet.BuildResult>());
+                exitCode);
         }
 
         private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo, int processId)

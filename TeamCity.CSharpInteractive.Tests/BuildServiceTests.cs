@@ -27,7 +27,7 @@ public class BuildServiceTests
 
     public BuildServiceTests()
     {
-        var buildResult = new BuildResult(BuildState.Succeeded).AddCommandLines(new CommandLineResult(_startInfo.Object, 33));
+        var buildResult = new BuildResult(BuildState.Succeeded, _startInfo.Object).WithExitCode(33);
         _process.Setup(i => i.GetStartInfo(_host.Object)).Returns(_startInfo.Object);
         _resultFactory = () => _buildResult.Object;
         _monitorFactory = () => _processMonitor.Object;

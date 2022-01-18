@@ -38,7 +38,7 @@ public class ReliableBuildResultTests
     {
         // Given
         var result = CreateInstance();
-        var buildResult = new BuildResult(BuildState.Succeeded).AddCommandLines(new CommandLineResult(_startInfo.Object, 33));
+        var buildResult = new BuildResult(BuildState.Succeeded, _startInfo.Object).WithExitCode(33);
         var messages = Mock.Of<IReadOnlyList<BuildMessage>>();
         _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, 11, It.IsAny<IServiceMessage>())).Returns(messages);
         _baseBuildResult.Setup(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33)).Returns(buildResult);

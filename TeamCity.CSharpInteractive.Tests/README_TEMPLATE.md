@@ -36,7 +36,6 @@
   - [Run a project](#run-a-project)
   - [Test a project](#test-a-project)
   - [Test an assembly](#test-an-assembly)
-  - [Pipelines](#pipelines)
 - NuGet API
   - [Restore NuGet a package of newest version](#restore-nuget-a-package-of-newest-version)
   - [Restore a NuGet package by a version range for the specified .NET and path](#restore-a-nuget-package-by-a-version-range-for-the-specified-.net-and-path)
@@ -555,39 +554,6 @@ result = build.Run(
 
 // The "result" variable provides details about a build
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
-result.State.ShouldBe(BuildState.Succeeded);
-```
-
-
-
-### Pipelines
-
-
-
-``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
-
-// Resolves a build service
-var build = GetService<IBuild>();
-
-var runMSTests = 
-    build.RunAsync(new Custom("new", "mstest", "-n", "MSTestTests", "--force"))
-    .ContinueWith(build.RunAsync(new Test().WithWorkingDirectory("MSTestTests")));
-
-var runXUnitTests = 
-    build.RunAsync(new Custom("new", "xunit", "-n", "XUnitTests", "--force"))
-    .ContinueWith(build.RunAsync(new Test().WithWorkingDirectory("XUnitTests")));
-
-var pack = 
-    build.RunAsync(new Custom("new", "classlib", "-n", "MyLib", "--force"))
-    .ContinueWith(build.RunAsync(new Build().WithWorkingDirectory("MyLib")))
-    .ContinueWith(build.RunAsync(new Pack().WithWorkingDirectory("MyLib").WithNoBuild(true)));
-
-// Creates NuGet package after running all tests in parallel, when all tests pass
-var result = await Task.WhenAll(runMSTests, runXUnitTests)
-    .ContinueWith(pack, previousBuild => previousBuild.State == BuildState.Succeeded && previousBuild.Totals.FailedTests == 0);
-
 result.State.ShouldBe(BuildState.Succeeded);
 ```
 

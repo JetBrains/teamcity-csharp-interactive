@@ -89,7 +89,7 @@ var failedTests =
     Enumerable.Repeat(new Test().WithNoBuild(true).AddProps(commonProps), testAttempts)
     // Passing an output handler to avoid reporting to CI
     .Select((test, index) => build.Run(test.WithShortName($"Testing (attempt {index + 1})"), _ => {}))
-    .TakeWhile(result => result.Totals.FailedTests > 0)
+    .TakeWhile(result => result.Summary.FailedTests > 0)
     .ToList();
 
 if (failedTests.Count == testAttempts)
