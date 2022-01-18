@@ -384,7 +384,7 @@ result.State.ShouldBe(BuildState.Succeeded);
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
 
 // The "result" variable provides details about a build
-result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
 result.State.ShouldBe(BuildState.Succeeded);
 ```
 
@@ -466,7 +466,7 @@ result = build.Run(
         .WithVerbosity(Verbosity.Detailed));
 
 // The "result" variable provides details about a build
-result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
 result.State.ShouldBe(BuildState.Succeeded);
 ```
 
@@ -644,14 +644,14 @@ var runXUnitTests =
     build.RunAsync(new Custom("new", "xunit", "-n", "XUnitTests", "--force"))
     .ContinueWith(build.RunAsync(new Test().WithWorkingDirectory("XUnitTests")));
 
-var publish = 
+var pack = 
     build.RunAsync(new Custom("new", "classlib", "-n", "MyLib", "--force"))
     .ContinueWith(build.RunAsync(new Build().WithWorkingDirectory("MyLib")))
-    .ContinueWith(build.RunAsync(new Publish().WithWorkingDirectory("MyLib").WithNoBuild(true)));
+    .ContinueWith(build.RunAsync(new Pack().WithWorkingDirectory("MyLib").WithNoBuild(true)));
 
-// Published after running all tests in parallel, when all tests pass
+// Creates NuGet package after running all tests in parallel, when all tests pass
 var result = await Task.WhenAll(runMSTests, runXUnitTests)
-    .ContinueWith(publish, previousBuild => previousBuild.State == BuildState.Succeeded && previousBuild.Totals.FailedTests == 0);
+    .ContinueWith(pack, previousBuild => previousBuild.State == BuildState.Succeeded && previousBuild.Totals.FailedTests == 0);
 
 result.State.ShouldBe(BuildState.Succeeded);
 ```
@@ -745,7 +745,7 @@ var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath(
 result = build.Run(baseDockerCmd.WithProcess(buildCmd), output => {});
 
 // The "result" variable provides details about a build
-result.Messages.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
 result.State.ShouldBe(BuildState.Succeeded);
 ```
 
