@@ -17,7 +17,7 @@ namespace TeamCity.CSharpInteractive
         private readonly IFileSystem _fileSystem;
         private readonly IMessagesReader _messagesReader;
         private readonly IBuildResult _baseBuildResult;
-        private readonly Dictionary<string, ProcessInfo> _sources = new();
+        private readonly Dictionary<string, Output> _sources = new();
 
         public ReliableBuildResult(
             ITeamCitySettings teamCitySettings,
@@ -31,19 +31,22 @@ namespace TeamCity.CSharpInteractive
             _baseBuildResult = baseBuildResult;
         }
 
-        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, int processId, IServiceMessage message)
+        public IReadOnlyList<BuildMessage> ProcessMessage(in Output output, IServiceMessage message)
         {
             var source = message.GetValue("source");
             if (string.IsNullOrWhiteSpace(source))
             {
-                return _baseBuildResult.ProcessMessage(startInfo, processId, message);
+                return _baseBuildResult.ProcessMessage(output, message);
             }
 
-            _sources.TryAdd(source, new ProcessInfo(startInfo, processId));
+            _sources.TryAdd(source, output.WithLine(string.Empty));
             return Array.Empty<BuildMessage>();
         }
 
-        public Dotnet.BuildResult Create(IStartInfo startInfo, ProcessState state, int? exitCode)
+        public IReadOnlyList<BuildMessage> ProcessOutput(in Output output) =>
+            _baseBuildResult.ProcessOutput(output);
+
+        public Dotnet.BuildResult Create(IStartInfo startInfo, int? exitCode)
         {
             var items = 
                 from source in _sources
@@ -55,14 +58,12 @@ namespace TeamCity.CSharpInteractive
                 select (message, startInfoFactory: source.Value);
 
             // ReSharper disable once UseDeconstruction
-            foreach (var (message, processInfo) in items)
+            foreach (var (message, output) in items)
             {
-                _baseBuildResult.ProcessMessage(processInfo.StartInfo, processInfo.ProcessId, message);
+                _baseBuildResult.ProcessMessage(output, message);
             }
             
-            return _baseBuildResult.Create(startInfo, state, exitCode);
+            return _baseBuildResult.Create(startInfo, exitCode);
         }
-
-        private record ProcessInfo(IStartInfo StartInfo, int ProcessId);
     }
 }

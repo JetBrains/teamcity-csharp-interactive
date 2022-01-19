@@ -9,6 +9,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class NuGetRestoreAdvanced: Scenario
     {
         [SkippableFact]

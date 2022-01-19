@@ -5,11 +5,11 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Linq;
-    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class DotnetBuild: Scenario
     {
         [Fact]
@@ -28,14 +28,14 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
             var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
 
             // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
             result = build.Run(new Build().WithWorkingDirectory("MyLib"));
             
             // The "result" variable provides details about a build
             result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             // }
         }
     }

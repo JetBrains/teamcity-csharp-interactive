@@ -4,11 +4,11 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Collections.Generic;
-    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class DotnetRun: Scenario
     {
         [Fact]
@@ -27,12 +27,12 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
             var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
 
             // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
             var stdOut = new List<string>(); 
             result = build.Run(new Run().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             
             // Checks StdOut
             stdOut.ShouldBe(new []{ "Hello, World!" });

@@ -31,6 +31,8 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // When
             statistics.RegisterError("error1");
+            statistics.RegisterError("");
+            statistics.RegisterError("   ");
             statistics.RegisterError("error2");
 
             // Then
@@ -45,6 +47,8 @@ namespace TeamCity.CSharpInteractive.Tests
 
             // When
             statistics.RegisterWarning("warning1");
+            statistics.RegisterWarning("");
+            statistics.RegisterWarning("   ");
             statistics.RegisterWarning("warning2");
 
             // Then

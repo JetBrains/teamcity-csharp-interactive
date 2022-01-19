@@ -4,11 +4,11 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Linq;
-    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class DotnetTest: Scenario
     {
         [Fact]
@@ -27,14 +27,14 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
             var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
 
             // Runs tests via a command like: "dotnet test" from the directory "MyTests"
             result = build.Run(new Test().WithWorkingDirectory("MyTests"));
             
             // The "result" variable provides details about a build
             result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             // }
         }
     }

@@ -12,7 +12,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $visible=true
             // $tag=08 Global state
             // $priority=01
-            // $description=Using _Props_ dictionary
+            // $description=Using Props dictionary
             // $header=Properties _Props_ have got from TeamCity system properties automatically.
             // {
             WriteLine(Props["TEAMCITY_VERSION"]);

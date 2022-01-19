@@ -1,5 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
+using System.Linq;
 using Dotnet;
 using Moq;
 using Xunit;
@@ -7,6 +8,8 @@ using Xunit;
 public class BuildMessageLogWriterTests
 {
     private readonly Mock<ILog<BuildMessageLogWriter>> _log = new();
+    private readonly Mock<IStdOut> _stdOut = new ();
+    private readonly Mock<IStdErr> _stdErr = new ();
 
     [Fact]
     public void ShouldWriteInfo()
@@ -15,10 +18,23 @@ public class BuildMessageLogWriterTests
         var writer = CreateInstance();
 
         // When
-        writer.Write(new BuildMessage(BuildMessageState.Info, default, "Abc"));
+        writer.Write(new BuildMessage(BuildMessageState.StdOut, default, "Abc"));
 
         // Then
-        _log.Verify(i => i.Info(It.IsAny<Text[]>()));
+        _stdOut.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new [] {new Text("Abc")}))));
+    }
+    
+    [Fact]
+    public void ShouldWriteStdErr()
+    {
+        // Given
+        var writer = CreateInstance();
+
+        // When
+        writer.Write(new BuildMessage(BuildMessageState.StdErr, default, "Abc"));
+
+        // Then
+        _stdErr.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new [] {new Text("Abc")}))));
     }
     
     [Fact]
@@ -51,5 +67,5 @@ public class BuildMessageLogWriterTests
     }
 
     private BuildMessageLogWriter CreateInstance() =>
-        new(_log.Object);
+        new(_log.Object, _stdOut.Object, _stdErr.Object);
 }

@@ -17,7 +17,6 @@ namespace Dotnet
     [Immutype.Target]
     [DebuggerTypeProxy(typeof(BuildResultDebugView))]
     public record BuildResult(
-        BuildState State,
         IStartInfo StartInfo,
         IReadOnlyList<BuildMessage> Errors,
         IReadOnlyList<BuildMessage> Warnings,
@@ -27,8 +26,8 @@ namespace Dotnet
         private readonly object _lockObject = new();
         private BuildStatistics? _summary;
 
-        public BuildResult(BuildState state, IStartInfo startInfo)
-            : this(state, startInfo, Array.Empty<BuildMessage>(), Array.Empty<BuildMessage>(), Array.Empty<TestResult>(), default)
+        public BuildResult(IStartInfo startInfo)
+            : this(startInfo, Array.Empty<BuildMessage>(), Array.Empty<BuildMessage>(), Array.Empty<TestResult>(), default)
         { }
 
         public BuildStatistics Summary
@@ -50,7 +49,7 @@ namespace Dotnet
             var sb = new StringBuilder();
             sb.Append(string.IsNullOrWhiteSpace(StartInfo.ShortName) ? "Build" : $"\"{StartInfo.ShortName}\"");
             sb.Append(" is ");
-            sb.Append(State.ToString().ToLowerInvariant());
+            sb.Append(ExitCode.HasValue ? "finished" : "not finished");
             if (Summary.IsEmpty != true)
             {
                 sb.Append(" with ");
@@ -108,8 +107,6 @@ namespace Dotnet
 
             public BuildResultDebugView(BuildResult result) => _result = result;
             
-            public BuildState State => _result.State;
-
             public BuildStatistics Summary => _result.Summary;
 
             [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]

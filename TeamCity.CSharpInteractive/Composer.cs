@@ -92,7 +92,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
                 .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
                 .Bind<IActive>(typeof(Debugger)).To<Debugger>()
-                .Bind<IWellknownValueResolver>().To<WellknownValueResolver>()
+                .Bind<Docker.ISettings>().To<DockerSettings>()
                 .Bind<IBuildResult>("base").As(Transient).To<BuildResult>()
                 .Bind<IBuildResult>().As(Transient).To<ReliableBuildResult>()
                 .Bind<ITextToColorStrings>().To<TextToColorStrings>()
@@ -106,9 +106,10 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IPathResolverContext>().Bind<IVirtualContext>().To<PathResolverContext>()
                 .Bind<IEncoding>().To<Utf8Encoding>()
                 .Bind<IProcessMonitor>().As(Transient).To<ProcessMonitor>()
-                .Bind<IBuildOutputConverter>().To<BuildOutputConverter>()
+                .Bind<IBuildOutputProcessor>().To<BuildOutputProcessor>()
                 .Bind<IBuildMessagesProcessor>("default").To<DefaultBuildMessagesProcessor>()
                 .Bind<IBuildMessagesProcessor>("custom").To<CustomMessagesProcessor>()
+                .Bind<HostComponents>().To<HostComponents>()
 
                 // Script options factory
                 .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))
@@ -164,7 +165,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
                 .Bind<ICommandLine>().To<CommandLineService>()
                 .Bind<Dotnet.IBuild>().To<BuildService>()
-                .Bind<ITeamCity>().Bind<ITeamCityContext>().To<TeamCityService>()
+                .Bind<Dotnet.ISettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
 
                 // TeamCity Service messages
                 .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()

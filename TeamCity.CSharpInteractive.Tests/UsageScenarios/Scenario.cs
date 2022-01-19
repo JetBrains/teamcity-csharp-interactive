@@ -52,5 +52,9 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 
             public bool TryGetValue(string key, out string value) => _dict.TryGetValue(key, out value!);
         }
+
+        public void Exit(int exitCode)
+        {
+        }
     }
 }

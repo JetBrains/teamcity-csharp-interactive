@@ -4,11 +4,11 @@
 // ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
-    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class DotnetClean: Scenario
     {
         [Fact]
@@ -27,17 +27,17 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
             var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
 
             // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
             result = build.Run(new Build().WithWorkingDirectory("MyLib"));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             
             // Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
             result = build.Run(new Clean().WithWorkingDirectory("MyLib"));
             
             // The "result" variable provides details about a build
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             // }
         }
     }

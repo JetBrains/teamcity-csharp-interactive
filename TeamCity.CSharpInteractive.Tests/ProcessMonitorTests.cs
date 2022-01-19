@@ -60,9 +60,8 @@ public class ProcessMonitorTests
     }
 
     [Theory]
-    [InlineData(ProcessState.Succeeded, "finished successfully", Color.Highlighted)]
-    [InlineData(ProcessState.Unknown, "finished", Color.Highlighted)]
-    public void ShouldLogWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
+    [InlineData(ProcessState.Finished, "finished", Color.Highlighted)]
+    internal void ShouldLogWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
     {
         // Given
         _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
@@ -107,7 +106,7 @@ public class ProcessMonitorTests
         monitor.Finished(_startInfo.Object, 22, ProcessState.Failed);
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("\"Abc xyz\" process "), new("failed to start"), new(" (in 22 ms)"), new(".")}))));
+        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("\"Abc xyz\" process "), new("failed"), new(" (in 22 ms)"), new(".")}))));
         _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
     }

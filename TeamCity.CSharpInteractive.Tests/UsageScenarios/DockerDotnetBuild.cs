@@ -6,12 +6,12 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Cmd;
     using Docker;
     using Dotnet;
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class DockerDotnetBuild: Scenario
     {
         [Fact(Skip = "Linux Docker only")]
@@ -42,7 +42,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // Creates a new library project in a docker container
             var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
             var result = build.Run(baseDockerCmd.WithProcess(customCmd));
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
 
             // Builds the library project in a docker container
             var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
@@ -50,7 +50,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             
             // The "result" variable provides details about a build
             result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             // }
         }
     }

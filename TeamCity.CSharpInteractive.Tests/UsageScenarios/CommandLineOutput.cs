@@ -7,6 +7,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class CommandLineOutput: Scenario
     {
         [SkippableFact]

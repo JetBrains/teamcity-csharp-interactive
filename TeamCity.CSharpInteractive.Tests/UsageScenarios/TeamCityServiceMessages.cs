@@ -45,7 +45,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
                 
                 using (var test = tests.OpenTest("Test2"))
                 {
-                    test.WriteFailed("Some error", "Error details");
+                    test.WriteIgnored("Some reason");
                 }
             }
             // }

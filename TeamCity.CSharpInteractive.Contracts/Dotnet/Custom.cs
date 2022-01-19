@@ -4,7 +4,6 @@
 // ReSharper disable UnusedType.Global
 namespace Dotnet
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -20,16 +19,12 @@ namespace Dotnet
         string ShortName = "")
         : IProcess
     {
-        public Custom()
-            : this(Array.Empty<string>())
-        { }
-        
         public Custom(params string[] args)
             : this(args, Enumerable.Empty<(string, string)>())
         { }
         
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
                 .WithShortName(string.IsNullOrWhiteSpace(ShortName) ? ((ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath)) + " " + Args.FirstOrDefault()).TrimEnd() : ShortName)
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithVars(Vars.ToArray())

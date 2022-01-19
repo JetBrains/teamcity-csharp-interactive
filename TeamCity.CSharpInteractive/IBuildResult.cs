@@ -8,8 +8,10 @@ namespace TeamCity.CSharpInteractive
 
     internal interface IBuildResult
     {
-        IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, int processId, IServiceMessage message);
+        IReadOnlyList<BuildMessage> ProcessMessage(in Output output, IServiceMessage message);
         
-        Dotnet.BuildResult Create(IStartInfo startInfo, ProcessState state, int? exitCode);
+        IReadOnlyList<BuildMessage> ProcessOutput(in Output output);
+
+        Dotnet.BuildResult Create(IStartInfo startInfo, int? exitCode);
     }
 }

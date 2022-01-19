@@ -11,8 +11,8 @@ namespace Cmd
 
         string WorkingDirectory { get; }
 
-        IReadOnlyList<string> Args { get; }
+        IEnumerable<string> Args { get; }
 
-        IReadOnlyList<(string name, string value)> Vars { get; }
+        IEnumerable<(string name, string value)> Vars { get; }
     }
 }

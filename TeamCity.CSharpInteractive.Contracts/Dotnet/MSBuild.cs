@@ -42,18 +42,14 @@ namespace Dotnet
             bool Version = false,
             Verbosity? Verbosity = default,
             string ShortName = "")
-        : IProcess, IProcessStateProvider
+        : IProcess
     {
         public MSBuild()
-            : this(string.Empty)
-        { }
-
-        public MSBuild(string ExecutablePath)
-            : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), ExecutablePath)
+            : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>())
         { }
         
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath))
                 .WithArgs(ExecutablePath == string.Empty ? new [] {"msbuild"} : Array.Empty<string>())
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
@@ -87,7 +83,5 @@ namespace Dotnet
                 .AddProps("-restoreProperty", RestoreProps.ToArray())
                 .AddProps("/p", Props.ToArray())
                 .AddArgs(Args.ToArray());
-
-        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Succeeded : ProcessState.Failed;
     }
 }

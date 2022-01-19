@@ -12,7 +12,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $visible=true
             // $tag=08 Global state
             // $priority=00
-            // $description=Using _Args_
+            // $description=Using Args
             // $header=_Args_ have got from the script arguments.
             // {
             if (Args.Count > 0)

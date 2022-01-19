@@ -2,9 +2,9 @@
 ## Usage Scenarios
 
 - Global state
-  - [Using _Args_](#using-_args_)
-  - [Using _Props_ dictionary](#using-_props_-dictionary)
-  - [Using the _Host_ property](#using-the-_host_-property)
+  - [Using Args](#using-args)
+  - [Using Props dictionary](#using-props-dictionary)
+  - [Using the Host property](#using-the-host-property)
   - [Get services](#get-services)
 - Logging
   - [Write a line to a build log](#write-a-line-to-a-build-log)
@@ -42,7 +42,7 @@
 - TeamCity Service Messages API
   - [TeamCity integration via service messages](#teamcity-integration-via-service-messages)
 
-### Using _Args_
+### Using Args
 
 _Args_ have got from the script arguments.
 
@@ -60,7 +60,7 @@ if (Args.Count > 1)
 
 
 
-### Using _Props_ dictionary
+### Using Props dictionary
 
 Properties _Props_ have got from TeamCity system properties automatically.
 
@@ -75,7 +75,7 @@ Props["Version"] = "1.1.6";
 
 
 
-### Using the _Host_ property
+### Using the Host property
 
 [_Host_](TeamCity.CSharpInteractive.Contracts/IHost.cs) is actually the provider of all global properties and methods.
 
@@ -312,14 +312,14 @@ var build = GetService<IBuild>();
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
 
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -337,17 +337,17 @@ var build = GetService<IBuild>();
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
 result = build.Run(new Clean().WithWorkingDirectory("MyLib"));
 
 // The "result" variable provides details about a build
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -369,7 +369,7 @@ var result = build.Run(
     new Custom("--version"),
     message => Version.TryParse(message.Text, out version));
 
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 version.ShouldNotBeNull();
 ```
 
@@ -388,7 +388,7 @@ var build = GetService<IBuild>();
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
 result = build.Run(
@@ -401,7 +401,7 @@ result = build.Run(
 
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -419,7 +419,7 @@ var build = GetService<IBuild>();
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Creates a NuGet package of version 1.2.3 for the project, running a command like: "dotnet pack /p:version=1.2.3" from the directory "MyLib"
 result = build.Run(
@@ -427,7 +427,7 @@ result = build.Run(
         .WithWorkingDirectory("MyLib")
         .AddProps(("version", "1.2.3")));
 
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -445,11 +445,11 @@ var build = GetService<IBuild>();
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
 result = build.Run(new Publish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -467,11 +467,11 @@ var build = GetService<IBuild>();
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
 result = build.Run(new Restore().WithWorkingDirectory("MyLib"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -489,12 +489,12 @@ var build = GetService<IBuild>();
 
 // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
 var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
 var stdOut = new List<string>(); 
 result = build.Run(new Run().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Checks StdOut
 stdOut.ShouldBe(new []{ "Hello, World!" });
@@ -515,14 +515,14 @@ var build = GetService<IBuild>();
 
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
 var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Runs tests via a command like: "dotnet test" from the directory "MyTests"
 result = build.Run(new Test().WithWorkingDirectory("MyTests"));
 
 // The "result" variable provides details about a build
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -540,11 +540,11 @@ var build = GetService<IBuild>();
 
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
 var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
 result = build.Run(new Build().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
 result = build.Run(
@@ -554,7 +554,7 @@ result = build.Run(
 
 // The "result" variable provides details about a build
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -567,7 +567,7 @@ result.State.ShouldBe(BuildState.Succeeded);
 // Adds the namespace "NuGet" to use INuGet
 using NuGet;
 
-IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore("IoC.Container", "*");
+IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new RestoreSettings("IoC.Container").WithVersionRange(VersionRange.All));
 ```
 
 
@@ -584,11 +584,12 @@ var packagesPath = System.IO.Path.Combine(
     System.IO.Path.GetTempPath(),
     Guid.NewGuid().ToString()[..4]);
 
-IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(
-    "IoC.Container",
-    "[1.3, 1.3.8)",
-    "net5.0",
-    packagesPath);
+var settings = new RestoreSettings("IoC.Container")
+    .WithVersionRange(VersionRange.Parse("[1.3, 1.3.8)"))
+    .WithTargetFrameworkMoniker("net5.0")
+    .WithPackagesPath(packagesPath);
+
+IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
 ```
 
 
@@ -639,7 +640,7 @@ var baseDockerCmd = new Docker.Run()
 // Creates a new library project in a docker container
 var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
 var result = build.Run(baseDockerCmd.WithProcess(customCmd));
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 
 // Builds the library project in a docker container
 var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
@@ -647,7 +648,7 @@ result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
 
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
-result.State.ShouldBe(BuildState.Succeeded);
+result.ExitCode.ShouldBe(0);
 ```
 
 
@@ -682,7 +683,7 @@ using (var tests = writer.OpenBlock("My Tests"))
     
     using (var test = tests.OpenTest("Test2"))
     {
-        test.WriteFailed("Some error", "Error details");
+        test.WriteIgnored("Some reason");
     }
 }
 ```

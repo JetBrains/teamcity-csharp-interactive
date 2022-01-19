@@ -28,12 +28,12 @@ namespace Dotnet
         string ShortName = "")
         : IProcess
     {
-        public Run()
-            : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>())
+        public Run(params string[] args)
+            : this(args, Enumerable.Empty<(string, string)>())
         { }
         
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet run")
                 .WithArgs("run")
                 .WithWorkingDirectory(WorkingDirectory)

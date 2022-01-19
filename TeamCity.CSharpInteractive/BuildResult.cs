@@ -20,58 +20,54 @@ namespace TeamCity.CSharpInteractive
         private readonly Dictionary<TestKey, TestContext> _currentTests = new();
         private readonly Dictionary<string, LinkedList<string>> _assemblies = new();
 
-        public BuildResult(ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter)
-        {
+        public BuildResult(ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter) =>
             _testDisplayNameToFullyQualifiedNameConverter = testDisplayNameToFullyQualifiedNameConverter;
-        }
 
-        // ReSharper disable once ReturnTypeCanBeEnumerable.Local
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, int processId, IServiceMessage message)
-        {
-            return message.Name.ToLowerInvariant() switch
+        public IReadOnlyList<BuildMessage> ProcessMessage(in Output output, IServiceMessage message) => (
+            message.Name.ToLowerInvariant() switch
             {
-                "teststdout" => OnStdOut(message, startInfo, processId).ToArray(),
-                "teststderr" => OnStdErr(message, startInfo, processId).ToArray(),
-                "testsuitestarted" => OnTestSuiteStarted(message).ToArray(),
-                "testsuitefinished" => OnTestSuiteFinished(message).ToArray(),
-                "testfinished" => OnTestFinished(message).ToArray(),
-                "testignored" => OnTestIgnored(message).ToArray(),
-                "testfailed" => OnTestFailed(message).ToArray(),
-                "message" => OnMessage(message).ToArray(),
-                "buildproblem" => OnBuildProblem(message).ToArray(),
-                _ => new[]
-                {
-                    new BuildMessage(BuildMessageState.ServiceMessage, message)
-                }
-            };
+                "teststdout" => OnStdOut(message, output.StartInfo, output.ProcessId),
+                "teststderr" => OnStdErr(message, output.StartInfo, output.ProcessId),
+                "testsuitestarted" => OnTestSuiteStarted(message),
+                "testsuitefinished" => OnTestSuiteFinished(message),
+                "testfinished" => OnTestFinished(message),
+                "testignored" => OnTestIgnored(message),
+                "testfailed" => OnTestFailed(message),
+                "message" => OnMessage(message),
+                "buildproblem" => OnBuildProblem(message),
+                _ => Enumerable.Empty<BuildMessage>()
+            }).ToArray();
+
+        public IReadOnlyList<BuildMessage> ProcessOutput(in Output output)
+        {
+            BuildMessage message;
+            if (output.IsError)
+            {
+                message = new BuildMessage(BuildMessageState.StdErr, default, output.Line);
+                _errors.Add(message);
+            }
+            else
+            {
+                message = new BuildMessage(BuildMessageState.StdOut, default, output.Line);
+            }
+
+            return new []{ message };
         }
 
-        public Dotnet.BuildResult Create(IStartInfo startInfo, ProcessState state, int? exitCode)
-        {
-            var buildState = state switch
-            {
-                ProcessState.Failed => BuildState.Failed,
-                ProcessState.Canceled => BuildState.Canceled,
-                ProcessState.Succeeded => BuildState.Succeeded,
-                _ => BuildState.Succeeded
-            };
-
-            return new Dotnet.BuildResult(
-                buildState,
-                startInfo,
+        public Dotnet.BuildResult Create(IStartInfo startInfo, int? exitCode) =>
+            new(startInfo,
                 _errors.AsReadOnly(),
                 _warnings.AsReadOnly(),
                 _tests.AsReadOnly(),
                 exitCode);
-        }
 
         private IEnumerable<BuildMessage> OnStdOut(IServiceMessage message, IStartInfo startInfo, int processId)
         {
             var testKey = CreateKey(message);
             var output = message.GetValue("out") ?? string.Empty;
             GetTestContext(testKey).AddStdOut(startInfo, processId, output);
-            yield return new BuildMessage(BuildMessageState.Info).WithText(output);
+            yield return new BuildMessage(BuildMessageState.StdOut).WithText(output);
         }
 
         private IEnumerable<BuildMessage> OnStdErr(IServiceMessage message, IStartInfo info, int processId)
@@ -79,7 +75,9 @@ namespace TeamCity.CSharpInteractive
             var testKey = CreateKey(message);
             var output = message.GetValue("out") ?? string.Empty;
             GetTestContext(testKey).AddStdErr(info, processId, output);
-            yield return new BuildMessage(BuildMessageState.Error).WithText(output);
+            var buildMessage = new BuildMessage(BuildMessageState.StdErr).WithText(output);
+            _errors.Add(buildMessage);
+            yield return buildMessage;
         }
 
         private IEnumerable<BuildMessage> OnTestSuiteStarted(IServiceMessage message)
@@ -182,24 +180,27 @@ namespace TeamCity.CSharpInteractive
                 "WARNING" => BuildMessageState.Warning,
                 "FAILURE" => BuildMessageState.Failure,
                 "ERROR" => BuildMessageState.Error,
-                _ => BuildMessageState.Info
+                _ => BuildMessageState.StdOut
             };
 
             var errorDetails = message.GetValue("errorDetails") ?? string.Empty;
             var buildMessage = new BuildMessage(state, default, text, errorDetails);
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
-            switch (state)
+            if (!string.IsNullOrWhiteSpace(buildMessage.Text))
             {
-                case BuildMessageState.Warning:
-                    _warnings.Add(buildMessage);
-                    break;
-
-                case BuildMessageState.Failure:
-                case BuildMessageState.Error:
-                // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
-                case BuildMessageState.BuildProblem:
-                    _errors.Add(buildMessage);
-                    break;
+                switch (state)
+                {
+                    case BuildMessageState.Warning:
+                        _warnings.Add(buildMessage);
+                        break;
+                    
+                    case BuildMessageState.Failure:
+                    case BuildMessageState.Error:
+                    // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
+                    case BuildMessageState.BuildProblem:
+                        _errors.Add(buildMessage);
+                        break;
+                }
             }
 
             yield return buildMessage;

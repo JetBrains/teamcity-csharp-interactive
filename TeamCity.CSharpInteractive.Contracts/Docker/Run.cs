@@ -66,7 +66,7 @@ namespace Docker
         // A file with environment variables inside the container
         string EnvFile = "",
         string ShortName = "")
-        : IProcess, IProcessStateProvider
+        : IProcess
     {
         public Run(): this(new CommandLine(string.Empty), string.Empty) 
         { }
@@ -89,10 +89,10 @@ namespace Docker
             var directoryMap = new Dictionary<string, string>();
             var pathResolver = new PathResolver(Platform, directoryMap);
             using var pathResolverToken = host.GetService<IPathResolverContext>().Register(pathResolver);
-            var valueResolver = host.GetService<IWellknownValueResolver>();
+            var settings = host.GetService<ISettings>();
 
             var processInfo = Process.GetStartInfo(host);
-            var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? valueResolver.Resolve(WellknownValue.DockerExecutablePath) : ExecutablePath)
+            var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? settings.DockerExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{processInfo.ShortName} in the docker container {Image}")
                 .WithWorkingDirectory(WorkingDirectory)
                 .WithArgs("run")
@@ -131,8 +131,6 @@ namespace Docker
                 .WithVars(Vars.ToArray());
         }
 
-        ProcessState IProcessStateProvider.GetState(int exitCode) => (Process as IProcessStateProvider)?.GetState(exitCode) ?? ProcessState.Unknown;
-        
         private class PathResolver: IPathResolver
         {
             private readonly string _platform;

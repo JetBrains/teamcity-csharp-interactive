@@ -8,6 +8,7 @@ namespace TeamCity.CSharpInteractive
 
     public class Program
     {
+        // ReSharper disable once UnusedMember.Global
         public static int Main()
         {
             try

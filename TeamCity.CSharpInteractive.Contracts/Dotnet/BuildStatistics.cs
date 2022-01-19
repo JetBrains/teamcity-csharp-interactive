@@ -2,13 +2,17 @@
 namespace Dotnet
 {
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Text;
 
     [Immutype.Target]
-    [DebuggerTypeProxy(typeof(BuildStatisticsDebugView))]
-    public record BuildStatistics(int Errors = default, int Warnings = default, int Tests = default, int FailedTests = default, int IgnoredTests = default, int PassedTests = default)
+    public record BuildStatistics(
+        int Errors = default,
+        int Warnings = default,
+        int Tests = default,
+        int FailedTests = default,
+        int IgnoredTests = default,
+        int PassedTests = default)
     {
         public bool IsEmpty =>
             Errors == 0
@@ -17,6 +21,8 @@ namespace Dotnet
                 && FailedTests == 0
                 && IgnoredTests == 0
                 && PassedTests == 0;
+        
+        public static implicit operator string(BuildStatistics it) => it.ToString();
 
         public override string ToString()
         {
@@ -92,28 +98,8 @@ namespace Dotnet
         private static string GetName(string baseName, int count) =>
             count switch
             {
-                0 => $"no {baseName}s",
                 1 => baseName,
                 _ => baseName + 's'
             };
-
-        private class BuildStatisticsDebugView
-        {
-            private readonly BuildStatistics _statistics;
-
-            public BuildStatisticsDebugView(BuildStatistics statistics) => _statistics = statistics;
-
-            public int Errors => _statistics.Errors;
-            
-            public int Warnings => _statistics.Warnings;
-            
-            public int FailedTests => _statistics.FailedTests;
-            
-            public int IgnoredTests => _statistics.IgnoredTests;
-            
-            public int PassedTests => _statistics.PassedTests;
-            
-            public int Tests => _statistics.Tests;
-        }
     }
 }

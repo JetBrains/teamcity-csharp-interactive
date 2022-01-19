@@ -21,6 +21,38 @@ public class BuildResultTests
     }
 
     [Fact]
+    public void ShouldProcessStdOutput()
+    {
+        // Given
+        var result = CreateInstance();
+        var msg = new BuildMessage(BuildMessageState.StdOut, default, "Abc");
+        
+        // When
+        var messages = result.ProcessOutput(new Output(Mock.Of<IStartInfo>(), false, "Abc", 33));
+        var buildResult = result.Create(Mock.Of<IStartInfo>(), 22);
+        
+        // Then
+        messages.ShouldBe(new []{msg});
+        buildResult.Errors.ShouldNotContain(msg);
+    }
+    
+    [Fact]
+    public void ShouldProcessErrOutput()
+    {
+        // Given
+        var result = CreateInstance();
+        var msg = new BuildMessage(BuildMessageState.StdErr, default, "Abc");
+        
+        // When
+        var messages = result.ProcessOutput(new Output(Mock.Of<IStartInfo>(), true, "Abc", 33));
+        var buildResult = result.Create(Mock.Of<IStartInfo>(), 22);
+        
+        // Then
+        messages.ShouldBe(new []{msg});
+        buildResult.Errors.ShouldContain(msg);
+    }
+
+    [Fact]
     public void ShouldProcessTestFinished()
     {
         // Given
@@ -58,13 +90,15 @@ public class BuildResultTests
             { "flowId", "11" }
         };
 
+        var output = new Output(_startInfo.Object, false, string.Empty, 11);
+        
         // When
-        result.ProcessMessage(_startInfo.Object, 11, testSuiteStarted).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, 11, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Info).WithText("Some output")});
-        result.ProcessMessage(_startInfo.Object, 11, testStderr).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Error).WithText("Some error")});
-        result.ProcessMessage(_startInfo.Object, 11, testFinished).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, 11, testSuiteFinished).ShouldBeEmpty();
-        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
+        result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
+        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
+        result.ProcessMessage(output, testStderr).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdErr).WithText("Some error")});
+        result.ProcessMessage(output, testFinished).ShouldBeEmpty();
+        result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
+        var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
@@ -114,13 +148,15 @@ public class BuildResultTests
             { "name", "Assembly1" },
             { "flowId", "11" }
         };
+        
+        var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(_startInfo.Object, 11, testSuiteStarted).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, 11, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Info).WithText("Some output")});
-        result.ProcessMessage(_startInfo.Object, 11, testFailed).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, 11, testSuiteFinished).ShouldBeEmpty();
-        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
+        result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
+        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
+        result.ProcessMessage(output, testFailed).ShouldBeEmpty();
+        result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
+        var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
@@ -165,13 +201,15 @@ public class BuildResultTests
             { "name", "Assembly1" },
             { "flowId", "11" }
         };
+        
+        var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(_startInfo.Object, 11, testSuiteStarted).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, 11, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.Info).WithText("Some output")});
-        result.ProcessMessage(_startInfo.Object, 11, testIgnored).ShouldBeEmpty();
-        result.ProcessMessage(_startInfo.Object, 11, testSuiteFinished).ShouldBeEmpty();
-        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
+        result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
+        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
+        result.ProcessMessage(output, testIgnored).ShouldBeEmpty();
+        result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
+        var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
@@ -187,9 +225,9 @@ public class BuildResultTests
     }
     
     [Theory]
-    [InlineData("Normal", BuildMessageState.Info)]
-    [InlineData("normal", BuildMessageState.Info)]
-    [InlineData("NORMAL", BuildMessageState.Info)]
+    [InlineData("Normal", BuildMessageState.StdOut)]
+    [InlineData("normal", BuildMessageState.StdOut)]
+    [InlineData("NORMAL", BuildMessageState.StdOut)]
     [InlineData("Warning", BuildMessageState.Warning)]
     [InlineData("warning", BuildMessageState.Warning)]
     [InlineData("WARNING", BuildMessageState.Warning)]
@@ -212,17 +250,20 @@ public class BuildResultTests
 
         var buildMessage = new BuildMessage(state, default, "some text", "error details");
 
+        var output = new Output(_startInfo.Object, false, string.Empty, 11);
+
         // When
-        result.ProcessMessage(_startInfo.Object, 11, message).ShouldBe(new []{ buildMessage });
-        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
+        result.ProcessMessage(output, message).ShouldBe(new []{ buildMessage });
+        var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(0);
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (state)
         {
             case BuildMessageState.ServiceMessage:
-            case BuildMessageState.Info:
+            case BuildMessageState.StdOut:
                 buildResult.Errors.ShouldBe(Array.Empty<BuildMessage>());
                 break;
 
@@ -250,10 +291,11 @@ public class BuildResultTests
         };
 
         var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, default, "Problem description", "ID123");
+        var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(_startInfo.Object, 11, buildProblem).ShouldBe(new []{ buildMessage });
-        var buildResult = result.Create(_startInfo.Object, ProcessState.Succeeded, 33);
+        result.ProcessMessage(output, buildProblem).ShouldBe(new []{ buildMessage });
+        var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(0);

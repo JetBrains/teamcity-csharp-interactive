@@ -8,38 +8,37 @@ namespace Dotnet
 {
     using System.Linq;
     using Cmd;
-    using TeamCity;
     using TeamCity.CSharpInteractive.Contracts;
 
     internal static class CommandLineExtensions
     {
         public static CommandLine AddMSBuildIntegration(this CommandLine cmd, IHost host, Verbosity? verbosity)
         {
-            var valueResolver = host.GetService<IWellknownValueResolver>();
             var virtualContext = host.GetService<IVirtualContext>();
-            return host.GetService<ITeamCity>().TeamCityIntegration
+            var settings = host.GetService<ISettings>();
+            return settings.LoggersAreRequired
                 ? cmd
                     .AddArgs("/noconsolelogger")
-                    .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(valueResolver.Resolve(WellknownValue.DotnetLoggerDirectory))}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
+                    .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotnetLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
                     .AddProps("/p",
                         ("VSTestLogger", "logger://teamcity"),
-                        ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(valueResolver.Resolve(WellknownValue.DotnetLoggerDirectory))}\""),
+                        ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotnetLoggerDirectory)}\""),
                         ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()))
-                    .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(valueResolver.Resolve(WellknownValue.TeamCityMessagesPath))))
+                    .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
                 : cmd;
         }
 
         public static CommandLine AddVSTestIntegration(this CommandLine cmd, IHost host, Verbosity? verbosity)
         {
-            var valueResolver = host.GetService<IWellknownValueResolver>();
             var virtualContext = host.GetService<IVirtualContext>();
-            return host.GetService<ITeamCity>().TeamCityIntegration
+            var settings = host.GetService<ISettings>();
+            return settings.LoggersAreRequired
                 ? cmd
                     .AddMSBuildArgs(
                         ("--Logger", "logger://teamcity"),
                         ("--Logger", $"console;verbosity={(verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()}"),
-                        ("--TestAdapterPath", $"\"{virtualContext.Resolve(valueResolver.Resolve(WellknownValue.DotnetLoggerDirectory))}\""))
-                    .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(valueResolver.Resolve(WellknownValue.TeamCityMessagesPath))))
+                        ("--TestAdapterPath", $"\"{virtualContext.Resolve(settings.DotnetLoggerDirectory)}\""))
+                    .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
                 : cmd;
         }
 

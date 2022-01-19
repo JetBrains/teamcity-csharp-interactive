@@ -252,6 +252,44 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
         }
         
         [Fact]
+        public void ShouldSupportLoadMultiple()
+        {
+            // Given
+            var workingDirectory = DotNetScript.GetWorkingDirectory();
+            // ReSharper disable once UnusedVariable
+            var scriptClass1 = DotNetScript.Create("class1.csx", workingDirectory, Enumerable.Empty<string>(), "class Class1 { public Class1(Class2 val) {}};");
+            // ReSharper disable once UnusedVariable
+            var scriptClass2 = DotNetScript.Create("class2.csx", workingDirectory, Enumerable.Empty<string>(), "class Class2 {};");
+            var script = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"class2.csx\"", "#load \"class1.csx\"").WithVars(TestTool.DefaultVars);
+            
+            // When
+            var result = TestTool.Run(script);
+
+            // Then
+            result.ExitCode.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+        }
+        
+        [Fact]
+        public void ShouldSupportLoadMultiple2()
+        {
+            // Given
+            var workingDirectory = DotNetScript.GetWorkingDirectory();
+            // ReSharper disable once UnusedVariable
+            var scriptClass1 = DotNetScript.Create("class1.csx", workingDirectory, Enumerable.Empty<string>(), "class Class1 { public Class1(Class2 val) {}};");
+            // ReSharper disable once UnusedVariable
+            var scriptClass2 = DotNetScript.Create("class2.csx", workingDirectory, Enumerable.Empty<string>(), "class Class2 {};");
+            var script = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "// #load \"class1.csx\"", "#load \"class2.csx\"").WithVars(TestTool.DefaultVars);
+            
+            // When
+            var result = TestTool.Run(script);
+
+            // Then
+            result.ExitCode.ShouldBe(0, result.ToString());
+            result.StdErr.ShouldBeEmpty(result.ToString());
+        }
+        
+        [Fact]
         public void ShouldProcessCompilationError()
         {
             // Given

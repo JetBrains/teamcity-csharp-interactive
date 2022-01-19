@@ -25,6 +25,8 @@ namespace Dotnet
         public TestResult(TestState state, string displayName)
             : this(state,string.Empty, string.Empty, displayName, string.Empty, string.Empty, TimeSpan.Zero, Array.Empty<Output>())
         { }
+        
+        public static implicit operator string(TestResult it) => it.ToString();
 
         public override string ToString()
         {
@@ -38,6 +40,7 @@ namespace Dotnet
             sb.Append(DisplayName);
             sb.Append(" is ");
             sb.Append(State.ToString().ToLowerInvariant());
+            sb.Append('.');
             return sb.ToString();
         }
 
@@ -56,10 +59,11 @@ namespace Dotnet
             public string DisplayName => _testResult.DisplayName;
 
             public string Message => _testResult.Message;
+
             public string Details => _testResult.Details;
 
             public TimeSpan Duration => _testResult.Duration;
-            
+
             [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
             public IReadOnlyList<Output> Output => _testResult.Output;
         }

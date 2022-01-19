@@ -28,14 +28,14 @@ namespace Dotnet
         bool UseCurrentRuntime = false,
         Verbosity? Verbosity = default,
         string ShortName = "")
-        : IProcess, IProcessStateProvider
+        : IProcess
     {
-        public Pack()
-            : this(Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>())
+        public Pack(params string[] args)
+            : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())
         { }
         
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet pack")
                 .WithArgs("pack")
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
@@ -58,7 +58,5 @@ namespace Dotnet
                 )
                 .AddProps("/p", Props.ToArray())
                 .AddArgs(Args.ToArray());
-
-        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Succeeded : ProcessState.Failed;
     }
 }

@@ -1,5 +1,4 @@
+// ReSharper disable NotAccessedPositionalProperty.Global
 namespace TeamCity.CSharpInteractive;
-
-using Cmd;
 
 internal record ProcessResult(ProcessState State, int? ExitCode = default);

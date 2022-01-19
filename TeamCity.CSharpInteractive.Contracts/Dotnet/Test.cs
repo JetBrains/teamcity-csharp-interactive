@@ -34,14 +34,14 @@ namespace Dotnet
         bool NoRestore = false,
         Verbosity? Verbosity = default,
         string ShortName = "")
-        : IProcess, IProcessStateProvider
+        : IProcess
     {
-        public Test()
-            : this(Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>())
+        public Test(params string[] args)
+            : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())
         { }
         
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet test")
                 .WithArgs("test")
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
@@ -71,7 +71,5 @@ namespace Dotnet
                 )
                 .AddProps("/p", Props.ToArray())
                 .AddArgs(Args.ToArray());
-
-        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Succeeded : ProcessState.Failed;
     }
 }

@@ -4,11 +4,11 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System;
-    using Cmd;
     using Dotnet;
     using Shouldly;
     using Xunit;
 
+    [CollectionDefinition("Integration", DisableParallelization = true)]
     public class DotnetCustom: Scenario
     {
         [Fact]
@@ -31,7 +31,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
                 new Custom("--version"),
                 message => Version.TryParse(message.Text, out version));
 
-            result.State.ShouldBe(BuildState.Succeeded);
+            result.ExitCode.ShouldBe(0);
             version.ShouldNotBeNull();
             // }
         }

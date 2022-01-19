@@ -25,5 +25,7 @@ namespace TeamCity.CSharpInteractive.Contracts
         void Trace(string trace, string origin = "");
         
         T GetService<T>();
+
+        void Exit(int exitCode = 0);
     }
 }

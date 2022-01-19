@@ -23,8 +23,22 @@ namespace TeamCity.CSharpInteractive
             return Disposable.Create(() => _stopwatch.Stop());
         }
 
-        public void RegisterError(string error) => _errors.Add(error.Trim());
+        public void RegisterError(string error)
+        {
+            error = error.Trim();
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                _errors.Add(error);
+            }
+        }
 
-        public void RegisterWarning(string warning) => _warnings.Add(warning.Trim());
+        public void RegisterWarning(string warning)
+        {
+            warning = warning.Trim();
+            if (!string.IsNullOrWhiteSpace(warning))
+            {
+                _warnings.Add(warning);
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive
     using System;
     using System.IO;
 
-    public class StreamReader: IStreamReader
+    internal class StreamReader: IStreamReader
     {
         private readonly object _lockObject = new();
         private readonly Stream _stream;

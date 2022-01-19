@@ -18,28 +18,26 @@ public class BuildServiceTests
     private readonly Func<IBuildResult> _resultFactory;
     private readonly Mock<IBuildMessagesProcessor> _defaultBuildMessagesProcessor = new();
     private readonly Mock<IBuildMessagesProcessor> _customBuildMessagesProcessor = new();
-    private readonly Mock<IBuildOutputConverter> _buildOutputConverter = new();
+    private readonly Mock<IBuildOutputProcessor> _buildOutputConverter = new();
     private readonly Mock<IProcessMonitor> _processMonitor = new();
     private readonly Func<IProcessMonitor> _monitorFactory;
     private readonly Mock<IStartInfo> _startInfo = new();
     private readonly Mock<IProcess> _process = new();
-    private static readonly ProcessResult ProcessResult = new(ProcessState.Succeeded, 33);
+    private static readonly ProcessResult ProcessResult = new(ProcessState.Finished, 33);
 
     public BuildServiceTests()
     {
-        var buildResult = new BuildResult(BuildState.Succeeded, _startInfo.Object).WithExitCode(33);
+        var buildResult = new BuildResult(_startInfo.Object).WithExitCode(33);
         _process.Setup(i => i.GetStartInfo(_host.Object)).Returns(_startInfo.Object);
         _resultFactory = () => _buildResult.Object;
         _monitorFactory = () => _processMonitor.Object;
-        _buildResult.Setup(i => i.Create(_startInfo.Object, ProcessState.Succeeded, 33)).Returns(buildResult);
+        _buildResult.Setup(i => i.Create(_startInfo.Object, 33)).Returns(buildResult);
     }
 
     [Fact]
     public void ShouldRunBuildWhenHasHandler()
     {
         // Given
-        var stateProvider = _process.As<IProcessStateProvider>();
-        stateProvider.Setup(i => i.GetState(It.IsAny<int>())).Returns(ProcessState.Succeeded);
         var buildMessages = new BuildMessage[]
         {
             new(),
@@ -69,8 +67,6 @@ public class BuildServiceTests
     public void ShouldRunBuildWhenHasNoHandler()
     {
         // Given
-        var stateProvider = _process.As<IProcessStateProvider>();
-        stateProvider.Setup(i => i.GetState(It.IsAny<int>())).Returns(ProcessState.Succeeded);
         var buildMessages = new BuildMessage[]
         {
             new(),
@@ -100,9 +96,8 @@ public class BuildServiceTests
         // Given
         using var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
-        _process.As<IProcessStateProvider>();
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.RunAsync(It.Is<ProcessRun>(processRun => processRun.StateProvider != default), token)).Returns(Task.FromResult(ProcessResult));
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessRun>(), token)).Returns(Task.FromResult(ProcessResult));
 
         // When
         await buildService.RunAsync(_process.Object, Mock.Of<Action<BuildMessage>?>(), token);

@@ -35,15 +35,15 @@ namespace Dotnet
         bool InIsolation = false,
         Verbosity? Verbosity = default,
         string ShortName = "")
-        : IProcess, IProcessStateProvider
+        : IProcess
     {
-        public VSTest(params string[] testFileNames)
-            : this(testFileNames, Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty< string>())
+        public VSTest(params string[] args)
+            : this(Enumerable.Empty<string>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())
         { }
         
         public IStartInfo GetStartInfo(IHost host)
         {
-            var cmd =  new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IWellknownValueResolver>().Resolve(WellknownValue.DotnetExecutablePath) : ExecutablePath)
+            var cmd =  new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet vstest")
                 .WithArgs("vstest")
                 .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
@@ -80,7 +80,5 @@ namespace Dotnet
 
                 return cmd;
         }
-
-        ProcessState IProcessStateProvider.GetState(int exitCode) => exitCode == 0 ? ProcessState.Succeeded : ProcessState.Failed;
     }
 }

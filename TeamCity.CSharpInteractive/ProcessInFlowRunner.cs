@@ -74,11 +74,11 @@ namespace TeamCity.CSharpInteractive
 
             public string WorkingDirectory => _baseStartIfo.WorkingDirectory;
 
-            public IReadOnlyList<string> Args => _baseStartIfo.Args;
+            public IEnumerable<string> Args => _baseStartIfo.Args;
 
-            public IReadOnlyList<(string name, string value)> Vars => 
+            public IEnumerable<(string name, string value)> Vars => 
                 new []{ (TeamCitySettings.FlowIdEnvironmentVariableName, _flowId) }
-                    .Concat(_baseStartIfo.Vars).ToArray();
+                    .Concat(_baseStartIfo.Vars);
 
             public override string? ToString() => _baseStartIfo.ToString();
         }

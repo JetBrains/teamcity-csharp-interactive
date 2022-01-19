@@ -6,7 +6,6 @@ namespace TeamCity.CSharpInteractive
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
-    using Cmd;
 
     internal class ProcessRunner: IProcessRunner
     {
@@ -23,7 +22,7 @@ namespace TeamCity.CSharpInteractive
 
         public ProcessResult Run(ProcessRun processRun, TimeSpan timeout)
         {
-            var (startInfo, monitor, handler, stateProvider) = processRun;
+            var (startInfo, monitor, handler) = processRun;
             using var processManager = _processManagerFactory();
             if (handler != default)
             {
@@ -53,21 +52,19 @@ namespace TeamCity.CSharpInteractive
             if (finished)
             {
                 stopwatch.Stop();
-                var state = stateProvider?.GetState(processManager.ExitCode) ?? ProcessState.Unknown;
-                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, state, processManager.ExitCode);
-                return new ProcessResult(state, processManager.ExitCode);
+                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Finished, processManager.ExitCode);
+                return new ProcessResult(ProcessState.Finished, processManager.ExitCode);
             }
 
             processManager.Kill();
             stopwatch.Stop();
             monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
-
             return new ProcessResult(ProcessState.Canceled);
         }
 
         public async Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken)
         {
-            var (startInfo, monitor, handler, stateProvider) = processRun;
+            var (startInfo, monitor, handler) = processRun;
             if (cancellationToken == default || cancellationToken == CancellationToken.None)
             {
                 cancellationToken = _cancellationTokenSource.Token;
@@ -110,9 +107,8 @@ namespace TeamCity.CSharpInteractive
                 {
                     var exitCode = await completionSource.Task.ConfigureAwait(false);
                     stopwatch.Start();
-                    var state = stateProvider?.GetState(exitCode) ?? ProcessState.Unknown;
-                    monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, state, exitCode);
-                    return new ProcessResult(state, exitCode);
+                    monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Finished, exitCode);
+                    return new ProcessResult(ProcessState.Finished, exitCode);
                 }
             }
         }

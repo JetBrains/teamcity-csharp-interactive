@@ -14,7 +14,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $visible=true
             // $tag=08 Global state
             // $priority=02
-            // $description=Using the _Host_ property
+            // $description=Using the Host property
             // $header=[_Host_](TeamCity.CSharpInteractive.Contracts/IHost.cs) is actually the provider of all global properties and methods.
             // {
             var packages = Host.GetService<INuGet>();

@@ -42,5 +42,7 @@ namespace TeamCity.CSharpInteractive
         public void Trace(string trace, string origin = "") => _log.Trace(() => new [] { new Text(trace) }, origin);
 
         public T GetService<T>() => Composer.Resolve<T>();
+
+        public void Exit(int exitCode = 0) => System.Environment.Exit(exitCode);
     }
 }

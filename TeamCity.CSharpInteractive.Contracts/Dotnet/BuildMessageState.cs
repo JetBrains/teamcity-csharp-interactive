@@ -6,7 +6,8 @@ namespace Dotnet
     public enum BuildMessageState
     {
         ServiceMessage,
-        Info,
+        StdOut,
+        StdErr,
         Warning,
         Failure,
         Error,

@@ -16,8 +16,8 @@ namespace Cmd
     public record CommandLine(
         string ExecutablePath,
         string WorkingDirectory,
-        IReadOnlyList<string> Args,
-        IReadOnlyList<(string name, string value)> Vars,
+        IEnumerable<string> Args,
+        IEnumerable<(string name, string value)> Vars,
         string ShortName = "")
         : IStartInfo, IProcess
     {
@@ -65,10 +65,10 @@ namespace Cmd
             public string WorkingDirectory => _startInfo.WorkingDirectory;
 
             [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-            public IReadOnlyList<string> Args => _startInfo.Args;
+            public IEnumerable<string> Args => _startInfo.Args;
 
             [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-            public IReadOnlyList<(string name, string value)> Vars => _startInfo.Vars;
+            public IEnumerable<(string name, string value)> Vars => _startInfo.Vars;
         }
     }
 }

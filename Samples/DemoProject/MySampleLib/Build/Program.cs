@@ -1,8 +1,8 @@
-﻿using Cmd;
-using NuGet;
+﻿using NuGet;
 using Dotnet;
 using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
+using NuGet.Versioning;
 
 var currentDirectory = Environment.CurrentDirectory;
 
@@ -30,9 +30,9 @@ if (string.IsNullOrEmpty(packageVersion))
         GetService<INuGet>()
         .Restore(packageId, "*")
         .Where(i => i.Name == packageId)
-        .Select(i => i.Version)
-        .Select(i => new Version(i.Major, i.Minor, i.Build + 1))
-        .DefaultIfEmpty(new Version(1, 0, 0))
+        .Select(i => i.NuGetVersion)
+        .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
+        .DefaultIfEmpty(new NuGetVersion(1, 0, 0))
         .Max()!
         .ToString();
 }
@@ -48,7 +48,7 @@ var build = GetService<IBuild>();
 
 Info($"Check the required .NET SDK version {requiredSdkVersion}.");
 var sdkVersion = new Version();
-if (build.Run(new Custom("--version"), message => Version.TryParse(message.Text, out sdkVersion)).State == BuildState.Succeeded)
+if (build.Run(new Custom("--version"), message => Version.TryParse(message.Text, out sdkVersion)).ExitCode == 0)
 {
     if (sdkVersion.Major != requiredSdkVersion.Major && sdkVersion.Minor != requiredSdkVersion.Minor)
     {
@@ -62,14 +62,10 @@ else
     return;
 }
 
-var cleanResult = build.Run(new Clean());
-if (cleanResult.State != BuildState.Succeeded)
-{
-    Error(cleanResult);
-    return;
-}
+var result = build.Run(new Clean());
+if (result.ExitCode != 0) Exit(1);
 
-var msbuildResult = build.Run(
+result = build.Run(
     new MSBuild()
         .WithShortName("Rebuilding the solution")
         .WithProject("MySampleLib.sln")
@@ -78,11 +74,7 @@ var msbuildResult = build.Run(
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (msbuildResult.State != BuildState.Succeeded)
-{
-    Error(msbuildResult);
-    return;
-}
+if (result.ExitCode != 0) Exit(1);
 
 Info($"Running flaky tests with {testAttempts} attempts.");
 var failedTests =
@@ -107,19 +99,15 @@ var flakyTests =
     .OrderBy(i => i)
     .ToList();
 
-var buildResult = build.Run(
+result = build.Run(
     new Build()
-        .WithShortName($"Building of the {configuration} version")
-        .WithConfiguration(configuration)
-        .WithOutput(outputDir)
-        .WithVerbosity(Verbosity.Normal)
-        .AddProps(commonProps));
+    .WithShortName($"Building of the {configuration} version")
+    .WithConfiguration(configuration)
+    .WithOutput(outputDir)
+    .WithVerbosity(Verbosity.Normal)
+    .AddProps(commonProps));
 
-if (buildResult.State != BuildState.Succeeded)
-{
-    Error(buildResult);
-    return;
-}
+if (result.ExitCode != 0) Exit(1);
 
 Info($"Running tests in Linux docker container and on the host in parallel.");
 var testCommand = new Test().WithExecutablePath("dotnet").WithVerbosity(Verbosity.Normal);
@@ -134,19 +122,10 @@ var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outp
 Task.WaitAll(testInContainerTask, vsTestTask);
 WriteLine($"Parallel tests completed.");
 
-if (testInContainerTask.Result.State != BuildState.Succeeded)
-{
-    Error(testInContainerTask.Result);
-    return;
-}
+if (testInContainerTask.Result.ExitCode != 0) Exit(1);
+if (vsTestTask.Result.ExitCode != 0) Exit(1);
 
-if (vsTestTask.Result.State != BuildState.Succeeded)
-{
-    Error(vsTestTask.Result);
-    return;
-}
-
-var packResult = build.Run(
+result = build.Run(
     new Pack()
         .WithShortName($"The packing of the {configuration} version")
         .WithConfiguration(configuration)
@@ -156,11 +135,7 @@ var packResult = build.Run(
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (packResult.State != BuildState.Succeeded)
-{
-    Error(packResult);
-    return;
-}
+if (result.ExitCode != 0) Exit(1);
 
 Info("Publish artifacts.");
 var teamCityWriter = GetService<ITeamCityWriter>();

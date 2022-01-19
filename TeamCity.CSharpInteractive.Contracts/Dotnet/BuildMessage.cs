@@ -13,6 +13,8 @@ namespace Dotnet
         string Text = "",
         string ErrorDetails = "")
     {
+        public static implicit operator string(BuildMessage it) => it.ToString();
+        
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -22,22 +24,25 @@ namespace Dotnet
                     sb.Append("Service Message");
                     break;
 
-                case BuildMessageState.Info:
+                case BuildMessageState.StdOut:
+                    sb.Append(Text);
+                    break;
+                
+                case BuildMessageState.StdErr:
+                    sb.Append("StdErr ");
                     sb.Append(Text);
                     break;
 
                 case BuildMessageState.Warning:
-                    sb.Append("Warning \"");
+                    sb.Append("Warning ");
                     sb.Append(Text);
-                    sb.Append('"');
                     break;
 
                 case BuildMessageState.Failure:
                 case BuildMessageState.BuildProblem:
                 case BuildMessageState.Error:
-                    sb.Append("Error \"");
+                    sb.Append("Error ");
                     sb.Append(Text);
-                    sb.Append('"');
                     if (!string.IsNullOrWhiteSpace(ErrorDetails))
                     {
                         sb.Append(": ");
