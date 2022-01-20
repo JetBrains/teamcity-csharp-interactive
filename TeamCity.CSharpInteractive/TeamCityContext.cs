@@ -5,16 +5,16 @@ namespace TeamCity.CSharpInteractive
 
     internal class TeamCityContext:
         ITeamCityContext,
-        Dotnet.ISettings
+        DotNet.ISettings
     {
         private readonly IEnvironment _environment;
-        private readonly IDotnetEnvironment _dotnetEnvironment;
+        private readonly IDotNetEnvironment _dotnetEnvironment;
         private readonly ITeamCitySettings _teamCitySettings;
         [ThreadStatic] private static bool _teamCityIntegration;
 
         public TeamCityContext(
             IEnvironment environment,
-            IDotnetEnvironment dotnetEnvironment,
+            IDotNetEnvironment dotnetEnvironment,
             ITeamCitySettings teamCitySettings)
         {
             _environment = environment;
@@ -29,9 +29,9 @@ namespace TeamCity.CSharpInteractive
         
         public bool LoggersAreRequired => _teamCityIntegration;
 
-        public string DotnetExecutablePath => _dotnetEnvironment.Path;
+        public string DotNetExecutablePath => _dotnetEnvironment.Path;
 
-        public string DotnetLoggerDirectory => _environment.GetPath(SpecialFolder.Bin);
+        public string DotNetLoggerDirectory => _environment.GetPath(SpecialFolder.Bin);
 
         public string TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath;
     }

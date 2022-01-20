@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Cmd;
-    using Dotnet;
+    using DotNet;
     using JetBrains.TeamCity.ServiceMessages;
 
     internal class BuildResult : IBuildResult
@@ -55,7 +55,7 @@ namespace TeamCity.CSharpInteractive
             return new []{ message };
         }
 
-        public Dotnet.BuildResult Create(IStartInfo startInfo, int? exitCode) =>
+        public DotNet.BuildResult Create(IStartInfo startInfo, int? exitCode) =>
             new(startInfo,
                 _errors.AsReadOnly(),
                 _warnings.AsReadOnly(),

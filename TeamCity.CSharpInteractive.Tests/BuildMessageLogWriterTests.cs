@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using System.Linq;
-using Dotnet;
+using DotNet;
 using Moq;
 using Xunit;
 

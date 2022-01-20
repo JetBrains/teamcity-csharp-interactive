@@ -11,7 +11,7 @@ namespace TeamCity.CSharpInteractive
     using System.Threading.Tasks;
     using Cmd;
     using Contracts;
-    using Dotnet;
+    using DotNet;
     using Pure.DI;
 
     internal class BuildService: IBuild
@@ -45,7 +45,7 @@ namespace TeamCity.CSharpInteractive
             _customBuildMessagesProcessor = customBuildMessagesProcessor;
         }
 
-        public Dotnet.BuildResult Run(IProcess process, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
+        public DotNet.BuildResult Run(IProcess process, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
         {
             var buildResult = _resultFactory();
             var startInfo = CreateStartInfo(process);
@@ -54,7 +54,7 @@ namespace TeamCity.CSharpInteractive
             return buildResult.Create(startInfo, result.ExitCode);
         }
 
-        public async Task<Dotnet.BuildResult> RunAsync(IProcess process, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default)
+        public async Task<DotNet.BuildResult> RunAsync(IProcess process, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default)
         {
             var buildResult = _resultFactory();
             var startInfo = CreateStartInfo(process);

@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive
     using System.IO;
     using System.Linq;
     using Cmd;
-    using Dotnet;
+    using DotNet;
     using JetBrains.TeamCity.ServiceMessages;
     using Pure.DI;
 
@@ -46,7 +46,7 @@ namespace TeamCity.CSharpInteractive
         public IReadOnlyList<BuildMessage> ProcessOutput(in Output output) =>
             _baseBuildResult.ProcessOutput(output);
 
-        public Dotnet.BuildResult Create(IStartInfo startInfo, int? exitCode)
+        public DotNet.BuildResult Create(IStartInfo startInfo, int? exitCode)
         {
             var items = 
                 from source in _sources

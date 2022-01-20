@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using System.Collections.Generic;
 using System.Linq;
 using Cmd;
-using Dotnet;
+using DotNet;
 using JetBrains.TeamCity.ServiceMessages.Read;
 
 internal class BuildOutputProcessor : IBuildOutputProcessor

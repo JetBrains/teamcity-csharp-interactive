@@ -10,12 +10,12 @@ namespace TeamCity.CSharpInteractive
     using Microsoft.DotNet.PlatformAbstractions;
     using Pure.DI;
 
-    internal class DotnetEnvironment : IDotnetEnvironment, ITraceSource
+    internal class DotNetEnvironment : IDotNetEnvironment, ITraceSource
     {
         private readonly string _moduleFile;
         private readonly IEnvironment _environment;
         private readonly IFileExplorer _fileExplorer;
-        public DotnetEnvironment(
+        public DotNetEnvironment(
             [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
             [Tag("ModuleFile")] string moduleFile,
             IEnvironment environment,
@@ -59,7 +59,7 @@ namespace TeamCity.CSharpInteractive
             {
                 yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
                 yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
-                yield return new Text($"DotnetPath: {Path}");
+                yield return new Text($"DotNetPath: {Path}");
                 yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
             }
         }

@@ -7,12 +7,12 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Docker;
-    using Dotnet;
+    using DotNet;
     using Shouldly;
     using Xunit;
 
     [CollectionDefinition("Integration", DisableParallelization = true)]
-    public class DockerDotnetBuild: Scenario
+    public class DockerDotNetBuild: Scenario
     {
         [Fact(Skip = "Linux Docker only")]
         [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped")]
@@ -24,8 +24,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=01
             // $description=Build a project in a docker container
             // {
-            // Adds the namespace "Dotnet" to use .NET build API
-            // ## using Dotnet;
+            // Adds the namespace "DotNet" to use .NET build API
+            // ## using DotNet;
             // Adds the namespace "Docker" to use Docker API
             // ## using Docker;
 

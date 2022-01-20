@@ -4,7 +4,7 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-namespace Dotnet
+namespace DotNet
 {
     using System.Linq;
     using Cmd;
@@ -19,10 +19,10 @@ namespace Dotnet
             return settings.LoggersAreRequired
                 ? cmd
                     .AddArgs("/noconsolelogger")
-                    .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotnetLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
+                    .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
                     .AddProps("/p",
                         ("VSTestLogger", "logger://teamcity"),
-                        ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotnetLoggerDirectory)}\""),
+                        ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotNetLoggerDirectory)}\""),
                         ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()))
                     .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
                 : cmd;
@@ -37,7 +37,7 @@ namespace Dotnet
                     .AddMSBuildArgs(
                         ("--Logger", "logger://teamcity"),
                         ("--Logger", $"console;verbosity={(verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()}"),
-                        ("--TestAdapterPath", $"\"{virtualContext.Resolve(settings.DotnetLoggerDirectory)}\""))
+                        ("--TestAdapterPath", $"\"{virtualContext.Resolve(settings.DotNetLoggerDirectory)}\""))
                     .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
                 : cmd;
         }

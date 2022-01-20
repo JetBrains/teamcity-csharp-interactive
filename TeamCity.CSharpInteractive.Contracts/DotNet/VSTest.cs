@@ -2,7 +2,7 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
-namespace Dotnet
+namespace DotNet
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -43,7 +43,7 @@ namespace Dotnet
         
         public IStartInfo GetStartInfo(IHost host)
         {
-            var cmd =  new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
+            var cmd =  new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotNetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet vstest")
                 .WithArgs("vstest")
                 .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())

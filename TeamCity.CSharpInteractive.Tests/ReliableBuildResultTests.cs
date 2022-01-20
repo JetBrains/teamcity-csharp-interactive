@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests;
 using System.Collections.Generic;
 using System.IO;
 using Cmd;
-using Dotnet;
+using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Write;
 using Moq;

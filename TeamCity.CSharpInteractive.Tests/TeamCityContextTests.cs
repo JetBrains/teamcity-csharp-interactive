@@ -7,11 +7,11 @@ using Xunit;
 public class TeamCityContextTests
 {
     private readonly Mock<IEnvironment> _environment = new();
-    private readonly Mock<IDotnetEnvironment> _dotnetEnvironment = new();
+    private readonly Mock<IDotNetEnvironment> _dotnetEnvironment = new();
     private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
     
     [Fact]
-    public void ShouldGetDotnetExecutablePath()
+    public void ShouldGetDotNetExecutablePath()
     {
         // Given
         var settings = CreateInstance();
@@ -20,11 +20,11 @@ public class TeamCityContextTests
         _dotnetEnvironment.SetupGet(i => i.Path).Returns("Bin");
 
         // Then
-        settings.DotnetExecutablePath.ShouldBe("Bin");
+        settings.DotNetExecutablePath.ShouldBe("Bin");
     }
     
     [Fact]
-    public void ShouldGetDotnetLoggerDirectory()
+    public void ShouldGetDotNetLoggerDirectory()
     {
         // Given
         var settings = CreateInstance();
@@ -33,7 +33,7 @@ public class TeamCityContextTests
         _environment.Setup(i => i.GetPath(SpecialFolder.Bin)).Returns("Bin");
 
         // Then
-        settings.DotnetLoggerDirectory.ShouldBe("Bin");
+        settings.DotNetLoggerDirectory.ShouldBe("Bin");
     }
     
     [Fact]

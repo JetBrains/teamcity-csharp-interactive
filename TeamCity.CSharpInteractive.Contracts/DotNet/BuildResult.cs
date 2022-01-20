@@ -5,7 +5,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable NotAccessedPositionalProperty.Global
 // ReSharper disable ReturnTypeCanBeEnumerable.Local
-namespace Dotnet
+namespace DotNet
 {
     using System;
     using System.Collections.Generic;

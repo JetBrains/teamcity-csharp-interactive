@@ -7,7 +7,7 @@ namespace TeamCity.CSharpInteractive.Tests
     using Shouldly;
     using Xunit;
 
-    public class DotnetEnvironmentTests
+    public class DotNetEnvironmentTests
     {
         private readonly Mock<IEnvironment> _environment = new();
         private readonly Mock<IFileExplorer> _fileExplorer = new();
@@ -81,7 +81,7 @@ namespace TeamCity.CSharpInteractive.Tests
             instance.Path.ShouldBe(defaultPath);
         }
         
-        private DotnetEnvironment CreateInstance(string frameworkName, string moduleFile) => 
+        private DotNetEnvironment CreateInstance(string frameworkName, string moduleFile) => 
             new(frameworkName, moduleFile, _environment.Object, _fileExplorer.Object);
     }
 }

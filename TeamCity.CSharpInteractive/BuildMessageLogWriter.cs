@@ -1,7 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive
 {
-    using Dotnet;
+    using DotNet;
     using Pure.DI;
 
     internal class BuildMessageLogWriter : IBuildMessageLogWriter

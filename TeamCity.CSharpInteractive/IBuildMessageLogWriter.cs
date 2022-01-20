@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive
 {
-    using Dotnet;
+    using DotNet;
 
     internal interface IBuildMessageLogWriter
     {

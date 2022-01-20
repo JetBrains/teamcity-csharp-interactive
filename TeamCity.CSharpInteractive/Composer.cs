@@ -58,7 +58,7 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IEnvironment>().Bind<IScriptContext>().Bind<ITraceSource>(typeof(Environment)).To<Environment>()
                 .Bind<ITeamCitySettings>().To<TeamCitySettings>()
                 .Bind<IExitTracker>().To<ExitTracker>()
-                .Bind<IDotnetEnvironment>().Bind<ITraceSource>(typeof(DotnetEnvironment)).To<DotnetEnvironment>()
+                .Bind<IDotNetEnvironment>().Bind<ITraceSource>(typeof(DotNetEnvironment)).To<DotNetEnvironment>()
                 .Bind<IDockerEnvironment>().Bind<ITraceSource>(typeof(DockerEnvironment)).To<DockerEnvironment>()
                 .Bind<INugetEnvironment>().Bind<ITraceSource>(typeof(NugetEnvironment)).To<NugetEnvironment>()
                 .Bind<ISettings>().Bind<ISettingsManager>().Bind<ISettingSetter<VerbosityLevel>>().Bind<Settings>().To<Settings>()
@@ -164,8 +164,8 @@ namespace TeamCity.CSharpInteractive
                 .Bind<IProcessRunner>("base").To<ProcessRunner>()
                 .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
                 .Bind<ICommandLine>().To<CommandLineService>()
-                .Bind<Dotnet.IBuild>().To<BuildService>()
-                .Bind<Dotnet.ISettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
+                .Bind<DotNet.IBuild>().To<BuildService>()
+                .Bind<DotNet.ISettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
 
                 // TeamCity Service messages
                 .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()

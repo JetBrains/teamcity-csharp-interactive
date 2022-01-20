@@ -6,12 +6,12 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
     using System.Linq;
-    using Dotnet;
+    using DotNet;
     using Shouldly;
     using Xunit;
 
     [CollectionDefinition("Integration", DisableParallelization = true)]
-    public class DotnetMSBuild: Scenario
+    public class DotNetMSBuild: Scenario
     {
         [Fact]
         public void Run()
@@ -21,8 +21,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=00
             // $description=Build a project using MSBuild
             // {
-            // Adds the namespace "Dotnet" to use .NET build API
-            // ## using Dotnet;
+            // Adds the namespace "DotNet" to use .NET build API
+            // ## using DotNet;
 
             // Resolves a build service
             var build = GetService<IBuild>();

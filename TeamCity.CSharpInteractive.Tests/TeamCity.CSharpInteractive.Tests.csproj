@@ -22,7 +22,7 @@
         <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.Contracts\TeamCity.CSharpInteractive.Contracts.csproj" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj" />
-        <PackageReference Update="TeamCity.Dotnet.Integration" Version="1.0.24" PrivateAssets="all">
+        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>

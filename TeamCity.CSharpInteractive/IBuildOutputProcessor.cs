@@ -2,7 +2,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Collections.Generic;
 using Cmd;
-using Dotnet;
+using DotNet;
 
 internal interface IBuildOutputProcessor
 {

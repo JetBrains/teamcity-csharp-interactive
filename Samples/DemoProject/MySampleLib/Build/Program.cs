@@ -1,5 +1,5 @@
 ﻿using NuGet;
-using Dotnet;
+using DotNet;
 using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;

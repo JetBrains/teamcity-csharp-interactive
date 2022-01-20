@@ -1,13 +1,13 @@
 // ReSharper disable CheckNamespace
-namespace Dotnet
+namespace DotNet
 {
     internal interface ISettings
     {
         bool LoggersAreRequired { get; }
         
-        string DotnetExecutablePath { get; }
+        string DotNetExecutablePath { get; }
 
-        string DotnetLoggerDirectory  { get; }
+        string DotNetLoggerDirectory  { get; }
 
         string TeamCityMessagesPath  { get; }
     }

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cmd;
 using Contracts;
-using Dotnet;
+using DotNet;
 using Moq;
 using Xunit;
 

@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests;
 using System;
 using System.Linq;
 using Cmd;
-using Dotnet;
+using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
 using Moq;

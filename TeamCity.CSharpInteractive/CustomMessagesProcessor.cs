@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using System;
 using System.Collections.Generic;
 using Cmd;
-using Dotnet;
+using DotNet;
 
 internal class CustomMessagesProcessor : IBuildMessagesProcessor
 {

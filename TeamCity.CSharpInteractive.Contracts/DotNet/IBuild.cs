@@ -3,7 +3,7 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMethodReturnValue.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace Dotnet
+namespace DotNet
 {
     using System;
     using System.Threading;

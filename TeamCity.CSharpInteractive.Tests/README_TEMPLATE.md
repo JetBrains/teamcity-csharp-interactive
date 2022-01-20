@@ -304,8 +304,8 @@ exitCode.HasValue.ShouldBeFalse();
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -329,8 +329,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -357,8 +357,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -380,8 +380,8 @@ version.ShouldNotBeNull();
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -411,8 +411,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -437,8 +437,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -459,8 +459,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -481,8 +481,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -507,8 +507,8 @@ stdOut.ShouldBe(new []{ "Hello, World!" });
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -532,8 +532,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
@@ -622,8 +622,8 @@ result.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Dotnet" to use .NET build API
-using Dotnet;
+// Adds the namespace "DotNet" to use .NET build API
+using DotNet;
 // Adds the namespace "Docker" to use Docker API
 using Docker;
 

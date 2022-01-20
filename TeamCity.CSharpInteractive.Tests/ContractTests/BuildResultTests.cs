@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests.ContractTests;
 using System.Collections.Generic;
 using System.Linq;
 using Cmd;
-using Dotnet;
+using DotNet;
 using Moq;
 using Shouldly;
 using Xunit;

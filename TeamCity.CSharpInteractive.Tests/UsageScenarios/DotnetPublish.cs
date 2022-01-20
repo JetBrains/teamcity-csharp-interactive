@@ -4,12 +4,12 @@
 // ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
 {
-    using Dotnet;
+    using DotNet;
     using Shouldly;
     using Xunit;
 
     [CollectionDefinition("Integration", DisableParallelization = true)]
-    public class DotnetPublish: Scenario
+    public class DotNetPublish: Scenario
     {
         [Fact]
         public void Run()
@@ -19,8 +19,8 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
             // $priority=00
             // $description=Publish a project
             // {
-            // Adds the namespace "Dotnet" to use .NET build API
-            // ## using Dotnet;
+            // Adds the namespace "DotNet" to use .NET build API
+            // ## using DotNet;
 
             // Resolves a build service
             var build = GetService<IBuild>();

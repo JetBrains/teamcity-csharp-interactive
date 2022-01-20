@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cmd;
-using Dotnet;
+using DotNet;
 
 internal class DefaultBuildMessagesProcessor : IBuildMessagesProcessor
 {

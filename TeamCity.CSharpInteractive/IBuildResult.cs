@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive
 {
     using System.Collections.Generic;
     using Cmd;
-    using Dotnet;
+    using DotNet;
     using JetBrains.TeamCity.ServiceMessages;
 
     internal interface IBuildResult
@@ -12,6 +12,6 @@ namespace TeamCity.CSharpInteractive
         
         IReadOnlyList<BuildMessage> ProcessOutput(in Output output);
 
-        Dotnet.BuildResult Create(IStartInfo startInfo, int? exitCode);
+        DotNet.BuildResult Create(IStartInfo startInfo, int? exitCode);
     }
 }

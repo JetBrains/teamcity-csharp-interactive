@@ -1,5 +1,5 @@
 // ReSharper disable CheckNamespace
-namespace Dotnet
+namespace DotNet
 {
     using System.Collections.Generic;
     using System.Linq;

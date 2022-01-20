@@ -14,7 +14,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration
 
             // When
             var result = TestTool.Run(
-                "using Dotnet;",
+                "using DotNet;",
                 "using System.Linq;",
                 "var build = GetService<IBuild>();",
                 "var result = build.Run(new Custom(\"new\", \"mstest\"));",

@@ -17,13 +17,13 @@ namespace TeamCity.CSharpInteractive
     {
         private readonly ILog<NugetAssetsReader> _log;
         private readonly ILogger _logger;
-        private readonly IDotnetEnvironment _dotnetEnvironment;
+        private readonly IDotNetEnvironment _dotnetEnvironment;
         private readonly IFileSystem _fileSystem;
 
         public NugetAssetsReader(
             ILog<NugetAssetsReader> log,
             ILogger logger,
-            IDotnetEnvironment dotnetEnvironment,
+            IDotNetEnvironment dotnetEnvironment,
             IFileSystem fileSystem)
         {
             _log = log;

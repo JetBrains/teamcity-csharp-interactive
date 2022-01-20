@@ -18,7 +18,7 @@ namespace TeamCity.CSharpInteractive
         private readonly IBuildEngine _buildEngine;
         private readonly IUniqueNameGenerator _uniqueNameGenerator;
         private readonly IEnvironment _environment;
-        private readonly IDotnetEnvironment _dotnetEnvironment;
+        private readonly IDotNetEnvironment _dotnetEnvironment;
         private readonly ITargetFrameworkMonikerParser _targetFrameworkMonikerParser;
         private readonly ISettings _settings;
 
@@ -32,7 +32,7 @@ namespace TeamCity.CSharpInteractive
             IBuildEngine buildEngine,
             IUniqueNameGenerator uniqueNameGenerator,
             IEnvironment environment,
-            IDotnetEnvironment dotnetEnvironment,
+            IDotNetEnvironment dotnetEnvironment,
             ITargetFrameworkMonikerParser targetFrameworkMonikerParser,
             ISettings settings)
         {
@@ -55,7 +55,7 @@ namespace TeamCity.CSharpInteractive
             targetFrameworkMoniker = _targetFrameworkMonikerParser.Parse(tfm);
             var projectStyle = settings.PackageType switch
             {
-                PackageType.Tool => "DotnetToolReference ",
+                PackageType.Tool => "DotNetToolReference ",
                 _ => "PackageReference"
             };
 

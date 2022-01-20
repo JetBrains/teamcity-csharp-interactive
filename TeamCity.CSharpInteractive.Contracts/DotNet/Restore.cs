@@ -1,7 +1,7 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace Dotnet
+namespace DotNet
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -39,7 +39,7 @@ namespace Dotnet
         { }
         
         public IStartInfo GetStartInfo(IHost host) =>
-            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotnetExecutablePath : ExecutablePath)
+            new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotNetExecutablePath : ExecutablePath)
                 .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet restore")
                 .WithArgs("restore")
                 .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())

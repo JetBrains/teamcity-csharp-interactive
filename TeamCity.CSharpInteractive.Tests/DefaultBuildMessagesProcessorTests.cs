@@ -2,7 +2,7 @@ namespace TeamCity.CSharpInteractive.Tests;
 
 using System;
 using Cmd;
-using Dotnet;
+using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
 using Moq;
 using Xunit;

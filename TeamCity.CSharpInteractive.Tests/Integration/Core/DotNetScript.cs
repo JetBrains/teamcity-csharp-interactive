@@ -15,7 +15,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration.Core
         
         public static CommandLine Create() =>
             new(
-                TeamCity.CSharpInteractive.Composer.Resolve<IDotnetEnvironment>().Path,
+                TeamCity.CSharpInteractive.Composer.Resolve<IDotNetEnvironment>().Path,
                 Path.Combine(Path.GetDirectoryName(typeof(DotNetScript).Assembly.Location)!, "dotnet-csi.dll"));
         
         public static CommandLine Create(string scriptName, string? workingDirectory, IEnumerable<string> args, params string[] lines)
