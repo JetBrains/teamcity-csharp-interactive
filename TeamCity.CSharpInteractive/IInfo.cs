@@ -1,15 +1,14 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IInfo
 {
-    internal interface IInfo
-    {
-        void ShowHeader();
+    void ShowHeader();
 
-        void ShowReplHelp();
+    void ShowReplHelp();
         
-        void ShowHelp();
+    void ShowHelp();
         
-        void ShowVersion();
+    void ShowVersion();
 
-        void ShowFooter();
-    }
+    void ShowFooter();
 }

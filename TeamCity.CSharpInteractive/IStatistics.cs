@@ -1,20 +1,16 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IStatistics
 {
-    using System;
-    using System.Collections.Generic;
-
-    internal interface IStatistics
-    {
-        IReadOnlyCollection<string> Errors { get; }
+    IReadOnlyCollection<string> Errors { get; }
         
-        IReadOnlyCollection<string> Warnings { get; }
+    IReadOnlyCollection<string> Warnings { get; }
         
-        TimeSpan TimeElapsed { get; }
+    TimeSpan TimeElapsed { get; }
 
-        IDisposable Start();
+    IDisposable Start();
 
-        void RegisterError(string error);
+    void RegisterError(string error);
         
-        void RegisterWarning(string warning);
-    }
+    void RegisterWarning(string warning);
 }

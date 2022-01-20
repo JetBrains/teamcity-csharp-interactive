@@ -1,11 +1,8 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ICommandFactory<in T>
 {
-    using System.Collections.Generic;
+    int Order { get; }
 
-    internal interface ICommandFactory<in T>
-    {
-        int Order { get; }
-
-        IEnumerable<ICommand> Create(T data);
-    }
+    IEnumerable<ICommand> Create(T data);
 }

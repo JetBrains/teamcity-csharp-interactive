@@ -1,13 +1,8 @@
 // ReSharper disable MemberCanBePrivate.Global
 namespace TeamCity.CSharpInteractive;
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Scripting;
 
 internal class AssembliesScriptOptionsProvider: IScriptOptionsFactory, IActive

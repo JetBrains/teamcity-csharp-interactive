@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ITraceSource
-    {
-        IEnumerable<Text> Trace { get; }
-    }
+internal interface ITraceSource
+{
+    IEnumerable<Text> Trace { get; }
 }

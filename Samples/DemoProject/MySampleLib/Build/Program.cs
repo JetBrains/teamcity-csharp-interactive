@@ -86,7 +86,7 @@ var failedTests =
 
 if (failedTests.Count == testAttempts)
 {
-    Error(failedTests.Last());
+    Error(failedTests.Last().ToString());
     return;
 }
 

@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ISettingsManager
 {
-    internal interface ISettingsManager
-    {
-        void Load();
-    }
+    void Load();
 }

@@ -1,10 +1,9 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Diagnostics;
-    using Cmd;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IStartInfoFactory
-    {
-        ProcessStartInfo Create(IStartInfo info);
-    }
+using System.Diagnostics;
+using Cmd;
+
+internal interface IStartInfoFactory
+{
+    ProcessStartInfo Create(IStartInfo info);
 }

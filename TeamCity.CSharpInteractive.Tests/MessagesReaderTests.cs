@@ -1,14 +1,9 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
 using System.Buffers;
-using System.Linq;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
 using JetBrains.TeamCity.ServiceMessages.Write;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class MessagesReaderTests
 {

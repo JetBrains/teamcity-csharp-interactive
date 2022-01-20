@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ICommandRunner
 {
-    internal interface ICommandRunner
-    {
-        CommandResult TryRun(ICommand command);
-    }
+    CommandResult TryRun(ICommand command);
 }

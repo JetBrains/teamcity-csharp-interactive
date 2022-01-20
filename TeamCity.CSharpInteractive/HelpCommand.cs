@@ -1,18 +1,17 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class HelpCommand: ICommand
 {
-    using System.Diagnostics.CodeAnalysis;
+    public static readonly ICommand Shared = new HelpCommand();
 
-    [ExcludeFromCodeCoverage]
-    internal class HelpCommand: ICommand
-    {
-        public static readonly ICommand Shared = new HelpCommand();
+    private HelpCommand() { }
 
-        private HelpCommand() { }
+    public string Name => "Help";
 
-        public string Name => "Help";
+    public bool Internal => false;
 
-        public bool Internal => false;
-
-        public override string ToString() => Name;
-    }
+    public override string ToString() => Name;
 }

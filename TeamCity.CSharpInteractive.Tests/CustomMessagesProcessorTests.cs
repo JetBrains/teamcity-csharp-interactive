@@ -1,10 +1,8 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
 using Cmd;
+using CSharpInteractive;
 using DotNet;
-using Moq;
-using Xunit;
 
 public class CustomMessagesProcessorTests
 {

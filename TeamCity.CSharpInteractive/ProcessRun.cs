@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
+namespace TeamCity.CSharpInteractive;
 
-    using System;
-    using Cmd;
+using Cmd;
 
-    [Immutype.Target]
-    internal record ProcessRun(IStartInfo StartInfo, IProcessMonitor Monitor, Action<Output>? Handler = default);
-}
+[Immutype.Target]
+internal record ProcessRun(IStartInfo StartInfo, IProcessMonitor Monitor, Action<Output>? Handler = default);

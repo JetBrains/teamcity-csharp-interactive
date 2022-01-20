@@ -1,13 +1,8 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IProcessRunner
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
+    ProcessResult Run(ProcessRun processRun, TimeSpan timeout);
 
-    internal interface IProcessRunner
-    {
-        ProcessResult Run(ProcessRun processRun, TimeSpan timeout);
-
-        Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken);
-    }
+    Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken);
 }

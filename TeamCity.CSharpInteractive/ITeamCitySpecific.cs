@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ITeamCitySpecific<out T>
 {
-    internal interface ITeamCitySpecific<out T>
-    {
-        T Instance { get; }
-    }
+    T Instance { get; }
 }

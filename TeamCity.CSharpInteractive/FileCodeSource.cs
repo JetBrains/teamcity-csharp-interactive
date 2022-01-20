@@ -1,96 +1,91 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Collections;
+
+internal class FileCodeSource: ICodeSource
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
+    private readonly ILog<FileCodeSource> _log;
+    private readonly IFileSystem _fileSystem;
+    private readonly IFilePathResolver _filePathResolver;
+    private readonly IScriptContext _scriptContext;
+    private string _fileName = "";
 
-    internal class FileCodeSource: ICodeSource
+    public FileCodeSource(
+        ILog<FileCodeSource> log,
+        IFileSystem fileSystem,
+        IFilePathResolver filePathResolver,
+        IScriptContext scriptContext)
     {
-        private readonly ILog<FileCodeSource> _log;
-        private readonly IFileSystem _fileSystem;
-        private readonly IFilePathResolver _filePathResolver;
-        private readonly IScriptContext _scriptContext;
-        private string _fileName = "";
+        _log = log;
+        _fileSystem = fileSystem;
+        _filePathResolver = filePathResolver;
+        _scriptContext = scriptContext;
+    }
 
-        public FileCodeSource(
-            ILog<FileCodeSource> log,
-            IFileSystem fileSystem,
-            IFilePathResolver filePathResolver,
-            IScriptContext scriptContext)
-        {
-            _log = log;
-            _fileSystem = fileSystem;
-            _filePathResolver = filePathResolver;
-            _scriptContext = scriptContext;
-        }
-
-        public string Name => Path.GetFileName(FileName);
+    public string Name => Path.GetFileName(FileName);
         
-        public bool Internal => false;
+    public bool Internal => false;
 
-        public string FileName
+    public string FileName
+    {
+        get => _fileName;
+        set
         {
-            get => _fileName;
-            set
+            if (!_filePathResolver.TryResolve(value, out var fullFilePath))
             {
-                if (!_filePathResolver.TryResolve(value, out var fullFilePath))
-                {
-                    fullFilePath = value;
-                }
-                
-                _fileName = fullFilePath;
+                fullFilePath = value;
             }
+                
+            _fileName = fullFilePath;
+        }
+    }
+
+    public IEnumerator<string> GetEnumerator()
+    {
+        var resource = _scriptContext.OverrideScriptDirectory(Path.GetDirectoryName(FileName));
+        try
+        {
+            _log.Trace(() => new []{new Text($@"Read file ""{FileName}"".")});
+            return new LinesEnumerator(_fileSystem.ReadAllLines(FileName).GetEnumerator(), () => resource.Dispose());
+        }
+        catch (Exception e)
+        {
+            _log.Error(ErrorId.File, new []{new Text(e.Message)});
+            return Enumerable.Empty<string>().GetEnumerator();
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        
+    private class LinesEnumerator: IEnumerator<string>
+    {
+        private readonly IEnumerator<string> _baseEnumerator;
+        private readonly Action _onDispose;
+
+        public LinesEnumerator(IEnumerator<string> baseEnumerator, Action onDispose)
+        {
+            _baseEnumerator = baseEnumerator;
+            _onDispose = onDispose;
         }
 
-        public IEnumerator<string> GetEnumerator()
+        public bool MoveNext() => _baseEnumerator.MoveNext();
+
+        public void Reset() => _baseEnumerator.Reset();
+
+        public string Current => _baseEnumerator.Current;
+
+        object? IEnumerator.Current => ((IEnumerator) _baseEnumerator).Current;
+
+        public void Dispose()
         {
-            var resource = _scriptContext.OverrideScriptDirectory(Path.GetDirectoryName(FileName));
             try
             {
-                _log.Trace(() => new []{new Text($@"Read file ""{FileName}"".")});
-                return new LinesEnumerator(_fileSystem.ReadAllLines(FileName).GetEnumerator(), () => resource.Dispose());
+                _baseEnumerator.Dispose();
             }
-            catch (Exception e)
+            finally
             {
-                _log.Error(ErrorId.File, new []{new Text(e.Message)});
-                return Enumerable.Empty<string>().GetEnumerator();
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        
-        private class LinesEnumerator: IEnumerator<string>
-        {
-            private readonly IEnumerator<string> _baseEnumerator;
-            private readonly Action _onDispose;
-
-            public LinesEnumerator(IEnumerator<string> baseEnumerator, Action onDispose)
-            {
-                _baseEnumerator = baseEnumerator;
-                _onDispose = onDispose;
-            }
-
-            public bool MoveNext() => _baseEnumerator.MoveNext();
-
-            public void Reset() => _baseEnumerator.Reset();
-
-            public string Current => _baseEnumerator.Current;
-
-            object? IEnumerator.Current => ((IEnumerator) _baseEnumerator).Current;
-
-            public void Dispose()
-            {
-                try
-                {
-                    _baseEnumerator.Dispose();
-                }
-                finally
-                {
-                    _onDispose();
-                }
+                _onDispose();
             }
         }
     }

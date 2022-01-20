@@ -1,10 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Linq;
-using Moq;
-using Xunit;
-
 public class TracePresenterTests
 {
     private readonly Mock<ILog<TracePresenter>> _log = new();

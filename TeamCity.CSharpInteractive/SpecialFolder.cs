@@ -1,21 +1,20 @@
 // ReSharper disable InconsistentNaming
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum SpecialFolder
 {
-    internal enum SpecialFolder
-    {
-        // Directory with executable file
-        Bin,
+    // Directory with executable file
+    Bin,
 
-        // Temp directory
-        Temp,
+    // Temp directory
+    Temp,
 
-        // "Program Files" on Windows and "usr/local/share" on others
-        ProgramFiles,
+    // "Program Files" on Windows and "usr/local/share" on others
+    ProgramFiles,
 
-        // A directory of current executing script
-        Script,
+    // A directory of current executing script
+    Script,
         
-        // Working directory of process
-        Working
-    }
+    // Working directory of process
+    Working
 }

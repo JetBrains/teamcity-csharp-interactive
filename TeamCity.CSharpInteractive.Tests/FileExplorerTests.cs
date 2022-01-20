@@ -1,10 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System.Linq;
-using Moq;
-using Shouldly;
-using Xunit;
-
 public class FileExplorerTests
 {
     private readonly Mock<IHostEnvironment> _hostEnvironment;

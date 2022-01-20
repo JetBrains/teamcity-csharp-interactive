@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IExitTracker
-    {
-        IDisposable Track();
-    }
+internal interface IExitTracker
+{
+    IDisposable Track();
 }

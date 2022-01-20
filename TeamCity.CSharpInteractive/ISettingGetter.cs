@@ -1,10 +1,7 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ISettingGetter<out TSetting>
-        where TSetting: struct, Enum
-    {
-        TSetting GetSetting();
-    }
+internal interface ISettingGetter<out TSetting>
+    where TSetting: struct, Enum
+{
+    TSetting GetSetting();
 }

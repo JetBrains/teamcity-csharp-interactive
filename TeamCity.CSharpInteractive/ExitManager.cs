@@ -1,40 +1,37 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class ExitManager: IActive
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading;
+    private readonly ISettings _settings;
+    private readonly CancellationTokenSource _cancellationTokenSource;
 
-    [ExcludeFromCodeCoverage]
-    internal class ExitManager: IActive
+    public ExitManager(
+        ISettings settings,
+        CancellationTokenSource cancellationTokenSource)
     {
-        private readonly ISettings _settings;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        _settings = settings;
+        _cancellationTokenSource = cancellationTokenSource;
+    }
 
-        public ExitManager(
-            ISettings settings,
-            CancellationTokenSource cancellationTokenSource)
+    public IDisposable Activate()
+    {
+        if (_settings.InteractionMode != InteractionMode.Interactive)
         {
-            _settings = settings;
-            _cancellationTokenSource = cancellationTokenSource;
+            return Disposable.Empty;
         }
 
-        public IDisposable Activate()
-        {
-            if (_settings.InteractionMode != InteractionMode.Interactive)
-            {
-                return Disposable.Empty;
-            }
+        System.Console.TreatControlCAsInput = false;
+        System.Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+        return Disposable.Create(() => System.Console.CancelKeyPress -= ConsoleOnCancelKeyPress);
+    }
 
-            System.Console.TreatControlCAsInput = false;
-            System.Console.CancelKeyPress += ConsoleOnCancelKeyPress;
-            return Disposable.Create(() => System.Console.CancelKeyPress -= ConsoleOnCancelKeyPress);
-        }
-
-        private void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
-        {
-            _cancellationTokenSource.Dispose();
-            System.Environment.Exit(0);
-        }
+    private void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
+    {
+        _cancellationTokenSource.Dispose();
+        System.Environment.Exit(0);
     }
 }

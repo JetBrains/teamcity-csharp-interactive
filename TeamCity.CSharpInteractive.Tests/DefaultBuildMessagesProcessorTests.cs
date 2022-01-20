@@ -1,11 +1,9 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
 using Cmd;
+using CSharpInteractive;
 using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
-using Moq;
-using Xunit;
 
 public class DefaultBuildMessagesProcessorTests
 {

@@ -1,8 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
-using System;
-using System.Collections.Generic;
 using Cmd;
+using CSharpInteractive;
 using DotNet;
 
 internal interface IBuildMessagesProcessor

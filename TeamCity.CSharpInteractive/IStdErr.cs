@@ -1,8 +1,7 @@
 // ReSharper disable UnusedMember.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IStdErr
 {
-    internal interface IStdErr
-    {
-        void WriteLine(params Text[] errorLine);
-    }
+    void WriteLine(params Text[] errorLine);
 }

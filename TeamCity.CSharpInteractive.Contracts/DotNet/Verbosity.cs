@@ -1,13 +1,12 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace DotNet
+namespace DotNet;
+
+public enum Verbosity
 {
-    public enum Verbosity
-    {
-        Quiet,
-        Minimal,
-        Normal,
-        Detailed,
-        Diagnostic
-    }
+    Quiet,
+    Minimal,
+    Normal,
+    Detailed,
+    Diagnostic
 }

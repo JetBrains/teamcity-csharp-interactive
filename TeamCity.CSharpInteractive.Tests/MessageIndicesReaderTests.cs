@@ -1,12 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
 using System.Buffers;
-using System.IO;
-using System.Linq;
 using Moq;
-using Shouldly;
-using Xunit;
 using StreamReader = StreamReader;
 
 public class MessageIndicesReaderTests

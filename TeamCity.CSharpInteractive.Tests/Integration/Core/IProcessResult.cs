@@ -1,13 +1,10 @@
-namespace TeamCity.CSharpInteractive.Tests.Integration.Core
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive.Tests.Integration.Core;
 
-    internal interface IProcessResult
-    {
-        int ExitCode { get; }
+internal interface IProcessResult
+{
+    int ExitCode { get; }
         
-        IReadOnlyCollection<string> StdOut { get; }
+    IReadOnlyCollection<string> StdOut { get; }
         
-        IReadOnlyCollection<string> StdErr { get; }
-    }
+    IReadOnlyCollection<string> StdErr { get; }
 }

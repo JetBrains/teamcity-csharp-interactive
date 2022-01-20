@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IUniqueNameGenerator
 {
-    internal interface IUniqueNameGenerator
-    {
-        string Generate();
-    }
+    string Generate();
 }

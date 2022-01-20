@@ -1,9 +1,8 @@
-﻿namespace TeamCity.CSharpInteractive
+﻿namespace TeamCity.CSharpInteractive;
+
+internal interface IStdOut
 {
-    internal interface IStdOut
-    {
-        void Write(params Text[] text);
+    void Write(params Text[] text);
         
-        void WriteLine(params Text[] line);
-    }
+    void WriteLine(params Text[] line);
 }

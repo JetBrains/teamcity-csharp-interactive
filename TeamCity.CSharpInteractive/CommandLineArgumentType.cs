@@ -1,17 +1,11 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum CommandLineArgumentType
 {
-    internal enum CommandLineArgumentType
-    {
-        ScriptFile,
-        
-        ScriptArgument,
-        
-        ScriptProperty,
-        
-        Help,
-        
-        Version,
-        
-        NuGetSource
-    }
+    ScriptFile,
+    ScriptArgument,
+    ScriptProperty,
+    Help,
+    Version,
+    NuGetSource
 }

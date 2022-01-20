@@ -1,21 +1,17 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Cmd;
 using Contracts;
+using CSharpInteractive;
 using DotNet;
-using Moq;
-using Xunit;
 
 public class BuildServiceTests
 {
     private readonly Mock<IProcessRunner> _processRunner = new();
     private readonly Mock<IHost> _host = new();
     private readonly Mock<ITeamCityContext> _teamCityContext = new();
-    private readonly Mock<IBuildResult> _buildResult = new();
-    private readonly Func<IBuildResult> _resultFactory;
+    private readonly Mock<IBuildContext> _buildResult = new();
+    private readonly Func<IBuildContext> _resultFactory;
     private readonly Mock<IBuildMessagesProcessor> _defaultBuildMessagesProcessor = new();
     private readonly Mock<IBuildMessagesProcessor> _customBuildMessagesProcessor = new();
     private readonly Mock<IBuildOutputProcessor> _buildOutputConverter = new();

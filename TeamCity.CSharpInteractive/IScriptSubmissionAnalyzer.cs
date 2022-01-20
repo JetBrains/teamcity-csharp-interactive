@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using Microsoft.CodeAnalysis.CSharp;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IScriptSubmissionAnalyzer
-    {
-        bool IsCompleteSubmission(string script, CSharpParseOptions parseOptions);
-    }
+using Microsoft.CodeAnalysis.CSharp;
+
+internal interface IScriptSubmissionAnalyzer
+{
+    bool IsCompleteSubmission(string script, CSharpParseOptions parseOptions);
 }

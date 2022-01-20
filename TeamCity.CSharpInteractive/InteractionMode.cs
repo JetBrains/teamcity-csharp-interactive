@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    internal enum InteractionMode
-    {
-        Interactive,
+namespace TeamCity.CSharpInteractive;
 
-        Script
-    }
+internal enum InteractionMode
+{
+    Interactive,
+
+    Script
 }

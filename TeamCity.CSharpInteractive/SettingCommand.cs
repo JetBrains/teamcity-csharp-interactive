@@ -1,30 +1,29 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class SettingCommand<TOption>: ICommand
+    where TOption: struct, Enum
 {
-    using System.Diagnostics.CodeAnalysis;
+    public readonly TOption Value;
 
-    [ExcludeFromCodeCoverage]
-    internal class SettingCommand<TOption>: ICommand
-        where TOption: struct, System.Enum
+    public SettingCommand(TOption value) => Value = value;
+        
+    public string Name => $"Set verbosity level to {Value}";
+        
+    public bool Internal => false;
+
+    public override bool Equals(object? obj)
     {
-        public readonly TOption Value;
-
-        public SettingCommand(TOption value) => Value = value;
-        
-        public string Name => $"Set verbosity level to {Value}";
-        
-        public bool Internal => false;
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            var other = (SettingCommand<TOption>) obj;
-            return Equals(Value, other.Value);
-        }
-
-        public override int GetHashCode() => Value.GetHashCode();
-        
-        public override string ToString() => Name;
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        var other = (SettingCommand<TOption>) obj;
+        return Equals(Value, other.Value);
     }
+
+    public override int GetHashCode() => Value.GetHashCode();
+        
+    public override string ToString() => Name;
 }

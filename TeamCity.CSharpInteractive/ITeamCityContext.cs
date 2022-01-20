@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ITeamCityContext
 {
-    internal interface ITeamCityContext
-    {
-        public bool TeamCityIntegration { set; }
-    }
+    public bool TeamCityIntegration { set; }
 }

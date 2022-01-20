@@ -1,9 +1,6 @@
 // ReSharper disable CheckNamespace
 namespace NuGet;
 
-using System.Collections.Generic;
-using System.Linq;
-
 [Immutype.Target]
 public record RestoreSettings(
     string PackageId,

@@ -1,22 +1,18 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IFileSystem
 {
-    using System.Collections.Generic;
-    using System.IO;
+    void DeleteDirectory(string path, bool recursive);
 
-    internal interface IFileSystem
-    {
-        void DeleteDirectory(string path, bool recursive);
+    bool IsPathRooted(string path);
 
-        bool IsPathRooted(string path);
-
-        bool IsFileExist(string file);
+    bool IsFileExist(string file);
         
-        bool IsDirectoryExist(string path);
+    bool IsDirectoryExist(string path);
 
-        IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption);
+    IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, SearchOption searchOption);
 
-        IEnumerable<string> ReadAllLines(string file);
+    IEnumerable<string> ReadAllLines(string file);
 
-        IStreamReader OpenReader(string file);
-    }
+    IStreamReader OpenReader(string file);
 }

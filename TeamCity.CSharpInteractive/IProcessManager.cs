@@ -1,24 +1,22 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using Cmd;
+
+internal interface IProcessManager: IDisposable
 {
-    using System;
-    using Cmd;
-
-    internal interface IProcessManager: IDisposable
-    {
-        event Action<Output> OnOutput;
+    event Action<Output> OnOutput;
         
-        event Action OnExit;
+    event Action OnExit;
 
-        int Id { get; }
+    int Id { get; }
 
-        int ExitCode { get; }
+    int ExitCode { get; }
 
-        bool Start(IStartInfo info);
+    bool Start(IStartInfo info);
 
-        void WaitForExit();
+    void WaitForExit();
         
-        bool WaitForExit(TimeSpan timeout);
+    bool WaitForExit(TimeSpan timeout);
         
-        bool Kill();
-    }
+    bool Kill();
 }

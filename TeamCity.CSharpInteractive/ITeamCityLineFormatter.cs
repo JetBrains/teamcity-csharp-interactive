@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ITeamCityLineFormatter
 {
-    internal interface ITeamCityLineFormatter
-    {
-        string Format(params Text[] line);
-    }
+    string Format(params Text[] line);
 }

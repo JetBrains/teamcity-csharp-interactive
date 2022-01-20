@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IHostEnvironment
 {
-    internal interface IHostEnvironment
-    {
-        string? GetEnvironmentVariable(string name);
-    }
+    string? GetEnvironmentVariable(string name);
 }

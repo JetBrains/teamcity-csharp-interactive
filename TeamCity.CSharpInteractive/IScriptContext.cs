@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IScriptContext
-    {
-        IDisposable OverrideScriptDirectory(string? scriptDirectory);
-    }
+internal interface IScriptContext
+{
+    IDisposable OverrideScriptDirectory(string? scriptDirectory);
 }

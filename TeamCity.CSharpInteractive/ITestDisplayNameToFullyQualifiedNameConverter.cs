@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ITestDisplayNameToFullyQualifiedNameConverter
 {
-    internal interface ITestDisplayNameToFullyQualifiedNameConverter
-    {
-        string Convert(string displayName);
-    }
+    string Convert(string displayName);
 }

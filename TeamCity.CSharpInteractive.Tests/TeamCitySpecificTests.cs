@@ -1,9 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Moq;
-using Shouldly;
-using Xunit;
-
 public class TeamCitySpecificTests
 {
     private readonly Mock<ITeamCitySettings> _settings = new();

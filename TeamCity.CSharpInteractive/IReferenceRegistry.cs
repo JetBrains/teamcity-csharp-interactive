@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IReferenceRegistry
 {
-    internal interface IReferenceRegistry
-    {
-        bool TryRegisterAssembly(string fileName, out string description);
-    }
+    bool TryRegisterAssembly(string fileName, out string description);
 }

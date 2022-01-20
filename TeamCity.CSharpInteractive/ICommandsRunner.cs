@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ICommandsRunner
-    {
-        IEnumerable<CommandResult> Run(IEnumerable<ICommand> commands);
-    }
+internal interface ICommandsRunner
+{
+    IEnumerable<CommandResult> Run(IEnumerable<ICommand> commands);
 }

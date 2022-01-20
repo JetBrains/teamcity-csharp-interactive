@@ -1,18 +1,16 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class NuGetRestoreSettingDescription : ISettingDescription
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
+    public bool IsVisible => false;
 
-    [ExcludeFromCodeCoverage]
-    internal class NuGetRestoreSettingDescription : ISettingDescription
-    {
-        public bool IsVisible => false;
+    public Type SettingType => typeof(NuGetRestoreSetting);
 
-        public Type SettingType => typeof(NuGetRestoreSetting);
+    public string Key => "nr";
 
-        public string Key => "nr";
-
-        public string Description => "Set a NuGet restore setting";
-    }
+    public string Description => "Set a NuGet restore setting";
 }

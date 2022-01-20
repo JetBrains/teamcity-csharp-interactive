@@ -1,31 +1,30 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal class SettingCommandRunner<TOption>: ICommandRunner
+    where TOption: struct, Enum
 {
-    internal class SettingCommandRunner<TOption>: ICommandRunner
-        where TOption: struct, System.Enum
+    private readonly ILog<SettingCommandRunner<TOption>> _log;
+    private readonly ISettingSetter<TOption> _settingSetter;
+
+    public SettingCommandRunner(
+        ILog<SettingCommandRunner<TOption>> log,
+        ISettingSetter<TOption> settingSetter)
     {
-        private readonly ILog<SettingCommandRunner<TOption>> _log;
-        private readonly ISettingSetter<TOption> _settingSetter;
+        _log = log;
+        _settingSetter = settingSetter;
+    }
 
-        public SettingCommandRunner(
-            ILog<SettingCommandRunner<TOption>> log,
-            ISettingSetter<TOption> settingSetter)
+    public CommandResult TryRun(ICommand command)
+    {
+        if (command is not SettingCommand<TOption> settingCommand)
         {
-            _log = log;
-            _settingSetter = settingSetter;
+            return new CommandResult(command, default);
         }
 
-        public CommandResult TryRun(ICommand command)
-        {
-            if (command is not SettingCommand<TOption> settingCommand)
-            {
-                return new CommandResult(command, default);
-            }
+        var previousValue = _settingSetter.SetSetting(settingCommand.Value);
+        _log.Trace(() => { return new[] { new Text($"Change the {typeof(TOption).Name} from {previousValue} to {settingCommand.Value}.") }; });
 
-            var previousValue = _settingSetter.SetSetting(settingCommand.Value);
-            _log.Trace(() => { return new[] { new Text($"Change the {typeof(TOption).Name} from {previousValue} to {settingCommand.Value}.") }; });
-
-            return new CommandResult(command, true);
-        }
+        return new CommandResult(command, true);
     }
 }

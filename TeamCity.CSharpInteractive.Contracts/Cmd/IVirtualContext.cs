@@ -1,8 +1,7 @@
 // ReSharper disable CheckNamespace
-namespace Cmd
+namespace Cmd;
+
+internal interface IVirtualContext
 {
-    internal interface IVirtualContext
-    {
-        string Resolve(string path);
-    }
+    string Resolve(string path);
 }

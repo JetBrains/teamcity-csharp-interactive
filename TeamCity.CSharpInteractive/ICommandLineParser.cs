@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ICommandLineParser
-    {
-        IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments);
-    }
+internal interface ICommandLineParser
+{
+    IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments);
 }

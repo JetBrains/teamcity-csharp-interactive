@@ -1,19 +1,17 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+
+[ExcludeFromCodeCoverage]
+internal class LanguageVersionSettingDescription : ISettingDescription
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
+    public bool IsVisible => false;
 
-    [ExcludeFromCodeCoverage]
-    internal class LanguageVersionSettingDescription : ISettingDescription
-    {
-        public bool IsVisible => false;
+    public Type SettingType => typeof(LanguageVersion);
 
-        public Type SettingType => typeof(LanguageVersion);
+    public string Key => "lv";
 
-        public string Key => "lv";
-
-        public string Description => "Set a C# language version";
-    }
+    public string Description => "Set a C# language version";
 }

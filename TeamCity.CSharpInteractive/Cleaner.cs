@@ -1,27 +1,24 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal class Cleaner : ICleaner
 {
-    using System;
+    private readonly ILog<Cleaner> _log;
+    private readonly IFileSystem _fileSystem;
 
-    internal class Cleaner : ICleaner
+    public Cleaner(ILog<Cleaner> log, IFileSystem fileSystem)
     {
-        private readonly ILog<Cleaner> _log;
-        private readonly IFileSystem _fileSystem;
+        _log = log;
+        _fileSystem = fileSystem;
+    }
 
-        public Cleaner(ILog<Cleaner> log, IFileSystem fileSystem)
+    public IDisposable Track(string path)
+    {
+        _log.Trace(() => new [] {new Text($"Start tracking \"{path}\".")});
+        return Disposable.Create(() =>
         {
-            _log = log;
-            _fileSystem = fileSystem;
-        }
-
-        public IDisposable Track(string path)
-        {
-            _log.Trace(() => new [] {new Text($"Start tracking \"{path}\".")});
-            return Disposable.Create(() =>
-            {
-                _log.Trace(() => new []{new Text($"Delete \"{path}\".")});
-                _fileSystem.DeleteDirectory(path, true);
-            });
-        }
+            _log.Trace(() => new []{new Text($"Delete \"{path}\".")});
+            _fileSystem.DeleteDirectory(path, true);
+        });
     }
 }

@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ICleaner
-    {
-        IDisposable Track(string path);
-    }
+internal interface ICleaner
+{
+    IDisposable Track(string path);
 }

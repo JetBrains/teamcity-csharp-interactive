@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IStringService
 {
-    internal interface IStringService
-    {
-        string TrimAndUnquote(string quotedString);
-    }
+    string TrimAndUnquote(string quotedString);
 }

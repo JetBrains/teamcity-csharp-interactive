@@ -1,41 +1,39 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Collections;
+using Contracts;
+using JetBrains.TeamCity.ServiceMessages.Write.Special;
+using Pure.DI;
+
+internal class TeamCityProperties: IProperties
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using Contracts;
-    using JetBrains.TeamCity.ServiceMessages.Write.Special;
-    using Pure.DI;
+    private readonly IProperties _props;
+    private readonly ITeamCityWriter _teamCityWriter;
 
-    internal class TeamCityProperties: IProperties
+    public TeamCityProperties(
+        [Tag("Default")] IProperties properties,
+        ITeamCityWriter teamCityWriter)
     {
-        private readonly IProperties _props;
-        private readonly ITeamCityWriter _teamCityWriter;
-
-        public TeamCityProperties(
-            [Tag("Default")] IProperties properties,
-            ITeamCityWriter teamCityWriter)
-        {
-            _props = properties;
-            _teamCityWriter = teamCityWriter;
-        }
-        
-        public int Count => _props.Count;
-
-        public string this[string key]
-        {
-            get => _props[key];
-            set
-            {
-                _props[key] = value;
-                _teamCityWriter.WriteBuildParameter($"system.{key}", value);
-            }
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _props.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_props).GetEnumerator();
-        
-        public bool TryGetValue(string key, out string value) => _props.TryGetValue(key, out value);
+        _props = properties;
+        _teamCityWriter = teamCityWriter;
     }
+        
+    public int Count => _props.Count;
+
+    public string this[string key]
+    {
+        get => _props[key];
+        set
+        {
+            _props[key] = value;
+            _teamCityWriter.WriteBuildParameter($"system.{key}", value);
+        }
+    }
+
+    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _props.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_props).GetEnumerator();
+        
+    public bool TryGetValue(string key, out string value) => _props.TryGetValue(key, out value);
 }

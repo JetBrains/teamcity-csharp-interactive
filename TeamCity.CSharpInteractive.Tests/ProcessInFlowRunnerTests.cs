@@ -1,14 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Cmd;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class ProcessInFlowRunnerTests
 {

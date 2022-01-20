@@ -1,67 +1,63 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using Microsoft.DotNet.PlatformAbstractions;
+using Pure.DI;
+
+internal class DotNetEnvironment : IDotNetEnvironment, ITraceSource
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Runtime.InteropServices;
-    using Microsoft.DotNet.PlatformAbstractions;
-    using Pure.DI;
-
-    internal class DotNetEnvironment : IDotNetEnvironment, ITraceSource
+    private readonly string _moduleFile;
+    private readonly IEnvironment _environment;
+    private readonly IFileExplorer _fileExplorer;
+    public DotNetEnvironment(
+        [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
+        [Tag("ModuleFile")] string moduleFile,
+        IEnvironment environment,
+        IFileExplorer fileExplorer)
     {
-        private readonly string _moduleFile;
-        private readonly IEnvironment _environment;
-        private readonly IFileExplorer _fileExplorer;
-        public DotNetEnvironment(
-            [Tag("TargetFrameworkMoniker")] string targetFrameworkMoniker,
-            [Tag("ModuleFile")] string moduleFile,
-            IEnvironment environment,
-            IFileExplorer fileExplorer)
-        {
-            _moduleFile = moduleFile;
-            _environment = environment;
-            _fileExplorer = fileExplorer;
-            TargetFrameworkMoniker = targetFrameworkMoniker;
-        }
+        _moduleFile = moduleFile;
+        _environment = environment;
+        _fileExplorer = fileExplorer;
+        TargetFrameworkMoniker = targetFrameworkMoniker;
+    }
 
-        public string Path
+    public string Path
+    {
+        get
         {
-            get
+            var executable = _environment.OperatingSystemPlatform == Platform.Windows ? "dotnet.exe" : "dotnet";
+            try
             {
-                var executable = _environment.OperatingSystemPlatform == Platform.Windows ? "dotnet.exe" : "dotnet";
-                try
+                if (System.IO.Path.GetFileName(_moduleFile).Equals(executable, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (System.IO.Path.GetFileName(_moduleFile).Equals(executable, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return _moduleFile;
-                    }
-
-                    return _fileExplorer.FindFiles(executable, "DOTNET_HOME").FirstOrDefault() ?? executable;
-                }
-                catch
-                {
-                    // ignored
+                    return _moduleFile;
                 }
 
-                return executable;
+                return _fileExplorer.FindFiles(executable, "DOTNET_HOME").FirstOrDefault() ?? executable;
             }
-        }
-
-        public string TargetFrameworkMoniker { get; }
-
-        [ExcludeFromCodeCoverage]
-        public IEnumerable<Text> Trace
-        {
-            get
+            catch
             {
-                yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
-                yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
-                yield return new Text($"DotNetPath: {Path}");
-                yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
+                // ignored
             }
+
+            return executable;
+        }
+    }
+
+    public string TargetFrameworkMoniker { get; }
+
+    [ExcludeFromCodeCoverage]
+    public IEnumerable<Text> Trace
+    {
+        get
+        {
+            yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
+            yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
+            yield return new Text($"DotNetPath: {Path}");
+            yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
         }
     }
 }

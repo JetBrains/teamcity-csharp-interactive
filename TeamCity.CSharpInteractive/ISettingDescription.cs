@@ -1,15 +1,12 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ISettingDescription
 {
-    using System;
-
-    internal interface ISettingDescription
-    {
-        bool IsVisible { get; }
+    bool IsVisible { get; }
         
-        Type SettingType { get; }
+    Type SettingType { get; }
             
-        string Key { get; }
+    string Key { get; }
 
-        string Description { get; }
-    }
+    string Description { get; }
 }

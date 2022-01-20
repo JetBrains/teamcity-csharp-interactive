@@ -1,46 +1,44 @@
-﻿namespace TeamCity.CSharpInteractive
+﻿namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable once ClassNeverInstantiated.Global
+[ExcludeFromCodeCoverage]
+internal class Console : IConsole
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
+    private readonly object _lockObject = new();
 
-    // ReSharper disable once ClassNeverInstantiated.Global
-    [ExcludeFromCodeCoverage]
-    internal class Console : IConsole
+    public void WriteToOut(params (ConsoleColor? color, string output)[] text)
     {
-        private readonly object _lockObject = new();
-
-        public void WriteToOut(params (ConsoleColor? color, string output)[] text)
+        lock (_lockObject)
         {
-            lock (_lockObject)
+            var foregroundColor = System.Console.ForegroundColor;
+            try
             {
-                var foregroundColor = System.Console.ForegroundColor;
-                try
+                foreach (var (color, output) in text)
                 {
-                    foreach (var (color, output) in text)
+                    if (color.HasValue)
                     {
-                        if (color.HasValue)
-                        {
-                            System.Console.ForegroundColor = color.Value;
-                        }
-
-                        System.Console.Out.Write(output);
+                        System.Console.ForegroundColor = color.Value;
                     }
-                }
-                finally
-                {
-                    System.Console.ForegroundColor = foregroundColor;
+
+                    System.Console.Out.Write(output);
                 }
             }
-        }
-
-        public void WriteToErr(params string[] text)
-        {
-            lock (_lockObject)
+            finally
             {
-                foreach (var item in text)
-                {
-                    System.Console.Error.Write(item);
-                }
+                System.Console.ForegroundColor = foregroundColor;
+            }
+        }
+    }
+
+    public void WriteToErr(params string[] text)
+    {
+        lock (_lockObject)
+        {
+            foreach (var item in text)
+            {
+                System.Console.Error.Write(item);
             }
         }
     }

@@ -1,24 +1,20 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive.Tests.Integration.Core
+namespace TeamCity.CSharpInteractive.Tests.Integration.Core;
+
+internal class FileSystem : IFileSystem
 {
-    using System.Collections.Generic;
-    using System.IO;
+    public string CreateTempFilePath() => Path.GetTempFileName();
 
-    internal class FileSystem : IFileSystem
+    public void DeleteFile(string file) => File.Delete(file);
+
+    public void AppendAllLines(string file, IEnumerable<string> lines)
     {
-        public string CreateTempFilePath() => Path.GetTempFileName();
-
-        public void DeleteFile(string file) => File.Delete(file);
-
-        public void AppendAllLines(string file, IEnumerable<string> lines)
+        var path = Path.GetDirectoryName(file);
+        if (!string.IsNullOrWhiteSpace(path) && !Directory.Exists(path))
         {
-            var path = Path.GetDirectoryName(file);
-            if (!string.IsNullOrWhiteSpace(path) && !Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            
-            File.AppendAllLines(file, lines);
+            Directory.CreateDirectory(path);
         }
+            
+        File.AppendAllLines(file, lines);
     }
 }

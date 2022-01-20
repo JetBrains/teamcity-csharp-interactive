@@ -1,14 +1,13 @@
-namespace TeamCity.CSharpInteractive.Contracts
+namespace TeamCity.CSharpInteractive.Contracts;
+
+public enum Color
 {
-    public enum Color
-    {
-        Default,
-        Header,
-        Trace,
-        Success,
-        Warning,
-        Error,
-        Details,
-        Highlighted
-    }
+    Default,
+    Header,
+    Trace,
+    Success,
+    Warning,
+    Error,
+    Details,
+    Highlighted
 }

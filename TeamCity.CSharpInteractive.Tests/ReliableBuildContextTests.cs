@@ -1,21 +1,17 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System.Collections.Generic;
-using System.IO;
 using Cmd;
+using CSharpInteractive;
 using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Write;
-using Moq;
-using Shouldly;
-using Xunit;
 
-public class ReliableBuildResultTests
+public class ReliableBuildContextTests
 {
     private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
     private readonly Mock<IFileSystem> _fileSystem = new();
     private readonly Mock<IMessagesReader> _messagesReader = new();
-    private readonly Mock<IBuildResult> _baseBuildResult = new();
+    private readonly Mock<IBuildContext> _baseBuildResult = new();
     private readonly Mock<IStartInfo> _startInfo = new();
     
     [Fact]
@@ -90,6 +86,6 @@ public class ReliableBuildResultTests
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Ccc"), Path.Combine("Messages", "Ccc.msg")), Times.Never);
     }
 
-    private ReliableBuildResult CreateInstance() =>
+    private ReliableBuildContext CreateInstance() =>
         new(_teamCitySettings.Object, _fileSystem.Object, _messagesReader.Object, _baseBuildResult.Object);
 }

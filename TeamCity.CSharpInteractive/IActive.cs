@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IActive
-    {
-        IDisposable Activate();
-    }
+internal interface IActive
+{
+    IDisposable Activate();
 }

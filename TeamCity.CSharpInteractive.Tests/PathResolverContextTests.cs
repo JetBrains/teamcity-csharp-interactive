@@ -2,9 +2,6 @@ namespace TeamCity.CSharpInteractive.Tests;
 
 using Cmd;
 using Contracts;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class PathResolverContextTests
 {

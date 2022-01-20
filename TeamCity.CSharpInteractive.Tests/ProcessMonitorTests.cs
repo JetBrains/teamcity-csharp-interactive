@@ -1,11 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Linq;
 using Cmd;
 using Contracts;
-using Moq;
-using Xunit;
 
 public class ProcessMonitorTests
 {

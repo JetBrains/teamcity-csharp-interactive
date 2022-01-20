@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IFilePathResolver
 {
-    internal interface IFilePathResolver
-    {
-        bool TryResolve(string? filePath, out string fullFilePath);
-    }
+    bool TryResolve(string? filePath, out string fullFilePath);
 }

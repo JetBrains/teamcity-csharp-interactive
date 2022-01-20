@@ -1,44 +1,41 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InvertIf
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal class CommandsRunner : ICommandsRunner
 {
-    using System.Collections.Generic;
+    private readonly ICommandRunner[] _commandRunners;
+    private readonly IStatistics _statistics;
 
-    internal class CommandsRunner : ICommandsRunner
+    public CommandsRunner(
+        ICommandRunner[] commandRunners,
+        IStatistics statistics)
     {
-        private readonly ICommandRunner[] _commandRunners;
-        private readonly IStatistics _statistics;
+        _commandRunners = commandRunners;
+        _statistics = statistics;
+    }
 
-        public CommandsRunner(
-            ICommandRunner[] commandRunners,
-            IStatistics statistics)
+    public IEnumerable<CommandResult> Run(IEnumerable<ICommand> commands)
+    {
+        using (_statistics.Start())
         {
-            _commandRunners = commandRunners;
-            _statistics = statistics;
-        }
-
-        public IEnumerable<CommandResult> Run(IEnumerable<ICommand> commands)
-        {
-            using (_statistics.Start())
+            foreach (var command in commands)
             {
-                foreach (var command in commands)
+                var processed = false;
+                foreach (var runner in _commandRunners)
                 {
-                    var processed = false;
-                    foreach (var runner in _commandRunners)
+                    var result = runner.TryRun(command);
+                    if (result.Success.HasValue)
                     {
-                        var result = runner.TryRun(command);
-                        if (result.Success.HasValue)
-                        {
-                            processed = true;
-                            yield return result;
-                            break;
-                        }
+                        processed = true;
+                        yield return result;
+                        break;
                     }
+                }
 
-                    if (!processed)
-                    {
-                        yield return new CommandResult(command, default);
-                    }
+                if (!processed)
+                {
+                    yield return new CommandResult(command, default);
                 }
             }
         }

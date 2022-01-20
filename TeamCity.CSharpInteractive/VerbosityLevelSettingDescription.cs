@@ -1,18 +1,16 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class VerbosityLevelSettingDescription : ISettingDescription
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
+    public bool IsVisible => true;
 
-    [ExcludeFromCodeCoverage]
-    internal class VerbosityLevelSettingDescription : ISettingDescription
-    {
-        public bool IsVisible => true;
+    public Type SettingType => typeof(VerbosityLevel);
 
-        public Type SettingType => typeof(VerbosityLevel);
+    public string Key => "l";
 
-        public string Key => "l";
-
-        public string Description => "Set a verbosity level";
-    }
+    public string Description => "Set a verbosity level";
 }

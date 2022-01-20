@@ -1,22 +1,20 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_BuiltInTypes
-namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
-{
-    using Xunit;
-    using static Contracts.Color;
+namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-    public class WriteLineWithColour: Scenario
+using static Color;
+
+public class WriteLineWithColour: Scenario
+{
+    [Fact]
+    public void Run()
     {
-        [Fact]
-        public void Run()
-        {
-            // $visible=true
-            // $tag=09 Logging
-            // $priority=01
-            // $description=Write a line highlighted with "Header" color to a build log
-            // {
-            WriteLine("Hello", Header);
-            // }
-        }
+        // $visible=true
+        // $tag=09 Logging
+        // $priority=01
+        // $description=Write a line highlighted with "Header" color to a build log
+        // {
+        WriteLine("Hello", Header);
+        // }
     }
 }

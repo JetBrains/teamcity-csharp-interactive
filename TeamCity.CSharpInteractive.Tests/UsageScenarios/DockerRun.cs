@@ -1,39 +1,36 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
+namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
+
+using Cmd;
+using Docker;
+
+[CollectionDefinition("Integration", DisableParallelization = true)]
+public class DockerRun: Scenario
 {
-    using Cmd;
-    using Docker;
-    using Shouldly;
-    using Xunit;
-
-    [CollectionDefinition("Integration", DisableParallelization = true)]
-    public class DockerRun: Scenario
+    [Fact]
+    public void Run()
     {
-        [Fact]
-        public void Run()
-        {
-            // $visible=true
-            // $tag=12 Docker API
-            // $priority=00
-            // $description=Running in docker
-            // {
-            // Adds the namespace "Cmd" to use Command Line API
-            // ## using Cmd;
-            // Adds the namespace "Docker" to use Docker API
-            // ## using Docker;
+        // $visible=true
+        // $tag=12 Docker API
+        // $priority=00
+        // $description=Running in docker
+        // {
+        // Adds the namespace "Cmd" to use Command Line API
+        // ## using Cmd;
+        // Adds the namespace "Docker" to use Docker API
+        // ## using Docker;
 
-            // Resolves a build service
-            var commandLine = GetService<ICommandLine>();
+        // Resolves a build service
+        var commandLine = GetService<ICommandLine>();
 
-            // Creates some command line to run in a docker container
-            var cmd = new CommandLine("whoami");
+        // Creates some command line to run in a docker container
+        var cmd = new CommandLine("whoami");
 
-            // Runs the command line in a docker container
-            var result = commandLine.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
-            result.ShouldBe(0);
-            // }
-        }
+        // Runs the command line in a docker container
+        var result = commandLine.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
+        result.ShouldBe(0);
+        // }
     }
 }

@@ -1,63 +1,61 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class DiagnosticsPresenter: IPresenter<CompilationDiagnostics>
 {
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using Microsoft.CodeAnalysis;
+    private readonly ILog<DiagnosticsPresenter> _log;
 
-    [ExcludeFromCodeCoverage]
-    internal class DiagnosticsPresenter: IPresenter<CompilationDiagnostics>
+    public DiagnosticsPresenter(ILog<DiagnosticsPresenter> log) => _log = log;
+
+    public void Show(CompilationDiagnostics data)
     {
-        private readonly ILog<DiagnosticsPresenter> _log;
-
-        public DiagnosticsPresenter(ILog<DiagnosticsPresenter> log) => _log = log;
-
-        public void Show(CompilationDiagnostics data)
+        var (sourceCommand, readOnlyCollection) = data;
+        foreach (var diagnostic in readOnlyCollection)
         {
-            var (sourceCommand, readOnlyCollection) = data;
-            foreach (var diagnostic in readOnlyCollection)
+            switch (diagnostic.Severity)
             {
-                switch (diagnostic.Severity)
-                {
-                    case DiagnosticSeverity.Hidden:
-                        _log.Trace(() => new []{new Text(diagnostic.ToString())});
-                        break;
+                case DiagnosticSeverity.Hidden:
+                    _log.Trace(() => new []{new Text(diagnostic.ToString())});
+                    break;
 
-                    case DiagnosticSeverity.Info:
-                        _log.Info(new []{new Text(diagnostic.ToString())});
-                        break;
+                case DiagnosticSeverity.Info:
+                    _log.Info(new []{new Text(diagnostic.ToString())});
+                    break;
 
-                    case DiagnosticSeverity.Warning:
-                        _log.Warning(new []{new Text(diagnostic.ToString())});
-                        break;
+                case DiagnosticSeverity.Warning:
+                    _log.Warning(new []{new Text(diagnostic.ToString())});
+                    break;
 
-                    case DiagnosticSeverity.Error:
-                        var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(sourceCommand.Name))}";
-                        _log.Error(new ErrorId(errorId), new []{new Text(diagnostic.ToString())});
-                        break;
-                }
+                case DiagnosticSeverity.Error:
+                    var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(sourceCommand.Name))}";
+                    _log.Error(new ErrorId(errorId), new []{new Text(diagnostic.ToString())});
+                    break;
             }
         }
+    }
         
-        private static string GetProperty(string? value, string prefix = ",") =>
-            string.IsNullOrWhiteSpace(value) ? string.Empty : $"{prefix}{value}";
+    private static string GetProperty(string? value, string prefix = ",") =>
+        string.IsNullOrWhiteSpace(value) ? string.Empty : $"{prefix}{value}";
 
-        private static string GetFileName(string file)
+    private static string GetFileName(string file)
+    {
+        try
         {
-            try
+            if (!string.IsNullOrWhiteSpace(file))
             {
-                if (!string.IsNullOrWhiteSpace(file))
-                {
-                    return Path.GetFileName(file);
-                }
+                return Path.GetFileName(file);
             }
-            catch
-            {
-                // ignored
-            }
-
-            return string.Empty;
         }
+        catch
+        {
+            // ignored
+        }
+
+        return string.Empty;
     }
 }

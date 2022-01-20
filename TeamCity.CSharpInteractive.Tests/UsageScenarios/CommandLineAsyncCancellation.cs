@@ -1,41 +1,35 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_Elsewhere
-namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
+namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
+
+using Cmd;
+
+[CollectionDefinition("Integration", DisableParallelization = true)]
+public class CommandLineAsyncCancellation: Scenario
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Cmd;
-    using Shouldly;
-    using Xunit;
-
-    [CollectionDefinition("Integration", DisableParallelization = true)]
-    public class CommandLineAsyncCancellation: Scenario
+    [SkippableFact]
+    public void Run()
     {
-        [SkippableFact]
-        public void Run()
-        {
-            Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
-            Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
+        Skip.IfNot(System.Environment.OSVersion.Platform == PlatformID.Win32NT);
+        Skip.IfNot(string.IsNullOrWhiteSpace(System.Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
-            // $visible=true
-            // $tag=10 Command Line API
-            // $priority=06
-            // $description=Cancellation of asynchronous run
-            // $header=The cancellation will kill a related process.
-            // {
-            // Adds the namespace "Cmd" to use Command Line API
-            // ## using Cmd;
+        // $visible=true
+        // $tag=10 Command Line API
+        // $priority=06
+        // $description=Cancellation of asynchronous run
+        // $header=The cancellation will kill a related process.
+        // {
+        // Adds the namespace "Cmd" to use Command Line API
+        // ## using Cmd;
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            Task<int?> task = GetService<ICommandLine>().RunAsync(
-                new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
-                default,
-                cancellationTokenSource.Token);
+        var cancellationTokenSource = new CancellationTokenSource();
+        Task<int?> task = GetService<ICommandLine>().RunAsync(
+            new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
+            default,
+            cancellationTokenSource.Token);
             
-            cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
-            task.IsCompleted.ShouldBeFalse();
-            // }
-        }
+        cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
+        task.IsCompleted.ShouldBeFalse();
+        // }
     }
 }

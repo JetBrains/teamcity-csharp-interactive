@@ -1,11 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ICodeSource : IEnumerable<string?>
-    {
-        string Name { get; }
+internal interface ICodeSource : IEnumerable<string?>
+{
+    string Name { get; }
         
-        bool Internal { get; }
-    }
+    bool Internal { get; }
 }

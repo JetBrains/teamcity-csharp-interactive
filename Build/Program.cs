@@ -1,4 +1,4 @@
-﻿using Dotnet;
+﻿using DotNet;
 using NuGet;
 using NuGet.Versioning;
 

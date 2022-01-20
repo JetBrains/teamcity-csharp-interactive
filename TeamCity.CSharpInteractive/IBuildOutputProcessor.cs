@@ -1,10 +1,10 @@
 namespace TeamCity.CSharpInteractive;
 
-using System.Collections.Generic;
 using Cmd;
+using CSharpInteractive;
 using DotNet;
 
 internal interface IBuildOutputProcessor
 {
-    IEnumerable<BuildMessage> Convert(in Output output, IBuildResult result);
+    IEnumerable<BuildMessage> Convert(in Output output, IBuildContext context);
 }

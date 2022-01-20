@@ -1,22 +1,20 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class FileCodeSourceFactory : IFileCodeSourceFactory
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
+    private readonly Func<FileCodeSource> _fileCodeSourceFactory;
 
-    [ExcludeFromCodeCoverage]
-    internal class FileCodeSourceFactory : IFileCodeSourceFactory
+    public FileCodeSourceFactory(Func<FileCodeSource> fileCodeSourceFactory) => 
+        _fileCodeSourceFactory = fileCodeSourceFactory;
+
+    public ICodeSource Create(string fileName)
     {
-        private readonly Func<FileCodeSource> _fileCodeSourceFactory;
-
-        public FileCodeSourceFactory(Func<FileCodeSource> fileCodeSourceFactory) => 
-            _fileCodeSourceFactory = fileCodeSourceFactory;
-
-        public ICodeSource Create(string fileName)
-        {
-            var fileCodeSource = _fileCodeSourceFactory();
-            fileCodeSource.FileName = fileName;
-            return fileCodeSource;
-        }
+        var fileCodeSource = _fileCodeSourceFactory();
+        fileCodeSource.FileName = fileName;
+        return fileCodeSource;
     }
 }

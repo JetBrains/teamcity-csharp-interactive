@@ -2,70 +2,65 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable NotAccessedPositionalProperty.Global
 // ReSharper disable ReturnTypeCanBeEnumerable.Local
-namespace DotNet
+namespace DotNet;
+
+using System.Diagnostics;
+using System.Text;
+using Cmd;
+
+[Immutype.Target]
+[DebuggerTypeProxy(typeof(TestResultDebugView))]
+public readonly record struct TestResult(
+    TestState State,
+    string AssemblyName,
+    string FullyQualifiedName,
+    string DisplayName,
+    string Message,
+    string Details,
+    TimeSpan Duration,
+    IReadOnlyList<Output> Output)
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Text;
-    using Cmd;
-
-    [Immutype.Target]
-    [DebuggerTypeProxy(typeof(TestResultDebugView))]
-    public readonly record struct TestResult(
-        TestState State,
-        string AssemblyName,
-        string FullyQualifiedName,
-        string DisplayName,
-        string Message,
-        string Details,
-        TimeSpan Duration,
-        IReadOnlyList<Output> Output)
-    {
-        public TestResult(TestState state, string displayName)
-            : this(state,string.Empty, string.Empty, displayName, string.Empty, string.Empty, TimeSpan.Zero, Array.Empty<Output>())
-        { }
+    public TestResult(TestState state, string displayName)
+        : this(state,string.Empty, string.Empty, displayName, string.Empty, string.Empty, TimeSpan.Zero, Array.Empty<Output>())
+    { }
         
-        public static implicit operator string(TestResult it) => it.ToString();
-
-        public override string ToString()
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        if (!string.IsNullOrWhiteSpace(AssemblyName))
         {
-            var sb = new StringBuilder();
-            if (!string.IsNullOrWhiteSpace(AssemblyName))
-            {
-                sb.Append(AssemblyName);
-                sb.Append(": ");
-            }
-
-            sb.Append(DisplayName);
-            sb.Append(" is ");
-            sb.Append(State.ToString().ToLowerInvariant());
-            sb.Append('.');
-            return sb.ToString();
+            sb.Append(AssemblyName);
+            sb.Append(": ");
         }
 
-        private class TestResultDebugView
-        {
-            private readonly TestResult _testResult;
+        sb.Append(DisplayName);
+        sb.Append(" is ");
+        sb.Append(State.ToString().ToLowerInvariant());
+        sb.Append('.');
+        return sb.ToString();
+    }
 
-            public TestResultDebugView(TestResult testResult) => _testResult = testResult;
+    private class TestResultDebugView
+    {
+        private readonly TestResult _testResult;
 
-            public TestState State => _testResult.State;
+        public TestResultDebugView(TestResult testResult) => _testResult = testResult;
 
-            public string AssemblyName => _testResult.AssemblyName;
+        public TestState State => _testResult.State;
 
-            public string FullyQualifiedName => _testResult.FullyQualifiedName;
+        public string AssemblyName => _testResult.AssemblyName;
 
-            public string DisplayName => _testResult.DisplayName;
+        public string FullyQualifiedName => _testResult.FullyQualifiedName;
 
-            public string Message => _testResult.Message;
+        public string DisplayName => _testResult.DisplayName;
 
-            public string Details => _testResult.Details;
+        public string Message => _testResult.Message;
 
-            public TimeSpan Duration => _testResult.Duration;
+        public string Details => _testResult.Details;
 
-            [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-            public IReadOnlyList<Output> Output => _testResult.Output;
-        }
+        public TimeSpan Duration => _testResult.Duration;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+        public IReadOnlyList<Output> Output => _testResult.Output;
     }
 }

@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using DotNet;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IBuildMessageLogWriter
-    {
-        void Write(BuildMessage message);
-    }
+using DotNet;
+
+internal interface IBuildMessageLogWriter
+{
+    void Write(BuildMessage message);
 }

@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IFileCodeSourceFactory
 {
-    internal interface IFileCodeSourceFactory
-    {
-        ICodeSource Create(string fileName);
-    }
+    ICodeSource Create(string fileName);
 }

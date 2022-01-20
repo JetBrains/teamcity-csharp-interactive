@@ -176,25 +176,25 @@ Trace("Some trace info");
 ``` CSharp
 // Adds the namespace "Cmd" to use Command Line API
 using Cmd;
-
+    
 // Creates a simple command line from just the name of the executable 
 new CommandLine("whoami");
-
+    
 // Creates a command line with multiple command line arguments 
 new CommandLine("cmd", "/c", "echo", "Hello");
-
+    
 // Same as previous statement
 new CommandLine("cmd", "/c")
     .AddArgs("echo", "Hello");
-
+    
 // Builds a command line with multiple environment variables
 new CommandLine("cmd", "/c", "echo", "Hello")
     .AddVars(("Var1", "val1"), ("var2", "Val2"));
-
+    
 // Builds a command line to run from a specific working directory 
 new CommandLine("cmd", "/c", "echo", "Hello")
     .WithWorkingDirectory("MyDyrectory");
-
+    
 // Builds a command line and replaces all command line arguments
 new CommandLine("cmd", "/c", "echo", "Hello")
     .WithArgs("/c", "echo", "Hello !!!");
@@ -240,7 +240,7 @@ var lines = new System.Collections.Generic.List<string>();
 int? exitCode = GetService<ICommandLine>().Run(
     new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
     i => lines.Add(i.Line));
-
+    
 lines.ShouldContain("MyEnv=MyVal");
 ```
 
@@ -274,7 +274,7 @@ Task<int?> task = GetService<ICommandLine>().RunAsync(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
     default,
     cancellationTokenSource.Token);
-
+    
 cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
 task.IsCompleted.ShouldBeFalse();
 ```
@@ -293,7 +293,7 @@ int? exitCode = GetService<ICommandLine>().Run(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
     default,
     TimeSpan.FromMilliseconds(1));
-
+    
 exitCode.HasValue.ShouldBeFalse();
 ```
 
@@ -309,14 +309,14 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
-
+    
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
@@ -334,7 +334,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -342,10 +342,10 @@ result.ExitCode.ShouldBe(0);
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
 result.ExitCode.ShouldBe(0);
-
+    
 // Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
 result = build.Run(new Clean().WithWorkingDirectory("MyLib"));
-
+    
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
 ```
@@ -362,7 +362,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Gets the dotnet version, running a command like: "dotnet --version"
 Version? version = default;
 var result = build.Run(
@@ -385,7 +385,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -398,7 +398,7 @@ result = build.Run(
         .WithRestore(true)
         .AddProps(("configuration", "Release"))
         .WithVerbosity(Verbosity.Detailed));
-
+    
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
@@ -416,7 +416,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -442,7 +442,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -464,7 +464,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -486,7 +486,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
 var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -495,7 +495,7 @@ result.ExitCode.ShouldBe(0);
 var stdOut = new List<string>(); 
 result = build.Run(new Run().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
 result.ExitCode.ShouldBe(0);
-
+    
 // Checks StdOut
 stdOut.ShouldBe(new []{ "Hello, World!" });
 ```
@@ -512,14 +512,14 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
 var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
 result.ExitCode.ShouldBe(0);
 
 // Runs tests via a command like: "dotnet test" from the directory "MyTests"
 result = build.Run(new Test().WithWorkingDirectory("MyTests"));
-
+    
 // The "result" variable provides details about a build
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 result.ExitCode.ShouldBe(0);
@@ -537,7 +537,7 @@ using DotNet;
 
 // Resolves a build service
 var build = GetService<IBuild>();
-
+    
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
 var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
 result.ExitCode.ShouldBe(0);
@@ -545,13 +545,13 @@ result.ExitCode.ShouldBe(0);
 // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
 result = build.Run(new Build().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
 result.ExitCode.ShouldBe(0);
-
+    
 // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
 result = build.Run(
     new VSTest()
         .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
         .WithWorkingDirectory("MyTests"));
-
+    
 // The "result" variable provides details about a build
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 result.ExitCode.ShouldBe(0);
@@ -635,8 +635,8 @@ var baseDockerCmd = new Docker.Run()
     .WithImage("mcr.microsoft.com/dotnet/sdk")
     .WithPlatform("linux")
     .WithContainerWorkingDirectory("/MyProjects")
-    .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
-
+    .AddVolumes((System.Environment.CurrentDirectory, "/MyProjects"));
+    
 // Creates a new library project in a docker container
 var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
 var result = build.Run(baseDockerCmd.WithProcess(customCmd));
@@ -645,7 +645,7 @@ result.ExitCode.ShouldBe(0);
 // Builds the library project in a docker container
 var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
 result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
-
+    
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
@@ -680,7 +680,7 @@ using (var tests = writer.OpenBlock("My Tests"))
         test.WriteImage("TestsResults/Test1Screenshot.jpg", "Screenshot");
         test.WriteDuration(TimeSpan.FromMilliseconds(10));
     }
-    
+        
     using (var test = tests.OpenTest("Test2"))
     {
         test.WriteIgnored("Some reason");

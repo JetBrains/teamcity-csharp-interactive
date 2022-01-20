@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+public interface IFlowContext
 {
-    public interface IFlowContext
-    {
-        string CurrentFlowId { get; }
-    }
+    string CurrentFlowId { get; }
 }

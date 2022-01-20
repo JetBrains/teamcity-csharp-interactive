@@ -1,68 +1,64 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Loader;
+using Contracts;
+
+[ExcludeFromCodeCoverage]
+public static class Host
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Runtime.Loader;
-    using Contracts;
+    private static readonly HostComponents Components = Composer.ResolveHostComponents();
+    private static readonly IDisposable StatisticsToken;
 
-    [ExcludeFromCodeCoverage]
-    public static class Host
+    static Host()
     {
-        private static readonly HostComponents Components = Composer.ResolveHostComponents();
-        private static readonly IDisposable StatisticsToken;
+        StatisticsToken = Components.Statistics.Start();
+        AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
+    }
 
-        static Host()
+    public static IReadOnlyList<string> Args => Components.Host.Args;
+
+    public static IProperties Props => Components.Host.Props;
+
+    public static void WriteLine() => Components.Host.WriteLine();
+
+    public static void WriteLine<T>(T line, Color color = Color.Default) => Components.Host.WriteLine(line, color);
+
+    public static void Error(string? error, string? errorId = default) => Components.Host.Error(error, errorId);
+
+    public static void Warning(string? warning) => Components.Host.Warning(warning);
+
+    public static void Info(string? text) => Components.Host.Info(text);
+
+    public static void Trace(string? trace, string? origin = default) => Components.Host.Trace(trace, origin);
+
+    public static T GetService<T>() => Components.Host.GetService<T>();
+
+    public static void Exit(int exitCode = 0) => System.Environment.Exit(exitCode);
+
+    private static void OnDefaultOnUnloading(AssemblyLoadContext ctx)
+    {
+        try
         {
-            StatisticsToken = Components.Statistics.Start();
-            AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
+            StatisticsToken.Dispose();
+            Components.StatisticsPresenter.Show(Components.Statistics);
+            var state = Components.Statistics.Errors.Any()
+                ? new Text("Running FAILED.", Color.Error)
+                : new Text("Running succeeded.", Color.Success);
+            Components.Log.Info(state);
         }
-
-        public static IReadOnlyList<string> Args => Components.Host.Args;
-
-        public static IProperties Props => Components.Host.Props;
-
-        public static void WriteLine() => Components.Host.WriteLine();
-
-        public static void WriteLine<T>(T line, Color color = Color.Default) => Components.Host.WriteLine(line, color);
-
-        public static void Error(string error, string errorId = "Unknown") => Components.Host.Error(error, errorId);
-
-        public static void Warning(string warning) => Components.Host.Warning(warning);
-
-        public static void Info(string text) => Components.Host.Info(text);
-
-        public static void Trace(string trace, string origin = "") => Components.Host.Trace(trace, origin);
-
-        public static T GetService<T>() => Components.Host.GetService<T>();
-
-        public static void Exit(int exitCode = 0) => System.Environment.Exit(exitCode);
-
-        private static void OnDefaultOnUnloading(AssemblyLoadContext ctx)
+        catch (Exception ex)
         {
             try
             {
-                StatisticsToken.Dispose();
-                Components.StatisticsPresenter.Show(Components.Statistics);
-                var state = Components.Statistics.Errors.Any()
-                    ? new Text("Running FAILED.", Color.Error)
-                    : new Text("Running succeeded.", Color.Success);
-                Components.Log.Info(state);
+                Components.Log.Error(ErrorId.Unhandled, ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                try
-                {
-                    Components.Log.Error(ErrorId.Unhandled, ex.Message);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                // ignored
             }
         }
     }

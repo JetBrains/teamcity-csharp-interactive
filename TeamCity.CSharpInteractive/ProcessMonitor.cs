@@ -1,8 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using System.Collections.Generic;
-using System.Linq;
 using Cmd;
 using Contracts;
 

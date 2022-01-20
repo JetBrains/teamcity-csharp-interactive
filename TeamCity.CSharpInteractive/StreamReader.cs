@@ -1,40 +1,36 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal class StreamReader: IStreamReader
 {
-    using System;
-    using System.IO;
+    private readonly object _lockObject = new();
+    private readonly Stream _stream;
 
-    internal class StreamReader: IStreamReader
+    public StreamReader(Stream stream) => _stream = stream;
+
+    public int Read(Memory<byte> buffer)
     {
-        private readonly object _lockObject = new();
-        private readonly Stream _stream;
-
-        public StreamReader(Stream stream) => _stream = stream;
-
-        public int Read(Memory<byte> buffer)
+        lock (_lockObject)
         {
-            lock (_lockObject)
-            {
-                return _stream.Read(buffer.Span);
-            }
+            return _stream.Read(buffer.Span);
         }
+    }
 
-        public int Read(Memory<byte> buffer, long offset)
+    public int Read(Memory<byte> buffer, long offset)
+    {
+        lock (_lockObject)
         {
-            lock (_lockObject)
-            {
-                _stream.Seek(offset, SeekOrigin.Begin);
-                return _stream.Read(buffer.Span);
-            }
+            _stream.Seek(offset, SeekOrigin.Begin);
+            return _stream.Read(buffer.Span);
         }
+    }
 
-        public void Dispose()
+    public void Dispose()
+    {
+        lock (_lockObject)
         {
-            lock (_lockObject)
-            {
-                _stream.Dispose();
-            }
+            _stream.Dispose();
+        }
             
-            GC.SuppressFinalize(this);
-        }
+        GC.SuppressFinalize(this);
     }
 }

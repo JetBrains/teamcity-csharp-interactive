@@ -1,11 +1,8 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum VerbosityLevel
 {
-    internal enum VerbosityLevel
-    {
-        Quiet,
-
-        Normal,
-
-        Diagnostic
-    }
+    Quiet,
+    Normal,
+    Diagnostic
 }

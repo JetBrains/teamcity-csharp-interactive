@@ -1,58 +1,52 @@
-namespace TeamCity.CSharpInteractive.Tests
+namespace TeamCity.CSharpInteractive.Tests;
+
+public class StatisticsTests
 {
-    using System;
-    using System.Linq;
-    using Shouldly;
-    using Xunit;
-
-    public class StatisticsTests
+    [Fact]
+    public void ShouldTrackTimeElapsed()
     {
-        [Fact]
-        public void ShouldTrackTimeElapsed()
-        {
-            // Given
-            var statistics = new Statistics();
+        // Given
+        var statistics = new Statistics();
 
-            // When
-            using (statistics.Start())
-            {
-                System.Threading.Thread.Sleep(2);
-            }
+        // When
+        using (statistics.Start())
+        {
+            System.Threading.Thread.Sleep(2);
+        }
             
-            // Then
-            statistics.TimeElapsed.ShouldNotBe(TimeSpan.Zero);
-        }
+        // Then
+        statistics.TimeElapsed.ShouldNotBe(TimeSpan.Zero);
+    }
         
-        [Fact]
-        public void ShouldRegisterError()
-        {
-            // Given
-            var statistics = new Statistics();
+    [Fact]
+    public void ShouldRegisterError()
+    {
+        // Given
+        var statistics = new Statistics();
 
-            // When
-            statistics.RegisterError("error1");
-            statistics.RegisterError("");
-            statistics.RegisterError("   ");
-            statistics.RegisterError("error2");
+        // When
+        statistics.RegisterError("error1");
+        statistics.RegisterError("");
+        statistics.RegisterError("   ");
+        statistics.RegisterError("error2");
 
-            // Then
-            statistics.Errors.ToArray().ShouldBe(new []{"error1", "error2"});
-        }
+        // Then
+        statistics.Errors.ToArray().ShouldBe(new []{"error1", "error2"});
+    }
         
-        [Fact]
-        public void ShouldRegisterWarning()
-        {
-            // Given
-            var statistics = new Statistics();
+    [Fact]
+    public void ShouldRegisterWarning()
+    {
+        // Given
+        var statistics = new Statistics();
 
-            // When
-            statistics.RegisterWarning("warning1");
-            statistics.RegisterWarning("");
-            statistics.RegisterWarning("   ");
-            statistics.RegisterWarning("warning2");
+        // When
+        statistics.RegisterWarning("warning1");
+        statistics.RegisterWarning("");
+        statistics.RegisterWarning("   ");
+        statistics.RegisterWarning("warning2");
 
-            // Then
-            statistics.Warnings.ToArray().ShouldBe(new []{"warning1", "warning2"});
-        }
+        // Then
+        statistics.Warnings.ToArray().ShouldBe(new []{"warning1", "warning2"});
     }
 }

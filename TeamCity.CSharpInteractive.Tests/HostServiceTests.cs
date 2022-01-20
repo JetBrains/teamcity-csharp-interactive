@@ -1,11 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Collections.Generic;
 using Contracts;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class HostServiceTests
 {

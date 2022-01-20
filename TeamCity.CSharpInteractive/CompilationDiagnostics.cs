@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.ObjectModel;
-    using System.Diagnostics.CodeAnalysis;
-    using Microsoft.CodeAnalysis;
+namespace TeamCity.CSharpInteractive;
 
-    [ExcludeFromCodeCoverage]
-    internal readonly record struct CompilationDiagnostics(ICommand SourceCommand, ReadOnlyCollection<Diagnostic> Diagnostics);
-}
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal readonly record struct CompilationDiagnostics(ICommand SourceCommand, ReadOnlyCollection<Diagnostic> Diagnostics);

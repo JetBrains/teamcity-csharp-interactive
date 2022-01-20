@@ -1,25 +1,23 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using Pure.DI;
+
+internal class TeamCitySpecific<T> : ITeamCitySpecific<T>
 {
-    using System;
-    using Pure.DI;
+    private readonly ITeamCitySettings _settings;
+    private readonly Func<T> _defaultFactory;
+    private readonly Func<T> _teamcityFactory;
 
-    internal class TeamCitySpecific<T> : ITeamCitySpecific<T>
+    public TeamCitySpecific(
+        ITeamCitySettings settings,
+        [Tag("Default")] Func<T> defaultFactory,
+        [Tag("TeamCity")] Func<T> teamcityFactory)
     {
-        private readonly ITeamCitySettings _settings;
-        private readonly Func<T> _defaultFactory;
-        private readonly Func<T> _teamcityFactory;
-
-        public TeamCitySpecific(
-            ITeamCitySettings settings,
-            [Tag("Default")] Func<T> defaultFactory,
-            [Tag("TeamCity")] Func<T> teamcityFactory)
-        {
-            _settings = settings;
-            _defaultFactory = defaultFactory;
-            _teamcityFactory = teamcityFactory;
-        }
-
-        public T Instance => _settings.IsUnderTeamCity ? _teamcityFactory() : _defaultFactory();
+        _settings = settings;
+        _defaultFactory = defaultFactory;
+        _teamcityFactory = teamcityFactory;
     }
+
+    public T Instance => _settings.IsUnderTeamCity ? _teamcityFactory() : _defaultFactory();
 }

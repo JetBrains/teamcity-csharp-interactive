@@ -1,10 +1,9 @@
 // ReSharper disable UnusedMemberInSuper.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IDotNetEnvironment
 {
-    internal interface IDotNetEnvironment
-    {
-        string Path { get; }
+    string Path { get; }
         
-        string TargetFrameworkMoniker { get; }
-    }
+    string TargetFrameworkMoniker { get; }
 }

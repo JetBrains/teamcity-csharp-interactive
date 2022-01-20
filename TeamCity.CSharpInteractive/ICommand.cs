@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ICommand
 {
-    internal interface ICommand
-    {
-        string Name { get; }
+    string Name { get; }
         
-        bool Internal { get; }
-    }
+    bool Internal { get; }
 }

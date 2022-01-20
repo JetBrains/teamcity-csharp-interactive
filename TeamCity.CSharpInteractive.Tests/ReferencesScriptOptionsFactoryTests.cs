@@ -2,9 +2,6 @@ namespace TeamCity.CSharpInteractive.Tests;
 
 using System.Reflection;
 using Microsoft.CodeAnalysis.Scripting;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class ReferencesScriptOptionsFactoryTests
 {

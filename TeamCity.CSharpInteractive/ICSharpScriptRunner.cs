@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    internal interface ICSharpScriptRunner
-    {
-        bool Run(ICommand sourceCommand, string script);
+namespace TeamCity.CSharpInteractive;
 
-        void Reset();
-    }
+internal interface ICSharpScriptRunner
+{
+    bool Run(ICommand sourceCommand, string script);
+
+    void Reset();
 }

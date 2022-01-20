@@ -1,10 +1,9 @@
 // ReSharper disable CheckNamespace
-namespace DotNet
+namespace DotNet;
+
+public enum TestState
 {
-    public enum TestState
-    {
-        Passed,
-        Failed,
-        Ignored
-    }
+    Passed,
+    Failed,
+    Ignored
 }

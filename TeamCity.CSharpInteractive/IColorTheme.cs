@@ -1,13 +1,11 @@
 ﻿// ReSharper disable UnusedMember.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using Contracts;
+
+internal interface IColorTheme
 {
-    using System;
-    using Contracts;
+    public ConsoleColor GetConsoleColor(Color color);
 
-    internal interface IColorTheme
-    {
-        public ConsoleColor GetConsoleColor(Color color);
-
-        string GetAnsiColor(Color color);
-    }
+    string GetAnsiColor(Color color);
 }

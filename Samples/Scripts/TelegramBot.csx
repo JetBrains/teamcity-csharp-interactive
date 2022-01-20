@@ -13,10 +13,6 @@ if(!Props.TryGetValue("telegram.bot.poll.timeout", out var timeoutStr) || !int.T
 #r "nuget: Telegram.Bot, 15.6.0"
 #r "nuget: Telegram.Bot.Extensions.Polling, 0.2.0"
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;

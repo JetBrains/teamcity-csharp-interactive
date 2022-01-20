@@ -1,8 +1,7 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum AllowUnsafe
 {
-    internal enum AllowUnsafe
-    {
-        Off,
-        On
-    }
+    Off,
+    On
 }

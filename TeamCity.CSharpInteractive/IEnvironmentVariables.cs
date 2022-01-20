@@ -1,8 +1,7 @@
 // ReSharper disable UnusedMember.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IEnvironmentVariables
 {
-    internal interface IEnvironmentVariables
-    {
-        string? GetEnvironmentVariable(string variable);
-    }
+    string? GetEnvironmentVariable(string variable);
 }

@@ -1,10 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using Moq;
-using Xunit;
 using Microsoft.DotNet.PlatformAbstractions;
-using Shouldly;
 
 public class DockerEnvironmentTests
 {

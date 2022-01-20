@@ -1,37 +1,35 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using Cmd;
+using Contracts;
+
+internal class PathResolverContext: IPathResolverContext, IVirtualContext
 {
-    using System;
-    using Cmd;
-    using Contracts;
+    private readonly IHost _host;
+    private IPathResolver _currentResolver = EmptyResolver.Shared;
+    private IPathResolver _prevResolver = EmptyResolver.Shared;
 
-    internal class PathResolverContext: IPathResolverContext, IVirtualContext
+    public PathResolverContext(IHost host) => _host = host;
+
+    public IDisposable Register(IPathResolver resolver)
     {
-        private readonly IHost _host;
-        private IPathResolver _currentResolver = EmptyResolver.Shared;
-        private IPathResolver _prevResolver = EmptyResolver.Shared;
-
-        public PathResolverContext(IHost host) => _host = host;
-
-        public IDisposable Register(IPathResolver resolver)
+        var prevResolver = _prevResolver;
+        _prevResolver = _currentResolver;
+        _currentResolver = resolver;
+        return Disposable.Create(() =>
         {
-            var prevResolver = _prevResolver;
-            _prevResolver = _currentResolver;
-            _currentResolver = resolver;
-            return Disposable.Create(() =>
-            {
-                _currentResolver = _prevResolver;
-                _prevResolver = prevResolver;
-            });
-        }
+            _currentResolver = _prevResolver;
+            _prevResolver = prevResolver;
+        });
+    }
 
-        public string Resolve(string path) => _currentResolver.Resolve(_host, path, _prevResolver);
+    public string Resolve(string path) => _currentResolver.Resolve(_host, path, _prevResolver);
 
-        private class EmptyResolver : IPathResolver
-        {
-            public static readonly IPathResolver Shared = new EmptyResolver();
+    private class EmptyResolver : IPathResolver
+    {
+        public static readonly IPathResolver Shared = new EmptyResolver();
             
-            public string Resolve(IHost host, string path, IPathResolver nextResolver) => path;
-        }
+        public string Resolve(IHost host, string path, IPathResolver nextResolver) => path;
     }
 }

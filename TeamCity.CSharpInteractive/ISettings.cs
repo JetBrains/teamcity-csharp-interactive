@@ -1,23 +1,20 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ISettings
 {
-    using System.Collections.Generic;
+    IReadOnlyList<string> ScriptArguments { get; }
+        
+    IReadOnlyDictionary<string, string> ScriptProperties { get; }
+        
+    VerbosityLevel VerbosityLevel { get; }
 
-    internal interface ISettings
-    {
-        IReadOnlyList<string> ScriptArguments { get; }
-        
-        IReadOnlyDictionary<string, string> ScriptProperties { get; }
-        
-        VerbosityLevel VerbosityLevel { get; }
+    InteractionMode InteractionMode { get; }
 
-        InteractionMode InteractionMode { get; }
-
-        bool ShowHelpAndExit { get; }
+    bool ShowHelpAndExit { get; }
         
-        bool ShowVersionAndExit { get; }
+    bool ShowVersionAndExit { get; }
         
-        IEnumerable<ICodeSource> CodeSources { get; }
+    IEnumerable<ICodeSource> CodeSources { get; }
         
-        IEnumerable<string> NuGetSources { get; }
-    }
+    IEnumerable<string> NuGetSources { get; }
 }

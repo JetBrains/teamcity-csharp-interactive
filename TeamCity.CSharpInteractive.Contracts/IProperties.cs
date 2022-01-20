@@ -1,13 +1,10 @@
-namespace TeamCity.CSharpInteractive.Contracts
+namespace TeamCity.CSharpInteractive.Contracts;
+
+public interface IProperties: IEnumerable<KeyValuePair<string, string>>
 {
-    using System.Collections.Generic;
+    int Count { get; }
 
-    public interface IProperties: IEnumerable<KeyValuePair<string, string>>
-    {
-        int Count { get; }
+    string this[string key] { get; set; }
 
-        string this[string key] { get; set; }
-
-        bool TryGetValue(string key, out string value);
-    }
+    bool TryGetValue(string key, out string value);
 }

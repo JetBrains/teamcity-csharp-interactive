@@ -1,28 +1,25 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class HostIntegrationCodeSource: ICodeSource
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
-    [ExcludeFromCodeCoverage]
-    internal class HostIntegrationCodeSource: ICodeSource
+    private static readonly string[] ImplicitUsing = 
     {
-        private static readonly string[] ImplicitUsing = 
-        {
-            "global using static global::TeamCity.CSharpInteractive.Contracts.Color;"
-        };
+        "global using static global::TeamCity.CSharpInteractive.Contracts.Color;"
+    };
 
-        // ReSharper disable once IdentifierTypo
-        private static readonly string ImplicitUsings = string.Join(System.Environment.NewLine, ImplicitUsing);
+    // ReSharper disable once IdentifierTypo
+    private static readonly string ImplicitUsings = string.Join(System.Environment.NewLine, ImplicitUsing);
         
-        public string Name => string.Empty;
+    public string Name => string.Empty;
 
-        public bool Internal => true;
+    public bool Internal => true;
 
-        public IEnumerator<string?> GetEnumerator() => Enumerable.Repeat(ImplicitUsings, 1).GetEnumerator();
+    public IEnumerator<string?> GetEnumerator() => Enumerable.Repeat(ImplicitUsings, 1).GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

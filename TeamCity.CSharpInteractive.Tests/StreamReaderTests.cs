@@ -1,9 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using System.Buffers;
-using System.IO;
-using Shouldly;
-using Xunit;
 using StreamReader = StreamReader;
 
 public class StreamReaderTests

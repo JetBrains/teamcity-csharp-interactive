@@ -2,95 +2,91 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable EmptyGeneralCatchClause
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal static class Disposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading;
+    public static readonly IDisposable Empty = EmptyDisposable.Shared;
 
-    [ExcludeFromCodeCoverage]
-    internal static class Disposable
+    public static IDisposable Create(Action action)
     {
-        public static readonly IDisposable Empty = EmptyDisposable.Shared;
+        return new DisposableAction(action);
+    }
 
-        public static IDisposable Create(Action action)
+    public static IDisposable Create(params IDisposable[] disposables) =>
+        Create((IEnumerable<IDisposable>) disposables);
+
+    public static IDisposable Create(IEnumerable<IDisposable> disposables) => 
+        new CompositeDisposable(disposables);
+
+    private sealed class DisposableAction : IDisposable
+    {
+        private readonly Action _action;
+        private readonly object? _key;
+        private int _counter;
+
+        public DisposableAction(Action action, object? key = null)
         {
-            return new DisposableAction(action);
+            _action = action;
+            _key = key ?? action;
         }
 
-        public static IDisposable Create(params IDisposable[] disposables) =>
-            Create((IEnumerable<IDisposable>) disposables);
-
-        public static IDisposable Create(IEnumerable<IDisposable> disposables) => 
-            new CompositeDisposable(disposables);
-
-        private sealed class DisposableAction : IDisposable
+        public void Dispose()
         {
-            private readonly Action _action;
-            private readonly object? _key;
-            private int _counter;
-
-            public DisposableAction(Action action, object? key = null)
+            if (Interlocked.Increment(ref _counter) != 1) return;
+            try
             {
-                _action = action;
-                _key = key ?? action;
+                _action();
             }
-
-            public void Dispose()
+            catch
             {
-                if (Interlocked.Increment(ref _counter) != 1) return;
+            }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is DisposableAction other && Equals(_key, other._key);
+        }
+
+        public override int GetHashCode() => 
+            _key != null ? _key.GetHashCode() : 0;
+    }
+
+    private sealed class CompositeDisposable : IDisposable
+    {
+        private readonly IEnumerable<IDisposable> _disposables;
+        private int _counter;
+
+        public CompositeDisposable(IEnumerable<IDisposable> disposables)
+            => _disposables = disposables;
+
+        public void Dispose()
+        {
+            if (Interlocked.Increment(ref _counter) != 1) return;
+            foreach (var disposable in _disposables)
+            {
                 try
                 {
-                    _action();
+                    disposable.Dispose();
                 }
                 catch
                 {
                 }
             }
-
-            public override bool Equals(object? obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                return obj is DisposableAction other && Equals(_key, other._key);
-            }
-
-            public override int GetHashCode() => 
-                _key != null ? _key.GetHashCode() : 0;
         }
+    }
 
-        private sealed class CompositeDisposable : IDisposable
-        {
-            private readonly IEnumerable<IDisposable> _disposables;
-            private int _counter;
+    private sealed class EmptyDisposable : IDisposable
+    {
+        public static readonly IDisposable Shared = new EmptyDisposable();
 
-            public CompositeDisposable(IEnumerable<IDisposable> disposables)
-                => _disposables = disposables;
+        private EmptyDisposable() { }
 
-            public void Dispose()
-            {
-                if (Interlocked.Increment(ref _counter) != 1) return;
-                foreach (var disposable in _disposables)
-                {
-                    try
-                    {
-                        disposable.Dispose();
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-        }
-
-        private sealed class EmptyDisposable : IDisposable
-        {
-            public static readonly IDisposable Shared = new EmptyDisposable();
-
-            private EmptyDisposable() { }
-
-            public void Dispose() { }
-        }
+        public void Dispose() { }
     }
 }

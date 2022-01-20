@@ -1,19 +1,17 @@
 // ReSharper disable UnusedMemberInSuper.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using Microsoft.DotNet.PlatformAbstractions;
+
+internal interface IEnvironment
 {
-    using System.Collections.Generic;
-    using Microsoft.DotNet.PlatformAbstractions;
+    Platform OperatingSystemPlatform { get; }
+        
+    string ProcessArchitecture { get; }
+        
+    IEnumerable<string> GetCommandLineArgs();
+        
+    string GetPath(SpecialFolder specialFolder);
 
-    internal interface IEnvironment
-    {
-        Platform OperatingSystemPlatform { get; }
-        
-        string ProcessArchitecture { get; }
-        
-        IEnumerable<string> GetCommandLineArgs();
-        
-        string GetPath(SpecialFolder specialFolder);
-
-        void Exit(ExitCode exitCode);
-    }
+    void Exit(ExitCode exitCode);
 }

@@ -1,10 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ITextToColorStrings
-    {
-        IEnumerable<(ConsoleColor? color, string text)> Convert(string text, ConsoleColor? defaultColor);
-    }
+internal interface ITextToColorStrings
+{
+    IEnumerable<(ConsoleColor? color, string text)> Convert(string text, ConsoleColor? defaultColor);
 }

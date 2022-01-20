@@ -1,35 +1,32 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class EnvironmentVariables : IEnvironmentVariables, ITraceSource
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
+    private readonly ILog<EnvironmentVariables> _log;
 
-    [ExcludeFromCodeCoverage]
-    internal class EnvironmentVariables : IEnvironmentVariables, ITraceSource
+    public EnvironmentVariables(ILog<EnvironmentVariables> log) => _log = log;
+
+    public string? GetEnvironmentVariable(string variable)
     {
-        private readonly ILog<EnvironmentVariables> _log;
+        var value = System.Environment.GetEnvironmentVariable(variable);
+        _log.Trace(() => new []{new Text($"Get environment variable {variable} = \"{value}\".")});
+        return value;
+    }
 
-        public EnvironmentVariables(ILog<EnvironmentVariables> log) => _log = log;
-
-        public string? GetEnvironmentVariable(string variable)
+    public IEnumerable<Text> Trace
+    {
+        get
         {
-            var value = System.Environment.GetEnvironmentVariable(variable);
-            _log.Trace(() => new []{new Text($"Get environment variable {variable} = \"{value}\".")});
-            return value;
-        }
-
-        public IEnumerable<Text> Trace
-        {
-            get
+            yield return new Text("Environment variables:");
+            foreach (var entry in System.Environment.GetEnvironmentVariables().OfType<DictionaryEntry>().OrderBy(i => i.Key))
             {
-                yield return new Text("Environment variables:");
-                foreach (var entry in System.Environment.GetEnvironmentVariables().OfType<DictionaryEntry>().OrderBy(i => i.Key))
-                {
-                    yield return Text.Tab;
-                    yield return new Text($"{entry.Key}={entry.Value}");
-                }
+                yield return Text.Tab;
+                yield return new Text($"{entry.Key}={entry.Value}");
             }
         }
     }

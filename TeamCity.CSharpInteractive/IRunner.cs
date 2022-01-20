@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IRunner
 {
-    internal interface IRunner
-    {
-        ExitCode Run();
-    }
+    ExitCode Run();
 }

@@ -1,13 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Cmd;
 using Contracts;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class CommandLineServiceTests
 {

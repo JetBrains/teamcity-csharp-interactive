@@ -1,36 +1,35 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Text;
+using Contracts;
+
+internal class TeamCityLineFormatter : ITeamCityLineFormatter
 {
-    using System.Text;
-    using Contracts;
-
-    internal class TeamCityLineFormatter : ITeamCityLineFormatter
-    {
-        private readonly IColorTheme _colorTheme;
+    private readonly IColorTheme _colorTheme;
         
-        public TeamCityLineFormatter(IColorTheme colorTheme) => _colorTheme = colorTheme;
+    public TeamCityLineFormatter(IColorTheme colorTheme) => _colorTheme = colorTheme;
 
-        // ReSharper disable once MemberCanBePrivate.Global
-        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-        internal char EscapeSymbol { get; set; }  = '\x001B';
+    // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    internal char EscapeSymbol { get; set; }  = '\x001B';
 
-        public string Format(params Text[] line)
+    public string Format(params Text[] line)
+    {
+        var lastColor = Color.Default;
+        var sb = new StringBuilder();
+        foreach (var (value, color) in line)
         {
-            var lastColor = Color.Default;
-            var sb = new StringBuilder();
-            foreach (var (value, color) in line)
+            if (color != lastColor && !string.IsNullOrWhiteSpace(value))
             {
-                if (color != lastColor && !string.IsNullOrWhiteSpace(value))
-                {
-                    sb.Append($"{EscapeSymbol}[{_colorTheme.GetAnsiColor(color)}m");
-                    lastColor = color;
-                }
-
-                sb.Append(value);
+                sb.Append($"{EscapeSymbol}[{_colorTheme.GetAnsiColor(color)}m");
+                lastColor = color;
             }
 
-            return sb.ToString();
+            sb.Append(value);
         }
+
+        return sb.ToString();
     }
 }

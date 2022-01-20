@@ -1,12 +1,11 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace DotNet
+namespace DotNet;
+
+public enum Platform
 {
-    public enum Platform
-    {
-        x86,
-        x64,
-        ARM
-    }
+    x86,
+    x64,
+    ARM
 }

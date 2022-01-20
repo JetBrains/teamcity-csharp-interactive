@@ -1,9 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Cmd;
 using Contracts;
 

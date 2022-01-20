@@ -1,39 +1,36 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class Debugger: IActive
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading;
+    private readonly ILog<Debugger> _log;
+    private readonly IEnvironmentVariables _environmentVariables;
 
-    [ExcludeFromCodeCoverage]
-    internal class Debugger: IActive
+    public Debugger(
+        ILog<Debugger> log,
+        IEnvironmentVariables environmentVariables)
     {
-        private readonly ILog<Debugger> _log;
-        private readonly IEnvironmentVariables _environmentVariables;
+        _log = log;
+        _environmentVariables = environmentVariables;
+    }
 
-        public Debugger(
-            ILog<Debugger> log,
-            IEnvironmentVariables environmentVariables)
+    public IDisposable Activate()
+    {
+        if (_environmentVariables.GetEnvironmentVariable("DEBUG_CSI") == null)
         {
-            _log = log;
-            _environmentVariables = environmentVariables;
-        }
-
-        public IDisposable Activate()
-        {
-            if (_environmentVariables.GetEnvironmentVariable("DEBUG_CSI") == null)
-            {
-                return Disposable.Empty;
-            }
-
-            _log.Warning($"\nWaiting for debugger in process [{System.Environment.ProcessId}] \"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}\".");
-            while (!System.Diagnostics.Debugger.IsAttached)
-            {
-                Thread.Sleep(100);
-            }
-
-            System.Diagnostics.Debugger.Break();
-
             return Disposable.Empty;
         }
+
+        _log.Warning($"\nWaiting for debugger in process [{System.Environment.ProcessId}] \"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}\".");
+        while (!System.Diagnostics.Debugger.IsAttached)
+        {
+            Thread.Sleep(100);
+        }
+
+        System.Diagnostics.Debugger.Break();
+
+        return Disposable.Empty;
     }
 }

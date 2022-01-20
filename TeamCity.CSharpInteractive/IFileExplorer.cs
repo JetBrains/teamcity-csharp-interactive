@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IFileExplorer
-    {
-        IEnumerable<string> FindFiles(string searchPattern, params string[] additionalVariables);
-    }
+internal interface IFileExplorer
+{
+    IEnumerable<string> FindFiles(string searchPattern, params string[] additionalVariables);
 }

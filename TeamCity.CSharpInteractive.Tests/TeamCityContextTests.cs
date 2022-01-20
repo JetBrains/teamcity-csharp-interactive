@@ -1,9 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Moq;
-using Shouldly;
-using Xunit;
-
 public class TeamCityContextTests
 {
     private readonly Mock<IEnvironment> _environment = new();

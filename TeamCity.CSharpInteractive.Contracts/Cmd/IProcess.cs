@@ -1,11 +1,10 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedParameter.Global
-namespace Cmd
-{
-    using TeamCity.CSharpInteractive.Contracts;
+namespace Cmd;
 
-    public interface IProcess
-    {
-        IStartInfo GetStartInfo(IHost host);
-    }
+using TeamCity.CSharpInteractive.Contracts;
+
+public interface IProcess
+{
+    IStartInfo GetStartInfo(IHost host);
 }

@@ -1,19 +1,18 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum NuGetRestoreSetting
 {
-    internal enum NuGetRestoreSetting
-    {
-        Default,
+    Default,
 
-        Parallel,
-        NonParallel,
+    Parallel,
+    NonParallel,
 
-        IgnoreFailedSources,
-        ConsiderFailedSources,
+    IgnoreFailedSources,
+    ConsiderFailedSources,
         
-        HideWarningsAndErrors,
-        ShowWarningsAndErrors,
+    HideWarningsAndErrors,
+    ShowWarningsAndErrors,
         
-        NoCache,
-        WithCache
-    }
+    NoCache,
+    WithCache
 }

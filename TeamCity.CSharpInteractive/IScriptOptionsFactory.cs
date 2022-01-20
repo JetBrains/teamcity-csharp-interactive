@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using Microsoft.CodeAnalysis.Scripting;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IScriptOptionsFactory
-    {
-        ScriptOptions Create(ScriptOptions baseOptions);
-    }
+using Microsoft.CodeAnalysis.Scripting;
+
+internal interface IScriptOptionsFactory
+{
+    ScriptOptions Create(ScriptOptions baseOptions);
 }

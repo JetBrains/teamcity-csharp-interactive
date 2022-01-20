@@ -1,17 +1,16 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class ResetCommand: ICommand
 {
-    using System.Diagnostics.CodeAnalysis;
+    // ReSharper disable once UnusedMember.Global
+    public static readonly ICommand Shared = new ResetCommand();
 
-    [ExcludeFromCodeCoverage]
-    internal class ResetCommand: ICommand
-    {
-        // ReSharper disable once UnusedMember.Global
-        public static readonly ICommand Shared = new ResetCommand();
-
-        private ResetCommand() { }
+    private ResetCommand() { }
         
-        public string Name => "Reset";
+    public string Name => "Reset";
         
-        public bool Internal => false;
-    }
+    public bool Internal => false;
 }

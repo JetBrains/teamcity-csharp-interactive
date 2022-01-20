@@ -1,18 +1,16 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class CheckOverflowSettingDescription : ISettingDescription
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
+    public bool IsVisible => false;
 
-    [ExcludeFromCodeCoverage]
-    internal class CheckOverflowSettingDescription : ISettingDescription
-    {
-        public bool IsVisible => false;
+    public Type SettingType => typeof(CheckOverflow);
 
-        public Type SettingType => typeof(CheckOverflow);
+    public string Key => "co";
 
-        public string Key => "co";
-
-        public string Description => "Enable or disable overflow check";
-    }
+    public string Description => "Enable or disable overflow check";
 }

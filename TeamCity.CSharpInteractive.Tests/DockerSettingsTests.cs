@@ -1,9 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Moq;
-using Shouldly;
-using Xunit;
-
 public class DockerSettingsTests
 {
     private readonly Mock<IDockerEnvironment> _dockerEnvironment = new();

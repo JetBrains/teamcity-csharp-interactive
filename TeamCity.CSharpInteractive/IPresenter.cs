@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface IPresenter<in T>
 {
-    internal interface IPresenter<in T>
-    {
-        public void Show(T data);
-    }
+    public void Show(T data);
 }

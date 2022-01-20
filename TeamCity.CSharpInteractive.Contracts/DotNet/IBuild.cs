@@ -3,17 +3,13 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMethodReturnValue.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace DotNet
-{
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Cmd;
+namespace DotNet;
 
-    public interface IBuild
-    {
-        BuildResult Run(IProcess process, Action<BuildMessage>? handler = default, TimeSpan timeout = default);
+using Cmd;
+
+public interface IBuild
+{
+    IResult Run(IProcess process, Action<BuildMessage>? handler = default, TimeSpan timeout = default);
         
-        Task<BuildResult> RunAsync(IProcess process, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default);
-    }
+    Task<IResult> RunAsync(IProcess process, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default);
 }

@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface ICommandSource
-    {
-        IEnumerable<ICommand> GetCommands();
-    }
+internal interface ICommandSource
+{
+    IEnumerable<ICommand> GetCommands();
 }

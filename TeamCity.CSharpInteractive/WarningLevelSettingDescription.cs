@@ -1,18 +1,16 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class WarningLevelSettingDescription : ISettingDescription
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
+    public bool IsVisible => false;
 
-    [ExcludeFromCodeCoverage]
-    internal class WarningLevelSettingDescription : ISettingDescription
-    {
-        public bool IsVisible => false;
+    public Type SettingType => typeof(WarningLevel);
 
-        public Type SettingType => typeof(WarningLevel);
+    public string Key => "wl";
 
-        public string Key => "wl";
-
-        public string Description => "Set a warning level";
-    }
+    public string Description => "Set a warning level";
 }

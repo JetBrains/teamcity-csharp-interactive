@@ -1,9 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System.Linq;
+using CSharpInteractive;
 using DotNet;
-using Moq;
-using Xunit;
 
 public class BuildMessageLogWriterTests
 {

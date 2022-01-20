@@ -1,8 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Shouldly;
-using Xunit;
-
 public class SettingTests
 {
     [Fact]

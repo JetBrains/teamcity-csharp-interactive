@@ -3,9 +3,6 @@ namespace TeamCity.CSharpInteractive.Tests;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Scripting;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class ConfigurableScriptOptionsFactoryTests
 {

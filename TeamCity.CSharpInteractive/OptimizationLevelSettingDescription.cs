@@ -1,19 +1,17 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class OptimizationLevelSettingDescription : ISettingDescription
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using Microsoft.CodeAnalysis;
+    public bool IsVisible => false;
 
-    [ExcludeFromCodeCoverage]
-    internal class OptimizationLevelSettingDescription : ISettingDescription
-    {
-        public bool IsVisible => false;
+    public Type SettingType => typeof(OptimizationLevel);
 
-        public Type SettingType => typeof(OptimizationLevel);
+    public string Key => "ol";
 
-        public string Key => "ol";
-
-        public string Description => "Set an optimization level";
-    }
+    public string Description => "Set an optimization level";
 }

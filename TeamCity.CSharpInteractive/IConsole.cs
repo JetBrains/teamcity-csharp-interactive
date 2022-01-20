@@ -1,11 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IConsole
-    {
-        void WriteToOut(params (ConsoleColor? color, string output)[] text);
+internal interface IConsole
+{
+    void WriteToOut(params (ConsoleColor? color, string output)[] text);
         
-        void WriteToErr(params string[] text);
-    }
+    void WriteToErr(params string[] text);
 }

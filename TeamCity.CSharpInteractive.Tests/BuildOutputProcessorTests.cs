@@ -1,20 +1,16 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Linq;
 using Cmd;
+using CSharpInteractive;
 using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class BuildOutputProcessorTests
 {
     private readonly Mock<IServiceMessageParser> _serviceMessageParser = new();
     private readonly Mock<IStartInfo> _startInfo = new();
-    private readonly Mock<IBuildResult> _buildResult = new();
+    private readonly Mock<IBuildContext> _buildResult = new();
 
     [Fact]
     public void ShouldConvertMessages()

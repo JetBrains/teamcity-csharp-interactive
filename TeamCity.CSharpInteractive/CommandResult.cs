@@ -1,23 +1,22 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal readonly struct CommandResult
 {
-    using System.Diagnostics.CodeAnalysis;
+    public readonly ICommand Command;
+    public readonly bool? Success;
 
-    [ExcludeFromCodeCoverage]
-    internal readonly struct CommandResult
+    public CommandResult(ICommand command, bool? success)
     {
-        public readonly ICommand Command;
-        public readonly bool? Success;
+        Command = command;
+        Success = success;
+    }
 
-        public CommandResult(ICommand command, bool? success)
-        {
-            Command = command;
-            Success = success;
-        }
-
-        public override string ToString()
-        {
-            var success = Success.HasValue ? Success.Value.ToString() : "empty";
-            return $"{Command.Name}: {success}";
-        }
+    public override string ToString()
+    {
+        var success = Success.HasValue ? Success.Value.ToString() : "empty";
+        return $"{Command.Name}: {success}";
     }
 }

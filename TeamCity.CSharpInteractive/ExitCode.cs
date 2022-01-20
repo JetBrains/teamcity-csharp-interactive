@@ -1,9 +1,7 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum ExitCode
 {
-    internal enum ExitCode
-    {
-        Success = 0,
-        
-        Fail = 1
-    }
+    Success = 0,
+    Fail = 1
 }

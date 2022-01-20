@@ -1,9 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
 using Cmd;
-using Moq;
-using Xunit;
 
 public class ProcessOutputWriterTests
 {
@@ -19,7 +16,7 @@ public class ProcessOutputWriterTests
         writer.Write(new Output(Mock.Of<IStartInfo>(), false, "Out", 11));
 
         // Then
-        _console.Verify(i => i.WriteToOut(It.Is<(ConsoleColor? color, string output)[]>(items => items.Length == 2 && items[0].output == "Out" && items[1].output == Environment.NewLine)));
+        _console.Verify(i => i.WriteToOut(It.Is<(ConsoleColor? color, string output)[]>(items => items.Length == 2 && items[0].output == "Out" && items[1].output == System.Environment.NewLine)));
     }
     
     [Fact]
@@ -32,7 +29,7 @@ public class ProcessOutputWriterTests
         writer.Write(new Output(Mock.Of<IStartInfo>(), true, "Err", 11));
 
         // Then
-        _console.Verify(i => i.WriteToErr("Err", Environment.NewLine));
+        _console.Verify(i => i.WriteToErr("Err", System.Environment.NewLine));
     }
 
     private ProcessOutputWriter CreateInstance() =>

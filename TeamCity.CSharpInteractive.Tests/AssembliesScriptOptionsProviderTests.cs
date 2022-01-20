@@ -1,16 +1,9 @@
 // ReSharper disable RedundantNameQualifier
 namespace TeamCity.CSharpInteractive.Tests;
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Microsoft.CodeAnalysis.Scripting;
-using Moq;
-using Shouldly;
-using Xunit;
 
 public class AssembliesScriptOptionsProviderTests
 {

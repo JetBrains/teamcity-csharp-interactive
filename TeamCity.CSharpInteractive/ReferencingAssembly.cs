@@ -1,19 +1,18 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class ReferencingAssembly
 {
-    using System.Diagnostics.CodeAnalysis;
+    public readonly string Name;
+    public readonly string FilePath;
 
-    [ExcludeFromCodeCoverage]
-    internal class ReferencingAssembly
+    public ReferencingAssembly(string name, string filePath)
     {
-        public readonly string Name;
-        public readonly string FilePath;
-
-        public ReferencingAssembly(string name, string filePath)
-        {
-            Name = name;
-            FilePath = filePath;
-        }
-
-        public override string ToString() => FilePath;
+        Name = name;
+        FilePath = filePath;
     }
+
+    public override string ToString() => FilePath;
 }

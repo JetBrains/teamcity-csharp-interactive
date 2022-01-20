@@ -1,38 +1,33 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 // ReSharper disable SuggestVarOrType_Elsewhere
-namespace TeamCity.CSharpInteractive.Tests.UsageScenarios
+namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
+
+using Cmd;
+
+[CollectionDefinition("Integration", DisableParallelization = true)]
+public class CommandLineInParallel: Scenario
 {
-    using System;
-    using System.Threading.Tasks;
-    using Cmd;
-    using Shouldly;
-    using Xunit;
-
-    [CollectionDefinition("Integration", DisableParallelization = true)]
-    public class CommandLineInParallel: Scenario
+    [SkippableFact]
+    public void Run()
     {
-        [SkippableFact]
-        public void Run()
-        {
-            Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
-            Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
+        Skip.IfNot(System.Environment.OSVersion.Platform == PlatformID.Win32NT);
+        Skip.IfNot(string.IsNullOrWhiteSpace(System.Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
-            // $visible=true
-            // $tag=10 Command Line API
-            // $priority=05
-            // $description=Run asynchronously in parallel
-            // {
-            // Adds the namespace "Cmd" to use Command Line API
-            // ## using Cmd;
+        // $visible=true
+        // $tag=10 Command Line API
+        // $priority=05
+        // $description=Run asynchronously in parallel
+        // {
+        // Adds the namespace "Cmd" to use Command Line API
+        // ## using Cmd;
 
-            Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
-            int? exitCode = GetService<ICommandLine>().Run(new CommandLine("cmd", "/c", "SET"));
-            task.Wait();
-            // }
+        Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
+        int? exitCode = GetService<ICommandLine>().Run(new CommandLine("cmd", "/c", "SET"));
+        task.Wait();
+        // }
             
-            task.Result.HasValue.ShouldBeTrue();
-            exitCode.HasValue.ShouldBeTrue();
-        }
+        task.Result.HasValue.ShouldBeTrue();
+        exitCode.HasValue.ShouldBeTrue();
     }
 }

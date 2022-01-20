@@ -1,9 +1,6 @@
-namespace TeamCity.CSharpInteractive
-{
-    using System.Collections.Generic;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IMessageIndicesReader
-    {
-        IEnumerable<ulong> Read(string indicesFile);
-    }
+internal interface IMessageIndicesReader
+{
+    IEnumerable<ulong> Read(string indicesFile);
 }

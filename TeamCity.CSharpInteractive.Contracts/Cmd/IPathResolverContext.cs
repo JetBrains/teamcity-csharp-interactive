@@ -1,10 +1,7 @@
 // ReSharper disable CheckNamespace
-namespace Cmd
-{
-    using System;
+namespace Cmd;
 
-    internal interface IPathResolverContext
-    {
-        IDisposable Register(IPathResolver resolver);
-    }
+internal interface IPathResolverContext
+{
+    IDisposable Register(IPathResolver resolver);
 }

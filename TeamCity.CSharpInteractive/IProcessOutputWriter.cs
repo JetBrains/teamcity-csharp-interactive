@@ -1,9 +1,8 @@
-namespace TeamCity.CSharpInteractive
-{
-    using Cmd;
+namespace TeamCity.CSharpInteractive;
 
-    internal interface IProcessOutputWriter
-    {
-        void Write(in Output output);
-    }
+using Cmd;
+
+internal interface IProcessOutputWriter
+{
+    void Write(in Output output);
 }

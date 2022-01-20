@@ -1,8 +1,7 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal enum CheckOverflow
 {
-    internal enum CheckOverflow
-    {
-        Off,
-        On
-    }
+    Off,
+    On
 }

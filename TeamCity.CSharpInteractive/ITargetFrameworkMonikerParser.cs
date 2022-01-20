@@ -1,7 +1,6 @@
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+internal interface ITargetFrameworkMonikerParser
 {
-    internal interface ITargetFrameworkMonikerParser
-    {
-        string Parse(string tfm);
-    }
+    string Parse(string tfm);
 }

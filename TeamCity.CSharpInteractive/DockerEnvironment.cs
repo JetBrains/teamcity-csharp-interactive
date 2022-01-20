@@ -1,50 +1,47 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
-namespace TeamCity.CSharpInteractive
+namespace TeamCity.CSharpInteractive;
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.DotNet.PlatformAbstractions;
+
+internal class DockerEnvironment : ITraceSource, IDockerEnvironment
 {
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using Microsoft.DotNet.PlatformAbstractions;
+    private readonly IEnvironment _environment;
+    private readonly IFileExplorer _fileExplorer;
 
-    internal class DockerEnvironment : ITraceSource, IDockerEnvironment
+    public DockerEnvironment(
+        IEnvironment environment,
+        IFileExplorer fileExplorer)
     {
-        private readonly IEnvironment _environment;
-        private readonly IFileExplorer _fileExplorer;
+        _environment = environment;
+        _fileExplorer = fileExplorer;
+    }
 
-        public DockerEnvironment(
-            IEnvironment environment,
-            IFileExplorer fileExplorer)
+    public string Path
+    {
+        get
         {
-            _environment = environment;
-            _fileExplorer = fileExplorer;
-        }
-
-        public string Path
-        {
-            get
+            var executable = _environment.OperatingSystemPlatform == Platform.Windows ? "docker.exe" : "docker";
+            try
             {
-                var executable = _environment.OperatingSystemPlatform == Platform.Windows ? "docker.exe" : "docker";
-                try
-                {
-                    return _fileExplorer.FindFiles(executable, "DOCKER_HOME").FirstOrDefault() ?? executable;
-                }
-                catch
-                {
-                    // ignored
-                }
+                return _fileExplorer.FindFiles(executable, "DOCKER_HOME").FirstOrDefault() ?? executable;
+            }
+            catch
+            {
+                // ignored
+            }
                 
-                return executable;
-            }
+            return executable;
         }
+    }
 
-        [ExcludeFromCodeCoverage]
-        public IEnumerable<Text> Trace
+    [ExcludeFromCodeCoverage]
+    public IEnumerable<Text> Trace
+    {
+        get
         {
-            get
-            {
-                yield return new Text($"DockerPath: {Path}");
-            }
+            yield return new Text($"DockerPath: {Path}");
         }
     }
 }
