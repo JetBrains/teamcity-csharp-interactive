@@ -40,7 +40,7 @@ var buildSolution = new Build()
     .WithProps(buildProps);
 
 var result = build.Run(buildSolution);
-if (result.ExitCode != 0) Exit(1);
+if (result.ExitCode != 0) return 1;
 
 var test = new Test()
     .WithProject(solutionFile)
@@ -49,7 +49,7 @@ var test = new Test()
     .WithProps(buildProps);
 
 result = build.Run(test);
-if (result.ExitCode != 0 || result.Summary.FailedTests != 0) Exit(1);
+if (result.ExitCode != 0 || result.Summary.FailedTests != 0) return 1;
 
 var pack = new Pack()
     .WithProject(solutionFile)
@@ -57,4 +57,4 @@ var pack = new Pack()
     .WithProps(buildProps);
     
 result = build.Run(pack);
-if (result.ExitCode != 0) Exit(1);
+return result.ExitCode ?? 1;

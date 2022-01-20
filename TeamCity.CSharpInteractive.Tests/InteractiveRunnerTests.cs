@@ -20,7 +20,7 @@ public class InteractiveRunnerTests
 
     [Theory]
     [MemberData(nameof(Data))]
-    internal void ShouldRun(CommandResult[] results, ExitCode expectedExitCode, string[] expectedOut)
+    internal void ShouldRun(CommandResult[] results, int expectedExitCode, string[] expectedOut)
     {
         // Given
         var runner = CreateInstance();
@@ -40,7 +40,7 @@ public class InteractiveRunnerTests
         new object[]
         {
             new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
-            ExitCode.Success,
+            0,
             new [] {"> ", ". ", ". ", "> "}
         },
             
@@ -48,7 +48,7 @@ public class InteractiveRunnerTests
         new object[]
         {
             new CommandResult[] { new(new CodeCommand(true), null), new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
-            ExitCode.Success,
+            0,
             new [] {"> ", ". ", ". ", "> "}
         }
     };

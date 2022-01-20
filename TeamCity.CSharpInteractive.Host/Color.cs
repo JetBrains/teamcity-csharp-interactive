@@ -1,4 +1,4 @@
-namespace TeamCity.CSharpInteractive.Contracts;
+namespace Host;
 
 public enum Color
 {

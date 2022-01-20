@@ -12,7 +12,7 @@ public class TracePresenterTests
         
         var source1 = new Mock<ITraceSource>();
         var text11 = new Text("a");
-        var text12 = new Text("a");
+        var text12 = new Text("b");
         source1.SetupGet(i => i.Trace).Returns(new[] { text11, text12 });
         
         var source2 = new Mock<ITraceSource>();
@@ -23,7 +23,7 @@ public class TracePresenterTests
         presenter.Show(new []{ source1.Object, source2.Object });
 
         // Then
-        _log.Verify(i => i.Trace(It.Is<Func<Text[]>>(func => func().SequenceEqual(new []{ text11, text12, text21 })), string.Empty));
+        _log.Verify(i => i.Trace(It.Is<Func<Text[]>>(func => func().SequenceEqual(new []{ Text.NewLine, text11, text12, text21 })), "Trace:"));
     }
 
     private TracePresenter CreateInstance() =>

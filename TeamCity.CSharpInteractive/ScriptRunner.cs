@@ -2,7 +2,7 @@
 // ReSharper disable InvertIf
 namespace TeamCity.CSharpInteractive;
 
-using Contracts;
+using Host;
 
 internal class ScriptRunner : IRunner
 {
@@ -10,55 +10,51 @@ internal class ScriptRunner : IRunner
     private readonly ICommandSource _commandSource;
     private readonly ICommandsRunner _commandsRunner;
     private readonly IStatistics _statistics;
-    private readonly IPresenter<IStatistics> _statisticsPresenter;
+    private readonly IPresenter<Summary> _summaryPresenter;
 
     public ScriptRunner(
         ILog<ScriptRunner> log,
         ICommandSource commandSource,
         ICommandsRunner commandsRunner,
         IStatistics statistics,
-        IPresenter<IStatistics> statisticsPresenter)
+        IPresenter<Summary> summaryPresenter)
     {
         _log = log;
         _commandSource = commandSource;
         _commandsRunner = commandsRunner;
         _statistics = statistics;
-        _statisticsPresenter = statisticsPresenter;
+        _summaryPresenter = summaryPresenter;
     }
         
-    public ExitCode Run()
+    public int Run()
     {
-        var exitCode = ExitCode.Success;
+        var summary = new Summary(true);
         try
         {
-            foreach (var result in _commandsRunner.Run(GetCommands()))
+            int? exitCode = default;
+            foreach (var (command, success, currentExitCode) in _commandsRunner.Run(GetCommands()))
             {
-                if (result.Success.HasValue)
+                if (success.HasValue)
                 {
-                    if (!result.Success.Value)
+                    if (!success.Value)
                     {
-                        exitCode = ExitCode.Fail;
+                        summary = summary.WithSuccess(false);
                         break;
                     }
                 }
                 else
                 {
-                    _log.Error(ErrorId.NotSupported, $"{result.Command} is not supported.");
+                    _log.Error(ErrorId.NotSupported, $"{command} is not supported.");
                 }
+
+                exitCode = currentExitCode;
             }
 
-            if (exitCode == ExitCode.Fail || _statistics.Errors.Count > 0)
-            {
-                _log.Info(new Text("Running FAILED.", Color.Error));
-                return ExitCode.Fail;
-            }
-
-            _log.Info(new Text("Running succeeded.", Color.Success));
-            return exitCode;
+            return exitCode ?? (summary.Success == false || _statistics.Errors.Count > 0 ? 1 : 0);
         }
         finally
         {
-            _statisticsPresenter.Show(_statistics);
+            _summaryPresenter.Show(summary);
         }
     }
 

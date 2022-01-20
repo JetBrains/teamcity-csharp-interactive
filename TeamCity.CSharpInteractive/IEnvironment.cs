@@ -13,5 +13,5 @@ internal interface IEnvironment
         
     string GetPath(SpecialFolder specialFolder);
 
-    void Exit(ExitCode exitCode);
+    void Exit(int exitCode);
 }

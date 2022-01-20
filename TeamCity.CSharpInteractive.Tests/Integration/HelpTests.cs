@@ -1,7 +1,6 @@
 // ReSharper disable RedundantUsingDirective
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
-using Contracts;
 using Core;
 using Cmd;
 

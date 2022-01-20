@@ -2,7 +2,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Contracts;
+using Host;
 
 internal class HostService : IHost
 {
@@ -65,6 +65,4 @@ internal class HostService : IHost
     }
 
     public T GetService<T>() => Composer.Resolve<T>();
-
-    public void Exit(int exitCode = 0) => System.Environment.Exit(exitCode);
 }

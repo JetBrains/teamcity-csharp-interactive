@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Tests", "TeamCity.CSharpInteractive.Tests\TeamCity.CSharpInteractive.Tests.csproj", "{D50DF30F-F84C-4292-9DA1-28D3649607A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Contracts", "TeamCity.CSharpInteractive.Contracts\TeamCity.CSharpInteractive.Contracts.csproj", "{4B570E69-8513-44C8-B501-22979CE6C87B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Host", "TeamCity.CSharpInteractive.Host\TeamCity.CSharpInteractive.Host.csproj", "{4B570E69-8513-44C8-B501-22979CE6C87B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Tool", "TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj", "{449E7939-B886-4213-A8AD-9E33B4EB19A7}"
 EndProject

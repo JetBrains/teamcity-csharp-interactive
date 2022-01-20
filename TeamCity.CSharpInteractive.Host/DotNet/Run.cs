@@ -4,48 +4,52 @@
 namespace DotNet;
 
 using Cmd;
-using DotNet;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 [Immutype.Target]
-public record Clean(
-    IEnumerable<(string name, string value)> Props,
+public record Run(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
     string ExecutablePath = "",
     string WorkingDirectory = "",
-    string Project = "",
     string Framework = "",
-    string Runtime = "",
     string Configuration = "",
-    string Output = "",
-    bool NoLogo = false,
+    string Runtime = "",
+    string Project = "",
+    string LaunchProfile = "",
+    bool NoLaunchProfile = false,
+    bool NoBuild = false,
+    bool NoRestore = false,
+    bool NoDependencies = false,
+    bool Force = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
     : IProcess
 {
-    public Clean(params string[] args)
-        : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())
+    public Run(params string[] args)
+        : this(args, Enumerable.Empty<(string, string)>())
     { }
         
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet clean")
-            .WithArgs("clean")
-            .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet run")
+            .WithArgs("run")
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
             .AddArgs(
-                ("--output", Output),
                 ("--framework", Framework),
-                ("--runtime", Runtime),
                 ("--configuration", Configuration),
+                ("--runtime", Runtime),
+                ("--project", Project),
+                ("--launch-profile", LaunchProfile),
                 ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
             )
             .AddBooleanArgs(
-                ("--nologo", NoLogo)
+                ("--no-launch-profile", NoLaunchProfile),
+                ("--no-build", NoBuild),
+                ("--no-restore", NoRestore),
+                ("--no-dependencies", NoDependencies),
+                ("--force", Force)
             )
-            .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
 }

@@ -55,9 +55,13 @@ internal class DotNetEnvironment : IDotNetEnvironment, ITraceSource
         get
         {
             yield return new Text($"FrameworkDescription: {RuntimeInformation.FrameworkDescription}");
+            yield return Text.NewLine;
             yield return new Text($"Default C# version: {ScriptCommandFactory.ParseOptions.LanguageVersion}");
+            yield return Text.NewLine;
             yield return new Text($"DotNetPath: {Path}");
+            yield return Text.NewLine;
             yield return new Text($"TargetFrameworkMoniker: {TargetFrameworkMoniker}");
+            yield return Text.NewLine;
         }
     }
 }

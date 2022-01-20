@@ -53,17 +53,17 @@ if (build.Run(new Custom("--version"), message => Version.TryParse(message.Text,
     if (sdkVersion.Major != requiredSdkVersion.Major && sdkVersion.Minor != requiredSdkVersion.Minor)
     {
         Error($"Current SDK version is {sdkVersion}, but .NET SDK {requiredSdkVersion} is required.");
-        return;
+        return 1;
     }
 }
 else
 {
     Error($"Cannot get an SDK version.");
-    return;
+    return 1;
 }
 
 var result = build.Run(new Clean());
-if (result.ExitCode != 0) Exit(1);
+if (result.ExitCode != 0) return 1;
 
 result = build.Run(
     new MSBuild()
@@ -74,7 +74,7 @@ result = build.Run(
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (result.ExitCode != 0) Exit(1);
+if (result.ExitCode != 0) return 1;
 
 Info($"Running flaky tests with {testAttempts} attempts.");
 var failedTests =
@@ -87,7 +87,7 @@ var failedTests =
 if (failedTests.Count == testAttempts)
 {
     Error(failedTests.Last().ToString());
-    return;
+    return 1;
 }
 
 var flakyTests =
@@ -107,7 +107,7 @@ result = build.Run(
     .WithVerbosity(Verbosity.Normal)
     .AddProps(commonProps));
 
-if (result.ExitCode != 0) Exit(1);
+if (result.ExitCode != 0) return 1;
 
 Info($"Running tests in Linux docker container and on the host in parallel.");
 var testCommand = new Test().WithExecutablePath("dotnet").WithVerbosity(Verbosity.Normal);
@@ -122,8 +122,8 @@ var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outp
 Task.WaitAll(testInContainerTask, vsTestTask);
 WriteLine($"Parallel tests completed.");
 
-if (testInContainerTask.Result.ExitCode != 0) Exit(1);
-if (vsTestTask.Result.ExitCode != 0) Exit(1);
+if (testInContainerTask.Result.ExitCode != 0) return 1;
+if (vsTestTask.Result.ExitCode != 0) return 1;
 
 result = build.Run(
     new Pack()
@@ -135,7 +135,7 @@ result = build.Run(
         .WithVerbosity(Verbosity.Normal)
         .AddProps(commonProps));
 
-if (result.ExitCode != 0) Exit(1);
+if (result.ExitCode != 0) return 1;
 
 Info("Publish artifacts.");
 var teamCityWriter = GetService<ITeamCityWriter>();
@@ -157,3 +157,5 @@ foreach (var artifact in artifacts)
 {
     teamCityWriter.PublishArtifact(artifact);
 }
+
+return 0;

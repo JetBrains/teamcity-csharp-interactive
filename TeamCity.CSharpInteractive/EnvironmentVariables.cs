@@ -23,10 +23,12 @@ internal class EnvironmentVariables : IEnvironmentVariables, ITraceSource
         get
         {
             yield return new Text("Environment variables:");
+            yield return Text.NewLine;
             foreach (var entry in System.Environment.GetEnvironmentVariables().OfType<DictionaryEntry>().OrderBy(i => i.Key))
             {
                 yield return Text.Tab;
                 yield return new Text($"{entry.Key}={entry.Value}");
+                yield return Text.NewLine;
             }
         }
     }

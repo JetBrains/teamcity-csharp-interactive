@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Contracts;
+using Host;
 using Microsoft.CodeAnalysis.Scripting;
 
 [ExcludeFromCodeCoverage]

@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
-using Contracts;
+using Host;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 
@@ -10,6 +10,7 @@ public class CSharpScriptRunnerTests
     private readonly Mock<ILog<CSharpScriptRunner>> _log;
     private readonly Mock<IPresenter<ScriptState<object>>> _scriptStatePresenter;
     private readonly Mock<IPresenter<CompilationDiagnostics>> _diagnosticsPresenter;
+    private readonly Mock<IExitCodeParser> _exitCodeParser;
     private readonly Mock<IHost> _host;
     private readonly List<Text> _errors = new();
     private readonly List<Diagnostic> _diagnostics = new();
@@ -22,6 +23,7 @@ public class CSharpScriptRunnerTests
         _diagnosticsPresenter = new Mock<IPresenter<CompilationDiagnostics>>();
         _diagnosticsPresenter.Setup(i => i.Show(It.IsAny<CompilationDiagnostics>())).Callback<CompilationDiagnostics>(i => _diagnostics.AddRange(i.Diagnostics));
         _host = new Mock<IHost>();
+        _exitCodeParser = new Mock<IExitCodeParser>();
     }
 
     [Theory]
@@ -30,12 +32,14 @@ public class CSharpScriptRunnerTests
     {
         // Given
         var runner = CreateInstance();
+        var command = Mock.Of<ICommand>();
             
         // When
-        var result = runner.Run(Mock.Of<ICommand>(), script);
+        var result = runner.Run(command, script);
 
         // Then
-        result.ShouldBeTrue();
+        result.Command.ShouldBe(command);
+        result.Success.ShouldBe(true);
         _errors.Count.ShouldBe(0);
         _diagnostics.Count.ShouldBe(0);
         _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<CompilationDiagnostics>()));
@@ -62,7 +66,7 @@ public class CSharpScriptRunnerTests
         var result = runner.Run(Mock.Of<ICommand>(), "Console.WriteLine(i);");
 
         // Then
-        result.ShouldBeTrue();
+        result.Success.ShouldBe(true);
         _errors.Count.ShouldBe(0);
         _diagnostics.Count.ShouldBe(0);
         _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<CompilationDiagnostics>()));
@@ -81,7 +85,7 @@ public class CSharpScriptRunnerTests
         var result = runner.Run(Mock.Of<ICommand>(), "Console.WriteLine(i);");
 
         // Then
-        result.ShouldBeFalse();
+        result.Success.ShouldBe(false);
         _errors.Count.ShouldBe(0);
         _diagnostics.Count.ShouldBe(1);
     }
@@ -96,7 +100,7 @@ public class CSharpScriptRunnerTests
         var result = runner.Run(Mock.Of<ICommand>(), "string i=10;");
 
         // Then
-        result.ShouldBeFalse();
+        result.Success.ShouldBe(false);
         _errors.Count.ShouldBe(0);
         _diagnostics.Count.ShouldNotBe(0);
         _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()), Times.Never);
@@ -113,7 +117,7 @@ public class CSharpScriptRunnerTests
         var result = runner.Run(Mock.Of<ICommand>(), "string i=10;");
 
         // Then
-        result.ShouldBeFalse();
+        result.Success.ShouldBe(false);
         _errors.Count.ShouldBe(0);
         _diagnostics.Count.ShouldNotBe(0);
         _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
@@ -129,7 +133,7 @@ public class CSharpScriptRunnerTests
         var result = runner.Run(Mock.Of<ICommand>(), "throw new Exception();");
 
         // Then
-        result.ShouldBeFalse();
+        result.Success.ShouldBe(false);
         _errors.Count.ShouldNotBe(0);
         _diagnostics.Count.ShouldBe(0);
         _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
@@ -138,6 +142,6 @@ public class CSharpScriptRunnerTests
     private CSharpScriptRunner CreateInstance()
     {
         var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider( Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(new FileSystem()), CancellationToken.None);
-        return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new []{ assembliesScriptOptionsProvider }, _host.Object);
+        return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new []{ assembliesScriptOptionsProvider }, _exitCodeParser.Object, _host.Object);
     }
 }

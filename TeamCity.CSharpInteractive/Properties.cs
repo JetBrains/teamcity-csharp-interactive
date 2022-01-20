@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Collections;
-using Contracts;
+using Host;
 
 internal class Properties: IProperties
 {

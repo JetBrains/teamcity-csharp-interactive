@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Contracts;
+using Host;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
 public class TeamCityPropertiesTests

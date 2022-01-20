@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using static Color;
+using static Host.Color;
 
 public class WriteLineWithColour: Scenario
 {

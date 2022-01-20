@@ -1,6 +1,6 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace TeamCity.CSharpInteractive.Contracts;
+namespace Host;
 
 public interface IHost
 {
@@ -23,6 +23,4 @@ public interface IHost
     void Trace(string? trace, string? origin = default);
         
     T GetService<T>();
-
-    void Exit(int exitCode = 0);
 }

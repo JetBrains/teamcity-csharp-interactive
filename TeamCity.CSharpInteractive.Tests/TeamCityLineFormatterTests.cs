@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Contracts;
+using Host;
 
 public class TeamCityLineFormatterTests
 {

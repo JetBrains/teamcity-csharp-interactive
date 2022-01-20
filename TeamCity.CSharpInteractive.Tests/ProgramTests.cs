@@ -23,7 +23,7 @@ public class ProgramTests
         _exitTracker = new Mock<IExitTracker>();
         _exitTracker.Setup(i => i.Track()).Returns(_trackToken.Object);
         _runner = new Mock<IRunner>();
-        _runner.Setup(i => i.Run()).Returns(ExitCode.Success);
+        _runner.Setup(i => i.Run()).Returns(0);
         _activationToken = new Mock<IDisposable>();
         _active = new Mock<IActive>();
         _active.Setup(i => i.Activate()).Returns(_activationToken.Object);
@@ -43,7 +43,7 @@ public class ProgramTests
         // Then
         _settingsManager.Verify(i => i.Load());
         _info.Verify(i => i.ShowHeader());
-        actualResult.ShouldBe(ExitCode.Success);
+        actualResult.ShouldBe(0);
         _trackToken.Verify(i => i.Dispose());
         _info.Verify(i => i.ShowFooter());
         _active.Verify(i => i.Activate());
@@ -61,7 +61,7 @@ public class ProgramTests
         var actualResult = program.Run();
 
         // Then
-        actualResult.ShouldBe(ExitCode.Fail);
+        actualResult.ShouldBe(1);
         _trackToken.Verify(i => i.Dispose());
         _info.Verify(i => i.ShowFooter());
         _activationToken.Verify(i => i.Dispose());
@@ -81,7 +81,7 @@ public class ProgramTests
         // Then
         _settingsManager.Verify(i => i.Load());
         _info.Verify(i => i.ShowVersion());
-        actualResult.ShouldBe(ExitCode.Success);
+        actualResult.ShouldBe(0);
     }
         
     [Fact]
@@ -98,7 +98,7 @@ public class ProgramTests
         _settingsManager.Verify(i => i.Load());
         _info.Verify(i => i.ShowHeader());
         _info.Verify(i => i.ShowHelp());
-        actualResult.ShouldBe(ExitCode.Success);
+        actualResult.ShouldBe(0);
     }
         
     [Fact]
@@ -112,7 +112,7 @@ public class ProgramTests
         var actualResult = program.Run();
 
         // Then
-        actualResult.ShouldBe(ExitCode.Fail);
+        actualResult.ShouldBe(1);
     }
 
     private Program CreateInstance() =>

@@ -46,13 +46,13 @@ public class Program
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    internal ExitCode Run()
+    internal int Run()
     {
         _settingsManager.Load();
         if (_settings.ShowVersionAndExit)
         {
             _info.ShowVersion();
-            return ExitCode.Success;
+            return 0;
         }
 
         _info.ShowHeader();
@@ -60,7 +60,7 @@ public class Program
         if (_settings.ShowHelpAndExit)
         {
             _info.ShowHelp();
-            return ExitCode.Success;
+            return 0;
         }
             
         using var exitToken = _exitTracker.Track();
@@ -71,7 +71,7 @@ public class Program
                 var result = _runner().Run();
                 if (_statistics.Errors.Any())
                 {
-                    result = ExitCode.Fail;
+                    result = 1;
                 }
 
                 return result;
@@ -80,7 +80,7 @@ public class Program
         catch(Exception error)
         {
             _log.Error(ErrorId.Unhandled, error);
-            return ExitCode.Fail;
+            return 1;
         }
         finally
         {

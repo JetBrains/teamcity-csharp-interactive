@@ -5,7 +5,7 @@
 namespace DotNet;
 
 using Cmd;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 [Immutype.Target]
 public record Custom(

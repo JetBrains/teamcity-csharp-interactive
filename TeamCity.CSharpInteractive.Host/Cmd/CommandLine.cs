@@ -7,7 +7,7 @@ namespace Cmd;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 [Immutype.Target]
 [DebuggerTypeProxy(typeof(StartInfoDebugView))]

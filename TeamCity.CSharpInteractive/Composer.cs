@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Versioning;
 using Cmd;
+using Host;
 using JetBrains.TeamCity.ServiceMessages.Read;
 using JetBrains.TeamCity.ServiceMessages.Write;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
@@ -17,7 +18,6 @@ using Microsoft.Build.Framework;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Scripting;
-using Contracts;
 using Pure.DI;
 using static Pure.DI.Lifetime;
 
@@ -106,7 +106,9 @@ internal static partial class Composer
             .Bind<IBuildOutputProcessor>().To<BuildOutputProcessor>()
             .Bind<IBuildMessagesProcessor>("default").To<DefaultBuildMessagesProcessor>()
             .Bind<IBuildMessagesProcessor>("custom").To<CustomMessagesProcessor>()
-            .Bind<HostComponents>().To<HostComponents>()
+            .Bind<HostComponents>().To<HostComponents>() 
+            .Bind<IPresenter<Summary>>().To<SummaryPresenter>()
+            .Bind<IExitCodeParser>().To<ExitCodeParser>()
 
             // Script options factory
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))

@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Contracts;
+using Host;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
@@ -14,6 +14,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
     private readonly IPresenter<ScriptState<object>> _scriptStatePresenter;
     private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
     private readonly IReadOnlyCollection<IScriptOptionsFactory> _scriptOptionsFactories;
+    private readonly IExitCodeParser _exitCodeParser;
     private readonly IHost _host;
     private ScriptState<object>? _scriptState;
         
@@ -22,16 +23,18 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
         IPresenter<ScriptState<object>> scriptStatePresenter,
         IPresenter<CompilationDiagnostics> diagnosticsPresenter,
         IReadOnlyCollection<IScriptOptionsFactory> scriptOptionsFactories,
+        IExitCodeParser exitCodeParser,
         IHost host)
     {
         _log = log;
         _scriptStatePresenter = scriptStatePresenter;
         _diagnosticsPresenter = diagnosticsPresenter;
         _scriptOptionsFactories = scriptOptionsFactories;
+        _exitCodeParser = exitCodeParser;
         _host = host;
     }
 
-    public bool Run(ICommand sourceCommand, string script)
+    public CommandResult Run(ICommand sourceCommand, string script)
     {
         var success = true;
         try
@@ -56,6 +59,16 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
             stopwatch.Stop();
             _log.Trace(() => new []{new Text($"Time Elapsed {stopwatch.Elapsed:g}")});
             _diagnosticsPresenter.Show(new CompilationDiagnostics(sourceCommand, _scriptState.Script.GetCompilation().GetDiagnostics().ToList().AsReadOnly()));
+            if (_scriptState.ReturnValue != default)
+            {
+                if (_exitCodeParser.TryParse(_scriptState.ReturnValue, out var exitCode))
+                {
+                    return new CommandResult(sourceCommand, success, exitCode);
+                }
+                
+                _log.Trace(() => new []{new Text("Return value is \""), new Text(_scriptState.ReturnValue.ToString() ?? "empty"), new Text("\".")});
+                return new CommandResult(sourceCommand, success);
+            }
         }
         catch (CompilationErrorException e)
         {
@@ -70,7 +83,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
             }
         }
 
-        return success;
+        return new CommandResult(sourceCommand, success);
     }
 
     public void Reset()

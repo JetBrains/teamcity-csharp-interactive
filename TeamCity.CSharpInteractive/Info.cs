@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Contracts;
+using Host;
 
 [ExcludeFromCodeCoverage]
 internal class Info : IInfo

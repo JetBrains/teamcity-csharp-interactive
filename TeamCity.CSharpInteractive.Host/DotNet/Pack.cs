@@ -4,11 +4,10 @@
 namespace DotNet;
 
 using Cmd;
-using DotNet;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 [Immutype.Target]
-public record Build(
+public record Pack(
     IEnumerable<(string name, string value)> Props,
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
@@ -16,45 +15,44 @@ public record Build(
     string WorkingDirectory = "",
     string Project = "",
     string Output = "",
-    string Framework = "",
-    string Configuration = "",
-    string Runtime = "",
-    string VersionSuffix = "",
-    bool NoIncremental = false,
-    bool NoDependencies = false,
+    bool NoBuild = false,
+    bool IncludeSymbols = false,
+    bool IncludeSource = false,
+    bool Serviceable = false,
     bool NoLogo = false,
     bool NoRestore = false,
-    bool Force = false,
+    string VersionSuffix = "",
+    string Configuration = "",
+    bool UseCurrentRuntime = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
     : IProcess
 {
-    public Build(params string[] args)
+    public Pack(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())
     { }
-
+        
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet build")
-            .WithArgs("build")
+            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet pack")
+            .WithArgs("pack")
             .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildIntegration(host, Verbosity)
             .AddArgs(
                 ("--output", Output),
-                ("--framework", Framework),
-                ("--configuration", Configuration),
-                ("--runtime", Runtime),
                 ("--version-suffix", VersionSuffix),
-                ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
+                ("--configuration", Configuration)
             )
             .AddBooleanArgs(
-                ("--no-incremental", NoIncremental),
-                ("--no-dependencies", NoDependencies),
+                ("--no-build", NoBuild),
+                ("--include-symbols", IncludeSymbols),
+                ("--include-source", IncludeSource),
+                ("--serviceable", Serviceable),
                 ("--nologo", NoLogo),
                 ("--no-restore", NoRestore),
-                ("--force", Force)
+                ("--use-current-runtime", UseCurrentRuntime)
             )
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());

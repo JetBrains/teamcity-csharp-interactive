@@ -49,24 +49,29 @@ internal class Environment : IEnvironment, ITraceSource, IScriptContext
         }
     }
 
-    public void Exit(ExitCode exitCode) => System.Environment.Exit((int)exitCode);
+    public void Exit(int exitCode) => System.Environment.Exit(exitCode);
 
     public IEnumerable<Text> Trace
     {
         get
         {
             yield return new Text($"OperatingSystemPlatform: {OperatingSystemPlatform}");
+            yield return Text.NewLine;
             yield return new Text($"ProcessArchitecture: {ProcessArchitecture}");
+            yield return Text.NewLine;
             foreach (var specialFolder in Enum.GetValues(typeof(SpecialFolder)).OfType<SpecialFolder>())
             {
                 yield return new Text($"Path({specialFolder}): {GetPath(specialFolder)}");
+                yield return Text.NewLine;
             }
 
             yield return new Text("Command line arguments:");
+            yield return Text.NewLine;
             foreach (var arg in System.Environment.GetCommandLineArgs())
             {
                 yield return Text.Tab;
                 yield return new Text(arg);
+                yield return Text.NewLine;
             }
         }
     }

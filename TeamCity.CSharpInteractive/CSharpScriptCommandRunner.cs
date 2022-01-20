@@ -13,7 +13,7 @@ internal class CSharpScriptCommandRunner : ICommandRunner
         switch (command)
         {
             case ScriptCommand scriptCommand:
-                return new CommandResult(command, _scriptRunner.Run(command, scriptCommand.Script));
+                return _scriptRunner.Run(command, scriptCommand.Script);
 
             case ResetCommand:
                 _scriptRunner.Reset();

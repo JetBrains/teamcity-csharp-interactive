@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.0-dev58" />
+    <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.0-dev59" />
   </ItemGroup>
 
 </Project>

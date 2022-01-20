@@ -5,9 +5,10 @@
         <IsPackable>false</IsPackable>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+        <RootNamespace>Host</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Immutype" Version="1.0.9">
+        <PackageReference Include="Immutype" Version="1.0.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

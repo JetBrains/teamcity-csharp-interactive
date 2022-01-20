@@ -5,15 +5,15 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Loader;
-using Contracts;
+using Host;
 
 [ExcludeFromCodeCoverage]
-public static class Host
+public static class HostConsole
 {
     private static readonly HostComponents Components = Composer.ResolveHostComponents();
     private static readonly IDisposable StatisticsToken;
 
-    static Host()
+    static HostConsole()
     {
         StatisticsToken = Components.Statistics.Start();
         AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
@@ -37,18 +37,12 @@ public static class Host
 
     public static T GetService<T>() => Components.Host.GetService<T>();
 
-    public static void Exit(int exitCode = 0) => System.Environment.Exit(exitCode);
-
     private static void OnDefaultOnUnloading(AssemblyLoadContext ctx)
     {
         try
         {
             StatisticsToken.Dispose();
-            Components.StatisticsPresenter.Show(Components.Statistics);
-            var state = Components.Statistics.Errors.Any()
-                ? new Text("Running FAILED.", Color.Error)
-                : new Text("Running succeeded.", Color.Success);
-            Components.Log.Info(state);
+            Components.SummaryPresenter.Show(Summary.Empty);
         }
         catch (Exception ex)
         {

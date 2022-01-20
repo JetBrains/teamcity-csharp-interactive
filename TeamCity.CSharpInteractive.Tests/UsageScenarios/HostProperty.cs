@@ -5,7 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using NuGet;
 
-public class Host: Scenario
+public class HostProperty: Scenario
 {
     [Fact]
     public void Run()
@@ -14,7 +14,7 @@ public class Host: Scenario
         // $tag=08 Global state
         // $priority=02
         // $description=Using the Host property
-        // $header=[_Host_](TeamCity.CSharpInteractive.Contracts/IHost.cs) is actually the provider of all global properties and methods.
+        // $header=[_Host_](TeamCity.CSharpInteractive.Host/IHost.cs) is actually the provider of all global properties and methods.
         // {
         var packages = Host.GetService<INuGet>();
         Host.WriteLine("Hello");

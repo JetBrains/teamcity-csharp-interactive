@@ -17,7 +17,7 @@ public class CSharpScriptCommandRunnerTests
         // Given
         var command = new ScriptCommand("abc", "code");
         var commandRunner = CreateInstance();
-        _csharpScriptRunner.Setup(i => i.Run(command, "code")).Returns(result);
+        _csharpScriptRunner.Setup(i => i.Run(command, "code")).Returns(new CommandResult(command, result, default));
 
         // When
         var actualResult = commandRunner.TryRun(command);

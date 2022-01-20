@@ -18,18 +18,25 @@ internal class InteractiveRunner : IRunner
         _stdOut = stdOut;
     }
 
-    public ExitCode Run()
+    public int Run()
     {
         ShowCursor(true);
+        // ReSharper disable once UseDeconstruction
         foreach (var result in _commandsRunner.Run(_commandSource.GetCommands()))
         {
+            var exitCode = result.ExitCode;
+            if (exitCode.HasValue)
+            {
+                return exitCode.Value;
+            }
+            
             if (!result.Command.Internal)
             {
                 ShowCursor(result.Command is not CodeCommand);
             }
         }
 
-        return ExitCode.Success;
+        return 0;
     }
 
     private void ShowCursor(bool completed) =>

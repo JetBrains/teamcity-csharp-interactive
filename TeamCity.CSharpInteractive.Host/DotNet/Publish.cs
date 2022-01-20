@@ -1,69 +1,65 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable CheckNamespace
+// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 namespace DotNet;
 
 using Cmd;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 [Immutype.Target]
-public record Test(
+public record Publish(
     IEnumerable<(string name, string value)> Props,
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
     string ExecutablePath = "",
     string WorkingDirectory = "",
     string Project = "",
-    string Settings = "",
-    bool ListTests = false,
-    string Filter = "",
-    string TestAdapterPath = "",
-    string Logger = "",
-    string Configuration = "",
+    bool UseCurrentRuntime = false,
+    string Output = "",
+    string Manifest = "",
+    bool NoBuild = false,
+    bool SelfContained = false,
+    bool NoSelfContained = false,
+    bool NoLogo = false,
     string Framework = "",
     string Runtime = "",
-    string Output = "",
-    string Diag = "",
-    bool NoBuild = false,
-    string ResultsDirectory = "",
-    string Collect = "",
-    bool Blame = false,
-    bool NoLogo = false,
+    string Configuration = "",
+    string VersionSuffix = "",
     bool NoRestore = false,
+    string Arch = "",
+    string OS = "",
     Verbosity? Verbosity = default,
     string ShortName = "")
     : IProcess
 {
-    public Test(params string[] args)
+    public Publish(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())
     { }
         
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<ISettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet test")
-            .WithArgs("test")
+            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet pack")
+            .WithArgs("publish")
             .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildIntegration(host, Verbosity)
             .AddArgs(
-                ("--settings", Settings),
-                ("--filter", Filter),
-                ("--test-adapter-path", TestAdapterPath),
-                ("--logger", Logger),
-                ("--configuration", Configuration),
+                ("--output", Output),
+                ("--manifest", Manifest),
                 ("--framework", Framework),
                 ("--runtime", Runtime),
-                ("--output", Output),
-                ("--diag", Diag),
-                ("--results-directory", ResultsDirectory),
-                ("--collect", Collect),
-                ("--verbosity", Verbosity?.ToString().ToLowerInvariant())
+                ("--configuration", Configuration),
+                ("--version-suffix", VersionSuffix),
+                ("--arch", Arch),
+                ("--os", OS)
             )
             .AddBooleanArgs(
-                ("--list-tests", ListTests),
+                ("--use-current-runtime", UseCurrentRuntime),
                 ("--no-build", NoBuild),
-                ("--blame", Blame),
+                ("--self-contained", SelfContained),
+                ("--no-self-contained", NoSelfContained),
                 ("--nologo", NoLogo),
                 ("--no-restore", NoRestore)
             )

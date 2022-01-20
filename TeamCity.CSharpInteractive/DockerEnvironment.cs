@@ -42,6 +42,7 @@ internal class DockerEnvironment : ITraceSource, IDockerEnvironment
         get
         {
             yield return new Text($"DockerPath: {Path}");
+            yield return Text.NewLine;
         }
     }
 }

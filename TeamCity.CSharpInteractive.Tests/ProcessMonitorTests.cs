@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using Cmd;
-using Contracts;
+using Host;
 
 public class ProcessMonitorTests
 {

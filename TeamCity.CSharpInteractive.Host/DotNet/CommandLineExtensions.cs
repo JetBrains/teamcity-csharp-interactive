@@ -9,7 +9,7 @@ namespace DotNet;
 using System.Linq;
 using Cmd;
 using DotNet;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 internal static class CommandLineExtensions
 {

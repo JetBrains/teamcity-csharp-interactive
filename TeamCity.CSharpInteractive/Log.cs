@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
-using Contracts;
+using Host;
 
 [ExcludeFromCodeCoverage]
 internal class Log<T> : ILog<T>

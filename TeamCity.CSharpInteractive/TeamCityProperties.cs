@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Collections;
-using Contracts;
+using Host;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using Pure.DI;
 

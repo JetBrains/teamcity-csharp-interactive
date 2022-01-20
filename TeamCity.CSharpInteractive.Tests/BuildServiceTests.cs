@@ -1,9 +1,9 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using Cmd;
-using Contracts;
 using CSharpInteractive;
 using DotNet;
+using Host;
 
 public class BuildServiceTests
 {

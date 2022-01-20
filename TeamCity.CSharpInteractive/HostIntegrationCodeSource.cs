@@ -7,10 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 [ExcludeFromCodeCoverage]
 internal class HostIntegrationCodeSource: ICodeSource
 {
-    private static readonly string[] ImplicitUsing = 
-    {
-        "global using static global::TeamCity.CSharpInteractive.Contracts.Color;"
-    };
+    private static readonly string[] ImplicitUsing = Array.Empty<string>();
 
     // ReSharper disable once IdentifierTypo
     private static readonly string ImplicitUsings = string.Join(System.Environment.NewLine, ImplicitUsing);

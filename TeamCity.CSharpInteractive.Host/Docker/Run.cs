@@ -9,7 +9,7 @@
 namespace Docker;
 
 using Cmd;
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 [Immutype.Target]
 public record Run(

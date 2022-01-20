@@ -7,9 +7,9 @@
 namespace TeamCity.CSharpInteractive;
 
 using Cmd;
-using Contracts;
 using CSharpInteractive;
 using DotNet;
+using Host;
 using Pure.DI;
 
 internal class BuildService: IBuild

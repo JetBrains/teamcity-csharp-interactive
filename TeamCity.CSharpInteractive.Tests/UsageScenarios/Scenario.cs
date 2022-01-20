@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System.Collections;
-using Contracts;
+using Host;
 
 public class Scenario: IHost
 {
@@ -50,9 +50,5 @@ public class Scenario: IHost
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public bool TryGetValue(string key, out string value) => _dict.TryGetValue(key, out value!);
-    }
-
-    public void Exit(int exitCode)
-    {
     }
 }

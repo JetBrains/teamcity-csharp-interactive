@@ -44,7 +44,8 @@ public class NuGetTests
 
         // When
         var result = TestTool.Run(
-            $"GetService<INuGet>().Restore(\"IoC.Container\", \"1.3.6\", \"net5.0\", @\"{tempPath}\");");
+            $"using NuGet;"
+            + $"GetService<INuGet>().Restore(\"IoC.Container\", \"1.3.6\", \"net5.0\", @\"{tempPath}\");");
             
         // Then
         result.ExitCode.ShouldBe(0, result.ToString());

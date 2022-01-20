@@ -7,24 +7,18 @@ using System.Diagnostics.CodeAnalysis;
 [ExcludeFromCodeCoverage]
 internal class ExitTracker : IExitTracker
 {
-    private readonly ILog<ExitTracker> _log;
     private readonly ISettings _settings;
-    private readonly ISettingSetter<VerbosityLevel> _settingSetter;
-    private readonly IInfo _info;
     private readonly IEnvironment _environment;
+    private readonly IPresenter<Summary> _summaryPresenter;
 
     public ExitTracker(
-        ILog<ExitTracker> log,
         ISettings settings,
-        ISettingSetter<VerbosityLevel> settingSetter,
-        IInfo info,
-        IEnvironment environment)
+        IEnvironment environment,
+        IPresenter<Summary> summaryPresenter)
     {
-        _log = log;
         _settings = settings;
-        _settingSetter = settingSetter;
-        _info = info;
         _environment = environment;
+        _summaryPresenter = summaryPresenter;
     }
 
     public IDisposable Track()
@@ -41,12 +35,8 @@ internal class ExitTracker : IExitTracker
         }
     }
 
-    private void CurrentDomainOnProcessExit(object? sender, EventArgs e)
-    {
-        _log.Error(ErrorId.AbnormalProgramTermination, "Abnormal program termination.");
-        _settingSetter.SetSetting(VerbosityLevel.Diagnostic);
-        _info.ShowFooter();
-    }
+    private void CurrentDomainOnProcessExit(object? sender, EventArgs e) =>
+        _summaryPresenter.Show(Summary.Empty);
 
-    private void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e) => _environment.Exit(ExitCode.Success);
+    private void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e) => _environment.Exit(0);
 }

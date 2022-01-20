@@ -62,8 +62,11 @@ internal class NuGetEnvironment : INuGetEnvironment, ITraceSource, IDisposable
         get
         {
             yield return new Text($"PackagesPath: {PackagesPath}");
+            yield return Text.NewLine;
             yield return new Text($"NuGetSources: {string.Join(";", Sources)}");
+            yield return Text.NewLine;
             yield return new Text($"NuGetFallbackFolders: {string.Join(";", FallbackFolders)}");
+            yield return Text.NewLine;
         }
     }
 

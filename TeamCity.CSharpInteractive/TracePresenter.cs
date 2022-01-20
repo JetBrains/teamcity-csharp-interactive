@@ -9,8 +9,8 @@ internal class TracePresenter: IPresenter<IEnumerable<ITraceSource>>
         _log = log;
 
     public void Show(IEnumerable<ITraceSource> data) =>
-        _log.Trace(() => ( 
+        _log.Trace(() => new []{ Text.NewLine }.Concat(
             from source in data
             from text in source.Trace
-            select text).ToArray());
+            select text).ToArray(), "Trace:");
 }

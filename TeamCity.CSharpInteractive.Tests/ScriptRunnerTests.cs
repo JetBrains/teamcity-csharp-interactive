@@ -5,7 +5,7 @@ public class ScriptRunnerTests
     private readonly Mock<ICommandSource> _commandSource;
     private readonly Mock<ICommandsRunner> _commandsRunner;
     private readonly Mock<IStatistics> _statistics;
-    private readonly Mock<IPresenter<IStatistics>> _statisticsPresenter;
+    private readonly Mock<IPresenter<Summary>> _summaryPresenter;
     private readonly Mock<ILog<ScriptRunner>> _log;
 
     public ScriptRunnerTests()
@@ -16,12 +16,12 @@ public class ScriptRunnerTests
         _commandSource.Setup(i => i.GetCommands()).Returns(commands);
         _commandsRunner = new Mock<ICommandsRunner>();
         _statistics = new Mock<IStatistics>();
-        _statisticsPresenter = new Mock<IPresenter<IStatistics>>();
+        _summaryPresenter = new Mock<IPresenter<Summary>>();
     }
         
     [Theory]
     [MemberData(nameof(Data))]
-    internal void ShouldRun(CommandResult[] results, string[] errors, string[] warnings, ExitCode expectedExitCode)
+    internal void ShouldRun(CommandResult[] results, string[] errors, string[] warnings, int expectedExitCode)
     {
         // Given
         var runner = CreateInstance();
@@ -42,26 +42,35 @@ public class ScriptRunnerTests
         new object[]
         {
             new CommandResult[] { new(new CodeCommand(), true), new(new CodeCommand(), true), new(new ScriptCommand(string.Empty, string.Empty), true)},
-            System.Array.Empty<string>(),
-            System.Array.Empty<string>(),
-            ExitCode.Success
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            0
+        },
+        
+        // Success
+        new object[]
+        {
+            new CommandResult[] { new(new CodeCommand(), true), new(new CodeCommand(), true), new(new ScriptCommand(string.Empty, string.Empty), true, 33)},
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            33
         },
             
         new object[]
         {
             new CommandResult[] { new(new CodeCommand(), default), new(new CodeCommand(), default), new(new ScriptCommand(string.Empty, string.Empty), default)},
-            System.Array.Empty<string>(),
-            System.Array.Empty<string>(),
-            ExitCode.Success
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            0
         },
             
         // Warnings
         new object[]
         {
             new CommandResult[] { new(new CodeCommand(), default), new(new CodeCommand(), default), new(new ScriptCommand(string.Empty, string.Empty), true)},
-            System.Array.Empty<string>(),
+            Array.Empty<string>(),
             new[] {"warn"},
-            ExitCode.Success
+            0
         },
             
         // Errors
@@ -70,16 +79,32 @@ public class ScriptRunnerTests
             new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), true)},
             new[] {"err"},
             new[] {"warn"},
-            ExitCode.Fail
+            1
+        },
+        
+        new object[]
+        {
+            new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), true, 44)},
+            new[] {"err"},
+            new[] {"warn"},
+            44
         },
             
         // Failed
         new object[]
         {
             new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), false)},
-            System.Array.Empty<string>(),
-            System.Array.Empty<string>(),
-            ExitCode.Fail
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            1
+        },
+        
+        new object[]
+        {
+            new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), false, 55)},
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            1
         }
     };
         
@@ -107,5 +132,5 @@ public class ScriptRunnerTests
             _commandSource.Object,
             _commandsRunner.Object,
             _statistics.Object,
-            _statisticsPresenter.Object);
+            _summaryPresenter.Object);
 }

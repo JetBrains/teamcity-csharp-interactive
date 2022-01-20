@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using Cmd;
-using Contracts;
+using Host;
 
 internal class PathResolverContext: IPathResolverContext, IVirtualContext
 {

@@ -1,9 +1,11 @@
 namespace TeamCity.CSharpInteractive;
 
-using Contracts;
+using System.Diagnostics.CodeAnalysis;
+using Host;
 
+[ExcludeFromCodeCoverage]
 internal readonly record struct HostComponents(
     IHost Host,
     IStatistics Statistics,
-    IPresenter<IStatistics> StatisticsPresenter,
+    IPresenter<Summary> SummaryPresenter,
     ILog<HostComponents> Log);

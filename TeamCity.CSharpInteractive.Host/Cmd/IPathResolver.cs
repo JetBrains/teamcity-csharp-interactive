@@ -2,7 +2,7 @@
 // ReSharper disable UnusedParameter.Global
 namespace Cmd;
 
-using TeamCity.CSharpInteractive.Contracts;
+using Host;
 
 internal interface IPathResolver
 {
