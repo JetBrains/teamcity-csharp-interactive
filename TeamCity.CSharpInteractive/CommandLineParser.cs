@@ -8,7 +8,7 @@ internal class CommandLineParser : ICommandLineParser
     public CommandLineParser(IFileSystem fileSystem) => 
         _fileSystem = fileSystem;
 
-    public IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments)
+    public IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments, CommandLineArgumentType defaultArgType)
     {
         var enumerators = new List<IEnumerator<string>> { arguments.GetEnumerator() };
         CommandLineArgumentType? argumentType = null;
@@ -93,11 +93,11 @@ internal class CommandLineParser : ICommandLineParser
                             continue;
 
                         case "--":
-                            argumentType = CommandLineArgumentType.ScriptFile;
+                            argumentType = defaultArgType;
                             continue;
 
                         default:
-                            yield return new CommandLineArgument(CommandLineArgumentType.ScriptFile, argument);
+                            yield return new CommandLineArgument(defaultArgType, argument);
                             argumentType = CommandLineArgumentType.ScriptArgument;
                             continue;
                     }

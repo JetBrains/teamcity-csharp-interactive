@@ -4,8 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using Script;
 
 [ExcludeFromCodeCoverage]
-internal readonly record struct HostComponents(
+internal readonly record struct ScriptHostComponents(
     IHost Host,
     IStatistics Statistics,
     IPresenter<Summary> SummaryPresenter,
-    ILog<HostComponents> Log);
+    ILog<ScriptHostComponents> Log,
+    IInfo Info,
+    ISettingsManager SettingsManager,
+    IExitTracker ExitTracker);

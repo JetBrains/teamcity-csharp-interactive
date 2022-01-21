@@ -32,6 +32,10 @@ internal static partial class Composer
             .Default(Singleton)
 #if TOOL
             .Bind<Program>().To<Program>()
+            .Bind<RunningMode>().To(_ => RunningMode.Tool)
+#endif
+#if APPLICATION
+            .Bind<RunningMode>().To(_ => RunningMode.Application)
 #endif
             .Bind<Assembly>().To(_ => typeof(Composer).Assembly)
             .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
@@ -68,8 +72,8 @@ internal static partial class Composer
             .Bind<FileCodeSource>().To<FileCodeSource>()
             .Bind<IFileCodeSourceFactory>().To<FileCodeSourceFactory>()
             .Bind<IRunner>().Tags(InteractionMode.Interactive).To<InteractiveRunner>()
-            .Bind<IRunner>().Tags(InteractionMode.Script).To<ScriptRunner>()
-            .Bind<IRunner>().As(Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IRunner>(InteractionMode.Interactive) : ctx.Resolve<IRunner>(InteractionMode.Script))
+            .Bind<IRunner>().Tags(InteractionMode.NonInteractive).To<ScriptRunner>()
+            .Bind<IRunner>().As(Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IRunner>(InteractionMode.Interactive) : ctx.Resolve<IRunner>(InteractionMode.NonInteractive))
             .Bind<ICommandSource>().To<CommandSource>()
             .Bind<IStringService>().To<StringService>()
             .Bind<IStatistics>().To<Statistics>()
@@ -107,7 +111,7 @@ internal static partial class Composer
             .Bind<IBuildOutputProcessor>().To<BuildOutputProcessor>()
             .Bind<IBuildMessagesProcessor>("default").To<DefaultBuildMessagesProcessor>()
             .Bind<IBuildMessagesProcessor>("custom").To<CustomMessagesProcessor>()
-            .Bind<HostComponents>().To<HostComponents>() 
+            .Bind<ScriptHostComponents>().To<ScriptHostComponents>() 
             .Bind<IPresenter<Summary>>().To<SummaryPresenter>()
             .Bind<IExitCodeParser>().To<ExitCodeParser>()
 

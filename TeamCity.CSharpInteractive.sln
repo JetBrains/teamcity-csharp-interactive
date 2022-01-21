@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Tool", "TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj", "{449E7939-B886-4213-A8AD-9E33B4EB19A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Build\Build.csproj", "{F22C244D-01C7-4D23-B71E-44490BAC7394}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{449E7939-B886-4213-A8AD-9E33B4EB19A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{449E7939-B886-4213-A8AD-9E33B4EB19A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{449E7939-B886-4213-A8AD-9E33B4EB19A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

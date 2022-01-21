@@ -23,7 +23,7 @@
         <PackageIcon>_common\icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <Description>$(Company) $(Title) $(Version) $(TargetFramework)</Description>
-        <PackageTags>C# csharp script interactive TeamCity</PackageTags>
+        <PackageTags>C#;csharp;script;interactive;TeamCity</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

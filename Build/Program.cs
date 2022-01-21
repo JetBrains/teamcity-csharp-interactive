@@ -1,60 +1,163 @@
-﻿using DotNet;
-using NuGet;
+﻿using NuGet;
+using DotNet;
+using Docker;
+using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
 
-const string solutionFile = "TeamCity.CSharpInteractive.sln"; 
-if (!File.Exists(solutionFile))
-{
-    Error($"Cannot find the solution \"{solutionFile}\". Current directory is \"{Environment.CurrentDirectory}\".");
-}
+Host.WriteLine($"Starting {Args[0]}");
+
+var currentDirectory = Environment.CurrentDirectory;
+
+// Target configuration
+var configuration = string.IsNullOrEmpty(Props["configuration"]) ? "Release" : Props["configuration"];
+
+// Test attempts for flaky tests
+if (!int.TryParse(Props["attempts"], out var testAttempts) || testAttempts < 1) testAttempts = 3;
+
+// Target directory
+var outputDir = Path.Combine(currentDirectory, "bin");
+
+// Required .NET SDK version
+var requiredSdkVersion = new Version(6, 0);
+
+// NuGet package id
+const string packageId = "MySampleLib";
 
 // Package version
-NuGetVersion GetNextVersion(RestoreSettings settings) =>
-    GetService<INuGet>()
-        .Restore(settings.WithHideWarningsAndErrors(true))
-        .Where(i => i.Name == settings.PackageId)
+var packageVersion = Props["version"];
+if (string.IsNullOrEmpty(packageVersion))
+{
+    Info("Evaluate next NuGet package version.");
+    packageVersion = 
+        GetService<INuGet>()
+        .Restore(packageId, "*")
+        .Where(i => i.Name == packageId)
         .Select(i => i.NuGetVersion)
         .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
-        .DefaultIfEmpty(string.IsNullOrWhiteSpace(Props["version"]) ? new NuGetVersion(1, 0, 0, "dev") : new NuGetVersion(Props["version"]))
-        .Max()!;
+        .DefaultIfEmpty(new NuGetVersion(1, 0, 0))
+        .Max()!
+        .ToString();
+}
 
-var toolRestoreSettings = new RestoreSettings("TeamCity.csi")
-    .WithPackageType(PackageType.Tool)
-    .WithVersionRange(VersionRange.All);
+Trace($"Package version is: {packageVersion}.");
 
-var nextToolVersion = GetNextVersion(toolRestoreSettings);
-WriteLine($"Version {nextToolVersion}");
-
-if (!Props.TryGetValue("configuration", out var configuration)) configuration = "Release";
-
-var buildProps = new[]
-{
-    ("version", nextToolVersion.ToString())
+var commonProps = new[]{ 
+    ("Version", packageVersion),
+    ("ContinuousIntegrationBuild", "true")
 };
 
 var build = GetService<IBuild>();
 
-var buildSolution = new Build()
-    .WithProject(solutionFile)
-    .WithConfiguration(configuration)
-    .WithProps(buildProps);
+Info($"Check the required .NET SDK version {requiredSdkVersion}.");
+var sdkVersion = new Version();
+if (build.Run(new Custom("--version"), message => Version.TryParse(message.Text, out sdkVersion)).ExitCode == 0)
+{
+    if (sdkVersion.Major != requiredSdkVersion.Major && sdkVersion.Minor != requiredSdkVersion.Minor)
+    {
+        Error($"Current SDK version is {sdkVersion}, but .NET SDK {requiredSdkVersion} is required.");
+        return 1;
+    }
+}
+else
+{
+    Error($"Cannot get an SDK version.");
+    return 1;
+}
 
-var result = build.Run(buildSolution);
+var result = build.Run(new Clean());
 if (result.ExitCode != 0) return 1;
 
-var test = new Test()
-    .WithProject(solutionFile)
-    .WithConfiguration(configuration)
-    .WithNoBuild(true)
-    .WithProps(buildProps);
+result = build.Run(
+    new MSBuild()
+        .WithShortName("Rebuilding the solution")
+        .WithProject("MySampleLib.sln")
+        .WithTarget("Rebuild")
+        .WithRestore(true)
+        .WithVerbosity(Verbosity.Normal)
+        .AddProps(commonProps));
 
-result = build.Run(test);
-if (result.ExitCode != 0 || result.Summary.FailedTests != 0) return 1;
+if (result.ExitCode != 0) return 1;
 
-var pack = new Pack()
-    .WithProject(solutionFile)
+Info($"Running flaky tests with {testAttempts} attempts.");
+var failedTests =
+    Enumerable.Repeat(new Test().WithNoBuild(true).AddProps(commonProps), testAttempts)
+    // Passing an output handler to avoid reporting to CI
+    .Select((test, index) => build.Run(test.WithShortName($"Testing (attempt {index + 1})"), _ => {}))
+    .TakeWhile(testResult => testResult.Summary.FailedTests > 0)
+    .ToList();
+
+if (failedTests.Count == testAttempts)
+{
+    Error(failedTests.Last().ToString());
+    return 1;
+}
+
+var flakyTests =
+    failedTests
+    .SelectMany(i => i.Tests)
+    .Where(i => i.State == TestState.Failed)
+    .Select(i => i.DisplayName)
+    .Distinct()
+    .OrderBy(i => i)
+    .ToList();
+
+result = build.Run(
+    new Build()
+    .WithShortName($"Building of the {configuration} version")
     .WithConfiguration(configuration)
-    .WithProps(buildProps);
-    
-result = build.Run(pack);
-return result.ExitCode ?? 1;
+    .WithOutput(outputDir)
+    .WithVerbosity(Verbosity.Normal)
+    .AddProps(commonProps));
+
+if (result.ExitCode != 0) return 1;
+
+Info($"Running tests in Linux docker container and on the host in parallel.");
+var testCommand = new Test().WithExecutablePath("dotnet").WithVerbosity(Verbosity.Normal);
+var dockerImage = $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}";
+var dockerTestCommand = new Docker.Run(testCommand, dockerImage)
+    .WithPlatform("linux")
+    .AddVolumes((currentDirectory, "/project"))
+    .WithContainerWorkingDirectory("/project");
+
+var testInContainerTask = build.RunAsync(dockerTestCommand);
+var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll")));
+Task.WaitAll(testInContainerTask, vsTestTask);
+WriteLine($"Parallel tests completed.");
+
+if (testInContainerTask.Result.ExitCode != 0) return 1;
+if (vsTestTask.Result.ExitCode != 0) return 1;
+
+result = build.Run(
+    new Pack()
+        .WithShortName($"The packing of the {configuration} version")
+        .WithConfiguration(configuration)
+        .WithOutput(outputDir)
+        .WithIncludeSymbols(true)
+        .WithIncludeSource(true)
+        .WithVerbosity(Verbosity.Normal)
+        .AddProps(commonProps));
+
+if (result.ExitCode != 0) return 1;
+
+Info("Publish artifacts.");
+var teamCityWriter = GetService<ITeamCityWriter>();
+
+if (flakyTests.Any())
+{
+    Warning("Has flaky tests.");
+    var flakyTestsFile = Path.Combine(outputDir, "FlakyTests.txt");
+    File.WriteAllLines(flakyTestsFile, flakyTests);
+    teamCityWriter.PublishArtifact($"{flakyTestsFile} => .");
+}
+
+var artifacts = 
+    from packageExtension in new [] { "nupkg", "symbols.nupkg" }
+    let path = Path.Combine(outputDir, $"{packageId}.{packageVersion}.{packageExtension}")
+    select $"{path} => .";
+
+foreach (var artifact in artifacts)
+{
+    teamCityWriter.PublishArtifact(artifact);
+}
+
+return 0;

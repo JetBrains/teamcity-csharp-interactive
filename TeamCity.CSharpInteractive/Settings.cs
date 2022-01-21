@@ -6,6 +6,7 @@ using Pure.DI;
 
 internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityLevel>
 {
+    private readonly RunningMode _runningMode;
     private readonly IEnvironment _environment;
     private readonly ICommandLineParser _commandLineParser;
     private readonly ICodeSource _hostCodeSource;
@@ -13,12 +14,14 @@ internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityL
     private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
 
     public Settings(
+        RunningMode runningMode,
         IEnvironment environment,
         ICommandLineParser commandLineParser,
         [Tag("Host")] ICodeSource hostCodeSource,
         ICodeSource consoleCodeSource,
         IFileCodeSourceFactory fileCodeSourceFactory)
     {
+        _runningMode = runningMode;
         _environment = environment;
         _commandLineParser = commandLineParser;
         _hostCodeSource = hostCodeSource;
@@ -44,7 +47,18 @@ internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityL
 
     public void Load()
     {
-        var args = _commandLineParser.Parse(_environment.GetCommandLineArgs().Skip(1)).ToImmutableArray();
+        var defaultArgType = _runningMode switch
+        {
+            RunningMode.Tool => CommandLineArgumentType.ScriptFile,
+            RunningMode.Application => CommandLineArgumentType.ScriptArgument,
+            _ => CommandLineArgumentType.ScriptFile
+        };
+
+        var args = _commandLineParser.Parse(
+            _environment.GetCommandLineArgs().Skip(1),
+            defaultArgType)
+            .ToImmutableArray();
+        
         var props = new Dictionary<string, string>();
         ScriptProperties = props;
         foreach (var (_, value, key) in args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptProperty))
@@ -53,9 +67,11 @@ internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityL
         }
 
         NuGetSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.NuGetSource).Select(i => i.Value);
-        if (args.Any(i => i.ArgumentType == CommandLineArgumentType.ScriptFile) || args.Any(i => i.ArgumentType == CommandLineArgumentType.Help))
+        if (_runningMode == RunningMode.Application 
+            || args.Any(i => i.ArgumentType == CommandLineArgumentType.ScriptFile)
+            || args.Any(i => i.ArgumentType == CommandLineArgumentType.Help))
         {
-            InteractionMode = InteractionMode.Script;
+            InteractionMode = InteractionMode.NonInteractive;
             VerbosityLevel = VerbosityLevel.Normal;
             ShowHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
             ShowVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);

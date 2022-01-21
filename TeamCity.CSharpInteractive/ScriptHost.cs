@@ -10,12 +10,14 @@ using Script;
 [ExcludeFromCodeCoverage]
 public static class ScriptHost
 {
-    private static readonly HostComponents Components = Composer.ResolveHostComponents();
-    private static readonly IDisposable StatisticsToken;
+    private static readonly ScriptHostComponents Components = Composer.ResolveScriptHostComponents();
+    private static readonly IDisposable FinishToken;
 
     static ScriptHost()
     {
-        StatisticsToken = Components.Statistics.Start();
+        Components.SettingsManager.Load();
+        Components.Info.ShowHeader();
+        FinishToken = Disposable.Create(Components.ExitTracker.Track(), Components.Statistics.Start());
         AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
     }
 
@@ -43,7 +45,7 @@ public static class ScriptHost
     {
         try
         {
-            StatisticsToken.Dispose();
+            FinishToken.Dispose();
             Components.SummaryPresenter.Show(Summary.Empty);
         }
         catch (Exception ex)

@@ -8,7 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.0-dev67" />
+    <ProjectReference Include="..\TeamCity.CSharpInteractive.Host\TeamCity.CSharpInteractive.Host.csproj" />
+    <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
+    <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TeamCity.CSharpInteractive\ScriptGlobalUsings.cs">
+      <Link>ScriptGlobalUsings.cs</Link>
+    </Compile>
   </ItemGroup>
 
 </Project>

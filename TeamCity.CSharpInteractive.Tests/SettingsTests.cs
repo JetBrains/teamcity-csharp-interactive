@@ -21,13 +21,13 @@ public class SettingsTests
     public void ShouldProvideSettingsWhenScriptMode()
     {
         // Given
-        var settings = CreateInstance();
+        var settings = CreateInstance(RunningMode.Tool);
         var codeSource = Mock.Of<ICodeSource>();
         _fileCodeSourceFactory.Setup(i => i.Create("myScript")).Returns(codeSource);
 
         // When
         _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0", "arg1", "arg2"});
-        _commandLineParser.Setup(i => i.Parse(new[] { "arg1", "arg2"})).Returns(
+        _commandLineParser.Setup(i => i.Parse(new[] { "arg1", "arg2"}, CommandLineArgumentType.ScriptFile)).Returns(
             new []
             {
                 new CommandLineArgument(CommandLineArgumentType.Version),
@@ -41,9 +41,37 @@ public class SettingsTests
 
         // Then
         settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
-        settings.InteractionMode.ShouldBe(InteractionMode.Script);
+        settings.InteractionMode.ShouldBe(InteractionMode.NonInteractive);
         settings.ShowVersionAndExit.ShouldBeTrue();
         settings.CodeSources.ToArray().ShouldBe(new []{_hostCodeSource, codeSource});
+        settings.NuGetSources.ToArray().ShouldBe(new []{"Src1", "Src2"});
+        settings.ScriptArguments.ToArray().ShouldBe(new []{"Arg1", "Arg2"});
+    }
+    
+    [Fact]
+    public void ShouldProvideSettingsWhenApplication()
+    {
+        // Given
+        var settings = CreateInstance(RunningMode.Application);
+        var codeSource = Mock.Of<ICodeSource>();
+
+        // When
+        _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0", "arg1", "arg2"});
+        _commandLineParser.Setup(i => i.Parse(new[] { "arg1", "arg2"}, CommandLineArgumentType.ScriptArgument)).Returns(
+            new []
+            {
+                new CommandLineArgument(CommandLineArgumentType.Version),
+                new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src1"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg1"),
+                new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src2"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg2")
+            });
+        settings.Load();
+
+        // Then
+        settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
+        settings.InteractionMode.ShouldBe(InteractionMode.NonInteractive);
+        settings.ShowVersionAndExit.ShouldBeTrue();
         settings.NuGetSources.ToArray().ShouldBe(new []{"Src1", "Src2"});
         settings.ScriptArguments.ToArray().ShouldBe(new []{"Arg1", "Arg2"});
     }
@@ -52,7 +80,7 @@ public class SettingsTests
     public void ShouldProvideSettingsWhenInteractiveMode()
     {
         // Given
-        var settings = CreateInstance();
+        var settings = CreateInstance(RunningMode.Tool);
             
         // When
         _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0" });
@@ -64,6 +92,6 @@ public class SettingsTests
         settings.CodeSources.ToArray().ShouldBe(new []{_hostCodeSource, _consoleCodeSource});
     }
 
-    private Settings CreateInstance() =>
-        new(_environment.Object, _commandLineParser.Object, _hostCodeSource, _consoleCodeSource, _fileCodeSourceFactory.Object);
+    private Settings CreateInstance(RunningMode runningMode) =>
+        new(runningMode, _environment.Object, _commandLineParser.Object, _hostCodeSource, _consoleCodeSource, _fileCodeSourceFactory.Object);
 }
