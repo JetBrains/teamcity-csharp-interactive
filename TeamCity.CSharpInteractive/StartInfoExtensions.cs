@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Text;
-using Cmd;
+using Script.Cmd;
 
 internal static class StartInfoExtensions
 {

@@ -1,5 +1,4 @@
-// ReSharper disable CheckNamespace
-namespace Docker;
+namespace Script.Docker;
 
 internal interface ISettings
 {

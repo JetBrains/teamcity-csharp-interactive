@@ -4,8 +4,8 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using NuGet;
 using NuGet.Build.Tasks;
+using Script.NuGet;
 
 [ExcludeFromCodeCoverage]
 internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetRestoreSetting>

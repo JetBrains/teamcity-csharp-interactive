@@ -1,10 +1,9 @@
-// ReSharper disable UnusedMember.Global
-// ReSharper disable CheckNamespace
-namespace Cmd;
+// ReSharper disable UnusedParameter.Global
+namespace Script.Cmd;
+
+using Script;
 
 public interface ICommandLine
 {
-    int? Run(IProcess process, Action<Output>? handler = default, TimeSpan timeout = default);
-        
-    Task<int?> RunAsync(IProcess process, Action<Output>? handler = default, CancellationToken cancellationToken = default);
+    IStartInfo GetStartInfo(IHost host);
 }

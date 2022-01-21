@@ -1,163 +1,107 @@
-﻿using NuGet;
-using DotNet;
-using Docker;
-using JetBrains.TeamCity.ServiceMessages.Write.Special;
+﻿using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
-
-Host.WriteLine($"Starting {Args[0]}");
+using Script.Docker;
+using Script.DotNet;
+using Script.NuGet;
 
 var currentDirectory = Environment.CurrentDirectory;
-
-// Target configuration
-var configuration = string.IsNullOrEmpty(Props["configuration"]) ? "Release" : Props["configuration"];
-
-// Test attempts for flaky tests
-if (!int.TryParse(Props["attempts"], out var testAttempts) || testAttempts < 1) testAttempts = 3;
-
-// Target directory
 var outputDir = Path.Combine(currentDirectory, "bin");
+Host.WriteLine($"Starting {Args[0]} at \"{currentDirectory}\".");
 
-// Required .NET SDK version
-var requiredSdkVersion = new Version(6, 0);
+if (!Props.TryGetValue("configuration", out var configuration)) configuration = "Release";
 
-// NuGet package id
 const string packageId = "MySampleLib";
-
-// Package version
-var packageVersion = Props["version"];
-if (string.IsNullOrEmpty(packageVersion))
+if (!Props.TryGetValue("version", out var packageVersion))
 {
     Info("Evaluate next NuGet package version.");
-    packageVersion = 
+    packageVersion =
         GetService<INuGet>()
-        .Restore(packageId, "*")
-        .Where(i => i.Name == packageId)
-        .Select(i => i.NuGetVersion)
-        .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
-        .DefaultIfEmpty(new NuGetVersion(1, 0, 0))
-        .Max()!
-        .ToString();
+            .Restore(packageId, "*")
+            .Where(i => i.Name == packageId)
+            .Select(i => i.NuGetVersion)
+            .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
+            .DefaultIfEmpty(new NuGetVersion(1, 0, 0))
+            .Max()!
+            .ToString();
 }
 
 Trace($"Package version is: {packageVersion}.");
 
-var commonProps = new[]{ 
-    ("Version", packageVersion),
-    ("ContinuousIntegrationBuild", "true")
-};
+var props = new[] { ("Version", packageVersion) };
 
-var build = GetService<IBuild>();
+var buildRunner = GetService<IBuildRunner>();
 
-Info($"Check the required .NET SDK version {requiredSdkVersion}.");
-var sdkVersion = new Version();
-if (build.Run(new Custom("--version"), message => Version.TryParse(message.Text, out sdkVersion)).ExitCode == 0)
+var requiredSdkVersion = new Version(6, 0);
+Info($"Checking the .NET SDK version {requiredSdkVersion}.");
+Version? sdkVersion = default;
+if (
+    buildRunner.Run(new Custom("--version"), message => Version.TryParse(message.Text, out sdkVersion)).ExitCode == 0
+    && sdkVersion != default
+    && sdkVersion < requiredSdkVersion)
 {
-    if (sdkVersion.Major != requiredSdkVersion.Major && sdkVersion.Minor != requiredSdkVersion.Minor)
-    {
-        Error($"Current SDK version is {sdkVersion}, but .NET SDK {requiredSdkVersion} is required.");
-        return 1;
-    }
-}
-else
-{
-    Error($"Cannot get an SDK version.");
+    Error($".NET SDK {requiredSdkVersion} or newer is required.");
     return 1;
 }
 
-var result = build.Run(new Clean());
-if (result.ExitCode != 0) return 1;
+if (buildRunner.Run(new Clean()).ExitCode != 0)
+    return 1;
 
-result = build.Run(
-    new MSBuild()
+if (buildRunner.Run(new MSBuild()
         .WithShortName("Rebuilding the solution")
         .WithProject("MySampleLib.sln")
         .WithTarget("Rebuild")
         .WithRestore(true)
         .WithVerbosity(Verbosity.Normal)
-        .AddProps(commonProps));
-
-if (result.ExitCode != 0) return 1;
-
-Info($"Running flaky tests with {testAttempts} attempts.");
-var failedTests =
-    Enumerable.Repeat(new Test().WithNoBuild(true).AddProps(commonProps), testAttempts)
-    // Passing an output handler to avoid reporting to CI
-    .Select((test, index) => build.Run(test.WithShortName($"Testing (attempt {index + 1})"), _ => {}))
-    .TakeWhile(testResult => testResult.Summary.FailedTests > 0)
-    .ToList();
-
-if (failedTests.Count == testAttempts)
-{
-    Error(failedTests.Last().ToString());
+        .AddProps(props)).ExitCode != 0)
     return 1;
-}
 
-var flakyTests =
-    failedTests
-    .SelectMany(i => i.Tests)
-    .Where(i => i.State == TestState.Failed)
-    .Select(i => i.DisplayName)
-    .Distinct()
-    .OrderBy(i => i)
-    .ToList();
+if (buildRunner.Run(new Build()
+        .WithShortName($"Building of the {configuration} version")
+        .WithConfiguration(configuration)
+        .WithOutput(outputDir)
+        .WithVerbosity(Verbosity.Normal)
+        .AddProps(props)).ExitCode != 0)
+    return 1;
 
-result = build.Run(
-    new Build()
-    .WithShortName($"Building of the {configuration} version")
-    .WithConfiguration(configuration)
-    .WithOutput(outputDir)
-    .WithVerbosity(Verbosity.Normal)
-    .AddProps(commonProps));
+var vstest = new VSTest()
+    .WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll"));
 
-if (result.ExitCode != 0) return 1;
+var test = new Test()
+    .WithExecutablePath("dotnet")
+    .WithNoBuild(true)
+    .WithVerbosity(Verbosity.Normal);
 
-Info($"Running tests in Linux docker container and on the host in parallel.");
-var testCommand = new Test().WithExecutablePath("dotnet").WithVerbosity(Verbosity.Normal);
-var dockerImage = $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}";
-var dockerTestCommand = new Docker.Run(testCommand, dockerImage)
+var testInContainer = new Script.Docker.Run(test, $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}")
     .WithPlatform("linux")
     .AddVolumes((currentDirectory, "/project"))
     .WithContainerWorkingDirectory("/project");
 
-var testInContainerTask = build.RunAsync(dockerTestCommand);
-var vsTestTask = build.RunAsync(new VSTest().WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll")));
-Task.WaitAll(testInContainerTask, vsTestTask);
-WriteLine($"Parallel tests completed.");
+var results = await Task.WhenAll(
+    buildRunner.RunAsync(testInContainer),
+    buildRunner.RunAsync(test),
+    buildRunner.RunAsync(vstest));
 
-if (testInContainerTask.Result.ExitCode != 0) return 1;
-if (vsTestTask.Result.ExitCode != 0) return 1;
+if (results.Any(i => i.ExitCode != 0)) return 1;
 
-result = build.Run(
-    new Pack()
-        .WithShortName($"The packing of the {configuration} version")
-        .WithConfiguration(configuration)
-        .WithOutput(outputDir)
-        .WithIncludeSymbols(true)
-        .WithIncludeSource(true)
-        .WithVerbosity(Verbosity.Normal)
-        .AddProps(commonProps));
+if (buildRunner.Run(
+        new Pack()
+            .WithShortName($"The packing of the {configuration} version")
+            .WithConfiguration(configuration)
+            .WithOutput(outputDir)
+            .WithIncludeSymbols(true)
+            .WithIncludeSource(true)
+            .WithVerbosity(Verbosity.Normal)
+            .AddProps(props)).ExitCode != 0)
+    return 1;
 
-if (result.ExitCode != 0) return 1;
-
-Info("Publish artifacts.");
+Info("Publishing artifacts.");
 var teamCityWriter = GetService<ITeamCityWriter>();
 
-if (flakyTests.Any())
-{
-    Warning("Has flaky tests.");
-    var flakyTestsFile = Path.Combine(outputDir, "FlakyTests.txt");
-    File.WriteAllLines(flakyTestsFile, flakyTests);
-    teamCityWriter.PublishArtifact($"{flakyTestsFile} => .");
-}
-
-var artifacts = 
-    from packageExtension in new [] { "nupkg", "symbols.nupkg" }
+(
+    from packageExtension in new[] {"nupkg", "symbols.nupkg"}
     let path = Path.Combine(outputDir, $"{packageId}.{packageVersion}.{packageExtension}")
-    select $"{path} => .";
-
-foreach (var artifact in artifacts)
-{
-    teamCityWriter.PublishArtifact(artifact);
-}
+    select $"{path} => .")
+    .ToList()
+    .ForEach(artifact => teamCityWriter.PublishArtifact(artifact));
 
 return 0;

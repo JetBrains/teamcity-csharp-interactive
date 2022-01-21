@@ -1,6 +1,5 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace Docker;
+namespace Script.Docker;
 
 public enum PullType
 {

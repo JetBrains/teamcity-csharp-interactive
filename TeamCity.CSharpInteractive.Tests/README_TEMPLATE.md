@@ -174,7 +174,7 @@ Trace("Some trace info");
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
     
 // Creates a simple command line from just the name of the executable 
@@ -207,10 +207,10 @@ new CommandLine("cmd", "/c", "echo", "Hello")
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
 
-int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
+int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("whoami", "/all"));
 ```
 
 
@@ -220,10 +220,10 @@ int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all")
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
 
-int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoami", "/all"));
+int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine("whoami", "/all"));
 ```
 
 
@@ -233,11 +233,11 @@ int? exitCode = await GetService<ICommandLine>().RunAsync(new CommandLine("whoam
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
 
 var lines = new System.Collections.Generic.List<string>();
-int? exitCode = GetService<ICommandLine>().Run(
+int? exitCode = GetService<ICommandLineRunner>().Run(
     new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
     i => lines.Add(i.Line));
     
@@ -251,11 +251,11 @@ lines.ShouldContain("MyEnv=MyVal");
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
 
-Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
-int? exitCode = GetService<ICommandLine>().Run(new CommandLine("cmd", "/c", "SET"));
+Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
+int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
 task.Wait();
 ```
 
@@ -266,11 +266,11 @@ task.Wait();
 The cancellation will kill a related process.
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
 
 var cancellationTokenSource = new CancellationTokenSource();
-Task<int?> task = GetService<ICommandLine>().RunAsync(
+Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
     default,
     cancellationTokenSource.Token);
@@ -286,10 +286,10 @@ task.IsCompleted.ShouldBeFalse();
 If timeout expired a process will be killed.
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
 
-int? exitCode = GetService<ICommandLine>().Run(
+int? exitCode = GetService<ICommandLineRunner>().Run(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
     default,
     TimeSpan.FromMilliseconds(1));
@@ -304,11 +304,11 @@ exitCode.HasValue.ShouldBeFalse();
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
@@ -329,11 +329,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
@@ -357,11 +357,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Gets the dotnet version, running a command like: "dotnet --version"
 Version? version = default;
@@ -380,11 +380,11 @@ version.ShouldNotBeNull();
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
@@ -411,11 +411,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
@@ -437,11 +437,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
@@ -459,11 +459,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
 var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
@@ -481,11 +481,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
 var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
@@ -507,11 +507,11 @@ stdOut.ShouldBe(new []{ "Hello, World!" });
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
 var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
@@ -532,11 +532,11 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
     
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
 var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
@@ -564,7 +564,7 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "NuGet" to use INuGet
+// Adds the namespace "Script.NuGet" to use INuGet
 using NuGet;
 
 IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new RestoreSettings("IoC.Container").WithVersionRange(VersionRange.All));
@@ -577,7 +577,7 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new RestoreSet
 
 
 ``` CSharp
-// Adds the namespace "NuGet" to use INuGet
+// Adds the namespace "Script.NuGet" to use INuGet
 using NuGet;
 
 var packagesPath = System.IO.Path.Combine(
@@ -599,13 +599,13 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
 
 
 ``` CSharp
-// Adds the namespace "Cmd" to use Command Line API
+// Adds the namespace "Script.Cmd" to use Command Line API
 using Cmd;
-// Adds the namespace "Docker" to use Docker API
+// Adds the namespace "Script.Docker" to use Docker API
 using Docker;
 
 // Resolves a build service
-var commandLine = GetService<ICommandLine>();
+var commandLine = GetService<ICommandLineRunner>();
 
 // Creates some command line to run in a docker container
 var cmd = new CommandLine("whoami");
@@ -622,16 +622,16 @@ result.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "DotNet" to use .NET build API
+// Adds the namespace "Script.DotNet" to use .NET build API
 using DotNet;
-// Adds the namespace "Docker" to use Docker API
+// Adds the namespace "Script.Docker" to use Docker API
 using Docker;
 
 // Resolves a build service
-var build = GetService<IBuild>();
+var build = GetService<IBuildRunner>();
 
 // Creates a base docker command line
-var baseDockerCmd = new Docker.Run()
+var baseDockerCmd = new Run()
     .WithImage("mcr.microsoft.com/dotnet/sdk")
     .WithPlatform("linux")
     .WithContainerWorkingDirectory("/MyProjects")
@@ -639,12 +639,12 @@ var baseDockerCmd = new Docker.Run()
     
 // Creates a new library project in a docker container
 var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
-var result = build.Run(baseDockerCmd.WithProcess(customCmd));
+var result = build.Run(baseDockerCmd.WithCommandLine(customCmd));
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project in a docker container
 var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
-result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
+result = build.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => {});
     
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();

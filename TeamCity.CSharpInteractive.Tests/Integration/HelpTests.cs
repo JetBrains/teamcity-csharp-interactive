@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using Core;
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class HelpTests

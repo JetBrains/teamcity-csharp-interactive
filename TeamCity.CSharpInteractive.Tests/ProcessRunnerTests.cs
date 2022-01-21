@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
+using Script.Cmd;
 
 public class ProcessRunnerTests
 {
@@ -20,7 +20,7 @@ public class ProcessRunnerTests
         var instance = CreateInstance(new CancellationTokenSource());
 
         // When
-        var result = instance.Run(new ProcessRun(_startInfo.Object, _monitor.Object, Handler), timeout);
+        var result = instance.Run(new ProcessInfo(_startInfo.Object, _monitor.Object, Handler), timeout);
 
         // Then
         result.ExitCode.HasValue.ShouldBeFalse();
@@ -37,7 +37,7 @@ public class ProcessRunnerTests
     {
         // Given
         var timeout = TimeSpan.FromSeconds(5);
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
         _processManager.Setup(i => i.WaitForExit(timeout)).Returns(true);
         _processManager.SetupGet(i => i.ExitCode).Returns(1);
@@ -62,7 +62,7 @@ public class ProcessRunnerTests
     {
         // Given
         var timeout = TimeSpan.Zero;
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
         _processManager.SetupGet(i => i.ExitCode).Returns(1);
         _processManager.SetupGet(i => i.Id).Returns(99);
@@ -86,7 +86,7 @@ public class ProcessRunnerTests
     {
         // Given
         var timeout = TimeSpan.Zero;
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(false);
         _processManager.SetupGet(i => i.Id).Returns(99);
         var instance = CreateInstance(new CancellationTokenSource());
@@ -107,7 +107,7 @@ public class ProcessRunnerTests
     {
         // Given
         var timeout = TimeSpan.Zero;
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
         _processManager.SetupGet(i => i.ExitCode).Returns(1);
         _processManager.SetupAdd(i => i.OnOutput += Handler).Callback<Action<Output>>(i => i(new Output(_startInfo.Object, false, "out", 99)));
@@ -125,7 +125,7 @@ public class ProcessRunnerTests
     public void ShouldRun()
     {
         // Given
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
         _processManager.Setup(i => i.WaitForExit(TimeSpan.FromDays(1))).Returns(true);
         _processManager.SetupGet(i => i.ExitCode).Returns(1);
@@ -148,7 +148,7 @@ public class ProcessRunnerTests
     public void ShouldRunWhenStateProviderIsNotDefined()
     {
         // Given
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
         _processManager.Setup(i => i.WaitForExit(TimeSpan.FromDays(1))).Returns(true);
         _processManager.SetupGet(i => i.ExitCode).Returns(1);
@@ -171,7 +171,7 @@ public class ProcessRunnerTests
     public async Task ShouldRunAsync()
     {
         // Given
-        var processRun = new ProcessRun(_startInfo.Object, _monitor.Object, Handler);
+        var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _processManager.Setup(i => i.Start(_startInfo.Object)).Returns(true);
         _processManager.SetupGet(i => i.ExitCode).Returns(2);
         _processManager.SetupAdd(i => i.OnExit += It.IsAny<Action>()).Callback<Action>(i => i());

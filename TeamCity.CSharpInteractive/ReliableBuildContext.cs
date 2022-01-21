@@ -2,11 +2,10 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Cmd;
-using CSharpInteractive;
-using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
 using Pure.DI;
+using Script.Cmd;
+using Script.DotNet;
 
 internal class ReliableBuildContext: IBuildContext
 {
@@ -43,7 +42,7 @@ internal class ReliableBuildContext: IBuildContext
     public IReadOnlyList<BuildMessage> ProcessOutput(in Output output) =>
         _baseBuildContext.ProcessOutput(output);
 
-    public IResult Create(IStartInfo startInfo, int? exitCode)
+    public IBuildResult Create(IStartInfo startInfo, int? exitCode)
     {
         var items = 
             from source in _sources

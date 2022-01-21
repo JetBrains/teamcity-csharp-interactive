@@ -1,5 +1,4 @@
-// ReSharper disable CheckNamespace
-namespace Cmd;
+namespace Script.Cmd;
 
 [Immutype.Target]
 public readonly record struct Output(IStartInfo StartInfo, bool IsError, string Line, int ProcessId)

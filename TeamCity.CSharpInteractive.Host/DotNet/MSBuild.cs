@@ -1,11 +1,11 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedType.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
+
 using Script;
 
 [Immutype.Target]
@@ -38,7 +38,7 @@ public record MSBuild(
     bool Version = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public MSBuild()
         : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>())

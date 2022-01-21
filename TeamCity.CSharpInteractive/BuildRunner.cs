@@ -6,13 +6,12 @@
 // ReSharper disable UseDeconstructionOnParameter
 namespace TeamCity.CSharpInteractive;
 
-using Cmd;
-using CSharpInteractive;
-using DotNet;
 using Pure.DI;
 using Script;
+using Script.Cmd;
+using Script.DotNet;
 
-internal class BuildService: IBuild
+internal class BuildRunner: IBuildRunner
 {
     private readonly IProcessRunner _processRunner;
     private readonly IHost _host;
@@ -23,7 +22,7 @@ internal class BuildService: IBuild
     private readonly IBuildMessagesProcessor _defaultBuildMessagesProcessor;
     private readonly IBuildMessagesProcessor _customBuildMessagesProcessor;
 
-    public BuildService(
+    public BuildRunner(
         IProcessRunner processRunner,
         IHost host,
         ITeamCityContext teamCityContext,
@@ -43,30 +42,30 @@ internal class BuildService: IBuild
         _customBuildMessagesProcessor = customBuildMessagesProcessor;
     }
 
-    public IResult Run(IProcess process, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
+    public IBuildResult Run(ICommandLine commandLine, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
     {
         var buildResult = _resultFactory();
-        var startInfo = CreateStartInfo(process);
-        var processInfo = new ProcessRun(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
+        var startInfo = CreateStartInfo(commandLine);
+        var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
         var result = _processRunner.Run(processInfo, timeout);
         return buildResult.Create(startInfo, result.ExitCode);
     }
 
-    public async Task<IResult> RunAsync(IProcess process, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default)
+    public async Task<IBuildResult> RunAsync(ICommandLine commandLine, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default)
     {
         var buildResult = _resultFactory();
-        var startInfo = CreateStartInfo(process);
-        var processInfo = new ProcessRun(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
+        var startInfo = CreateStartInfo(commandLine);
+        var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
         var result = await _processRunner.RunAsync(processInfo, cancellationToken);
         return buildResult.Create(startInfo, result.ExitCode);
     }
 
-    private IStartInfo CreateStartInfo(IProcess process)
+    private IStartInfo CreateStartInfo(ICommandLine commandLine)
     {
         try
         {
             _teamCityContext.TeamCityIntegration = true;
-            return process.GetStartInfo(_host);
+            return commandLine.GetStartInfo(_host);
         }
         finally
         {

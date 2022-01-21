@@ -2,14 +2,12 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Collections.Immutable;
-using Pure.DI;
 
 internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityLevel>
 {
     private readonly RunningMode _runningMode;
     private readonly IEnvironment _environment;
     private readonly ICommandLineParser _commandLineParser;
-    private readonly ICodeSource _hostCodeSource;
     private readonly ICodeSource _consoleCodeSource;
     private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
 
@@ -17,14 +15,12 @@ internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityL
         RunningMode runningMode,
         IEnvironment environment,
         ICommandLineParser commandLineParser,
-        [Tag("Host")] ICodeSource hostCodeSource,
         ICodeSource consoleCodeSource,
         IFileCodeSourceFactory fileCodeSourceFactory)
     {
         _runningMode = runningMode;
         _environment = environment;
         _commandLineParser = commandLineParser;
-        _hostCodeSource = hostCodeSource;
         _consoleCodeSource = consoleCodeSource;
         _fileCodeSourceFactory = fileCodeSourceFactory;
     }
@@ -76,15 +72,13 @@ internal class Settings : ISettings, ISettingsManager, ISettingSetter<VerbosityL
             ShowHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
             ShowVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
             ScriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToImmutableArray();
-            CodeSources = new[] { _hostCodeSource }
-                .Concat(args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile)
-                    .Select(i => _fileCodeSourceFactory.Create(i.Value)));
+            CodeSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value));
         }
         else
         {
             InteractionMode = InteractionMode.Interactive;
             VerbosityLevel = VerbosityLevel.Quiet;
-            CodeSources = new[] { _hostCodeSource, _consoleCodeSource };
+            CodeSources = new[] { _consoleCodeSource };
         }
     }
 

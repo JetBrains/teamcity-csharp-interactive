@@ -1,8 +1,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBeProtected.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable ReturnTypeCanBeEnumerable.Global
-namespace Cmd;
+namespace Script.Cmd;
 
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -17,7 +16,7 @@ public record CommandLine(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
     string ShortName = "")
-    : IStartInfo, IProcess
+    : ICommandLine, IStartInfo
 {
     private readonly string _shortName = ShortName;
 

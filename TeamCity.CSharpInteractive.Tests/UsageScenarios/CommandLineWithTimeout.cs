@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class CommandLineWithTimeout: ScenarioHostService
@@ -19,10 +19,10 @@ public class CommandLineWithTimeout: ScenarioHostService
         // $description=Run timeout
         // $header=If timeout expired a process will be killed.
         // {
-        // Adds the namespace "Cmd" to use Command Line API
+        // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
 
-        int? exitCode = GetService<ICommandLine>().Run(
+        int? exitCode = GetService<ICommandLineRunner>().Run(
             new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
             default,
             TimeSpan.FromMilliseconds(1));

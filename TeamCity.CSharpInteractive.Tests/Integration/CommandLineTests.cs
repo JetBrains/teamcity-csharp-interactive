@@ -2,8 +2,8 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using System.Diagnostics;
-using Cmd;
 using Core;
+using Script.Cmd;
 using Composer = Composer;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
@@ -16,7 +16,7 @@ public class CommandLineTests
         var events = new List<Output>();
 
         // When
-        var exitCode = GetService<ICommandLine>().Run(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
+        var exitCode = GetService<ICommandLineRunner>().Run(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
 
         // Then
         exitCode.HasValue.ShouldBeTrue();
@@ -32,7 +32,7 @@ public class CommandLineTests
         var events = new List<Output>();
 
         // When
-        var exitCode = GetService<ICommandLine>().Run(
+        var exitCode = GetService<ICommandLineRunner>().Run(
             DotNetScript.Create("WriteLine(\"VAL=\" + System.Environment.GetEnvironmentVariable(\"ABC\"));").AddVars(("ABC", "123")),
             e => events.Add(e));
 
@@ -51,7 +51,7 @@ public class CommandLineTests
 
         // When
         stopwatch.Start();
-        var exitCode = GetService<ICommandLine>().Run(
+        var exitCode = GetService<ICommandLineRunner>().Run(
             DotNetScript.Create("System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));"),
             _ => { },
             TimeSpan.FromMilliseconds(100));
@@ -70,7 +70,7 @@ public class CommandLineTests
         var events = new List<Output>();
 
         // When
-        var exitCode = await GetService<ICommandLine>().RunAsync(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
+        var exitCode = await GetService<ICommandLineRunner>().RunAsync(DotNetScript.Create("WriteLine(\"Hello\");"), e => events.Add(e));
 
         // Then
         exitCode.HasValue.ShouldBeTrue();
@@ -88,7 +88,7 @@ public class CommandLineTests
 
         // When
         stopwatch.Start();
-        GetService<ICommandLine>().RunAsync(
+        GetService<ICommandLineRunner>().RunAsync(
             DotNetScript.Create("System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));"),
             _ => { },
             cancellationTokenSource.Token);

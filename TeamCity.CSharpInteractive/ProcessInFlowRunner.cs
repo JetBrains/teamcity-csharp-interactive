@@ -2,9 +2,9 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
-using Cmd;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using Pure.DI;
+using Script.Cmd;
 
 internal class ProcessInFlowRunner: IProcessRunner
 {
@@ -25,16 +25,16 @@ internal class ProcessInFlowRunner: IProcessRunner
         _flowContext = flowContext;
     }
         
-    public ProcessResult Run(ProcessRun processRun, TimeSpan timeout)
+    public ProcessResult Run(ProcessInfo processInfo, TimeSpan timeout)
     {
         using var flow = CreateFlow();
-        return _baseProcessRunner.Run(processRun.WithStartInfo(WrapInFlow(processRun.StartInfo)), timeout);
+        return _baseProcessRunner.Run(processInfo.WithStartInfo(WrapInFlow(processInfo.StartInfo)), timeout);
     }
         
-    public Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken)
+    public Task<ProcessResult> RunAsync(ProcessInfo processInfo, CancellationToken cancellationToken)
     {
         var flow = CreateFlow();
-        return _baseProcessRunner.RunAsync(processRun.WithStartInfo(WrapInFlow(processRun.StartInfo)), cancellationToken)
+        return _baseProcessRunner.RunAsync(processInfo.WithStartInfo(WrapInFlow(processInfo.StartInfo)), cancellationToken)
             .ContinueWith(
                 task =>
                 {

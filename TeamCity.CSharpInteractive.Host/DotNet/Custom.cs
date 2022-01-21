@@ -1,8 +1,8 @@
-// ReSharper disable CheckNamespace
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedType.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
 using Script;
@@ -14,7 +14,7 @@ public record Custom(
     string ExecutablePath = "",
     string WorkingDirectory = "",
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public Custom(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>())

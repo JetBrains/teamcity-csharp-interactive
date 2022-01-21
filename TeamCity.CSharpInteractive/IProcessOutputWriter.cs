@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-using Cmd;
+using Script.Cmd;
 
 internal interface IProcessOutputWriter
 {

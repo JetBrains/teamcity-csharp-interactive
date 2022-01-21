@@ -1,7 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Cmd;
+using Script.Cmd;
 
 internal class ProcessOutputWriter : IProcessOutputWriter
 {

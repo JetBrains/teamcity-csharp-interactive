@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using NuGet;
 using NuGet.Versioning;
+using Script.NuGet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class NuGetRestoreAdvanced: ScenarioHostService
@@ -16,7 +17,7 @@ public class NuGetRestoreAdvanced: ScenarioHostService
         // $priority=01
         // $description=Restore a NuGet package by a version range for the specified .NET and path
         // {
-        // Adds the namespace "NuGet" to use INuGet
+        // Adds the namespace "Script.NuGet" to use INuGet
         // ## using NuGet;
 
         var packagesPath = System.IO.Path.Combine(

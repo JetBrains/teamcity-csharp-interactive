@@ -1,8 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable NotAccessedPositionalProperty.Global
 // ReSharper disable ReturnTypeCanBeEnumerable.Local
-namespace DotNet;
+namespace Script.DotNet;
 
 using System.Diagnostics;
 using System.Text;

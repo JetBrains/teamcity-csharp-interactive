@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class CommandLineSimple: ScenarioHostService
@@ -18,10 +18,10 @@ public class CommandLineSimple: ScenarioHostService
         // $priority=01
         // $description=Run a command line
         // {
-        // Adds the namespace "Cmd" to use Command Line API
+        // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
 
-        int? exitCode = GetService<ICommandLine>().Run(new CommandLine("whoami", "/all"));
+        int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("whoami", "/all"));
         // }
             
         exitCode.HasValue.ShouldBeTrue();

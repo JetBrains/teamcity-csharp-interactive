@@ -1,4 +1,4 @@
-﻿using DotNet;
+﻿using Script.DotNet;
 
 const string solutionFile = "TeamCity.CSharpInteractive.sln"; 
 if (!File.Exists(solutionFile))

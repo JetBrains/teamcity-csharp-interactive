@@ -1,10 +1,9 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Cmd;
-using CSharpInteractive;
-using DotNet;
 using JetBrains.TeamCity.ServiceMessages.Read;
+using Script.Cmd;
+using Script.DotNet;
 
 internal class BuildOutputProcessor : IBuildOutputProcessor
 {

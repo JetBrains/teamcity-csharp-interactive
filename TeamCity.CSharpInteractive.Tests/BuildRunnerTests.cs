@@ -1,11 +1,11 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
 using CSharpInteractive;
-using DotNet;
 using Script;
+using Script.Cmd;
+using Script.DotNet;
 
-public class BuildServiceTests
+public class BuildRunnerTests
 {
     private readonly Mock<IProcessRunner> _processRunner = new();
     private readonly Mock<IHost> _host = new();
@@ -18,10 +18,10 @@ public class BuildServiceTests
     private readonly Mock<IProcessMonitor> _processMonitor = new();
     private readonly Func<IProcessMonitor> _monitorFactory;
     private readonly Mock<IStartInfo> _startInfo = new();
-    private readonly Mock<IProcess> _process = new();
+    private readonly Mock<ICommandLine> _process = new();
     private static readonly ProcessResult ProcessResult = new(ProcessState.Finished, 33);
 
-    public BuildServiceTests()
+    public BuildRunnerTests()
     {
         var buildResult = new BuildResult(_startInfo.Object).WithExitCode(33);
         _process.Setup(i => i.GetStartInfo(_host.Object)).Returns(_startInfo.Object);
@@ -44,8 +44,8 @@ public class BuildServiceTests
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
         
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.Run(It.IsAny<ProcessRun>(), TimeSpan.FromSeconds(1)))
-            .Callback<ProcessRun, TimeSpan>((processRun, _) => processRun.Handler!(output))
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), TimeSpan.FromSeconds(1)))
+            .Callback<ProcessInfo, TimeSpan>((processRun, _) => processRun.Handler!(output))
             .Returns(ProcessResult);
         
         var customHandler = Mock.Of<Action<BuildMessage>>();
@@ -73,8 +73,8 @@ public class BuildServiceTests
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
         
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.Run(It.IsAny<ProcessRun>(), TimeSpan.FromSeconds(1)))
-            .Callback<ProcessRun, TimeSpan>((processRun, _) => processRun.Handler!(output))
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), TimeSpan.FromSeconds(1)))
+            .Callback<ProcessInfo, TimeSpan>((processRun, _) => processRun.Handler!(output))
             .Returns(ProcessResult);
         
         // When
@@ -93,7 +93,7 @@ public class BuildServiceTests
         using var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
         var buildService = CreateInstance();
-        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessRun>(), token)).Returns(Task.FromResult(ProcessResult));
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessInfo>(), token)).Returns(Task.FromResult(ProcessResult));
 
         // When
         await buildService.RunAsync(_process.Object, Mock.Of<Action<BuildMessage>?>(), token);
@@ -103,7 +103,7 @@ public class BuildServiceTests
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = false);
     }
     
-    private BuildService CreateInstance() =>
+    private BuildRunner CreateInstance() =>
         new(
             _processRunner.Object,
             _host.Object,

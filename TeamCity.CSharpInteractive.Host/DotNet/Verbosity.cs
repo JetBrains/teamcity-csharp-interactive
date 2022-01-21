@@ -1,6 +1,5 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 public enum Verbosity
 {

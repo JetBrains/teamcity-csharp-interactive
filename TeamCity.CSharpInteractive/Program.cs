@@ -21,7 +21,7 @@ public class Program
     private readonly ISettingsManager _settingsManager;
     private readonly ISettings _settings;
     private readonly IExitTracker _exitTracker;
-    private readonly Func<IRunner> _runner;
+    private readonly Func<IScriptRunner> _runner;
     private readonly IStatistics _statistics;
 
     internal Program(
@@ -31,7 +31,7 @@ public class Program
         ISettingsManager settingsManager,
         ISettings settings,
         IExitTracker exitTracker,
-        Func<IRunner> runner,
+        Func<IScriptRunner> runner,
         IStatistics statistics)
     {
         _log = log;

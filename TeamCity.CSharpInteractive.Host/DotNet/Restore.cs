@@ -1,9 +1,9 @@
 // ReSharper disable UnusedType.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
+
 using Script;
 
 [Immutype.Target]
@@ -30,7 +30,7 @@ public record Restore(
     bool ForceEvaluate = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public Restore(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())

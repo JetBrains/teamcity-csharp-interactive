@@ -1,8 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using NuGet;
 using Script;
+using Script.NuGet;
 
 internal class AddNuGetReferenceCommandRunner: ICommandRunner
 {

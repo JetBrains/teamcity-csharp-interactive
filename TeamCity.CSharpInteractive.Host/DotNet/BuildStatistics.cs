@@ -1,5 +1,4 @@
-// ReSharper disable CheckNamespace
-namespace DotNet;
+namespace Script.DotNet;
 
 using System.Text;
 

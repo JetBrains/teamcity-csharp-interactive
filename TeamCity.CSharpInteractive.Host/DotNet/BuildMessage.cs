@@ -1,7 +1,6 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
 // ReSharper disable NotAccessedPositionalProperty.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using System.Text;
 using JetBrains.TeamCity.ServiceMessages;

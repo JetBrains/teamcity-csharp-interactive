@@ -1,14 +1,13 @@
-// ReSharper disable CheckNamespace
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable ArrangeRedundantParentheses
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using System.Linq;
 using Cmd;
-using DotNet;
 using Script;
 
 internal static class CommandLineExtensions

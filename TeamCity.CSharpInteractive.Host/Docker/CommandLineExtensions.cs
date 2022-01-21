@@ -1,9 +1,8 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-namespace Docker;
+namespace Script.Docker;
 
 using Cmd;
 

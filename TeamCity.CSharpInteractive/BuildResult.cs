@@ -3,12 +3,12 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
 using System.Text;
-using Cmd;
-using DotNet;
+using Script.Cmd;
+using Script.DotNet;
 
 [Immutype.Target]
 [DebuggerTypeProxy(typeof(BuildResultDebugView))]
-internal class BuildResult : IResult
+internal class BuildResult : IBuildResult
 {
     private readonly Lazy<BuildStatistics> _summary;
 
@@ -102,23 +102,23 @@ internal class BuildResult : IResult
         
     private class BuildResultDebugView
     {
-        private readonly BuildResult _result;
+        private readonly BuildResult _buildResult;
 
-        public BuildResultDebugView(BuildResult result) => _result = result;
+        public BuildResultDebugView(BuildResult buildResult) => _buildResult = buildResult;
             
-        public BuildStatistics Summary => _result.Summary;
+        public BuildStatistics Summary => _buildResult.Summary;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-        public IReadOnlyList<BuildMessage> Errors => _result.Errors;
+        public IReadOnlyList<BuildMessage> Errors => _buildResult.Errors;
             
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-        public IReadOnlyList<BuildMessage> Warnings => _result.Warnings;
+        public IReadOnlyList<BuildMessage> Warnings => _buildResult.Warnings;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-        public IReadOnlyList<TestResult> Tests => _result.Tests;
+        public IReadOnlyList<TestResult> Tests => _buildResult.Tests;
 
-        public IStartInfo StartInfo => _result.StartInfo;
+        public IStartInfo StartInfo => _buildResult.StartInfo;
             
-        public int? ExitCode => _result.ExitCode;
+        public int? ExitCode => _buildResult.ExitCode;
     }
 }

@@ -1,9 +1,9 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
 using CSharpInteractive;
-using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
+using Script.Cmd;
+using Script.DotNet;
 
 public class DefaultBuildMessagesProcessorTests
 {

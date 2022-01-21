@@ -10,7 +10,7 @@ public class BuildTests
 
         // When
         var result = TestTool.Run(
-            "using DotNet;",
+            "using Script.DotNet;",
             "using System.Linq;",
             "var build = GetService<IBuild>();",
             "var result = build.Run(new Custom(\"new\", \"mstest\"));",

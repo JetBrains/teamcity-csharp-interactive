@@ -3,8 +3,8 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Cmd;
-using Docker;
+using Script.Cmd;
+using Script.Docker;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class DockerRun: ScenarioHostService
@@ -17,13 +17,13 @@ public class DockerRun: ScenarioHostService
         // $priority=00
         // $description=Running in docker
         // {
-        // Adds the namespace "Cmd" to use Command Line API
+        // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
-        // Adds the namespace "Docker" to use Docker API
+        // Adds the namespace "Script.Docker" to use Docker API
         // ## using Docker;
 
         // Resolves a build service
-        var commandLine = GetService<ICommandLine>();
+        var commandLine = GetService<ICommandLineRunner>();
 
         // Creates some command line to run in a docker container
         var cmd = new CommandLine("whoami");

@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 internal class TeamCityContext:
     ITeamCityContext,
-    DotNet.ISettings
+    Script.DotNet.ISettings
 {
     private readonly IEnvironment _environment;
     private readonly IDotNetEnvironment _dotnetEnvironment;

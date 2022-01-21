@@ -1,10 +1,9 @@
 // ReSharper disable UnusedType.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
-using DotNet;
+
 using Script;
 
 [Immutype.Target]
@@ -22,7 +21,7 @@ public record Clean(
     bool NoLogo = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public Clean(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())

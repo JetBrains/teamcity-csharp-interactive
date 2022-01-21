@@ -3,8 +3,7 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using CSharpInteractive;
-using DotNet;
+using Script.DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class DotNetTest: ScenarioHostService
@@ -17,11 +16,11 @@ public class DotNetTest: ScenarioHostService
         // $priority=00
         // $description=Test a project
         // {
-        // Adds the namespace "DotNet" to use .NET build API
+        // Adds the namespace "Script.DotNet" to use .NET build API
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuild>();
+        var build = GetService<IBuildRunner>();
             
         // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
         var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));

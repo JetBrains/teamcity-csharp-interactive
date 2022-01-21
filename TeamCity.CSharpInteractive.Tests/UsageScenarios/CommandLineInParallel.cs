@@ -3,7 +3,7 @@
 // ReSharper disable SuggestVarOrType_Elsewhere
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class CommandLineInParallel: ScenarioHostService
@@ -19,11 +19,11 @@ public class CommandLineInParallel: ScenarioHostService
         // $priority=05
         // $description=Run asynchronously in parallel
         // {
-        // Adds the namespace "Cmd" to use Command Line API
+        // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
 
-        Task<int?> task = GetService<ICommandLine>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
-        int? exitCode = GetService<ICommandLine>().Run(new CommandLine("cmd", "/c", "SET"));
+        Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("whoami").AddArgs("/all"));
+        int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
         task.Wait();
         // }
             

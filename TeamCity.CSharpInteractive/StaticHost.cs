@@ -1,19 +1,20 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-namespace TeamCity.CSharpInteractive;
+// ReSharper disable CheckNamespace
+namespace Script;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Loader;
-using Script;
+using TeamCity.CSharpInteractive;
 
 [ExcludeFromCodeCoverage]
-public static class ScriptHost
+public static class StaticHost
 {
     private static readonly ScriptHostComponents Components = Composer.ResolveScriptHostComponents();
     private static readonly IDisposable FinishToken;
 
-    static ScriptHost()
+    static StaticHost()
     {
         Components.SettingsManager.Load();
         Components.Info.ShowHeader();

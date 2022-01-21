@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using CSharpInteractive;
-using DotNet;
+using Script.DotNet;
 
 public class BuildMessageLogWriterTests
 {

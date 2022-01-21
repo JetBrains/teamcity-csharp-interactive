@@ -1,6 +1,5 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedParameter.Global
-namespace Cmd;
+namespace Script.Cmd;
 
 using Script;
 

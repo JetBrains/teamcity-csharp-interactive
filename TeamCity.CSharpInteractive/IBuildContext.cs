@@ -1,9 +1,9 @@
 // ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive;
 
-using Cmd;
-using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
+using Script.Cmd;
+using Script.DotNet;
 
 internal interface IBuildContext
 {
@@ -11,5 +11,5 @@ internal interface IBuildContext
         
     IReadOnlyList<BuildMessage> ProcessOutput(in Output output);
 
-    IResult Create(IStartInfo startInfo, int? exitCode);
+    IBuildResult Create(IStartInfo startInfo, int? exitCode);
 }

@@ -19,9 +19,9 @@ internal class ProcessRunner: IProcessRunner
         _cancellationTokenSource = cancellationTokenSource;
     }
 
-    public ProcessResult Run(ProcessRun processRun, TimeSpan timeout)
+    public ProcessResult Run(ProcessInfo processInfo, TimeSpan timeout)
     {
-        var (startInfo, monitor, handler) = processRun;
+        var (startInfo, monitor, handler) = processInfo;
         using var processManager = _processManagerFactory();
         if (handler != default)
         {
@@ -61,9 +61,9 @@ internal class ProcessRunner: IProcessRunner
         return new ProcessResult(ProcessState.Canceled);
     }
 
-    public async Task<ProcessResult> RunAsync(ProcessRun processRun, CancellationToken cancellationToken)
+    public async Task<ProcessResult> RunAsync(ProcessInfo processInfo, CancellationToken cancellationToken)
     {
-        var (startInfo, monitor, handler) = processRun;
+        var (startInfo, monitor, handler) = processInfo;
         if (cancellationToken == default || cancellationToken == CancellationToken.None)
         {
             cancellationToken = _cancellationTokenSource.Token;

@@ -1,14 +1,13 @@
 // https://github.com/JetBrains/teamcity-csharp-interactive
 
 // Changes a verbosity level (Quiet, Normal or Diagnostic)
-// #l Diagnostic
+// #l Level
 
 // Adds a NuGet package
-// #r "nuget: Newtonsoft.Json, 13.0.1"
+// #r "nuget: PackageName, PackageVersion"
 
-// Includes code from files
-// #load "Class1.cs"
-// #load "Class2.cs"
+// Includes code from a file
+// #load "MyClass.cs"
 
 // Runs script from an entry point
 #load "Program.cs"

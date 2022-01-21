@@ -3,8 +3,7 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using CSharpInteractive;
-using DotNet;
+using Script.DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class DotNetCustom: ScenarioHostService
@@ -17,11 +16,11 @@ public class DotNetCustom: ScenarioHostService
         // $priority=00
         // $description=Run a custom .NET command
         // {
-        // Adds the namespace "DotNet" to use .NET build API
+        // Adds the namespace "Script.DotNet" to use .NET build API
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuild>();
+        var build = GetService<IBuildRunner>();
             
         // Gets the dotnet version, running a command like: "dotnet --version"
         Version? version = default;

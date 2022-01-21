@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using NuGet;
 using NuGet.Versioning;
+using Script.NuGet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class NuGetTests
@@ -44,7 +45,7 @@ public class NuGetTests
 
         // When
         var result = TestTool.Run(
-            $"using NuGet;"
+            $"using Script.NuGet;"
             + $"GetService<INuGet>().Restore(\"IoC.Container\", \"1.3.6\", \"net5.0\", @\"{tempPath}\");");
             
         // Then

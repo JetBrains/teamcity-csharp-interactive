@@ -3,10 +3,9 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
-using Cmd;
-using CSharpInteractive;
-using DotNet;
 using JetBrains.TeamCity.ServiceMessages;
+using Script.Cmd;
+using Script.DotNet;
 
 internal class BuildContext : IBuildContext
 {
@@ -53,7 +52,7 @@ internal class BuildContext : IBuildContext
         return new []{ message };
     }
 
-    public IResult Create(IStartInfo startInfo, int? exitCode) =>
+    public IBuildResult Create(IStartInfo startInfo, int? exitCode) =>
         new BuildResult(startInfo,
             _errors.AsReadOnly(),
             _warnings.AsReadOnly(),

@@ -1,7 +1,6 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 public enum BuildMessageState
 {

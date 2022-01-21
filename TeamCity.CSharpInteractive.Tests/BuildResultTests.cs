@@ -1,8 +1,8 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
 using CSharpInteractive;
-using DotNet;
+using Script.Cmd;
+using Script.DotNet;
 
 public class BuildResultTests
 {

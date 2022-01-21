@@ -1,10 +1,8 @@
 // ReSharper disable UnusedType.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
-using DotNet;
 using Script;
 
 [Immutype.Target]
@@ -27,7 +25,7 @@ public record Build(
     bool Force = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public Build(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())

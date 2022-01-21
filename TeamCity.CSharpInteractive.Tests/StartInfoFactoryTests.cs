@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
+using Script.Cmd;
 
 public class StartInfoFactoryTests
 {

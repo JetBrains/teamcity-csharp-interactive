@@ -3,7 +3,7 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class CommandLineBuild: ScenarioHostService
@@ -18,7 +18,7 @@ public class CommandLineBuild: ScenarioHostService
         // $priority=00
         // $description=Build command lines
         // {
-        // Adds the namespace "Cmd" to use Command Line API
+        // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
             
         // Creates a simple command line from just the name of the executable 

@@ -1,12 +1,11 @@
-// ReSharper disable CheckNamespace
-namespace NuGet;
+namespace Script.NuGet;
 
 [Immutype.Target]
 public record RestoreSettings(
     string PackageId,
     IEnumerable<string> Sources,
     IEnumerable<string> FallbackFolders,
-    Versioning.VersionRange? VersionRange = default,
+    global::NuGet.Versioning.VersionRange? VersionRange = default,
     string? TargetFrameworkMoniker = default,
     string? PackagesPath = default,
     PackageType? PackageType = default,

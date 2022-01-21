@@ -1,7 +1,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
-// ReSharper disable CheckNamespace
-namespace NuGet;
+
+namespace Script.NuGet;
 
 public interface INuGet
 {

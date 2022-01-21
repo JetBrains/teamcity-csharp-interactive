@@ -1,6 +1,5 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-namespace NuGet;
+namespace Script.NuGet;
 
 public enum PackageType
 {

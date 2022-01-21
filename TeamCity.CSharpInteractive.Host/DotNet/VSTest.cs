@@ -1,10 +1,10 @@
 // ReSharper disable UnusedType.Global
-// ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
+
 using Script;
 
 [Immutype.Target]
@@ -33,7 +33,7 @@ public record VSTest(
     bool InIsolation = false,
     Verbosity? Verbosity = default,
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public VSTest(params string[] args)
         : this(Enumerable.Empty<string>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())

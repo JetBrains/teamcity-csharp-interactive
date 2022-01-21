@@ -2,6 +2,7 @@ namespace TeamCity.CSharpInteractive.Tests;
 
 using NuGet;
 using NuGet.Versioning;
+using Script.NuGet;
 
 public class AddNuGetReferenceCommandRunnerTests
 {

@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMemberInSuper.Global
 namespace TeamCity.CSharpInteractive;
 
 internal interface ISettings

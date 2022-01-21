@@ -1,14 +1,14 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
 using Script;
+using Script.Cmd;
 
-public class CommandLineServiceTests
+public class CommandLineRunnerTests
 {
     private readonly Mock<IHost> _host = new();
     private readonly Mock<IProcessRunner> _processRunner = new();
 
-    public CommandLineServiceTests()
+    public CommandLineRunnerTests()
     {
         _host.SetupGet(i => i.Host).Returns(_host.Object);
     }
@@ -18,10 +18,10 @@ public class CommandLineServiceTests
     {
         // Given
         var startInfo = new Mock<IStartInfo>();
-        var process = new Mock<IProcess>();
+        var process = new Mock<ICommandLine>();
         process.Setup(i => i.GetStartInfo(_host.Object)).Returns(startInfo.Object);
         var cmdService = CreateInstance();
-        _processRunner.Setup(i => i.Run(It.IsAny<ProcessRun>(), TimeSpan.FromSeconds(1))).Returns(new ProcessResult(ProcessState.Finished, 33));
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), TimeSpan.FromSeconds(1))).Returns(new ProcessResult(ProcessState.Finished, 33));
 
         // When
         var exitCode = cmdService.Run(process.Object, Handler, TimeSpan.FromSeconds(1));
@@ -37,10 +37,10 @@ public class CommandLineServiceTests
         using var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
         var startInfo = new Mock<IStartInfo>();
-        var process = new Mock<IProcess>();
+        var process = new Mock<ICommandLine>();
         process.Setup(i => i.GetStartInfo(_host.Object)).Returns(startInfo.Object);
         var cmdService = CreateInstance();
-        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessRun>(), token)).Returns(Task.FromResult(new ProcessResult(ProcessState.Finished, 33)));
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessInfo>(), token)).Returns(Task.FromResult(new ProcessResult(ProcessState.Finished, 33)));
 
         // When
         var exitCode = await cmdService.RunAsync(process.Object, Handler, token);
@@ -51,6 +51,6 @@ public class CommandLineServiceTests
 
     private static void Handler(Output obj) { }
 
-    private CommandLineService CreateInstance() =>
+    private CommandLineRunner CreateInstance() =>
         new(_host.Object, _processRunner.Object, Mock.Of<IProcessMonitor>);
 }

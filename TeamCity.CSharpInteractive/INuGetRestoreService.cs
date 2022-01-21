@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-using NuGet;
+using Script.NuGet;
 
 internal interface INuGetRestoreService
 {

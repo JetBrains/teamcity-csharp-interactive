@@ -9,6 +9,7 @@ internal readonly record struct ErrorId(string Id)
     public static readonly ErrorId File = new("CSI001");
     public static readonly ErrorId NuGet = new("CSI002");
     public static readonly ErrorId CannotParsePackageVersion = new("CSI003");
+    // ReSharper disable once UnusedMember.Global
     public static readonly ErrorId AbnormalProgramTermination = new("CSI004");
     public static readonly ErrorId NotSupported = new("CSI005");
     public static readonly ErrorId Exception = new("CSI006");

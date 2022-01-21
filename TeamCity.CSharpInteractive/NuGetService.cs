@@ -1,8 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using NuGet;
 using NuGet.Versioning;
+using Script.NuGet;
 
 internal class NuGetService: INuGet
 {

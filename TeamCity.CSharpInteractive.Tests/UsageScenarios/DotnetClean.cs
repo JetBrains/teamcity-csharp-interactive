@@ -4,8 +4,7 @@
 // ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using CSharpInteractive;
-using DotNet;
+using Script.DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class DotNetClean: ScenarioHostService
@@ -18,11 +17,11 @@ public class DotNetClean: ScenarioHostService
         // $priority=00
         // $description=Clean a project
         // {
-        // Adds the namespace "DotNet" to use .NET build API
+        // Adds the namespace "Script.DotNet" to use .NET build API
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuild>();
+        var build = GetService<IBuildRunner>();
             
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
         var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));

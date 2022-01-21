@@ -1,4 +1,3 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
 // ReSharper disable CommentTypo
 // ReSharper disable IdentifierTypo
@@ -6,15 +5,16 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedType.Global
-namespace Docker;
+namespace Script.Docker;
 
 using Cmd;
+
 using Script;
 
 [Immutype.Target]
 public record Run(
     // Process to run in container
-    IProcess Process,
+    ICommandLine CommandLine,
     // Docker image
     string Image,
     IEnumerable<string> Args,
@@ -62,14 +62,14 @@ public record Run(
     // A file with environment variables inside the container
     string EnvFile = "",
     string ShortName = "")
-    : IProcess
+    : ICommandLine
 {
     public Run(): this(new CommandLine(string.Empty), string.Empty) 
     { }
         
-    public Run(IProcess process, string image)
+    public Run(ICommandLine commandLine, string image)
         : this(
-            process,
+            commandLine,
             image,
             Enumerable.Empty<string>(),
             Enumerable.Empty<(string, string)>(),
@@ -87,7 +87,7 @@ public record Run(
         using var pathResolverToken = host.GetService<IPathResolverContext>().Register(pathResolver);
         var settings = host.GetService<ISettings>();
 
-        var processInfo = Process.GetStartInfo(host);
+        var processInfo = CommandLine.GetStartInfo(host);
         var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? settings.DockerExecutablePath : ExecutablePath)
             .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{processInfo.ShortName} in the docker container {Image}")
             .WithWorkingDirectory(WorkingDirectory)

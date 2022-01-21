@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Cmd;
 using Script;
+using Script.Cmd;
 
 public class PathResolverContextTests
 {

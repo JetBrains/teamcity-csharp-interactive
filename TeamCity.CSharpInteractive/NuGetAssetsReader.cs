@@ -4,10 +4,10 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
-using NuGet;
 using NuGet.Common;
 using NuGet.ProjectModel;
 using NuGet.Versioning;
+using Script.NuGet;
 
 [ExcludeFromCodeCoverage]
 internal class NuGetAssetsReader : INuGetAssetsReader

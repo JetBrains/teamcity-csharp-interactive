@@ -1,10 +1,9 @@
 // ReSharper disable UnusedMemberInSuper.Global
-// ReSharper disable CheckNamespace
-namespace DotNet;
+namespace Script.DotNet;
 
 using Cmd;
 
-public interface IResult
+public interface IBuildResult
 {
     IStartInfo StartInfo { get; }
     

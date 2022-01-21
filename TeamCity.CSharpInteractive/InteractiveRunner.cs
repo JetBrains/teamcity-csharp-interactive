@@ -2,7 +2,7 @@
 // ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 namespace TeamCity.CSharpInteractive;
 
-internal class InteractiveRunner : IRunner
+internal class InteractiveRunner : IScriptRunner
 {
     private readonly ICommandSource _commandSource;
     private readonly ICommandsRunner _commandsRunner;

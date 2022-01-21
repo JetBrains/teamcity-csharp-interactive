@@ -3,7 +3,7 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using Core;
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class ScriptRunTests
@@ -341,6 +341,7 @@ public class ScriptRunTests
 
         // When
         var result = TestTool.Run(
+            "using Script;",
             "class Abc",
             "{",
             "  private readonly IHost _host;",

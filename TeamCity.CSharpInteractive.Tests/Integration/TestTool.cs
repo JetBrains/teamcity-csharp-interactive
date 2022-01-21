@@ -1,10 +1,10 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using System.Text;
-using Cmd;
 using Core;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
+using Script.Cmd;
 using Composer = Composer;
 
 internal static class TestTool
@@ -22,7 +22,7 @@ internal static class TestTool
     public static IProcessResult Run(in CommandLine commandLine)
     {
         var events = new List<Output>();
-        var exitCode = Composer.ResolveICommandLine().Run(commandLine, e => events.Add(e));
+        var exitCode = Composer.ResolveICommandLineRunner().Run(commandLine, e => events.Add(e));
         return new ProcessResult(exitCode!.Value, events);
     }
         

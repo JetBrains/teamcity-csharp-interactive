@@ -8,7 +8,7 @@ public class ProgramTests
     private readonly Mock<ISettings> _settings;
     private readonly Mock<IExitTracker> _exitTracker;
     private readonly Mock<IDisposable> _trackToken;
-    private readonly Mock<IRunner> _runner;
+    private readonly Mock<IScriptRunner> _runner;
     private readonly Mock<IActive> _active;
     private readonly Mock<IDisposable> _activationToken;
     private readonly Mock<IStatistics> _statistics;
@@ -22,7 +22,7 @@ public class ProgramTests
         _trackToken = new Mock<IDisposable>();
         _exitTracker = new Mock<IExitTracker>();
         _exitTracker.Setup(i => i.Track()).Returns(_trackToken.Object);
-        _runner = new Mock<IRunner>();
+        _runner = new Mock<IScriptRunner>();
         _runner.Setup(i => i.Run()).Returns(0);
         _activationToken = new Mock<IDisposable>();
         _active = new Mock<IActive>();

@@ -1,11 +1,4 @@
-﻿using DotNet;
+﻿using Script.DotNet;
 
-var build = GetService<IBuild>();
-var buildStep = new Build()
-    .WithConfiguration("Release");
-
-var result = build.Run(buildStep);
-if (result.ExitCode != 0)
-{
-    Error(result.ToString());
-}
+var runner = GetService<IBuildRunner>();
+runner.Run(new Build());

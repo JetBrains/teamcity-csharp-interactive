@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_Elsewhere
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Cmd;
+using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class CommandLineAsyncCancellation: ScenarioHostService
@@ -19,11 +19,11 @@ public class CommandLineAsyncCancellation: ScenarioHostService
         // $description=Cancellation of asynchronous run
         // $header=The cancellation will kill a related process.
         // {
-        // Adds the namespace "Cmd" to use Command Line API
+        // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
 
         var cancellationTokenSource = new CancellationTokenSource();
-        Task<int?> task = GetService<ICommandLine>().RunAsync(
+        Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
             new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
             default,
             cancellationTokenSource.Token);

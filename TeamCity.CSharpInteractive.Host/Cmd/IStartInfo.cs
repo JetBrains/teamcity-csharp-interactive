@@ -1,5 +1,4 @@
-// ReSharper disable CheckNamespace
-namespace Cmd;
+namespace Script.Cmd;
 
 public interface IStartInfo
 {
