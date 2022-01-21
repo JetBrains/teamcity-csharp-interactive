@@ -2,7 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using Cmd;
-using Host;
+using Script;
 
 internal class CommandLineService: ICommandLine
 {

@@ -4,6 +4,8 @@ using Docker;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
 
+Host.WriteLine("Starting");
+
 var currentDirectory = Environment.CurrentDirectory;
 
 // Target configuration

@@ -9,7 +9,7 @@ namespace DotNet;
 using System.Linq;
 using Cmd;
 using DotNet;
-using Host;
+using Script;
 
 internal static class CommandLineExtensions
 {

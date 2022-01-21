@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Host;
+using Script;
 
 public class TeamCityLineFormatterTests
 {

@@ -2,7 +2,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Host;
+using Script;
 
 internal class SummaryPresenter: IPresenter<Summary>
 {

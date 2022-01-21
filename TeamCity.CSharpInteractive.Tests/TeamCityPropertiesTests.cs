@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Host;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
+using Script;
 
 public class TeamCityPropertiesTests
 {

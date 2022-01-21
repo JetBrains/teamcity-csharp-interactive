@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests;
 using Cmd;
 using CSharpInteractive;
 using DotNet;
-using Host;
+using Script;
 
 public class BuildServiceTests
 {

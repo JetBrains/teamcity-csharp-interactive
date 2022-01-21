@@ -2,7 +2,7 @@
 // ReSharper disable UnusedParameter.Global
 namespace Cmd;
 
-using Host;
+using Script;
 
 internal interface IPathResolver
 {

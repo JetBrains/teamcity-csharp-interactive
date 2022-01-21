@@ -5,19 +5,21 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Loader;
-using Host;
+using Script;
 
 [ExcludeFromCodeCoverage]
-public static class HostConsole
+public static class ConsoleHost
 {
     private static readonly HostComponents Components = Composer.ResolveHostComponents();
     private static readonly IDisposable StatisticsToken;
 
-    static HostConsole()
+    static ConsoleHost()
     {
         StatisticsToken = Components.Statistics.Start();
         AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
     }
+
+    public static IHost Host => Components.Host;
 
     public static IReadOnlyList<string> Args => Components.Host.Args;
 

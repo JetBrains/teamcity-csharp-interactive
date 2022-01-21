@@ -2,8 +2,6 @@
 // ReSharper disable InvertIf
 namespace TeamCity.CSharpInteractive;
 
-using Host;
-
 internal class ScriptRunner : IRunner
 {
     private readonly ILog<ScriptRunner> _log;

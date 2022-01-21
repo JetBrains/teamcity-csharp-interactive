@@ -5,7 +5,7 @@ namespace DotNet;
 
 using Cmd;
 using DotNet;
-using Host;
+using Script;
 
 [Immutype.Target]
 public record Clean(

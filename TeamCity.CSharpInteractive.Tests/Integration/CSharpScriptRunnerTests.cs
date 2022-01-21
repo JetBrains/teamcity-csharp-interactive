@@ -1,8 +1,8 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
-using Host;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
+using Script;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class CSharpScriptRunnerTests

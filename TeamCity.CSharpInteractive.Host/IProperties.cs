@@ -1,4 +1,4 @@
-namespace Host;
+namespace Script;
 
 public interface IProperties: IEnumerable<KeyValuePair<string, string>>
 {

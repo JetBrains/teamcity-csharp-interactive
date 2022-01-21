@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
-using Host;
+using Script;
 
 [ExcludeFromCodeCoverage]
 internal readonly record struct HostComponents(

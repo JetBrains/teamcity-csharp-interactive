@@ -18,7 +18,7 @@ internal class AssembliesScriptOptionsProvider: IScriptOptionsFactory, IActive
         ("System.Net.Http", typeof(System.Net.Http.HttpRequestMessage)),
         ("System.Threading", typeof(System.Threading.Thread)),
         ("System.Threading.Tasks", typeof(System.Threading.Tasks.Task)),
-        ("Host", default)
+        ("Script", default)
     };
 
     private readonly ILog<AssembliesScriptOptionsProvider> _log;

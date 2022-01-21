@@ -1,6 +1,6 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
-namespace Host;
+namespace Script;
 
 public interface IHost
 {

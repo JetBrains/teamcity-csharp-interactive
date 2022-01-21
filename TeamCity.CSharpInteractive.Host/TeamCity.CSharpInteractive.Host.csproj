@@ -5,7 +5,7 @@
         <IsPackable>false</IsPackable>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
-        <RootNamespace>Host</RootNamespace>
+        <RootNamespace>Script</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Immutype" Version="1.0.10">

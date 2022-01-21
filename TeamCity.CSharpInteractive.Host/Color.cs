@@ -1,4 +1,4 @@
-namespace Host;
+namespace Script;
 
 public enum Color
 {
