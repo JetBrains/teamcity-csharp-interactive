@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-public class TeamCityServiceMessages: Scenario
+public class TeamCityServiceMessages: ScenarioHostService
 {
     [SkippableFact]
     public void Run()

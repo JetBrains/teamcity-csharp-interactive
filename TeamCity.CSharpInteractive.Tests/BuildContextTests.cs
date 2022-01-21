@@ -37,7 +37,7 @@ public class BuildContextTests
     {
         // Given
         var result = CreateInstance();
-        var msg = new BuildMessage(BuildMessageState.StdErr, default, "Abc");
+        var msg = new BuildMessage(BuildMessageState.StdError, default, "Abc");
         
         // When
         var messages = result.ProcessOutput(new Output(Mock.Of<IStartInfo>(), true, "Abc", 33));
@@ -91,7 +91,7 @@ public class BuildContextTests
         // When
         result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
         result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
-        result.ProcessMessage(output, testStderr).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdErr).WithText("Some error")});
+        result.ProcessMessage(output, testStderr).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdError).WithText("Some error")});
         result.ProcessMessage(output, testFinished).ShouldBeEmpty();
         result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
@@ -230,9 +230,9 @@ public class BuildContextTests
     [InlineData("Failure", BuildMessageState.Failure)]
     [InlineData("failure", BuildMessageState.Failure)]
     [InlineData("FAILURE", BuildMessageState.Failure)]
-    [InlineData("Error", BuildMessageState.Error)]
-    [InlineData("error", BuildMessageState.Error)]
-    [InlineData("ERROR", BuildMessageState.Error)]
+    [InlineData("Error", BuildMessageState.StdError)]
+    [InlineData("error", BuildMessageState.StdError)]
+    [InlineData("ERROR", BuildMessageState.StdError)]
     public void ShouldProcessMessage(string status, BuildMessageState state)
     {
         // Given
@@ -268,7 +268,7 @@ public class BuildContextTests
                 break;
 
             case BuildMessageState.Failure:
-            case BuildMessageState.Error:
+            case BuildMessageState.StdError:
             case BuildMessageState.BuildProblem:
                 buildResult.Errors.ShouldBe(new[] { buildMessage });
                 break;

@@ -8,12 +8,12 @@ using System.Runtime.Loader;
 using Script;
 
 [ExcludeFromCodeCoverage]
-public static class ConsoleHost
+public static class ScriptHost
 {
     private static readonly HostComponents Components = Composer.ResolveHostComponents();
     private static readonly IDisposable StatisticsToken;
 
-    static ConsoleHost()
+    static ScriptHost()
     {
         StatisticsToken = Components.Statistics.Start();
         AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;

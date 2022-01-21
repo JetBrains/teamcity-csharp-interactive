@@ -6,7 +6,7 @@ using NuGet;
 using NuGet.Versioning;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class NuGetRestore: Scenario
+public class NuGetRestore: ScenarioHostService
 {
     [SkippableFact]
     public void Run()

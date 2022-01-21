@@ -63,7 +63,7 @@ public class DefaultBuildMessagesProcessorTests
         // Given
         var output = new Output(_startInfo.Object, false, "Output", 11);
         var msg1 = new BuildMessage(BuildMessageState.StdOut, default, "Msg1");
-        var msg2 = new BuildMessage(BuildMessageState.Error, default, "Error");
+        var msg2 = new BuildMessage(BuildMessageState.StdError, default, "Error");
 
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
         var nextHandler = new Mock<Action<BuildMessage>>();

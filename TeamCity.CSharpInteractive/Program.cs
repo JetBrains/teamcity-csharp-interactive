@@ -1,5 +1,4 @@
-﻿// ReSharper disable ClassNeverInstantiated.Global
-namespace TeamCity.CSharpInteractive;
+﻿namespace TeamCity.CSharpInteractive;
 
 public class Program
 {
@@ -8,7 +7,7 @@ public class Program
     {
         try
         {
-            return (int)Composer.ResolveProgram().Run();
+            return Composer.ResolveProgram().Run();
         }
         finally
         {

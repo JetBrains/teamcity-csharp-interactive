@@ -7,7 +7,7 @@ using CSharpInteractive;
 using DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class DotNetTest: Scenario
+public class DotNetTest: ScenarioHostService
 {
     [Fact]
     public void Run()

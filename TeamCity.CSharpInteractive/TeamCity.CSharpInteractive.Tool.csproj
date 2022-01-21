@@ -9,6 +9,7 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)GeneratedForTool</CompilerGeneratedFilesOutputPath>
         <ImmutypeAPI>False</ImmutypeAPI>
+        <DefineConstants>$(DefineConstants);TOOL</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -66,6 +67,8 @@
             <PackagePath>tools\$(TargetFramework)\any</PackagePath>
             <Pack>true</Pack>
         </Content>
-    </ItemGroup>
 
+        <Compile Remove="ScriptGlobalUsings.cs" />
+        <Compile Remove="ScriptHost.cs" />
+    </ItemGroup>
 </Project>

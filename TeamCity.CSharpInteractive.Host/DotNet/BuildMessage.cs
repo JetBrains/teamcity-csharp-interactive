@@ -19,27 +19,30 @@ public readonly record struct BuildMessage(
         switch (State)
         {
             case BuildMessageState.ServiceMessage:
-                sb.Append("Service Message");
+                sb.Append(State.ToString());
+                sb.Append(' ');
                 break;
 
             case BuildMessageState.StdOut:
                 sb.Append(Text);
                 break;
                 
-            case BuildMessageState.StdErr:
-                sb.Append("StdErr ");
+            case BuildMessageState.StdError:
+                sb.Append(State.ToString());
+                sb.Append(' ');
                 sb.Append(Text);
                 break;
 
             case BuildMessageState.Warning:
-                sb.Append("Warning ");
+                sb.Append(State.ToString());
+                sb.Append(' ');
                 sb.Append(Text);
                 break;
 
             case BuildMessageState.Failure:
             case BuildMessageState.BuildProblem:
-            case BuildMessageState.Error:
-                sb.Append("Error ");
+                sb.Append(State.ToString());
+                sb.Append(' ');
                 sb.Append(Text);
                 if (!string.IsNullOrWhiteSpace(ErrorDetails))
                 {

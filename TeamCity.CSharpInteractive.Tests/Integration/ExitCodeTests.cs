@@ -2,9 +2,6 @@
 // ReSharper disable RedundantUsingDirective
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
-using NuGet;
-using NuGet.Versioning;
-
 [CollectionDefinition("Integration", DisableParallelization = true)]
 public class ExitCodeTests
 {

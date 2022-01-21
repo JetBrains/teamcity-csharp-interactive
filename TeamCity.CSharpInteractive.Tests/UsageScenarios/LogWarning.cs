@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-public class LogWarning: Scenario
+public class LogWarning: ScenarioHostService
 {
     [SkippableFact]
     public void Run()

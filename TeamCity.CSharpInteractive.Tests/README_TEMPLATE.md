@@ -318,7 +318,7 @@ result.ExitCode.ShouldBe(0);
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
     
 // The "result" variable provides details about a build
-result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
 ```
 
@@ -400,7 +400,7 @@ result = build.Run(
         .WithVerbosity(Verbosity.Detailed));
     
 // The "result" variable provides details about a build
-result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
 ```
 
@@ -647,7 +647,7 @@ var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath(
 result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
     
 // The "result" variable provides details about a build
-result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
 ```
 

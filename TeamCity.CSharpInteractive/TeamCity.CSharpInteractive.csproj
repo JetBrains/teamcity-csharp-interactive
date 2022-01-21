@@ -7,6 +7,7 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
         <ImmutypeAPI>False</ImmutypeAPI>
+        <DefineConstants>$(DefineConstants);CLASSLIB</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -71,6 +72,9 @@
             <Pack>true</Pack>
             <BuildAction>Compile</BuildAction>
         </Content>
+
+        <Compile Remove="ScriptGlobalUsings.cs" />
+        <Compile Remove="Program.cs" />
     </ItemGroup>
 
 </Project>

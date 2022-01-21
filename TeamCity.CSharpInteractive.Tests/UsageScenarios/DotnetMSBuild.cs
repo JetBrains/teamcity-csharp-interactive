@@ -9,7 +9,7 @@ using CSharpInteractive;
 using DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class DotNetMSBuild: Scenario
+public class DotNetMSBuild: ScenarioHostService
 {
     [Fact]
     public void Run()
@@ -39,7 +39,7 @@ public class DotNetMSBuild: Scenario
                 .WithVerbosity(Verbosity.Detailed));
             
         // The "result" variable provides details about a build
-        result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+        result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
         result.ExitCode.ShouldBe(0);
         // }
     }

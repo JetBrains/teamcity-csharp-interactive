@@ -7,7 +7,7 @@ using Cmd;
 using Docker;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class DockerRun: Scenario
+public class DockerRun: ScenarioHostService
 {
     [Fact]
     public void Run()

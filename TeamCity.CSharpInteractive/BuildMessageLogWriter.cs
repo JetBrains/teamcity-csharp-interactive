@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using CSharpInteractive;
 using DotNet;
 using Pure.DI;
+using Script;
 
 internal class BuildMessageLogWriter : IBuildMessageLogWriter
 {
@@ -29,8 +30,8 @@ internal class BuildMessageLogWriter : IBuildMessageLogWriter
             case BuildMessageState.StdOut:
                 _stdOut.WriteLine(new []{ new Text(message.Text)});
                 break;
-                
-            case BuildMessageState.StdErr:
+
+            case BuildMessageState.StdError:
                 _stdErr.WriteLine(new []{new Text(message.Text)});
                 break;
 
@@ -38,7 +39,6 @@ internal class BuildMessageLogWriter : IBuildMessageLogWriter
                 _log.Warning(message.Text);
                 break;
                 
-            case BuildMessageState.Error:
             case BuildMessageState.Failure:
             case BuildMessageState.BuildProblem:
                 _log.Error(ErrorId.Build, message.Text);

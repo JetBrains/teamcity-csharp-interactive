@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using NuGet;
 
-public class GetServices: Scenario
+public class GetServices: ScenarioHostService
 {
     [Fact]
     public void Run()

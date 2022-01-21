@@ -42,7 +42,7 @@ internal class BuildContext : IBuildContext
         BuildMessage message;
         if (output.IsError)
         {
-            message = new BuildMessage(BuildMessageState.StdErr, default, output.Line);
+            message = new BuildMessage(BuildMessageState.StdError, default, output.Line);
             _errors.Add(message);
         }
         else
@@ -73,7 +73,7 @@ internal class BuildContext : IBuildContext
         var testKey = CreateKey(message);
         var output = message.GetValue("out") ?? string.Empty;
         GetTestContext(testKey).AddStdErr(info, processId, output);
-        var buildMessage = new BuildMessage(BuildMessageState.StdErr).WithText(output);
+        var buildMessage = new BuildMessage(BuildMessageState.StdError).WithText(output);
         _errors.Add(buildMessage);
         yield return buildMessage;
     }
@@ -177,7 +177,7 @@ internal class BuildContext : IBuildContext
         {
             "WARNING" => BuildMessageState.Warning,
             "FAILURE" => BuildMessageState.Failure,
-            "ERROR" => BuildMessageState.Error,
+            "ERROR" => BuildMessageState.StdError,
             _ => BuildMessageState.StdOut
         };
 
@@ -193,7 +193,7 @@ internal class BuildContext : IBuildContext
                     break;
                     
                 case BuildMessageState.Failure:
-                case BuildMessageState.Error:
+                case BuildMessageState.StdError:
                 // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
                 case BuildMessageState.BuildProblem:
                     _errors.Add(buildMessage);

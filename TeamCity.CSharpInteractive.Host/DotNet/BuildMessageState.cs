@@ -7,9 +7,8 @@ public enum BuildMessageState
 {
     ServiceMessage,
     StdOut,
-    StdErr,
     Warning,
+    StdError,
     Failure,
-    Error,
     BuildProblem
 }

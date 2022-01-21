@@ -30,7 +30,9 @@ internal static partial class Composer
         // #out=C:\Projects\_temp\a
         DI.Setup()
             .Default(Singleton)
+#if TOOL
             .Bind<Program>().To<Program>()
+#endif
             .Bind<Assembly>().To(_ => typeof(Composer).Assembly)
             .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<Process>().To(_ => Process.GetCurrentProcess())

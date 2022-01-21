@@ -29,7 +29,7 @@ public class BuildMessageLogWriterTests
         var writer = CreateInstance();
 
         // When
-        writer.Write(new BuildMessage(BuildMessageState.StdErr, default, "Abc"));
+        writer.Write(new BuildMessage(BuildMessageState.StdError, default, "Abc"));
 
         // Then
         _stdErr.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new [] {new Text("Abc")}))));
@@ -49,7 +49,6 @@ public class BuildMessageLogWriterTests
     }
     
     [Theory]
-    [InlineData(BuildMessageState.Error)]
     [InlineData(BuildMessageState.Failure)]
     [InlineData(BuildMessageState.BuildProblem)]
     public void ShouldWriteError(BuildMessageState state)

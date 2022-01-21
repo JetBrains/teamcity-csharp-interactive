@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using static Script.Color;
 
-public class WriteLineWithColour: Scenario
+public class WriteLineWithColour: ScenarioHostService
 {
     [Fact]
     public void Run()

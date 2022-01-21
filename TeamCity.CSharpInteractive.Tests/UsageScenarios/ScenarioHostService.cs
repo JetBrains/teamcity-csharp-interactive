@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using System.Collections;
 using Script;
 
-public class Scenario: IHost
+public class ScenarioHostService: IHost
 {
     public IHost Host => this;
 

@@ -142,7 +142,7 @@ Props["Version"] = "1.1.6";
 
 ### Using the Host property
 
-[_Host_](TeamCity.CSharpInteractive.Contracts/IHost.cs) is actually the provider of all global properties and methods.
+[_Host_](TeamCity.CSharpInteractive.Host/IHost.cs) is actually the provider of all global properties and methods.
 
 ``` CSharp
 var packages = Host.GetService<INuGet>();
@@ -153,7 +153,7 @@ Host.WriteLine("Hello");
 
 ### Get services
 
-This method might be used to get access to different APIs like [INuGet](TeamCity.CSharpInteractive.Contracts/INuGet.cs) or [ICommandLine](TeamCity.CSharpInteractive.Contracts/ICommandLine.cs).
+This method might be used to get access to different APIs like [INuGet](TeamCity.CSharpInteractive.Host/INuGet.cs) or [ICommandLine](TeamCity.CSharpInteractive.Host/ICommandLine.cs).
 
 ``` CSharp
 GetService<INuGet>();
@@ -383,7 +383,7 @@ result.ExitCode.ShouldBe(0);
 result = build.Run(new Build().WithWorkingDirectory("MyLib"));
     
 // The "result" variable provides details about a build
-result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
 ```
 
@@ -465,7 +465,7 @@ result = build.Run(
         .WithVerbosity(Verbosity.Detailed));
     
 // The "result" variable provides details about a build
-result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
 ```
 
@@ -712,7 +712,7 @@ var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath(
 result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
     
 // The "result" variable provides details about a build
-result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
 ```
 

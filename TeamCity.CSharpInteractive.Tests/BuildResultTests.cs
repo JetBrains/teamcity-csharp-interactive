@@ -25,7 +25,7 @@ public class BuildResultTests
         var result = 
             new BuildResult(startInfo.Object)
                 .WithExitCode(exitCode)
-                .WithErrors(Enumerable.Repeat(new BuildMessage(BuildMessageState.Error), errors).ToArray())
+                .WithErrors(Enumerable.Repeat(new BuildMessage(BuildMessageState.StdError), errors).ToArray())
                 .WithWarnings(Enumerable.Repeat(new BuildMessage(BuildMessageState.Warning), warnings).ToArray())
                 .WithTests(
                     GetTests(TestState.Failed, failedTests)

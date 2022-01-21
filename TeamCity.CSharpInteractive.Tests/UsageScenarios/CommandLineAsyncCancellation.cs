@@ -5,7 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class CommandLineAsyncCancellation: Scenario
+public class CommandLineAsyncCancellation: ScenarioHostService
 {
     [SkippableFact]
     public void Run()

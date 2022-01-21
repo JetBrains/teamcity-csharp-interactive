@@ -8,7 +8,7 @@ using CSharpInteractive;
 using DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class DotNetBuild: Scenario
+public class DotNetBuild: ScenarioHostService
 {
     [Fact]
     public void Run()
@@ -32,7 +32,7 @@ public class DotNetBuild: Scenario
         result = build.Run(new Build().WithWorkingDirectory("MyLib"));
             
         // The "result" variable provides details about a build
-        result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+        result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
         result.ExitCode.ShouldBe(0);
         // }
     }

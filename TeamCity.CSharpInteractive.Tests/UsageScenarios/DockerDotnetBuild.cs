@@ -9,7 +9,7 @@ using CSharpInteractive;
 using DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class DockerDotNetBuild: Scenario
+public class DockerDotNetBuild: ScenarioHostService
 {
     [Fact(Skip = "Linux Docker only")]
     [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped")]
@@ -46,7 +46,7 @@ public class DockerDotNetBuild: Scenario
         result = build.Run(baseDockerCmd.WithProcess(buildCmd), _ => {});
             
         // The "result" variable provides details about a build
-        result.Errors.Any(message => message.State == BuildMessageState.Error).ShouldBeFalse();
+        result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
         result.ExitCode.ShouldBe(0);
         // }
     }

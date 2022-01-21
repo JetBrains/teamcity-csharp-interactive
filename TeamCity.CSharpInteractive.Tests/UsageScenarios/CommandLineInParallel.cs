@@ -6,7 +6,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
-public class CommandLineInParallel: Scenario
+public class CommandLineInParallel: ScenarioHostService
 {
     [SkippableFact]
     public void Run()
