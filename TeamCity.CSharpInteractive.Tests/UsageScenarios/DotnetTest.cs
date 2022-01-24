@@ -31,8 +31,8 @@ public class DotNetTest: ScenarioHostService
         result = build.Run(new Test().WithWorkingDirectory("MyTests"));
             
         // The "result" variable provides details about a build
-        result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
         result.ExitCode.ShouldBe(0);
+        result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
         // }
     }
 }

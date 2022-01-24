@@ -28,7 +28,7 @@ public class DockerDotNetBuild: ScenarioHostService
         // ## using Docker;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
 
         // Creates a base docker command line
         var baseDockerCmd = new Run()
@@ -39,12 +39,12 @@ public class DockerDotNetBuild: ScenarioHostService
             
         // Creates a new library project in a docker container
         var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
-        var result = build.Run(baseDockerCmd.WithCommandLine(customCmd));
+        var result = buildRunner.Run(baseDockerCmd.WithCommandLine(customCmd));
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project in a docker container
         var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
-        result = build.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => {});
+        result = buildRunner.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => {});
             
         // The "result" variable provides details about a build
         result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();

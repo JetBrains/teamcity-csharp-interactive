@@ -24,13 +24,13 @@ public class DockerRun: ScenarioHostService
         // ## using Docker;
 
         // Resolves a build service
-        var commandLine = GetService<ICommandLineRunner>();
+        var commandLineRunner = GetService<ICommandLineRunner>();
 
         // Creates some command line to run in a docker container
         var cmd = new CommandLine("whoami");
 
         // Runs the command line in a docker container
-        var result = commandLine.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
+        var result = commandLineRunner.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
         result.ShouldBe(0);
         // }
     }

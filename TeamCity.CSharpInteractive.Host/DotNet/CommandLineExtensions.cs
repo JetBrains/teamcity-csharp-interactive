@@ -19,10 +19,10 @@ internal static class CommandLineExtensions
         return settings.LoggersAreRequired
             ? cmd
                 .AddArgs("/noconsolelogger")
-                .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
+                .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetMSBuildLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
                 .AddProps("/p",
                     ("VSTestLogger", "logger://teamcity"),
-                    ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotNetLoggerDirectory)}\""),
+                    ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""),
                     ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()))
                 .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
             : cmd;
@@ -37,7 +37,7 @@ internal static class CommandLineExtensions
                 .AddMSBuildArgs(
                     ("--Logger", "logger://teamcity"),
                     ("--Logger", $"console;verbosity={(verbosity.HasValue ? (verbosity.Value >= Verbosity.Normal ? verbosity.Value : Verbosity.Normal) : Verbosity.Normal).ToString().ToLowerInvariant()}"),
-                    ("--TestAdapterPath", $"\"{virtualContext.Resolve(settings.DotNetLoggerDirectory)}\""))
+                    ("--TestAdapterPath", $"\"{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""))
                 .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
             : cmd;
     }

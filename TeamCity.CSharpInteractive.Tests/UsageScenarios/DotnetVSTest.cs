@@ -22,18 +22,18 @@ public class DotNetVSTest: ScenarioHostService
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-        var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
+        var result = buildRunner.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
-        result = build.Run(new Build().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
+        result = buildRunner.Run(new Build().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
         result.ExitCode.ShouldBe(0);
             
         // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
-        result = build.Run(
+        result = buildRunner.Run(
             new VSTest()
                 .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
                 .WithWorkingDirectory("MyTests"));

@@ -21,11 +21,11 @@ public class DotNetCustom: ScenarioHostService
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
             
         // Gets the dotnet version, running a command like: "dotnet --version"
         Version? version = default;
-        var result = build.Run(
+        var result = buildRunner.Run(
             new Custom("--version"),
             message => Version.TryParse(message.Text, out version));
 

@@ -22,10 +22,24 @@
         <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.Host\TeamCity.CSharpInteractive.Host.csproj" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj" />
-        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true">
+        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*" />
+            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
+        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
+    </Target>
     
     <ItemGroup>
         <None Remove="Integration\Resources\csinetstandard11.1.0.0.nupkg" />
@@ -41,13 +55,15 @@
         </None>
 
         <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any</PackagePath>
+            <PackagePath>tools\$(TargetFramework)\any\msbuild</PackagePath>
             <Pack>true</Pack>
+            <Visible>false</Visible>
         </Content>
 
         <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any</PackagePath>
+            <PackagePath>tools\$(TargetFramework)\any\vstest</PackagePath>
             <Pack>true</Pack>
+            <Visible>false</Visible>
         </Content>
     </ItemGroup>
 

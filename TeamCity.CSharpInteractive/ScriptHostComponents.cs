@@ -10,5 +10,4 @@ internal readonly record struct ScriptHostComponents(
     IPresenter<Summary> SummaryPresenter,
     ILog<ScriptHostComponents> Log,
     IInfo Info,
-    ISettingsManager SettingsManager,
     IExitTracker ExitTracker);

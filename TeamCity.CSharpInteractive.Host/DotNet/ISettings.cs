@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace Script.DotNet;
 
 internal interface ISettings
@@ -6,7 +7,9 @@ internal interface ISettings
         
     string DotNetExecutablePath { get; }
 
-    string DotNetLoggerDirectory  { get; }
+    string DotNetMSBuildLoggerDirectory  { get; }
+    
+    string DotNetVSTestLoggerDirectory  { get; }
 
     string TeamCityMessagesPath  { get; }
 }

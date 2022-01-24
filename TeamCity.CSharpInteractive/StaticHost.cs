@@ -16,7 +16,6 @@ public static class StaticHost
 
     static StaticHost()
     {
-        Components.SettingsManager.Load();
         Components.Info.ShowHeader();
         FinishToken = Disposable.Create(Components.ExitTracker.Track(), Components.Statistics.Start());
         AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;

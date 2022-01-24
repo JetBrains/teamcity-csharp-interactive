@@ -23,14 +23,14 @@ public class DotNetMSBuild: ScenarioHostService
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = buildRunner.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
-        result = build.Run(
+        result = buildRunner.Run(
             new MSBuild()
                 .WithWorkingDirectory("MyLib")
                 .WithTarget("Build")

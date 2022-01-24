@@ -22,14 +22,14 @@ public class DotNetRestore: ScenarioHostService
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = buildRunner.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
-        result = build.Run(new Restore().WithWorkingDirectory("MyLib"));
+        result = buildRunner.Run(new Restore().WithWorkingDirectory("MyLib"));
         result.ExitCode.ShouldBe(0);
         // }
     }

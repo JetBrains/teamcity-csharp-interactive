@@ -1,6 +1,14 @@
-﻿using NuGet.Versioning;
+﻿using JetBrains.TeamCity.ServiceMessages.Write.Special;
+using NuGet.Versioning;
 using Script.DotNet;
 using Script.NuGet;
+
+const string packageId = "TeamCity.CSharpInteractive";
+const string toolPackageId = "TeamCity.csi";
+const string templatesPackageId = "TeamCity.CSharpInteractive.Templates";
+
+if (!Props.TryGetValue("configuration", out var configuration)) configuration = "Release";
+if (!Props.TryGetValue("integration", out var integrationStr) || !bool.TryParse(integrationStr, out var integration)) integration = false;
 
 var currentDir = Environment.CurrentDirectory;
 const string solutionFile = "TeamCity.CSharpInteractive.sln"; 
@@ -9,6 +17,9 @@ if (!File.Exists(solutionFile))
     Error($"Cannot find the solution \"{solutionFile}\". Current directory is \"{currentDir}\".");
     return 1;
 }
+
+var outputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive", "bin", configuration);
+var templatesOutputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive.Templates", "bin", configuration);
 
 // Package version
 NuGetVersion GetNextVersion(RestoreSettings settings) =>
@@ -20,16 +31,24 @@ NuGetVersion GetNextVersion(RestoreSettings settings) =>
         .DefaultIfEmpty(string.IsNullOrWhiteSpace(Props["version"]) ? new NuGetVersion(1, 0, 0, "dev") : new NuGetVersion(Props["version"]))
         .Max()!;
 
-var toolRestoreSettings = new RestoreSettings("TeamCity.csi")
-    .WithPackageType(PackageType.Tool)
-    .WithVersionRange(VersionRange.All);
+var toolRestoreSettings = new RestoreSettings(toolPackageId)
+    .WithPackageType(PackageType.Tool);
 
-var nextToolVersion = GetNextVersion(toolRestoreSettings);
-WriteLine($"Version {nextToolVersion}");
+var packageRestoreSettings = new RestoreSettings(packageId)
+    .WithPackageType(PackageType.Tool);
 
-if (!Props.TryGetValue("configuration", out var configuration)) configuration = "Release";
+var nextToolAndPackageVersion = new []{ GetNextVersion(toolRestoreSettings),  GetNextVersion(packageRestoreSettings) }.Max()!;
 
-var buildProps = new[] { ("version", nextToolVersion.ToString()) };
+WriteLine($"Tool and package version: {nextToolAndPackageVersion}");
+
+var templateRestoreSettings = new RestoreSettings(templatesPackageId)
+    .WithPackageType(PackageType.Package);
+
+var nextTemplateVersion = GetNextVersion(templateRestoreSettings);
+
+WriteLine($"Template version: {nextTemplateVersion}");
+
+var buildProps = new[] { ("version", nextToolAndPackageVersion.ToString()) };
 
 var runner = GetService<IBuildRunner>();
 
@@ -50,8 +69,12 @@ var test = new Test()
     .WithProject(solutionFile)
     .WithConfiguration(configuration)
     .WithNoBuild(true)
-    .WithFilter("Integration!=true")
     .WithProps(buildProps);
+
+if (!integration)
+{
+    test = test.WithFilter("Integration!=true");
+}
 
 var result = runner.Run(test);
 if (result.ExitCode != 0 || result.Summary.FailedTests != 0)
@@ -71,25 +94,45 @@ var pack = new Pack()
     
 if (runner.Run(pack).ExitCode != 0) return 1;
 
-var uninstallTool = new Custom("tool", "uninstall", "TeamCity.csi", "-g");
+var uninstallTool = new Custom("tool", "uninstall", toolPackageId, "-g");
 if (runner.Run(uninstallTool).ExitCode != 0) return 1;
 
-var installTool = new Custom("tool", "install", "TeamCity.csi", "-g", "--version", nextToolVersion.ToString(), "--add-source", Path.Combine(currentDir, "TeamCity.CSharpInteractive", "bin", configuration));
+var installTool = new Custom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", outputDir);
 if (runner.Run(installTool).ExitCode != 0) return 1;
 
 var runTool = new Custom( "csi", "/?");
 if (runner.Run(runTool).ExitCode != 0) return 1;
 
-var templatePackageDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive.Templates", "bin", configuration);
-var uninstallTemplates = new Custom("new", "-u", "TeamCity.CSharpInteractive.Templates")
-    .WithWorkingDirectory(templatePackageDir);
+var uninstallTemplates = new Custom("new", "-u", templatesPackageId)
+    .WithWorkingDirectory(templatesOutputDir);
 if (runner.Run(uninstallTemplates).ExitCode != 0) return 1;
 
-var installTemplates = new Custom("new", "-i", $"TeamCity.CSharpInteractive.Templates::{nextToolVersion.ToString()}", "--nuget-source", templatePackageDir)
-    .WithWorkingDirectory(templatePackageDir);
+var installTemplates = new Custom("new", "-i", $"{templatesPackageId}::{nextTemplateVersion.ToString()}", "--nuget-source", templatesOutputDir)
+    .WithWorkingDirectory(templatesOutputDir);
 if (runner.Run(installTemplates).ExitCode != 0) return 1;
 
 var runTemplates = new Custom("new",  "build",  "--help");
 if (runner.Run(runTemplates).ExitCode != 0) return 1;
+
+Info("Publishing artifacts.");
+var teamCityWriter = GetService<ITeamCityWriter>();
+
+var nugetPackages = new[]
+{
+    Path.Combine(outputDir, $"{toolPackageId}.{nextToolAndPackageVersion.ToString()}.nupkg"),
+    Path.Combine(outputDir, $"{packageId}.{nextToolAndPackageVersion.ToString()}.nupkg"),
+    Path.Combine(templatesOutputDir, $"{templatesPackageId}.{nextTemplateVersion.ToString()}.nupkg")
+};
+
+foreach (var nugetPackage in nugetPackages)
+{
+    if (!File.Exists(nugetPackage))
+    {
+        Error($"NuGet package {nugetPackage} does not exist.");
+        return 1;
+    }
+
+    teamCityWriter.PublishArtifact($"{nugetPackage} => .");
+}
 
 return 0;

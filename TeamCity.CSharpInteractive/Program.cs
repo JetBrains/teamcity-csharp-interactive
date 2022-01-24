@@ -18,7 +18,6 @@ public class Program
     private readonly ILog<Program> _log;
     private readonly IEnumerable<IActive> _activeObjects;
     private readonly IInfo _info;
-    private readonly ISettingsManager _settingsManager;
     private readonly ISettings _settings;
     private readonly IExitTracker _exitTracker;
     private readonly Func<IScriptRunner> _runner;
@@ -28,7 +27,6 @@ public class Program
         ILog<Program> log,
         IEnumerable<IActive> activeObjects,
         IInfo info,
-        ISettingsManager settingsManager,
         ISettings settings,
         IExitTracker exitTracker,
         Func<IScriptRunner> runner,
@@ -37,7 +35,6 @@ public class Program
         _log = log;
         _activeObjects = activeObjects;
         _info = info;
-        _settingsManager = settingsManager;
         _settings = settings;
         _exitTracker = exitTracker;
         _runner = runner;
@@ -47,7 +44,6 @@ public class Program
     // ReSharper disable once MemberCanBePrivate.Global
     internal int Run()
     {
-        _settingsManager.Load();
         if (_settings.ShowVersionAndExit)
         {
             _info.ShowVersion();

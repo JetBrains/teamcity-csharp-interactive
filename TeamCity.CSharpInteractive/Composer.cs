@@ -65,7 +65,7 @@ internal static partial class Composer
             .Bind<IDotNetEnvironment>().Bind<ITraceSource>(typeof(DotNetEnvironment)).To<DotNetEnvironment>()
             .Bind<IDockerEnvironment>().Bind<ITraceSource>(typeof(DockerEnvironment)).To<DockerEnvironment>()
             .Bind<INuGetEnvironment>().Bind<ITraceSource>(typeof(NuGetEnvironment)).To<NuGetEnvironment>()
-            .Bind<ISettings>().Bind<ISettingsManager>().Bind<ISettingSetter<VerbosityLevel>>().Bind<Settings>().To<Settings>()
+            .Bind<ISettings>().Bind<ISettingSetter<VerbosityLevel>>().Bind<Settings>().To<Settings>()
             .Bind<ISettingDescription>().Tags(typeof(VerbosityLevel)).To<VerbosityLevelSettingDescription>()
             .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()

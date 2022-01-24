@@ -21,15 +21,15 @@ public class DotNetRun: ScenarioHostService
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
-        var result = build.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
+        var result = buildRunner.Run(new Custom("new", "console", "-n", "MyApp", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
         var stdOut = new List<string>(); 
-        result = build.Run(new Run().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
+        result = buildRunner.Run(new Run().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
         result.ExitCode.ShouldBe(0);
             
         // Checks StdOut

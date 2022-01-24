@@ -29,7 +29,9 @@ internal class TeamCityContext:
 
     public string DotNetExecutablePath => _dotnetEnvironment.Path;
 
-    public string DotNetLoggerDirectory => _environment.GetPath(SpecialFolder.Bin);
+    public string DotNetMSBuildLoggerDirectory => Path.Combine(_environment.GetPath(SpecialFolder.Bin), "msbuild");
+    
+    public string DotNetVSTestLoggerDirectory => Path.Combine(_environment.GetPath(SpecialFolder.Bin), "vstest");
 
     public string TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath;
 }

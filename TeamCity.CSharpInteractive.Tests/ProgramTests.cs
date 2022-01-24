@@ -4,7 +4,6 @@ public class ProgramTests
 {
     private readonly Mock<ILog<Program>> _log;
     private readonly Mock<IInfo> _info;
-    private readonly Mock<ISettingsManager> _settingsManager;
     private readonly Mock<ISettings> _settings;
     private readonly Mock<IExitTracker> _exitTracker;
     private readonly Mock<IDisposable> _trackToken;
@@ -17,7 +16,6 @@ public class ProgramTests
     {
         _log = new Mock<ILog<Program>>();
         _info = new Mock<IInfo>();
-        _settingsManager = new Mock<ISettingsManager>();
         _settings = new Mock<ISettings>();
         _trackToken = new Mock<IDisposable>();
         _exitTracker = new Mock<IExitTracker>();
@@ -41,7 +39,6 @@ public class ProgramTests
         var actualResult = program.Run();
 
         // Then
-        _settingsManager.Verify(i => i.Load());
         _info.Verify(i => i.ShowHeader());
         actualResult.ShouldBe(0);
         _trackToken.Verify(i => i.Dispose());
@@ -79,7 +76,6 @@ public class ProgramTests
         var actualResult = program.Run();
 
         // Then
-        _settingsManager.Verify(i => i.Load());
         _info.Verify(i => i.ShowVersion());
         actualResult.ShouldBe(0);
     }
@@ -95,7 +91,6 @@ public class ProgramTests
         var actualResult = program.Run();
 
         // Then
-        _settingsManager.Verify(i => i.Load());
         _info.Verify(i => i.ShowHeader());
         _info.Verify(i => i.ShowHelp());
         actualResult.ShouldBe(0);
@@ -120,7 +115,6 @@ public class ProgramTests
             _log.Object,
             new []{_active.Object},
             _info.Object,
-            _settingsManager.Object,
             _settings.Object,
             _exitTracker.Object,
             () => _runner.Object,

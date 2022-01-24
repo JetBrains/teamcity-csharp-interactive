@@ -20,7 +20,7 @@ public class TeamCityContextTests
     }
     
     [Fact]
-    public void ShouldGetDotNetLoggerDirectory()
+    public void ShouldGetDotNetMSBuildLoggerDirectory()
     {
         // Given
         var settings = CreateInstance();
@@ -29,7 +29,20 @@ public class TeamCityContextTests
         _environment.Setup(i => i.GetPath(SpecialFolder.Bin)).Returns("Bin");
 
         // Then
-        settings.DotNetLoggerDirectory.ShouldBe("Bin");
+        settings.DotNetMSBuildLoggerDirectory.ShouldBe(Path.Combine("Bin", "msbuild"));
+    }
+    
+    [Fact]
+    public void ShouldGetDotNetVSTestLoggerDirectory()
+    {
+        // Given
+        var settings = CreateInstance();
+
+        // When
+        _environment.Setup(i => i.GetPath(SpecialFolder.Bin)).Returns("Bin");
+
+        // Then
+        settings.DotNetVSTestLoggerDirectory.ShouldBe(Path.Combine("Bin", "vstest"));
     }
     
     [Fact]

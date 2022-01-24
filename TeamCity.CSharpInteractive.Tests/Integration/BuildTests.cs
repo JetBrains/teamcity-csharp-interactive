@@ -13,14 +13,14 @@ public class BuildTests
         var result = TestTool.Run(
             "using Script.DotNet;",
             "using System.Linq;",
-            "var build = GetService<IBuild>();",
-            "var result = build.Run(new Custom(\"new\", \"mstest\"));",
+            "var buildRunner = GetService<IBuildRunner>();",
+            "var result = buildRunner.Run(new Custom(\"new\", \"mstest\"));",
             "WriteLine(\"Custom=\" + result.ExitCode);",
-            "result = build.Run(new Restore());",
+            "result = buildRunner.Run(new Restore());",
             "WriteLine(\"Restore=\" + result.Tests.Count());",
-            "result = build.Run(new Build());",
+            "result = buildRunner.Run(new Build());",
             "WriteLine(\"Build=\" + result.Tests.Count());",
-            "result = build.Run(new Test());",
+            "result = buildRunner.Run(new Test());",
             "WriteLine(\"Tests=\" + result.Tests.Count());"
         );
 

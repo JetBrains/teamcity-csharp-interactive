@@ -47,10 +47,24 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
         </AssemblyAttribute>
-        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true">
+        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*" />
+            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
+        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
+    </Target>
 
     <ItemGroup>
         <None Include="$(MSBuildProjectDirectory)\..\icon.png">
@@ -64,13 +78,15 @@
         </Content>
 
         <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any</PackagePath>
+            <PackagePath>tools\$(TargetFramework)\any\msbuild</PackagePath>
             <Pack>true</Pack>
+            <Visible>false</Visible>
         </Content>
 
         <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any</PackagePath>
+            <PackagePath>tools\$(TargetFramework)\any\vstest</PackagePath>
             <Pack>true</Pack>
+            <Visible>false</Visible>
         </Content>
 
         <Compile Remove="ScriptGlobalUsings.cs" />

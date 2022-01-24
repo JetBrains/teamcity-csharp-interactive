@@ -35,7 +35,6 @@ public class SettingsTests
                 new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src2"),
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg2")
             });
-        settings.Load();
 
         // Then
         settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
@@ -64,7 +63,6 @@ public class SettingsTests
                 new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src2"),
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg2")
             });
-        settings.Load();
 
         // Then
         settings.VerbosityLevel.ShouldBe(VerbosityLevel.Normal);
@@ -82,7 +80,6 @@ public class SettingsTests
             
         // When
         _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0" });
-        settings.Load();
 
         // Then
         settings.VerbosityLevel.ShouldBe(VerbosityLevel.Quiet);

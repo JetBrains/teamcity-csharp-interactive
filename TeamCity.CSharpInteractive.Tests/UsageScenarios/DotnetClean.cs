@@ -22,18 +22,18 @@ public class DotNetClean: ScenarioHostService
         // ## using DotNet;
 
         // Resolves a build service
-        var build = GetService<IBuildRunner>();
+        var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = build.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = buildRunner.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
-        result = build.Run(new Build().WithWorkingDirectory("MyLib"));
+        result = buildRunner.Run(new Build().WithWorkingDirectory("MyLib"));
         result.ExitCode.ShouldBe(0);
             
         // Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
-        result = build.Run(new Clean().WithWorkingDirectory("MyLib"));
+        result = buildRunner.Run(new Clean().WithWorkingDirectory("MyLib"));
             
         // The "result" variable provides details about a build
         result.ExitCode.ShouldBe(0);
