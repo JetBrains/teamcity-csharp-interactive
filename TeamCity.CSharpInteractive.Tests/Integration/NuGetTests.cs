@@ -7,6 +7,7 @@ using NuGet.Versioning;
 using Script.NuGet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class NuGetTests
 {
     [Fact]

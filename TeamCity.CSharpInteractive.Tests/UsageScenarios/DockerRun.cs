@@ -7,6 +7,7 @@ using Script.Cmd;
 using Script.Docker;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class DockerRun: ScenarioHostService
 {
     [Fact]

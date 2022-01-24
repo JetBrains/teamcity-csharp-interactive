@@ -8,6 +8,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using Script.DotNet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class DotNetMSBuild: ScenarioHostService
 {
     [Fact]

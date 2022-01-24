@@ -5,6 +5,7 @@ using Core;
 using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class HelpTests
 {
     [Theory]

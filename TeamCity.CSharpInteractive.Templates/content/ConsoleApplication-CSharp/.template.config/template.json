@@ -7,10 +7,10 @@
   ],
   "name": "Build App",
   "generatorVersions": "[1.0.0.0-*)",
-  "description": "A build project for creating a command-line application to run TeamCity C# script on Windows, Linux, macOS and under TeamCity build server",
+  "description": "A build project for creating a command-line application to run TeamCity C# script on Windows, Linux, macOS and under TeamCity build server.",
   "groupIdentity": "TeamCity.Projects",
   "precedence": "8000",
-  "identity": "Buld.Console",
+  "identity": "Build.Console",
   "shortName": "build",
   "tags": {
     "language": "C#",
@@ -19,32 +19,17 @@
   "sourceName": "Company.ConsoleApplication1",
   "preferNameDirectory": true,
   "symbols": {
-    "TargetFrameworkOverride": {
-      "type": "parameter",
-      "description": "Overrides the target framework",
-      "replaces": "TargetFrameworkOverride",
-      "datatype": "string",
-      "defaultValue": "",
-      "displayName": "Target framework override"
-    },
-    "Framework": {
-      "type": "parameter",
-      "description": "The target framework for the project.",
-      "datatype": "choice",
-      "choices": [
-        {
-          "choice": "net6.0",
-          "description": "Target net6.0",
-          "displayName": ".NET 6.0"
-        }
-      ],
-      "replaces": "net6.0",
-      "defaultValue": "net6.0",
-      "displayName": "Framework"
-    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "HostIdentifier"
+    },
+    "packageVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "description": "Sets the referencing package version in the created project file.",
+      "replaces": "$(PackageVersion)",
+      "defaultValue": "1.*",
+      "displayName": "Referencing package version"
     },
     "skipRestore": {
       "type": "parameter",

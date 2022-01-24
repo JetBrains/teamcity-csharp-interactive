@@ -3,6 +3,7 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class ExitCodeTests
 {
     [Fact]

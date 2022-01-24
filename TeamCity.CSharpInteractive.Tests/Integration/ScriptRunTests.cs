@@ -6,6 +6,7 @@ using Core;
 using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class ScriptRunTests
 {
     private const int InitialLinesCount = 3;

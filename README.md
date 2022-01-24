@@ -15,12 +15,12 @@ TeamCity.csi is available as a [NuGet package](https://www.nuget.org/packages/Te
 Install the tool on your OS:
 
 ```Shell
-dotnet tool install dotnet-csi -g --version <version>
+dotnet tool install TeamCity.csi -g --version <version>
 ```
 
 Uninstall the tool:
 ```Shell
-dotnet tool uninstall dotnet-csi -g
+dotnet tool uninstall TeamCity.csi -g
 ```
 
 ## Use Inside TeamCity

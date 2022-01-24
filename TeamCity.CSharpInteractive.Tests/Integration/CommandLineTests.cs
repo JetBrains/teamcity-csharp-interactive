@@ -7,6 +7,7 @@ using Script.Cmd;
 using Composer = Composer;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class CommandLineTests
 {
     [Fact]

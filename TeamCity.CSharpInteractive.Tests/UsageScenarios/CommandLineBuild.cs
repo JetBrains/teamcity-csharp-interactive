@@ -6,6 +6,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class CommandLineBuild: ScenarioHostService
 {
     [SkippableFact]

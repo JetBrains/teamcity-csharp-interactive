@@ -9,6 +9,7 @@ using Script.DotNet;
 using Run = Script.Docker.Run;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class DockerDotNetBuild: ScenarioHostService
 {
     [Fact(Skip = "Linux Docker only")]

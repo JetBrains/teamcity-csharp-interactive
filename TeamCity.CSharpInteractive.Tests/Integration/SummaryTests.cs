@@ -5,6 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 using System;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class SummaryTests
 {
     [Fact]

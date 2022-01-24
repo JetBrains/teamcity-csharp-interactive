@@ -5,6 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using Script.Cmd;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class CommandLineSimple: ScenarioHostService
 {
     [SkippableFact]
@@ -21,7 +22,7 @@ public class CommandLineSimple: ScenarioHostService
         // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
 
-        int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("whoami", "/all"));
+        int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
         // }
             
         exitCode.HasValue.ShouldBeTrue();

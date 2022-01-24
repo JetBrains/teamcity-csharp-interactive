@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using Script;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
+[Trait("Integration", "true")]
 public class CSharpScriptRunnerTests
 {
     private readonly Mock<ILog<CSharpScriptRunner>> _log;
