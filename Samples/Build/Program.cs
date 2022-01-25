@@ -45,7 +45,7 @@ if (buildRunner.Run(new DotNetClean()).ExitCode != 0)
     return 1;
 
 if (buildRunner.Run(new MSBuild()
-        .WithShortName("Rebuilding the solution")
+        .WithShortName("Rebuilding solution")
         .WithProject("MySampleLib.sln")
         .WithTarget("Rebuild")
         .WithRestore(true)
@@ -54,7 +54,7 @@ if (buildRunner.Run(new MSBuild()
     return 1;
 
 if (buildRunner.Run(new DotNetBuild()
-        .WithShortName($"Building of the {configuration} version")
+        .WithShortName($"Building {configuration} version")
         .WithConfiguration(configuration)
         .WithOutput(outputDir)
         .WithVerbosity(DotNetVerbosity.Normal)
@@ -83,7 +83,7 @@ if (results.Any(i => i.ExitCode != 0)) return 1;
 
 if (buildRunner.Run(
         new DotNetPack()
-            .WithShortName($"The packing of the {configuration} version")
+            .WithShortName($"Packing {configuration} version")
             .WithConfiguration(configuration)
             .WithOutput(outputDir)
             .WithIncludeSymbols(true)

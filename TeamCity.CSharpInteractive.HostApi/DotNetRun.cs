@@ -30,7 +30,7 @@ public record DotNetRun(
         
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet run")
+            .WithShortName("dotnet run".GetShortName(ShortName, Project))
             .WithArgs("run")
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())

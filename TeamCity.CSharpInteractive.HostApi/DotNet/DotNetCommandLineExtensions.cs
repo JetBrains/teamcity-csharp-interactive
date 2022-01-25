@@ -10,6 +10,22 @@ using Cmd;
 
 internal static class DotNetCommandLineExtensions
 {
+    public static string GetShortName(this string baseName, string shortName, string path)
+    {
+        if (!string.IsNullOrWhiteSpace(shortName))
+        {
+            return shortName;
+        }
+
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return baseName;
+        }
+
+        return $"{baseName} {Path.GetFileName(path)}";
+    }
+
     public static CommandLine AddMSBuildIntegration(this CommandLine cmd, IHost host, DotNetVerbosity? verbosity)
     {
         var virtualContext = host.GetService<IVirtualContext>();
