@@ -8,6 +8,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
+[Trait("Docker", "true")]
 public class DockerDotNetBuild: ScenarioHostService
 {
     [Fact(Skip = "Linux Docker only")]

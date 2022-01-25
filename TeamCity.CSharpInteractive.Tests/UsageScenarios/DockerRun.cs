@@ -7,6 +7,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
+[Trait("Docker", "true")]
 public class DockerRun: ScenarioHostService
 {
     [Fact]

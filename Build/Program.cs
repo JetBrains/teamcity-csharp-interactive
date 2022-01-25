@@ -9,6 +9,21 @@ const string templatesPackageId = "TeamCity.CSharpInteractive.Templates";
 if (!Props.TryGetValue("configuration", out var configuration)) configuration = "Release";
 if (!Props.TryGetValue("integrationTests", out var integrationStr) || !bool.TryParse(integrationStr, out var integrationTests)) integrationTests = false;
 
+var dockerLinuxTests = false;
+var commandLineRunner = GetService<ICommandLineRunner>();
+commandLineRunner.Run(new DockerCustom("info"), output =>
+{
+    if (output.Line.Contains("OSType: linux"))
+    {
+        dockerLinuxTests = true;
+    }
+});
+
+if (!dockerLinuxTests)
+{
+    Warning("The docker Linux container is not available.");
+}
+
 var currentDir = Environment.CurrentDirectory;
 const string solutionFile = "TeamCity.CSharpInteractive.sln"; 
 if (!File.Exists(solutionFile))
@@ -73,6 +88,11 @@ var test = new DotNetTest()
 if (!integrationTests)
 {
     test = test.WithFilter("Integration!=true");
+}
+
+if (!dockerLinuxTests)
+{
+    test = test.WithFilter(string.Join('&', test.Filter, "Integration!=true"));
 }
 
 var result = runner.Run(test);
