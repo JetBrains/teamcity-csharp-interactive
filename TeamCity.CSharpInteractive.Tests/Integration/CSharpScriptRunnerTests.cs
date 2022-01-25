@@ -1,8 +1,8 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
+using HostApi;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
-using Script;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]

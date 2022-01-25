@@ -1,8 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Script;
-using Script.NuGet;
+using HostApi;
 
 internal class AddNuGetReferenceCommandRunner: ICommandRunner
 {
@@ -40,7 +39,7 @@ internal class AddNuGetReferenceCommandRunner: ICommandRunner
         var success = true;
         _log.Info(new[] { new Text($"Restoring package {packageName}.", Color.Highlighted) });
         var restoreResult = _nugetRestoreService.TryRestore(
-            new RestoreSettings(
+            new NuGetRestore(
                 addPackageReferenceCommand.PackageId,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,

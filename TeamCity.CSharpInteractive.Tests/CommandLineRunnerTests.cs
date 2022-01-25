@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Script;
-using Script.Cmd;
+using HostApi;
 
 public class CommandLineRunnerTests
 {

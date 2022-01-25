@@ -1,10 +1,9 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using CSharpInteractive;
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
-using Script.Cmd;
-using Script.DotNet;
 
 public class BuildOutputProcessorTests
 {

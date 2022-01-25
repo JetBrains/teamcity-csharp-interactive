@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Script;
+using HostApi;
 
 public class HostServiceTests
 {

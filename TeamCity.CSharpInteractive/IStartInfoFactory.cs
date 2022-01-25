@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
-using Script.Cmd;
+using HostApi;
 
 internal interface IStartInfoFactory
 {

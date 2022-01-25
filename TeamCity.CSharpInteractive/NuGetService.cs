@@ -1,8 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
+using HostApi;
 using NuGet.Versioning;
-using Script.NuGet;
 
 internal class NuGetService: INuGet
 {
@@ -32,7 +32,7 @@ internal class NuGetService: INuGet
         _cleaner = cleaner;
     }
 
-    public IEnumerable<NuGetPackage> Restore(RestoreSettings settings)
+    public IEnumerable<NuGetPackage> Restore(NuGetRestore settings)
     {
         var packagesPath = settings.PackagesPath;
         if (string.IsNullOrWhiteSpace(packagesPath))
@@ -78,7 +78,7 @@ internal class NuGetService: INuGet
 
     public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
     {
-        var settings = new RestoreSettings(packageId);
+        var settings = new NuGetRestore(packageId);
         if (versionRange != default)
         {
             settings = settings.WithVersionRange(VersionRange.Parse(versionRange));

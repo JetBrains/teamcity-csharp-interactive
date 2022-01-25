@@ -3,8 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
 using System.Text;
-using Script.Cmd;
-using Script.DotNet;
+using HostApi;
 
 [Immutype.Target]
 [DebuggerTypeProxy(typeof(BuildResultDebugView))]

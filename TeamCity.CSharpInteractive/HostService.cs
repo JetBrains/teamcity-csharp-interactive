@@ -2,7 +2,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Script;
+using HostApi;
 
 internal class HostService : IHost
 {

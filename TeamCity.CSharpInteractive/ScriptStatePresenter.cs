@@ -3,8 +3,8 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using HostApi;
 using Microsoft.CodeAnalysis.Scripting;
-using Script;
 
 [ExcludeFromCodeCoverage]
 internal class ScriptStatePresenter: IPresenter<ScriptState<object>>

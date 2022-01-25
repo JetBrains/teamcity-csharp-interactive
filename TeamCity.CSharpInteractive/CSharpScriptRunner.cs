@@ -3,9 +3,9 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using HostApi;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Script;
 
 [ExcludeFromCodeCoverage]
 internal class CSharpScriptRunner : ICSharpScriptRunner

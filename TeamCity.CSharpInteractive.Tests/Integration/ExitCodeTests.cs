@@ -10,7 +10,6 @@ public class ExitCodeTests
     public void ShouldGetExitCodeFromReturnValue()
     {
         // Given
-        var tempPath = CreateTempDirectory();
 
         // When
         var result = TestTool.Run("return 33;");
@@ -23,7 +22,6 @@ public class ExitCodeTests
     public void ShouldGetExitCodeFromEnvironmentExit()
     {
         // Given
-        var tempPath = CreateTempDirectory();
 
         // When
         var result = TestTool.Run("Environment.Exit(33);");
@@ -36,7 +34,6 @@ public class ExitCodeTests
     public void ExitCodeShouldBe1WhenError()
     {
         // Given
-        var tempPath = CreateTempDirectory();
 
         // When
         var result = TestTool.Run("throw new Exception();");
@@ -49,7 +46,6 @@ public class ExitCodeTests
     public void ExitCodeShouldBe0ByDefault()
     {
         // Given
-        var tempPath = CreateTempDirectory();
 
         // When
         var result = TestTool.Run("var i=10;");
@@ -57,6 +53,4 @@ public class ExitCodeTests
         // Then
         result.ExitCode.ShouldBe(0, result.ToString());
     }
-
-    private static string CreateTempDirectory() => Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()[..4]);
 }

@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using Script.Cmd;
 
 public class ProcessInFlowRunnerTests
 {

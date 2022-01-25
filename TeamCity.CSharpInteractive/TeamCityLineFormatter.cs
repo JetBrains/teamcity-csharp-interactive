@@ -3,7 +3,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Text;
-using Script;
+using HostApi;
 
 internal class TeamCityLineFormatter : ITeamCityLineFormatter
 {

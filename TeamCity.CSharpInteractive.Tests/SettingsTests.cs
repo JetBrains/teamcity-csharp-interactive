@@ -50,7 +50,6 @@ public class SettingsTests
     {
         // Given
         var settings = CreateInstance(RunningMode.Application);
-        var codeSource = Mock.Of<ICodeSource>();
 
         // When
         _environment.Setup(i => i.GetCommandLineArgs()).Returns(new[] { "arg0", "arg1", "arg2"});

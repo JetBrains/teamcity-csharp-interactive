@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using Script.Cmd;
+using HostApi;
 
 public class ProcessOutputWriterTests
 {

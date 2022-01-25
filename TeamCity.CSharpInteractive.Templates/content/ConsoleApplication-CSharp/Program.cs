@@ -1,4 +1,4 @@
-﻿using Script.DotNet;
+﻿using HostApi;
 
 var runner = GetService<IBuildRunner>();
-runner.Run(new Build());
+runner.Run(new DotNetBuild());

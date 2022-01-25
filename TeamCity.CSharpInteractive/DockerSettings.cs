@@ -1,7 +1,9 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-internal class DockerSettings : Script.Docker.ISettings
+using HostApi.Docker;
+
+internal class DockerSettings : IDockerSettings
 {
     private readonly IDockerEnvironment _dockerEnvironment;
 

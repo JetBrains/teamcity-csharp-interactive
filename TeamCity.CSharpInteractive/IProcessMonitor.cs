@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-using Script.Cmd;
+using HostApi;
 
 internal interface IProcessMonitor
 {

@@ -4,7 +4,7 @@
 // ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.DotNet;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -25,11 +25,11 @@ public class DotNetVSTest: ScenarioHostService
         var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-        var result = buildRunner.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
+        var result = buildRunner.Run(new DotNetCustom("new", "mstest", "-n", "MyTests", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
-        result = buildRunner.Run(new Build().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
+        result = buildRunner.Run(new HostApi.DotNetBuild().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
         result.ExitCode.ShouldBe(0);
             
         // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"

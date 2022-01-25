@@ -3,8 +3,7 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.Cmd;
-using Script.Docker;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -30,7 +29,7 @@ public class DockerRun: ScenarioHostService
         var cmd = new CommandLine("whoami");
 
         // Runs the command line in a docker container
-        var result = commandLineRunner.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
+        var result = commandLineRunner.Run(new HostApi.DockerRun(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
         result.ShouldBe(0);
         // }
     }

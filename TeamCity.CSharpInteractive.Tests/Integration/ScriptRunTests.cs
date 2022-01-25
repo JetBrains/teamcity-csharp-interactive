@@ -3,7 +3,8 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using Core;
-using Script.Cmd;
+using HostApi;
+using Script;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -342,7 +343,7 @@ public class ScriptRunTests
 
         // When
         var result = TestTool.Run(
-            "using Script;",
+            "using HostApi;",
             "class Abc",
             "{",
             "  private readonly IHost _host;",

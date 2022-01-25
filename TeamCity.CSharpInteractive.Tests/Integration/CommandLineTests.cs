@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using System.Diagnostics;
 using Core;
-using Script.Cmd;
+using HostApi;
 using Composer = Composer;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]

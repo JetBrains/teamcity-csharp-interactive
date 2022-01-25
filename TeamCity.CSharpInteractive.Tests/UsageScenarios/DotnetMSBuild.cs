@@ -5,7 +5,7 @@
 // ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.DotNet;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -26,7 +26,7 @@ public class DotNetMSBuild: ScenarioHostService
         var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = buildRunner.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
@@ -36,7 +36,7 @@ public class DotNetMSBuild: ScenarioHostService
                 .WithTarget("Build")
                 .WithRestore(true)
                 .AddProps(("configuration", "Release"))
-                .WithVerbosity(Verbosity.Detailed));
+                .WithVerbosity(DotNetVerbosity.Detailed));
             
         // The "result" variable provides details about a build
         result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();

@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration.Core;
 
-using Script.Cmd;
+using HostApi;
 
 internal static class DotNetScript
 {

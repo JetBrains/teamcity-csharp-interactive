@@ -2,8 +2,8 @@
 namespace TeamCity.CSharpInteractive;
 
 using CSharpInteractive;
+using HostApi;
 using Pure.DI;
-using Script.DotNet;
 
 internal class BuildMessageLogWriter : IBuildMessageLogWriter
 {

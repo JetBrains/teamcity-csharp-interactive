@@ -4,7 +4,7 @@
 // ReSharper disable CommentTypo
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.DotNet;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -25,11 +25,11 @@ public class DotNetPublish: ScenarioHostService
         var buildRunner = GetService<IBuildRunner>();
             
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = buildRunner.Run(new Custom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
-        result = buildRunner.Run(new Publish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
+        result = buildRunner.Run(new HostApi.DotNetPublish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
         result.ExitCode.ShouldBe(0);
         // }
     }

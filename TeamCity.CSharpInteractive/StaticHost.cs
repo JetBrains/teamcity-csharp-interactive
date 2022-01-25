@@ -6,6 +6,7 @@ namespace Script;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Loader;
+using HostApi;
 using TeamCity.CSharpInteractive;
 
 [ExcludeFromCodeCoverage]

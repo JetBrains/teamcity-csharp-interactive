@@ -17,6 +17,7 @@ public class CSharpScriptCommandRunnerTests
         // Given
         var command = new ScriptCommand("abc", "code");
         var commandRunner = CreateInstance();
+        // ReSharper disable once RedundantArgumentDefaultValue
         _csharpScriptRunner.Setup(i => i.Run(command, "code")).Returns(new CommandResult(command, result, default));
 
         // When

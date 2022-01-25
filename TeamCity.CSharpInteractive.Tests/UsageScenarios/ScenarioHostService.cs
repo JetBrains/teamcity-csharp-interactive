@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System.Collections;
-using Script;
+using HostApi;
 
 public class ScenarioHostService: IHost
 {

@@ -1,9 +1,8 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using CSharpInteractive;
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write;
-using Script.Cmd;
-using Script.DotNet;
 using Shouldly;
 
 public class BuildContextTests

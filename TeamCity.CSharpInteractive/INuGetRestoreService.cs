@@ -1,8 +1,8 @@
 namespace TeamCity.CSharpInteractive;
 
-using Script.NuGet;
+using HostApi;
 
 internal interface INuGetRestoreService
 {
-    bool TryRestore(RestoreSettings settings, out string projectAssetsJson);
+    bool TryRestore(NuGetRestore settings, out string projectAssetsJson);
 }

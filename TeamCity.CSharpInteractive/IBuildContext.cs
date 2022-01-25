@@ -1,9 +1,8 @@
 // ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive;
 
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
-using Script.Cmd;
-using Script.DotNet;
 
 internal interface IBuildContext
 {

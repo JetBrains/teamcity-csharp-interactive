@@ -1,8 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Script.Cmd;
-using Script.DotNet;
+using HostApi;
 
 internal class DefaultBuildMessagesProcessor : IBuildMessagesProcessor
 {

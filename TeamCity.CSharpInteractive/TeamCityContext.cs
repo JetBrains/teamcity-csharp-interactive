@@ -1,9 +1,11 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
+using HostApi.DotNet;
+
 internal class TeamCityContext:
     ITeamCityContext,
-    Script.DotNet.ISettings
+    IDotNetSettings
 {
     private readonly IEnvironment _environment;
     private readonly IDotNetEnvironment _dotnetEnvironment;

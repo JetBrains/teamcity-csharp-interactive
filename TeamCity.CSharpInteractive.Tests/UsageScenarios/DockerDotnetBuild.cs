@@ -4,9 +4,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System.Diagnostics.CodeAnalysis;
-using Script.Docker;
-using Script.DotNet;
-using Run = Script.Docker.Run;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -31,19 +29,19 @@ public class DockerDotNetBuild: ScenarioHostService
         var buildRunner = GetService<IBuildRunner>();
 
         // Creates a base docker command line
-        var baseDockerCmd = new Run()
+        var baseDockerCmd = new HostApi.DockerRun()
             .WithImage("mcr.microsoft.com/dotnet/sdk")
             .WithPlatform("linux")
             .WithContainerWorkingDirectory("/MyProjects")
             .AddVolumes((System.Environment.CurrentDirectory, "/MyProjects"));
             
         // Creates a new library project in a docker container
-        var customCmd = new Custom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
+        var customCmd = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
         var result = buildRunner.Run(baseDockerCmd.WithCommandLine(customCmd));
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project in a docker container
-        var buildCmd = new Build().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
+        var buildCmd = new HostApi.DotNetBuild().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
         result = buildRunner.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => {});
             
         // The "result" variable provides details about a build

@@ -2,10 +2,10 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
+using HostApi;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Build.Tasks;
-using Script.NuGet;
 
 [ExcludeFromCodeCoverage]
 internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetRestoreSetting>
@@ -43,7 +43,7 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
         SetSetting(NuGetRestoreSetting.Default);
     }
 
-    public bool TryRestore(RestoreSettings settings, out string projectAssetsJson)
+    public bool TryRestore(NuGetRestore settings, out string projectAssetsJson)
     {
         var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
         var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());
@@ -52,7 +52,7 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
         targetFrameworkMoniker = _targetFrameworkMonikerParser.Parse(tfm);
         var projectStyle = settings.PackageType switch
         {
-            PackageType.Tool => "DotNetToolReference ",
+            NuGetPackageType.Tool => "DotNetToolReference ",
             _ => "PackageReference"
         };
 

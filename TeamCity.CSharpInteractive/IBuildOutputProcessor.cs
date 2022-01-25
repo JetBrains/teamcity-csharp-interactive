@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-using Script.Cmd;
-using Script.DotNet;
+using HostApi;
 
 internal interface IBuildOutputProcessor
 {

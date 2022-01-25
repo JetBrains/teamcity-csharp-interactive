@@ -3,8 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Script;
-using Script.Cmd;
+using HostApi;
 
 [ExcludeFromCodeCoverage]
 internal class ProcessManager: IProcessManager

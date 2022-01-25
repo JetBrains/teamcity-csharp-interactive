@@ -11,16 +11,16 @@ public class BuildTests
 
         // When
         var result = TestTool.Run(
-            "using Script.DotNet;",
+            "using HostApi;",
             "using System.Linq;",
             "var buildRunner = GetService<IBuildRunner>();",
-            "var result = buildRunner.Run(new Custom(\"new\", \"mstest\"));",
+            "var result = buildRunner.Run(new DotNetCustom(\"new\", \"mstest\"));",
             "WriteLine(\"Custom=\" + result.ExitCode);",
-            "result = buildRunner.Run(new Restore());",
+            "result = buildRunner.Run(new DotNetRestore());",
             "WriteLine(\"Restore=\" + result.Tests.Count());",
-            "result = buildRunner.Run(new Build());",
+            "result = buildRunner.Run(new DotNetBuild());",
             "WriteLine(\"Build=\" + result.Tests.Count());",
-            "result = buildRunner.Run(new Test());",
+            "result = buildRunner.Run(new DotNetTest());",
             "WriteLine(\"Tests=\" + result.Tests.Count());"
         );
 

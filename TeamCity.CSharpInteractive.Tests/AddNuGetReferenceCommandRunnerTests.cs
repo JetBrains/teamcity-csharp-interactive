@@ -1,8 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using NuGet;
+using HostApi;
 using NuGet.Versioning;
-using Script.NuGet;
 
 public class AddNuGetReferenceCommandRunnerTests
 {
@@ -32,7 +31,7 @@ public class AddNuGetReferenceCommandRunnerTests
             
         _nugetRestoreService = new Mock<INuGetRestoreService>();
         var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        var settings = new RestoreSettings(
+        var settings = new NuGetRestore(
             _command.PackageId,
             Sources,
             FallbackFolders,
@@ -96,7 +95,7 @@ public class AddNuGetReferenceCommandRunnerTests
 
         // When
         var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        var settings = new RestoreSettings(
+        var settings = new NuGetRestore(
             _command.PackageId,
             Sources,
             FallbackFolders,

@@ -1,8 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using Script;
 
 internal class TeamCityLog<T>: ILog<T>
 {

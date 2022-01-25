@@ -2,10 +2,9 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using Pure.DI;
-using Script.Cmd;
-using Script.DotNet;
 
 internal class ReliableBuildContext: IBuildContext
 {

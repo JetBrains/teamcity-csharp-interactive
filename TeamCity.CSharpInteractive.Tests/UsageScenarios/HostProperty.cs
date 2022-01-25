@@ -3,8 +3,7 @@
 // ReSharper disable UnusedVariable
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using NuGet;
-using Script.NuGet;
+using HostApi;
 
 public class HostProperty: ScenarioHostService
 {
@@ -15,7 +14,7 @@ public class HostProperty: ScenarioHostService
         // $tag=08 Global state
         // $priority=02
         // $description=Using the Host property
-        // $header=[_Host_](TeamCity.CSharpInteractive.Host/IHost.cs) is actually the provider of all global properties and methods.
+        // $header=[_Host_](TeamCity.CSharpInteractive.HostApi/IHost.cs) is actually the provider of all global properties and methods.
         // {
         var packages = Host.GetService<INuGet>();
         Host.WriteLine("Hello");

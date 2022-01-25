@@ -3,7 +3,7 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.DotNet;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -24,11 +24,11 @@ public class DotNetTest: ScenarioHostService
         var build = GetService<IBuildRunner>();
             
         // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-        var result = build.Run(new Custom("new", "mstest", "-n", "MyTests", "--force"));
+        var result = build.Run(new DotNetCustom("new", "mstest", "-n", "MyTests", "--force"));
         result.ExitCode.ShouldBe(0);
 
         // Runs tests via a command like: "dotnet test" from the directory "MyTests"
-        result = build.Run(new Test().WithWorkingDirectory("MyTests"));
+        result = build.Run(new HostApi.DotNetTest().WithWorkingDirectory("MyTests"));
             
         // The "result" variable provides details about a build
         result.ExitCode.ShouldBe(0);

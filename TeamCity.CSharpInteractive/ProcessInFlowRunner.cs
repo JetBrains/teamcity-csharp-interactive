@@ -2,9 +2,9 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using Pure.DI;
-using Script.Cmd;
 
 internal class ProcessInFlowRunner: IProcessRunner
 {

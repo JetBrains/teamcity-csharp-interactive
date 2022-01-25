@@ -20,7 +20,7 @@ public class FileExplorerTests
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("DOTNET_HOME")).Returns("DotNet");
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("PATH")).Returns(default(string));
         _fileSystem.Setup(i => i.IsDirectoryExist("DotNet")).Returns(true);
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", System.IO.SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd" });
         _fileSystem.Setup(i => i.IsFileExist("ab")).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist("C")).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist("dd")).Returns(true);
@@ -43,8 +43,8 @@ public class FileExplorerTests
         _fileSystem.Setup(i => i.IsDirectoryExist("DotNet")).Returns(true);
         _fileSystem.Setup(i => i.IsDirectoryExist("Bin1")).Returns(false);
         _fileSystem.Setup(i => i.IsDirectoryExist("bin2")).Returns(true);
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", System.IO.SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd" });
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("bin2", "*", System.IO.SearchOption.TopDirectoryOnly)).Returns(new []{ "Zz", "zz" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("bin2", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "Zz", "zz" });
         _fileSystem.Setup(i => i.IsFileExist("ab")).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist("C")).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist("dd")).Returns(true);
@@ -67,7 +67,7 @@ public class FileExplorerTests
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("DOTNET_HOME")).Returns("DotNet");
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("PATH")).Returns(default(string));
         _fileSystem.Setup(i => i.IsDirectoryExist("DotNet")).Returns(true);
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", System.IO.SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd", "C" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd", "C" });
         _fileSystem.Setup(i => i.IsFileExist("ab")).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist("C")).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist("dd")).Returns(true);

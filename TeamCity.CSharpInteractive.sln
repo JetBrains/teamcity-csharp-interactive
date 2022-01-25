@@ -4,15 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Tests", "TeamCity.CSharpInteractive.Tests\TeamCity.CSharpInteractive.Tests.csproj", "{D50DF30F-F84C-4292-9DA1-28D3649607A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Host", "TeamCity.CSharpInteractive.Host\TeamCity.CSharpInteractive.Host.csproj", "{4B570E69-8513-44C8-B501-22979CE6C87B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.HostApi", "TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj", "{4B570E69-8513-44C8-B501-22979CE6C87B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Tool", "TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj", "{449E7939-B886-4213-A8AD-9E33B4EB19A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Build\Build.csproj", "{F22C244D-01C7-4D23-B71E-44490BAC7394}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.CSharpInteractive.Templates", "TeamCity.CSharpInteractive.Templates\TeamCity.CSharpInteractive.Templates.csproj", "{F8533CEF-6965-48A9-BBDF-4BD791E3F92F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B542E6F5-1C85-4349-A8E3-AA3F0457E054}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{12A64310-BCF1-4B76-938C-F5DD7593B55F}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,6 +16,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{
 		LICENSE = LICENSE
 		README_BODY.md = README_BODY.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Build\Build.csproj", "{600A88F7-B0B1-4CE9-B113-C21EB31309E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{CE315710-ACE8-4CAC-B030-4778257652DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Samples\Build\Build.csproj", "{3F5207E9-BA16-4B65-9BA7-9582F2B2445D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,16 +45,24 @@ Global
 		{449E7939-B886-4213-A8AD-9E33B4EB19A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{449E7939-B886-4213-A8AD-9E33B4EB19A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{449E7939-B886-4213-A8AD-9E33B4EB19A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F22C244D-01C7-4D23-B71E-44490BAC7394}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8533CEF-6965-48A9-BBDF-4BD791E3F92F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8533CEF-6965-48A9-BBDF-4BD791E3F92F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8533CEF-6965-48A9-BBDF-4BD791E3F92F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8533CEF-6965-48A9-BBDF-4BD791E3F92F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE99DB4-7EA8-418D-ABF8-45D66063E6D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE99DB4-7EA8-418D-ABF8-45D66063E6D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE99DB4-7EA8-418D-ABF8-45D66063E6D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE99DB4-7EA8-418D-ABF8-45D66063E6D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{600A88F7-B0B1-4CE9-B113-C21EB31309E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{600A88F7-B0B1-4CE9-B113-C21EB31309E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{600A88F7-B0B1-4CE9-B113-C21EB31309E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{600A88F7-B0B1-4CE9-B113-C21EB31309E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F5207E9-BA16-4B65-9BA7-9582F2B2445D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F5207E9-BA16-4B65-9BA7-9582F2B2445D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F5207E9-BA16-4B65-9BA7-9582F2B2445D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F5207E9-BA16-4B65-9BA7-9582F2B2445D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F22C244D-01C7-4D23-B71E-44490BAC7394} = {B542E6F5-1C85-4349-A8E3-AA3F0457E054}
+		{3F5207E9-BA16-4B65-9BA7-9582F2B2445D} = {CE315710-ACE8-4CAC-B030-4778257652DB}
 	EndGlobalSection
 EndGlobal

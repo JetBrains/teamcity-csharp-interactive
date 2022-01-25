@@ -2,7 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Script;
+using HostApi;
 
 [ExcludeFromCodeCoverage]
 internal readonly record struct Text(string Value, Color Color)

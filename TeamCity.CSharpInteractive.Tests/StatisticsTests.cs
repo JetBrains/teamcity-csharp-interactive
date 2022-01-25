@@ -11,7 +11,7 @@ public class StatisticsTests
         // When
         using (statistics.Start())
         {
-            System.Threading.Thread.Sleep(2);
+            Thread.Sleep(2);
         }
             
         // Then

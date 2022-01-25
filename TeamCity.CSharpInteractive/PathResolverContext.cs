@@ -1,8 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Script;
-using Script.Cmd;
+using HostApi;
+using HostApi.Cmd;
 
 internal class PathResolverContext: IPathResolverContext, IVirtualContext
 {

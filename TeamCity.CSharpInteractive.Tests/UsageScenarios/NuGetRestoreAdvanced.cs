@@ -2,9 +2,8 @@
 // ReSharper disable SuggestVarOrType_Elsewhere
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using NuGet;
+using HostApi;
 using NuGet.Versioning;
-using Script.NuGet;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -21,11 +20,11 @@ public class NuGetRestoreAdvanced: ScenarioHostService
         // Adds the namespace "Script.NuGet" to use INuGet
         // ## using NuGet;
 
-        var packagesPath = System.IO.Path.Combine(
-            System.IO.Path.GetTempPath(),
+        var packagesPath = Path.Combine(
+            Path.GetTempPath(),
             Guid.NewGuid().ToString()[..4]);
 
-        var settings = new RestoreSettings("IoC.Container")
+        var settings = new HostApi.NuGetRestore("IoC.Container")
             .WithVersionRange(VersionRange.Parse("[1.3, 1.3.8)"))
             .WithTargetFrameworkMoniker("net5.0")
             .WithPackagesPath(packagesPath);

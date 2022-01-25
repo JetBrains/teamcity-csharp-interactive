@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive.Tests;
 
 public class TeamCityContextTests

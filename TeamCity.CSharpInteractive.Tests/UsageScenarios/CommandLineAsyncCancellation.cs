@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_Elsewhere
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.Cmd;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]

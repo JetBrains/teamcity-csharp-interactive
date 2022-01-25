@@ -1,8 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using NuGet;
+using HostApi;
 using NuGet.Versioning;
-using Script.NuGet;
 
 public class NuGetServiceTests
 {
@@ -56,14 +55,14 @@ public class NuGetServiceTests
         _nugetEnvironment.SetupGet(i => i.PackagesPath).Returns("defaultPackagesPath");
         _fileSystem.Setup(i => i.IsPathRooted(It.IsAny<string>())).Returns(isPathRooted);
         _nugetAssetsReader.Setup(i => i.ReadPackages(expectedNuGtePackagesDir, projectAssetsJson)).Returns(new [] {NuGetPackage1, NuGetPackage2});
-        _nugetRestoreService.Setup(i => i.TryRestore(It.IsAny<RestoreSettings>(), out projectAssetsJson)).Returns(true);
+        _nugetRestoreService.Setup(i => i.TryRestore(It.IsAny<NuGetRestore>(), out projectAssetsJson)).Returns(true);
 
         // When
         var packages = nuGet.Restore("Abc", "1.2.3", ".NETCoreApp,Version=v3.1", packagesPath).ToArray();
 
         // Then
         _nugetRestoreService.Verify(i => i.TryRestore(
-            new RestoreSettings("Abc")
+            new NuGetRestore("Abc")
                 .WithSources(Sources)
                 .WithFallbackFolders(FallBacks)
                 .WithVersionRange(VersionRange.Parse("1.2.3"))

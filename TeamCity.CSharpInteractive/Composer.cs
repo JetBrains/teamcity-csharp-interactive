@@ -8,6 +8,10 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Versioning;
+using HostApi;
+using HostApi.Cmd;
+using HostApi.Docker;
+using HostApi.DotNet;
 using JetBrains.TeamCity.ServiceMessages.Read;
 using JetBrains.TeamCity.ServiceMessages.Write;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
@@ -15,11 +19,7 @@ using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
 using Microsoft.Build.Framework;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Script;
 using Pure.DI;
-using Script.Cmd;
-using Script.DotNet;
-using Script.NuGet;
 using static Pure.DI.Lifetime;
 
 [ExcludeFromCodeCoverage]
@@ -95,7 +95,7 @@ internal static partial class Composer
             .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
             .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
             .Bind<IActive>(typeof(Debugger)).To<Debugger>()
-            .Bind<Script.Docker.ISettings>().To<DockerSettings>()
+            .Bind<IDockerSettings>().To<DockerSettings>()
             .Bind<IBuildContext>("base").As(Transient).To<BuildContext>()
             .Bind<IBuildContext>().As(Transient).To<ReliableBuildContext>()
             .Bind<ITextToColorStrings>().To<TextToColorStrings>()
@@ -170,7 +170,7 @@ internal static partial class Composer
             .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
             .Bind<ICommandLineRunner>().To<CommandLineRunner>()
             .Bind<IBuildRunner>().To<BuildRunner>()
-            .Bind<Script.DotNet.ISettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
+            .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
 
             // TeamCity Service messages
             .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()

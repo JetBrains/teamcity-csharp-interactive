@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-using Script.NuGet;
+using HostApi;
 
 internal interface INuGetAssetsReader
 {

@@ -6,10 +6,8 @@
 // ReSharper disable UseDeconstructionOnParameter
 namespace TeamCity.CSharpInteractive;
 
+using HostApi;
 using Pure.DI;
-using Script;
-using Script.Cmd;
-using Script.DotNet;
 
 internal class BuildRunner: IBuildRunner
 {

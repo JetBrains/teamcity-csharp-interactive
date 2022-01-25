@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-using Script.Cmd;
+using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -22,7 +22,7 @@ public class CommandLineOutput: ScenarioHostService
         // Adds the namespace "Script.Cmd" to use Command Line API
         // ## using Cmd;
 
-        var lines = new System.Collections.Generic.List<string>();
+        var lines = new List<string>();
         int? exitCode = GetService<ICommandLineRunner>().Run(
             new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
             i => lines.Add(i.Line));

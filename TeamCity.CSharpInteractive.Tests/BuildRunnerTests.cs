@@ -1,9 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using CSharpInteractive;
-using Script;
-using Script.Cmd;
-using Script.DotNet;
+using HostApi;
 
 public class BuildRunnerTests
 {

@@ -3,9 +3,8 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
-using Script.Cmd;
-using Script.DotNet;
 
 internal class BuildContext : IBuildContext
 {

@@ -1,8 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Script;
-using Script.Cmd;
+using HostApi;
 
 internal class ProcessMonitor : IProcessMonitor
 {

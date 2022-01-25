@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics.CodeAnalysis;
-using Script;
+using HostApi;
 
 [ExcludeFromCodeCoverage]
 internal static class TextExtensions

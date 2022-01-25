@@ -2,9 +2,9 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using System.Text;
 using Core;
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
-using Script.Cmd;
 using Composer = Composer;
 
 internal static class TestTool
