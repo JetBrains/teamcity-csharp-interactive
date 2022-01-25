@@ -56,6 +56,9 @@ internal static class DotNetCommandLineExtensions
             : cmd;
     }
 
+    public static CommandLine AddNotEmptyArgs(this CommandLine cmd, params string[] args) =>
+        cmd.AddArgs(args.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray());
+
     public static CommandLine AddArgs(this CommandLine cmd, params (string name, string? value)[] args) =>
         cmd.AddArgs((
                 from arg in args

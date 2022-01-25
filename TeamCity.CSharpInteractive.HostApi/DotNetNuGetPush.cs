@@ -31,7 +31,8 @@ public record DotNetNuGetPush(
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName("dotnet nuget push".GetShortName(ShortName, Package))
-            .WithArgs("nuget", "push", Package)
+            .WithArgs("nuget", "push")
+            .AddNotEmptyArgs(Package)
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
