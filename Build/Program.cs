@@ -45,20 +45,15 @@ NuGetVersion GetNextVersion(NuGetRestore settings) =>
         .DefaultIfEmpty(string.IsNullOrWhiteSpace(Props["version"]) ? new NuGetVersion(1, 0, 0, "dev") : new NuGetVersion(Props["version"]))
         .Max()!;
 
-var toolRestoreSettings = new NuGetRestore(toolPackageId)
-    .WithPackageType(NuGetPackageType.Tool);
-
-var packageRestoreSettings = new NuGetRestore(packageId)
-    .WithPackageType(NuGetPackageType.Tool);
-
-var nextToolAndPackageVersion = new []{ GetNextVersion(toolRestoreSettings),  GetNextVersion(packageRestoreSettings) }.Max()!;
+var nextToolAndPackageVersion = new []
+{
+    GetNextVersion(new NuGetRestore(toolPackageId).WithPackageType(NuGetPackageType.Tool)),
+    GetNextVersion(new NuGetRestore(packageId))
+}.Max()!;
 
 WriteLine($"Tool and package version: {nextToolAndPackageVersion}");
 
-var templateRestoreSettings = new NuGetRestore(templatesPackageId)
-    .WithPackageType(NuGetPackageType.Package);
-
-var nextTemplateVersion = GetNextVersion(templateRestoreSettings);
+var nextTemplateVersion = GetNextVersion(new NuGetRestore(templatesPackageId));
 
 WriteLine($"Template version: {nextTemplateVersion}");
 

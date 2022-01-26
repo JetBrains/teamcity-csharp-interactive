@@ -7,11 +7,11 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RefPackageVersion Condition="'$(RefPackageVersion)' == ''">$(PackageVersion)</RefPackageVersion>
+    <RootNamespace />
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TeamCity.CSharpInteractive" Version="$(RefPackageVersion)" />
+    <PackageReference Include="TeamCity.CSharpInteractive" Version="$(PackageVersion)" />
   </ItemGroup>
 
 </Project>

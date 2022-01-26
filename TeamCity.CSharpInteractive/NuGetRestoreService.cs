@@ -76,7 +76,7 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
                 "Dependency",
                 ("TargetFrameworks", tfm),
                 ("Id", settings.PackageId),
-                ("VersionRange", settings.VersionRange?.ToString()),
+                ("VersionRange", settings.VersionRange?.ToString() ?? "*"),
                 ("IncludeAssets", "All")),
 
             CreateTaskItem(
