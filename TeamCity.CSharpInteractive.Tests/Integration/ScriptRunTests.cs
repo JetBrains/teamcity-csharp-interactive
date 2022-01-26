@@ -186,7 +186,7 @@ public class ScriptRunTests
     [InlineData("nuget: IoC.Container, 1.3.6", "//1")]
     [InlineData("nuget:IoC.Container,1.3.6", "//1")]
     [InlineData("nuget: IoC.Container, [1.3.6, 2)", "//1")]
-    [InlineData("nuget: IoC.Container", "container://1")]
+    [InlineData("nuget: IoC.Container", "//1")]
     public void ShouldSupportNuGetRestore(string package, string name)
     {
         // Given

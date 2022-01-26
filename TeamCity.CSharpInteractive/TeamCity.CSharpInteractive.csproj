@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.22">
+        <PackageReference Include="Pure.DI" Version="1.1.25">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -31,6 +31,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.0.1" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0" />
@@ -42,7 +43,7 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
         </AssemblyAttribute>
-        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" >
+        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
@@ -93,7 +94,6 @@
             <PackagePath>contentFiles\cs\any</PackagePath>
             <BuildAction>Compile</BuildAction>
             <Pack>true</Pack>
-            <Visible>false</Visible>
         </Content>
 
         <Compile Remove="ScriptGlobalUsings.cs" />

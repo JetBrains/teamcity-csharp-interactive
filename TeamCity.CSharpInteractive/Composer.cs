@@ -19,6 +19,7 @@ using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
 using Microsoft.Build.Framework;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.Extensions.DependencyInjection;
 using Pure.DI;
 using static Pure.DI.Lifetime;
 
@@ -28,11 +29,13 @@ internal static partial class Composer
     private static void Setup()
     {
         // #trace=true
+        // #debug=true
         // #verbosity=diagnostic
-        // #out=C:\Projects\_temp\a
+        // #out=C:\Projects\TeamCity\Teamcity.CSharpInteractive\TeamCity.CSharpInteractive\obj\Generated
         DI.Setup()
             .Default(Singleton)
 #if TOOL
+
             .Bind<Program>().To<Program>()
             .Bind<RunningMode>().To(_ => RunningMode.Tool)
 #endif
@@ -115,6 +118,9 @@ internal static partial class Composer
             .Bind<ScriptHostComponents>().To<ScriptHostComponents>() 
             .Bind<IPresenter<Summary>>().To<SummaryPresenter>()
             .Bind<IExitCodeParser>().To<ExitCodeParser>()
+            .Bind<IProcessRunner>("base").To<ProcessRunner>()
+            .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
+            .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
 
             // Script options factory
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))
@@ -166,11 +172,9 @@ internal static partial class Composer
             .Bind<IHost>().To<HostService>()
             .Bind<IProperties>().To(ctx => ctx.Resolve<ITeamCitySpecific<IProperties>>().Instance)
             .Bind<INuGet>().To<NuGetService>()
-            .Bind<IProcessRunner>("base").To<ProcessRunner>()
-            .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
             .Bind<ICommandLineRunner>().To<CommandLineRunner>()
             .Bind<IBuildRunner>().To<BuildRunner>()
-            .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
+            .Bind<IServiceCollection>().To<HostServiceCollection>()
 
             // TeamCity Service messages
             .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
