@@ -1,7 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
-internal class Setting<T>: ISettingGetter<T>, ISettingSetter<T>
-    where T : struct, Enum
+internal class Setting<T> : ISettingGetter<T>, ISettingSetter<T>
+    where T: struct, Enum
 {
     private T _settingValue;
 

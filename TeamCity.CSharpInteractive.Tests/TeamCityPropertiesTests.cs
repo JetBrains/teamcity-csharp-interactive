@@ -27,7 +27,7 @@ public class TeamCityPropertiesTests
         _properties.VerifySet(i => i["Abc"] = "Xyz");
         _teamCityWriter.Verify(i => i.WriteBuildParameter("system.Abc", "Xyz"));
     }
-        
+
     [Fact]
     public void ShouldGetProperty()
     {
@@ -42,7 +42,7 @@ public class TeamCityPropertiesTests
         // Then
         actual.ShouldBe("Xyz");
     }
-        
+
     [Fact]
     public void ShouldProvideCount()
     {

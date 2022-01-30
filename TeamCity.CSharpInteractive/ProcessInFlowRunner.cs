@@ -6,7 +6,7 @@ using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using Pure.DI;
 
-internal class ProcessInFlowRunner: IProcessRunner
+internal class ProcessInFlowRunner : IProcessRunner
 {
     private readonly IProcessRunner _baseProcessRunner;
     private readonly ITeamCitySettings _teamCitySettings;
@@ -24,13 +24,13 @@ internal class ProcessInFlowRunner: IProcessRunner
         _teamCityWriter = teamCityWriter;
         _flowContext = flowContext;
     }
-        
+
     public ProcessResult Run(ProcessInfo processInfo, TimeSpan timeout)
     {
         using var flow = CreateFlow();
         return _baseProcessRunner.Run(processInfo.WithStartInfo(WrapInFlow(processInfo.StartInfo)), timeout);
     }
-        
+
     public Task<ProcessResult> RunAsync(ProcessInfo processInfo, CancellationToken cancellationToken)
     {
         var flow = CreateFlow();
@@ -47,12 +47,12 @@ internal class ProcessInFlowRunner: IProcessRunner
         _teamCitySettings.IsUnderTeamCity
             ? new StartInfoInFlow(startInfo, _flowContext.CurrentFlowId)
             : startInfo;
-        
+
     private IDisposable CreateFlow() =>
         _teamCitySettings.IsUnderTeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
 
     [DebuggerTypeProxy(typeof(CommandLine.StartInfoDebugView))]
-    private class StartInfoInFlow: IStartInfo
+    private class StartInfoInFlow : IStartInfo
     {
         private readonly IStartInfo _baseStartIfo;
         private readonly string _flowId;
@@ -71,8 +71,8 @@ internal class ProcessInFlowRunner: IProcessRunner
 
         public IEnumerable<string> Args => _baseStartIfo.Args;
 
-        public IEnumerable<(string name, string value)> Vars => 
-            new []{ (TeamCitySettings.FlowIdEnvironmentVariableName, _flowId) }
+        public IEnumerable<(string name, string value)> Vars =>
+            new[] {(TeamCitySettings.FlowIdEnvironmentVariableName, _flowId)}
                 .Concat(_baseStartIfo.Vars);
 
         public override string? ToString() => _baseStartIfo.ToString();

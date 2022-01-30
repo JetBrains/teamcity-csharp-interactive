@@ -7,7 +7,7 @@ internal class InteractiveRunner : IScriptRunner
     private readonly ICommandSource _commandSource;
     private readonly ICommandsRunner _commandsRunner;
     private readonly IStdOut _stdOut;
-        
+
     public InteractiveRunner(
         ICommandSource commandSource,
         ICommandsRunner commandsRunner,
@@ -29,7 +29,7 @@ internal class InteractiveRunner : IScriptRunner
             {
                 return exitCode.Value;
             }
-            
+
             if (!result.Command.Internal)
             {
                 ShowCursor(result.Command is not CodeCommand);

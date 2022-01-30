@@ -14,7 +14,7 @@ internal enum SpecialFolder
 
     // A directory of current executing script
     Script,
-        
+
     // Working directory of process
     Working
 }

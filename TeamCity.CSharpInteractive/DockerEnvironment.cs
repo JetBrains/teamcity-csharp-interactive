@@ -31,7 +31,7 @@ internal class DockerEnvironment : ITraceSource, IDockerEnvironment
             {
                 // ignored
             }
-                
+
             return executable;
         }
     }

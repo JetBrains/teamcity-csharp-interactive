@@ -1,9 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using CSharpInteractive;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write;
-using Shouldly;
 
 public class BuildContextTests
 {
@@ -21,29 +19,29 @@ public class BuildContextTests
         // Given
         var result = CreateInstance();
         var msg = new BuildMessage(BuildMessageState.StdOut, default, "Abc");
-        
+
         // When
         var messages = result.ProcessOutput(new Output(Mock.Of<IStartInfo>(), false, "Abc", 33));
         var buildResult = result.Create(Mock.Of<IStartInfo>(), 22);
-        
+
         // Then
-        messages.ShouldBe(new []{msg});
+        messages.ShouldBe(new[] {msg});
         buildResult.Errors.ShouldNotContain(msg);
     }
-    
+
     [Fact]
     public void ShouldProcessErrOutput()
     {
         // Given
         var result = CreateInstance();
         var msg = new BuildMessage(BuildMessageState.StdError, default, "Abc");
-        
+
         // When
         var messages = result.ProcessOutput(new Output(Mock.Of<IStartInfo>(), true, "Abc", 33));
         var buildResult = result.Create(Mock.Of<IStartInfo>(), 22);
-        
+
         // Then
-        messages.ShouldBe(new []{msg});
+        messages.ShouldBe(new[] {msg});
         buildResult.Errors.ShouldContain(msg);
     }
 
@@ -54,43 +52,43 @@ public class BuildContextTests
         var result = CreateInstance();
         var testSuiteStarted = new ServiceMessage("testSuiteStarted")
         {
-            { "name", "Assembly1" },
-            { "flowId", "11" }
+            {"name", "Assembly1"},
+            {"flowId", "11"}
         };
-        
+
         var testStdout = new ServiceMessage("testStdout")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "out", "Some output" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"out", "Some output"}
         };
-        
+
         var testStderr = new ServiceMessage("testStderr")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "out", "Some error" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"out", "Some error"}
         };
-        
+
         var testFinished = new ServiceMessage("testFinished")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "duration", "123" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"duration", "123"}
         };
-        
+
         var testSuiteFinished = new ServiceMessage("testSuiteFinished")
         {
-            { "name", "Assembly1" },
-            { "flowId", "11" }
+            {"name", "Assembly1"},
+            {"flowId", "11"}
         };
 
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
-        
+
         // When
         result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
-        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
-        result.ProcessMessage(output, testStderr).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdError).WithText("Some error")});
+        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
+        result.ProcessMessage(output, testStderr).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdError).WithText("Some error")});
         result.ProcessMessage(output, testFinished).ShouldBeEmpty();
         result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
@@ -105,13 +103,13 @@ public class BuildContextTests
         test.State.ShouldBe(TestState.Passed);
         test.Message.ShouldBeEmpty();
         test.Details.ShouldBeEmpty();
-        test.Output.ShouldBe(new []
+        test.Output.ShouldBe(new[]
         {
             new Output(_startInfo.Object, false, "Some output", 11),
             new Output(_startInfo.Object, true, "Some error", 11)
         });
     }
-    
+
     [Fact]
     public void ShouldProcessTestFailed()
     {
@@ -119,36 +117,36 @@ public class BuildContextTests
         var result = CreateInstance();
         var testSuiteStarted = new ServiceMessage("testSuiteStarted")
         {
-            { "name", "Assembly1" },
-            { "flowId", "11" }
+            {"name", "Assembly1"},
+            {"flowId", "11"}
         };
-        
+
         var testStdout = new ServiceMessage("testStdout")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "out", "Some output" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"out", "Some output"}
         };
-        
+
         var testFailed = new ServiceMessage("testFailed")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "message", "Some message" },
-            { "details", "Error details" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"message", "Some message"},
+            {"details", "Error details"}
         };
-        
+
         var testSuiteFinished = new ServiceMessage("testSuiteFinished")
         {
-            { "name", "Assembly1" },
-            { "flowId", "11" }
+            {"name", "Assembly1"},
+            {"flowId", "11"}
         };
-        
+
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
         result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
-        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
+        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
         result.ProcessMessage(output, testFailed).ShouldBeEmpty();
         result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
@@ -163,9 +161,9 @@ public class BuildContextTests
         test.State.ShouldBe(TestState.Failed);
         test.Message.ShouldBe("Some message");
         test.Details.ShouldBe("Error details");
-        test.Output.ShouldBe(new []{new Output(_startInfo.Object, false, "Some output", 11)});
+        test.Output.ShouldBe(new[] {new Output(_startInfo.Object, false, "Some output", 11)});
     }
-    
+
     [Fact]
     public void ShouldProcessTestIgnored()
     {
@@ -173,35 +171,35 @@ public class BuildContextTests
         var result = CreateInstance();
         var testSuiteStarted = new ServiceMessage("testSuiteStarted")
         {
-            { "name", "Assembly1" },
-            { "flowId", "11" }
+            {"name", "Assembly1"},
+            {"flowId", "11"}
         };
-        
+
         var testStdout = new ServiceMessage("testStdout")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "out", "Some output" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"out", "Some output"}
         };
-        
+
         var testIgnored = new ServiceMessage("testIgnored")
         {
-            { "name", "Test1" },
-            { "flowId", "11" },
-            { "message", "Some message" }
+            {"name", "Test1"},
+            {"flowId", "11"},
+            {"message", "Some message"}
         };
-        
+
         var testSuiteFinished = new ServiceMessage("testSuiteFinished")
         {
-            { "name", "Assembly1" },
-            { "flowId", "11" }
+            {"name", "Assembly1"},
+            {"flowId", "11"}
         };
-        
+
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
         result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
-        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new []{new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
+        result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
         result.ProcessMessage(output, testIgnored).ShouldBeEmpty();
         result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
@@ -216,9 +214,9 @@ public class BuildContextTests
         test.State.ShouldBe(TestState.Ignored);
         test.Message.ShouldBe("Some message");
         test.Details.ShouldBeEmpty();
-        test.Output.ShouldBe(new []{new Output(_startInfo.Object, false, "Some output", 11)});
+        test.Output.ShouldBe(new[] {new Output(_startInfo.Object, false, "Some output", 11)});
     }
-    
+
     [Theory]
     [InlineData("Normal", BuildMessageState.StdOut)]
     [InlineData("normal", BuildMessageState.StdOut)]
@@ -238,9 +236,9 @@ public class BuildContextTests
         var result = CreateInstance();
         var message = new ServiceMessage("message")
         {
-            { "text", "some text" },
-            { "status", status },
-            { "errorDetails", "error details" }
+            {"text", "some text"},
+            {"status", status},
+            {"errorDetails", "error details"}
         };
 
         var buildMessage = new BuildMessage(state, default, "some text", "error details");
@@ -248,7 +246,7 @@ public class BuildContextTests
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(output, message).ShouldBe(new []{ buildMessage });
+        result.ProcessMessage(output, message).ShouldBe(new[] {buildMessage});
         var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
@@ -263,17 +261,17 @@ public class BuildContextTests
                 break;
 
             case BuildMessageState.Warning:
-                buildResult.Warnings.ShouldBe(new[] { buildMessage });
+                buildResult.Warnings.ShouldBe(new[] {buildMessage});
                 break;
 
             case BuildMessageState.Failure:
             case BuildMessageState.StdError:
             case BuildMessageState.BuildProblem:
-                buildResult.Errors.ShouldBe(new[] { buildMessage });
+                buildResult.Errors.ShouldBe(new[] {buildMessage});
                 break;
         }
     }
-    
+
     [Fact]
     public void ShouldBuildProblem()
     {
@@ -281,20 +279,20 @@ public class BuildContextTests
         var result = CreateInstance();
         var buildProblem = new ServiceMessage("buildProblem")
         {
-            { "description", "Problem description" },
-            { "identity", "ID123" }
+            {"description", "Problem description"},
+            {"identity", "ID123"}
         };
 
         var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, default, "Problem description", "ID123");
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(output, buildProblem).ShouldBe(new []{ buildMessage });
+        result.ProcessMessage(output, buildProblem).ShouldBe(new[] {buildMessage});
         var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(0);
-        buildResult.Errors.ShouldBe(new []{ buildMessage });
+        buildResult.Errors.ShouldBe(new[] {buildMessage});
     }
 
     private BuildContext CreateInstance() =>

@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Text.RegularExpressions;
 
-internal class LoadCommandFactory: ICommandFactory<string>
+internal class LoadCommandFactory : ICommandFactory<string>
 {
     private static readonly Regex Regex = new(@"^\s*#load\s+""(.+)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
@@ -16,7 +16,7 @@ internal class LoadCommandFactory: ICommandFactory<string>
         _fileCodeSourceFactory = fileCodeSourceFactory;
         _codeSourceCommandFactory = codeSourceCommandFactory;
     }
-        
+
     public int Order => 0;
 
     public IEnumerable<ICommand> Create(string replCommand)

@@ -3,9 +3,10 @@
 namespace HostApi;
 
 using System.Text;
+using Immutype;
 using JetBrains.TeamCity.ServiceMessages;
 
-[Immutype.Target]
+[Target]
 public readonly record struct BuildMessage(
     BuildMessageState State,
     IServiceMessage? ServiceMessage = default,
@@ -25,7 +26,7 @@ public readonly record struct BuildMessage(
             case BuildMessageState.StdOut:
                 sb.Append(Text);
                 break;
-                
+
             case BuildMessageState.StdError:
                 sb.Append(State.ToString());
                 sb.Append(' ');

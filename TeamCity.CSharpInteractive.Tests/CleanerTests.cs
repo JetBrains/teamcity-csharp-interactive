@@ -8,14 +8,14 @@ public class CleanerTests
         // Given
         var fs = new Mock<IFileSystem>();
         var cleaner = new Cleaner(Mock.Of<ILog<Cleaner>>(), fs.Object);
-            
+
         // When
         cleaner.Track("Abc.txt");
-            
+
         // Then
         fs.Verify(i => i.DeleteDirectory(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
     }
-        
+
     [Fact]
     public void ShouldDeleteDirectoryOnTrackFinish()
     {

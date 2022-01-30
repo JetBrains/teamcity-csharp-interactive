@@ -27,9 +27,9 @@ internal class NuGetEnvironment : INuGetEnvironment, ITraceSource, IDisposable
         _settings = settings;
     }
 
-    public IEnumerable<string> Sources => _settings.NuGetSources.Concat(new []{@"https://api.nuget.org/v3/index.json"});
+    public IEnumerable<string> Sources => _settings.NuGetSources.Concat(new[] {@"https://api.nuget.org/v3/index.json"});
 
-    public IEnumerable<string> FallbackFolders => 
+    public IEnumerable<string> FallbackFolders =>
         FallbackFoldersFromEnv
             .Distinct();
 
@@ -47,7 +47,7 @@ internal class NuGetEnvironment : INuGetEnvironment, ITraceSource, IDisposable
             {
                 return _packagePath;
             }
-                
+
             _packagePath = Path.Combine(_environment.GetPath(SpecialFolder.Temp), _uniqueNameGenerator.Generate());
             _packagePathToken = _cleaner.Track(_packagePath);
             return _packagePath;

@@ -4,6 +4,6 @@ namespace TeamCity.CSharpInteractive;
 internal interface IDotNetEnvironment
 {
     string Path { get; }
-        
+
     string TargetFrameworkMoniker { get; }
 }

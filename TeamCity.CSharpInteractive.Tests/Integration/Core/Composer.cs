@@ -7,7 +7,7 @@ using Pure.DI;
 
 internal static partial class Composer
 {
-    private static void Setup() => 
+    private static void Setup() =>
         DI.Setup()
             .Default(Lifetime.Singleton)
             .Bind<IFileSystem>().To<FileSystem>()

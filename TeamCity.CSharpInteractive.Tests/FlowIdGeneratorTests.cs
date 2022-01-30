@@ -4,7 +4,7 @@ public class FlowIdGeneratorTests
 {
     private readonly Mock<ITeamCitySettings> _teamCitySettings;
 
-    public FlowIdGeneratorTests() => 
+    public FlowIdGeneratorTests() =>
         _teamCitySettings = new Mock<ITeamCitySettings>();
 
     [Fact]
@@ -20,7 +20,7 @@ public class FlowIdGeneratorTests
         // Then
         flowId.ShouldBe("root");
     }
-        
+
     [Fact]
     public void ShouldProvideNexFlowIdAfterRootFlowIdWhenItIsSpecified()
     {
@@ -35,7 +35,7 @@ public class FlowIdGeneratorTests
         // Then
         flowId.ShouldNotBe("root");
     }
-        
+
     [Fact]
     public void ShouldProvideFlowIdWhenRootFlowIdIsNotSpecified()
     {
@@ -48,7 +48,7 @@ public class FlowIdGeneratorTests
         // Then
         flowId.ShouldNotBe("root");
     }
-        
+
     [Fact]
     public void ShouldProvideGenerateFlowIds()
     {

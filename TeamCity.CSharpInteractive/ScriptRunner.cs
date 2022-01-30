@@ -23,7 +23,7 @@ internal class ScriptRunner : IScriptRunner
         _statistics = statistics;
         _summaryPresenter = summaryPresenter;
     }
-        
+
     public int Run()
     {
         var summary = new Summary(true);
@@ -67,7 +67,7 @@ internal class ScriptRunner : IScriptRunner
                 yield return command;
             }
         }
-            
+
         if (codeCommand != null)
         {
             _log.Error(ErrorId.UncompletedScript, "Script is uncompleted.");

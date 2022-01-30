@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Text.RegularExpressions;
 
-internal class AddAssemblyReferenceCommandFactory: ICommandFactory<string>
+internal class AddAssemblyReferenceCommandFactory : ICommandFactory<string>
 {
     private static readonly Regex LibReferenceRegex = new(@"^\s*#r\s+""\s*(.+?)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private readonly ILog<AddAssemblyReferenceCommandFactory> _log;
@@ -33,7 +33,7 @@ internal class AddAssemblyReferenceCommandFactory: ICommandFactory<string>
             yield break;
         }
 
-        _log.Trace(() => new []{new Text($"REPL #r \"{fullAssemblyPath}\"")});
+        _log.Trace(() => new[] {new Text($"REPL #r \"{fullAssemblyPath}\"")});
         yield return new ScriptCommand(assemblyPath, $"#r \"{fullAssemblyPath}\"");
     }
 }

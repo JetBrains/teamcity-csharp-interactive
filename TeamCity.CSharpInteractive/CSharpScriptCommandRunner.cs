@@ -5,7 +5,7 @@ namespace TeamCity.CSharpInteractive;
 internal class CSharpScriptCommandRunner : ICommandRunner
 {
     private readonly ICSharpScriptRunner _scriptRunner;
-        
+
     public CSharpScriptCommandRunner(ICSharpScriptRunner scriptRunner) => _scriptRunner = scriptRunner;
 
     public CommandResult TryRun(ICommand command)

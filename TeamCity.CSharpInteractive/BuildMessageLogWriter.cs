@@ -1,7 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using CSharpInteractive;
 using HostApi;
 using Pure.DI;
 
@@ -27,17 +26,17 @@ internal class BuildMessageLogWriter : IBuildMessageLogWriter
         switch (message.State)
         {
             case BuildMessageState.StdOut:
-                _stdOut.WriteLine(new []{ new Text(message.Text)});
+                _stdOut.WriteLine(new[] {new Text(message.Text)});
                 break;
 
             case BuildMessageState.StdError:
-                _stdErr.WriteLine(new []{new Text(message.Text)});
+                _stdErr.WriteLine(new[] {new Text(message.Text)});
                 break;
 
             case BuildMessageState.Warning:
                 _log.Warning(message.Text);
                 break;
-                
+
             case BuildMessageState.Failure:
             case BuildMessageState.BuildProblem:
                 _log.Error(ErrorId.Build, message.Text);

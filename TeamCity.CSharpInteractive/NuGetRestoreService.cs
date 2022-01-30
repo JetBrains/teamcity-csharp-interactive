@@ -56,7 +56,7 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
             _ => "PackageReference"
         };
 
-        _log.Trace(() => new []{new Text($"Restore nuget package {settings.PackageId} {settings.VersionRange} to \"{outputPath}\" and \"{settings.PackagesPath}\".")});
+        _log.Trace(() => new[] {new Text($"Restore nuget package {settings.PackageId} {settings.VersionRange} to \"{outputPath}\" and \"{settings.PackagesPath}\".")});
         var restoreGraphItems = new[]
         {
             CreateTaskItem("RestoreSpec"),
@@ -114,7 +114,7 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
         {
             taskItem.SetMetadata(key, value);
         }
-            
+
         return taskItem;
     }
 
@@ -129,9 +129,9 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
                 _hideWarningsAndErrors = false;
                 _restoreNoCache = false;
                 break;
-                
+
             case NuGetRestoreSetting.Parallel:
-                prevVal = _restoreDisableParallel ? NuGetRestoreSetting.Parallel : NuGetRestoreSetting.NonParallel; 
+                prevVal = _restoreDisableParallel ? NuGetRestoreSetting.Parallel : NuGetRestoreSetting.NonParallel;
                 _restoreDisableParallel = true;
                 break;
 

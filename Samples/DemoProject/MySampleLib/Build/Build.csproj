@@ -8,23 +8,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-        <PackageReference Include="Moq" Version="4.16.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0"/>
+        <PackageReference Include="Moq" Version="4.16.1"/>
         <PackageReference Include="Pure.DI" Version="1.1.22">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Shouldly" Version="4.0.3" />
-        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
-        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="Shouldly" Version="4.0.3"/>
+        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13"/>
+        <PackageReference Include="xunit" Version="2.4.1"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
-        <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-        <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" />
-        <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj" />
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>
+        <PackageReference Include="Xunit.SkippableFact" Version="1.4.13"/>
+        <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj"/>
+        <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj"/>
         <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

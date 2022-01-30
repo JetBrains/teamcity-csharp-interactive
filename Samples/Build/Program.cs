@@ -1,7 +1,6 @@
 ﻿using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
-
 var currentDirectory = Environment.CurrentDirectory;
 var outputDir = Path.Combine(currentDirectory, "bin");
 Host.WriteLine($"Starting {Args[0]} at \"{currentDirectory}\".");
@@ -25,7 +24,7 @@ if (!Props.TryGetValue("version", out var packageVersion))
 
 Trace($"Package version is: {packageVersion}.");
 
-var props = new[] { ("Version", packageVersion) };
+var props = new[] {("Version", packageVersion)};
 
 var buildRunner = GetService<IBuildRunner>();
 
@@ -96,9 +95,9 @@ Info("Publishing artifacts.");
 var teamCityWriter = GetService<ITeamCityWriter>();
 
 (
-    from packageExtension in new[] {"nupkg", "symbols.nupkg"}
-    let path = Path.Combine(outputDir, $"{packageId}.{packageVersion}.{packageExtension}")
-    select $"{path} => .")
+        from packageExtension in new[] {"nupkg", "symbols.nupkg"}
+        let path = Path.Combine(outputDir, $"{packageId}.{packageVersion}.{packageExtension}")
+        select $"{path} => .")
     .ToList()
     .ForEach(artifact => teamCityWriter.PublishArtifact(artifact));
 

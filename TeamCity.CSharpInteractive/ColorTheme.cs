@@ -16,7 +16,7 @@ internal class ColorTheme : IColorTheme
         ConsoleColor.DarkMagenta,
         ConsoleColor.DarkRed
     };
-        
+
     public ConsoleColor GetConsoleColor(Color color)
     {
         if (DarkColors.Contains(System.Console.BackgroundColor))

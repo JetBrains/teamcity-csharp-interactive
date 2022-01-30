@@ -5,8 +5,9 @@ namespace HostApi;
 
 using System.Diagnostics;
 using System.Text;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 [DebuggerTypeProxy(typeof(TestResultDebugView))]
 public readonly record struct TestResult(
     TestState State,
@@ -19,9 +20,9 @@ public readonly record struct TestResult(
     IReadOnlyList<Output> Output)
 {
     public TestResult(TestState state, string displayName)
-        : this(state,string.Empty, string.Empty, displayName, string.Empty, string.Empty, TimeSpan.Zero, Array.Empty<Output>())
+        : this(state, string.Empty, string.Empty, displayName, string.Empty, string.Empty, TimeSpan.Zero, Array.Empty<Output>())
     { }
-        
+
     public override string ToString()
     {
         var sb = new StringBuilder();

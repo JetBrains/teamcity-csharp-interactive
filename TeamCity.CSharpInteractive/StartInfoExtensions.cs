@@ -32,7 +32,7 @@ internal static class StartInfoExtensions
 
         return sb.ToString();
     }
-    
+
     public static string EscapeArg(this string? text)
     {
         if (string.IsNullOrWhiteSpace(text))

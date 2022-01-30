@@ -28,7 +28,7 @@ public class CSharpScriptCommandRunnerTests
         actualResult.Command.ShouldBe(command);
         actualResult.Success.ShouldBe(result);
     }
-        
+
     [Fact]
     public void ShouldRunResetCommand()
     {
@@ -44,7 +44,7 @@ public class CSharpScriptCommandRunnerTests
         actualResult.Command.ShouldBe(command);
         actualResult.Success.ShouldBe(true);
     }
-        
+
     [Fact]
     public void ShouldSkipUnhandledCommand()
     {

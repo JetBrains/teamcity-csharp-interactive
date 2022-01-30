@@ -1,6 +1,6 @@
 namespace HostApi;
 
-public interface IProperties: IEnumerable<KeyValuePair<string, string>>
+public interface IProperties : IEnumerable<KeyValuePair<string, string>>
 {
     int Count { get; }
 

@@ -12,7 +12,7 @@ public class PropertiesTests
         _settings = new Mock<ISettings>();
         _settings.SetupGet(i => i.ScriptProperties).Returns(_scriptProperties);
     }
-        
+
     [Fact]
     public void ShouldInit()
     {
@@ -41,7 +41,7 @@ public class PropertiesTests
         // Then
         val.ShouldBe("Xyz");
     }
-        
+
     [Fact]
     public void ShouldSupportTryGetValue()
     {
@@ -55,7 +55,7 @@ public class PropertiesTests
         // Then
         val.ShouldBe("Xyz");
     }
-        
+
     [Fact]
     public void ShouldSupportIndexedSetter()
     {
@@ -70,7 +70,7 @@ public class PropertiesTests
         val.ShouldBe("Xyz");
         props.Count.ShouldBe(1);
     }
-        
+
     [Fact]
     public void ShouldGetEmptyStringWhenNoValue()
     {
@@ -83,7 +83,7 @@ public class PropertiesTests
         // Then
         val.ShouldBe(string.Empty);
     }
-        
+
     [Fact]
     public void ShouldSupportTryGetValueWhenNoValue()
     {
@@ -96,7 +96,7 @@ public class PropertiesTests
         // Then
         result.ShouldBeFalse();
     }
-        
+
     [Fact]
     public void ShouldEnumeratePairs()
     {
@@ -106,15 +106,15 @@ public class PropertiesTests
         var props = CreateInstance();
 
         // When
-            
+
         // Then
-        props.ShouldBe(new []
+        props.ShouldBe(new[]
         {
             new KeyValuePair<string, string>("Abc", "Xyz"),
             new KeyValuePair<string, string>("1", "2")
         });
     }
-        
+
     [Fact]
     public void ShouldRemoveStringWhenSetEmptyValue()
     {

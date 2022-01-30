@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 
 [ExcludeFromCodeCoverage]
-internal class ScriptCommand: ICommand
+internal class ScriptCommand : ICommand
 {
     public readonly string Script;
 
@@ -15,7 +15,7 @@ internal class ScriptCommand: ICommand
     }
 
     public string Name { get; }
-        
+
     public bool Internal { get; }
 
     public override bool Equals(object? obj)
@@ -23,11 +23,11 @@ internal class ScriptCommand: ICommand
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        var other = (ScriptCommand) obj;
+        var other = (ScriptCommand)obj;
         return Name == other.Name && Script == other.Script;
     }
 
     public override int GetHashCode() => HashCode.Combine(Name, Script);
-        
+
     public override string ToString() => Name;
 }

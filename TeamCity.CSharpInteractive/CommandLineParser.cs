@@ -5,12 +5,12 @@ internal class CommandLineParser : ICommandLineParser
 {
     private readonly IFileSystem _fileSystem;
 
-    public CommandLineParser(IFileSystem fileSystem) => 
+    public CommandLineParser(IFileSystem fileSystem) =>
         _fileSystem = fileSystem;
 
     public IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments, CommandLineArgumentType defaultArgType)
     {
-        var enumerators = new List<IEnumerator<string>> { arguments.GetEnumerator() };
+        var enumerators = new List<IEnumerator<string>> {arguments.GetEnumerator()};
         CommandLineArgumentType? argumentType = null;
         try
         {
@@ -43,7 +43,7 @@ internal class CommandLineParser : ICommandLineParser
                             yield return new CommandLineArgument(CommandLineArgumentType.NuGetSource, argument);
                             argumentType = null;
                             continue;
-                            
+
                         case CommandLineArgumentType.ScriptProperty:
                             var parts = argument.Split('=', 2);
                             if (parts.Length > 0)
@@ -84,7 +84,7 @@ internal class CommandLineParser : ICommandLineParser
                         case "/s":
                             argumentType = CommandLineArgumentType.NuGetSource;
                             continue;
-                            
+
                         case "--property":
                         case "/property":
                         case "-p":

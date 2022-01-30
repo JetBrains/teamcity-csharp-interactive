@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 internal class FileSystem : IFileSystem
 {
     public void DeleteDirectory(string path, bool recursive) => Directory.Delete(path, recursive);
-        
+
     public bool IsPathRooted(string path) => Path.IsPathRooted(path);
 
     public bool IsFileExist(string file) => File.Exists(file);

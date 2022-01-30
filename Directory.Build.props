@@ -31,14 +31,14 @@
         <PropertyGroup>
             <Integration>$(PKGTeamCity_Dotnet_Integration)\build\_common</Integration>
         </PropertyGroup>
-        
+
         <ItemGroup>
-            <VSTestFiles Include="$(Integration)\vstest15\*.*" />
-            <MSBuildFiles Include="$(Integration)\msbuild15\*.*" />
+            <VSTestFiles Include="$(Integration)\vstest15\*.*"/>
+            <MSBuildFiles Include="$(Integration)\msbuild15\*.*"/>
         </ItemGroup>
 
-        <Copy SourceFiles="@(MSBuildFiles)" DestinationFolder="$(OutDir)" />
-        <Copy SourceFiles="@(VSTestFiles)" DestinationFolder="$(OutDir)" />
+        <Copy SourceFiles="@(MSBuildFiles)" DestinationFolder="$(OutDir)"/>
+        <Copy SourceFiles="@(VSTestFiles)" DestinationFolder="$(OutDir)"/>
     </Target>
 </Project>
 

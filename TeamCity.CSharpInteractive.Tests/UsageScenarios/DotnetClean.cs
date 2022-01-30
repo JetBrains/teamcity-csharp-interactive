@@ -8,7 +8,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class DotNetClean: ScenarioHostService
+public class DotNetClean : ScenarioHostService
 {
     [Fact]
     public void Run()
@@ -23,7 +23,7 @@ public class DotNetClean: ScenarioHostService
 
         // Resolves a build service
         var buildRunner = GetService<IBuildRunner>();
-            
+
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
         var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);
@@ -31,10 +31,10 @@ public class DotNetClean: ScenarioHostService
         // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
         result = buildRunner.Run(new HostApi.DotNetBuild().WithWorkingDirectory("MyLib"));
         result.ExitCode.ShouldBe(0);
-            
+
         // Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
         result = buildRunner.Run(new HostApi.DotNetClean().WithWorkingDirectory("MyLib"));
-            
+
         // The "result" variable provides details about a build
         result.ExitCode.ShouldBe(0);
         // }

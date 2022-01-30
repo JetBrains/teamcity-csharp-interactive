@@ -19,28 +19,28 @@ public class TeamCityInOutTests
     {
         // Given
         var output = (IStdErr)CreateInstance();
-            
+
         // When
         output.WriteLine(new[] {new Text("err")});
 
         // Then
         _teamCityWriter.Verify(i => i.WriteError("F_err", null));
     }
-        
+
     [Fact]
     public void ShouldWriteMessage()
     {
         // Given
         var output = (IStdOut)CreateInstance();
-            
+
         // When
         output.WriteLine(new[] {new Text("message")});
 
         // Then
         _teamCityWriter.Verify(i => i.WriteMessage("F_message"));
     }
-        
-    private TeamCityInOut CreateInstance() => 
+
+    private TeamCityInOut CreateInstance() =>
         new(
             _lineFormatter.Object,
             _teamCityWriter.Object);

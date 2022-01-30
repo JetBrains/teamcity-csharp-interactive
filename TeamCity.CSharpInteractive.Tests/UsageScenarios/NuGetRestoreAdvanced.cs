@@ -7,7 +7,7 @@ using NuGet.Versioning;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class NuGetRestoreAdvanced: ScenarioHostService
+public class NuGetRestoreAdvanced : ScenarioHostService
 {
     [SkippableFact]
     public void Run()
@@ -31,7 +31,7 @@ public class NuGetRestoreAdvanced: ScenarioHostService
 
         IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
         // }
-            
+
         packages.ShouldNotBeEmpty();
     }
 }

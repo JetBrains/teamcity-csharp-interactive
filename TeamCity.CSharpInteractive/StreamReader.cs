@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-internal class StreamReader: IStreamReader
+internal class StreamReader : IStreamReader
 {
     private readonly object _lockObject = new();
     private readonly Stream _stream;
@@ -30,7 +30,7 @@ internal class StreamReader: IStreamReader
         {
             _stream.Dispose();
         }
-            
+
         GC.SuppressFinalize(this);
     }
 }

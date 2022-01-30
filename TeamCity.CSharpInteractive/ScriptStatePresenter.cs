@@ -7,10 +7,10 @@ using HostApi;
 using Microsoft.CodeAnalysis.Scripting;
 
 [ExcludeFromCodeCoverage]
-internal class ScriptStatePresenter: IPresenter<ScriptState<object>>
+internal class ScriptStatePresenter : IPresenter<ScriptState<object>>
 {
     private const string Tab = " ";
-    private static readonly IEnumerable<Text> EmptyLine = new []{Text.NewLine };
+    private static readonly IEnumerable<Text> EmptyLine = new[] {Text.NewLine};
     private readonly ILog<ScriptStatePresenter> _log;
     private readonly IProperties _properties;
 
@@ -34,7 +34,7 @@ internal class ScriptStatePresenter: IPresenter<ScriptState<object>>
                         into gr
                         select gr.Last())
                     .Select(GetVariablyTrace));
-                
+
                 var props = GetTrace(
                     "Properties",
                     _properties.Select(i => $"{Tab}Props[\"{i.Key}\"] = \"{i.Value}\""));
@@ -47,12 +47,12 @@ internal class ScriptStatePresenter: IPresenter<ScriptState<object>>
         }
         else
         {
-            _log.Trace(() => new []{new Text("No variables defined.")});
+            _log.Trace(() => new[] {new Text("No variables defined.")});
         }
     }
 
-    private static IEnumerable<Text> GetTrace(string name, IEnumerable<string> items) => 
-        new [] {new Text($"{name}:")}.Concat(items.Select(i => new [] {Text.NewLine, new Text($"{Tab}{i}")}).SelectMany(i => i));
+    private static IEnumerable<Text> GetTrace(string name, IEnumerable<string> items) =>
+        new[] {new Text($"{name}:")}.Concat(items.Select(i => new[] {Text.NewLine, new Text($"{Tab}{i}")}).SelectMany(i => i));
 
     private static string GetVariablyTrace(ScriptVariable variable)
     {

@@ -7,7 +7,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class DotNetCustomScenario: ScenarioHostService
+public class DotNetCustomScenario : ScenarioHostService
 {
     [Fact]
     public void Run()
@@ -22,7 +22,7 @@ public class DotNetCustomScenario: ScenarioHostService
 
         // Resolves a build service
         var buildRunner = GetService<IBuildRunner>();
-            
+
         // Gets the dotnet version, running a command like: "dotnet --version"
         Version? version = default;
         var result = buildRunner.Run(

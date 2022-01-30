@@ -17,7 +17,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
     private readonly IExitCodeParser _exitCodeParser;
     private readonly IHost _host;
     private ScriptState<object>? _scriptState;
-        
+
     public CSharpScriptRunner(
         ILog<CSharpScriptRunner> log,
         IPresenter<ScriptState<object>> scriptStatePresenter,
@@ -57,7 +57,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
                 .Result;
 
             stopwatch.Stop();
-            _log.Trace(() => new []{new Text($"Time Elapsed {stopwatch.Elapsed:g}")});
+            _log.Trace(() => new[] {new Text($"Time Elapsed {stopwatch.Elapsed:g}")});
             _diagnosticsPresenter.Show(new CompilationDiagnostics(sourceCommand, _scriptState.Script.GetCompilation().GetDiagnostics().ToList().AsReadOnly()));
             if (_scriptState.ReturnValue != default)
             {
@@ -65,8 +65,8 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
                 {
                     return new CommandResult(sourceCommand, success, exitCode);
                 }
-                
-                _log.Trace(() => new []{new Text("Return value is \""), new Text(_scriptState.ReturnValue.ToString() ?? "empty"), new Text("\".")});
+
+                _log.Trace(() => new[] {new Text("Return value is \""), new Text(_scriptState.ReturnValue.ToString() ?? "empty"), new Text("\".")});
                 return new CommandResult(sourceCommand, success);
             }
         }
@@ -88,7 +88,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
 
     public void Reset()
     {
-        _log.Trace(() => new []{new Text("Reset state.")});
+        _log.Trace(() => new[] {new Text("Reset state.")});
         _scriptState = default;
     }
 }

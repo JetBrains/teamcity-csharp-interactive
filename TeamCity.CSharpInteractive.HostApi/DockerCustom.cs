@@ -1,12 +1,12 @@
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedType.Global
 namespace HostApi;
 
 using Docker;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DockerCustom(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
@@ -18,7 +18,7 @@ public record DockerCustom(
     public DockerCustom(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDockerSettings>().DockerExecutablePath : ExecutablePath)
             .WithShortName(string.IsNullOrWhiteSpace(ShortName) ? ((ExecutablePath == string.Empty ? "docker" : Path.GetFileNameWithoutExtension(ExecutablePath)) + " " + Args.FirstOrDefault()).TrimEnd() : ShortName)

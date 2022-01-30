@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 
 using HostApi;
 
-internal class SummaryPresenter: IPresenter<Summary>
+internal class SummaryPresenter : IPresenter<Summary>
 {
     private readonly ILog<SummaryPresenter> _log;
     private readonly IStatistics _statistics;
@@ -19,7 +19,7 @@ internal class SummaryPresenter: IPresenter<Summary>
         _statistics = statistics;
         _statisticsPresenter = statisticsPresenter;
     }
-    
+
     public void Show(Summary summary)
     {
         _statisticsPresenter.Show(_statistics);

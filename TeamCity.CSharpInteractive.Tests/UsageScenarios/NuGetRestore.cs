@@ -7,7 +7,7 @@ using NuGet.Versioning;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class NuGetRestore: ScenarioHostService
+public class NuGetRestore : ScenarioHostService
 {
     [SkippableFact]
     public void Run()
@@ -22,7 +22,7 @@ public class NuGetRestore: ScenarioHostService
 
         IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new HostApi.NuGetRestore("IoC.Container").WithVersionRange(VersionRange.All));
         // }
-            
+
         packages.ShouldNotBeEmpty();
     }
 }

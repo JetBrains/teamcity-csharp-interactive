@@ -1,40 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" />
-    <ProjectReference Include="..\..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj" />
-    <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <PropertyGroup>
-    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-  </PropertyGroup>
-
-  <Target Name="GetDependencyTargetPaths">
     <ItemGroup>
-      <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*" />
-      <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*" />
+        <ProjectReference Include="..\..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj"/>
+        <ProjectReference Include="..\..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.csproj"/>
+        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
-    <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
-    <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
-  </Target>
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\TeamCity.CSharpInteractive\ScriptGlobalUsings.cs">
-      <Link>ScriptGlobalUsings.cs</Link>
-    </Compile>
-  </ItemGroup>
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*"/>
+            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*"/>
+        </ItemGroup>
+
+        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild"/>
+        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest"/>
+    </Target>
+
+    <ItemGroup>
+        <Compile Include="..\..\TeamCity.CSharpInteractive\ScriptGlobalUsings.cs">
+            <Link>ScriptGlobalUsings.cs</Link>
+        </Compile>
+    </ItemGroup>
 
 </Project>

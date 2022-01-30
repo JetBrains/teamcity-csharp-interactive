@@ -24,18 +24,18 @@ public class FileCodeSourceTests
         // Given
         var fullPath = Path.Combine("wd", "zx", "Abc");
         _filePathResolver.Setup(i => i.TryResolve(Path.Combine("zx", "Abc"), out fullPath)).Returns(true);
-        _fileSystem.Setup(i => i.ReadAllLines( Path.Combine("wd", "zx", "Abc"))).Returns(new [] {"content"});
+        _fileSystem.Setup(i => i.ReadAllLines(Path.Combine("wd", "zx", "Abc"))).Returns(new[] {"content"});
         var source = CreateInstance(Path.Combine("zx", "Abc"));
 
         // When
         var expectedResult = source.ToArray();
 
         // Then
-        expectedResult.ShouldBe(new []{"content"});
+        expectedResult.ShouldBe(new[] {"content"});
         _workingDirectoryContext.Verify(i => i.OverrideScriptDirectory(Path.Combine("wd", "zx")));
         _workingDirectoryToken.Verify(i => i.Dispose());
     }
-        
+
     [Fact]
     public void ShouldLogErrorWhenReadingFailed()
     {
@@ -51,9 +51,9 @@ public class FileCodeSourceTests
 
         // Then
         expectedResult.ShouldBeEmpty();
-        _log.Verify(i => i.Error(ErrorId.File,It.IsAny<Text[]>()));
+        _log.Verify(i => i.Error(ErrorId.File, It.IsAny<Text[]>()));
     }
 
-    private FileCodeSource CreateInstance(string fileName) => 
-        new(_log.Object, _fileSystem.Object, _filePathResolver.Object, _workingDirectoryContext.Object) { FileName = fileName};
+    private FileCodeSource CreateInstance(string fileName) =>
+        new(_log.Object, _fileSystem.Object, _filePathResolver.Object, _workingDirectoryContext.Object) {FileName = fileName};
 }

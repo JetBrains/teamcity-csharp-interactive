@@ -1,6 +1,8 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests;
 
+using System;
+
 public class ScriptCommandParserTests
 {
     [Fact]
@@ -15,32 +17,32 @@ public class ScriptCommandParserTests
         var commands = parser.Create(new ScriptCommand("origin", "code")).ToArray();
 
         // Then
-        commands.ShouldBe(new []{(ICommand)new CodeCommand()}); 
+        commands.ShouldBe(new[] {(ICommand)new CodeCommand()});
     }
-        
+
     [Fact]
     public void ShouldReturnScriptCommandWhenCompleteSubmission()
     {
         // Given
         var scriptSubmissionAnalyzer = new Mock<IScriptSubmissionAnalyzer>();
-        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
+        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code" + Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
         var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
         // When
         var commands = parser.Create(new ScriptCommand("origin", "code")).ToArray();
 
         // Then
-        commands.ShouldBe(new ICommand[]{new ScriptCommand("origin", "code" + System.Environment.NewLine)}); 
+        commands.ShouldBe(new ICommand[] {new ScriptCommand("origin", "code" + Environment.NewLine)});
     }
-        
+
     [Fact]
     public void ShouldReturnScriptCommandWhenSeveralCompleteSubmission()
     {
         // Given
         var scriptSubmissionAnalyzer = new Mock<IScriptSubmissionAnalyzer>();
-        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(false);
-        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
-        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code2" + System.Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
+        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(false);
+        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code1" + Environment.NewLine + "code2" + Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
+        scriptSubmissionAnalyzer.Setup(i => i.IsCompleteSubmission("code2" + Environment.NewLine, ScriptCommandFactory.ParseOptions)).Returns(true);
         var parser = new ScriptCommandFactory(Mock.Of<ILog<ScriptCommandFactory>>(), scriptSubmissionAnalyzer.Object);
 
         // When
@@ -51,7 +53,7 @@ public class ScriptCommandParserTests
         var commands2 = parser.Create(new ScriptCommand("origin", "code2")).ToArray();
 
         // Then
-        commands.ShouldBe(new ICommand[]{new ScriptCommand("origin", "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine)});
-        commands2.ShouldBe(new ICommand[]{new ScriptCommand("origin", "code2" + System.Environment.NewLine)});
+        commands.ShouldBe(new ICommand[] {new ScriptCommand("origin", "code1" + Environment.NewLine + "code2" + Environment.NewLine)});
+        commands2.ShouldBe(new ICommand[] {new ScriptCommand("origin", "code2" + Environment.NewLine)});
     }
 }

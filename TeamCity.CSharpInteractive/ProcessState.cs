@@ -1,4 +1,3 @@
-
 namespace TeamCity.CSharpInteractive;
 
 internal enum ProcessState

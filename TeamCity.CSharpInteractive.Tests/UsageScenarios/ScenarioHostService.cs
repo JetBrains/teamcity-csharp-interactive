@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 using System.Collections;
 using HostApi;
 
-public class ScenarioHostService: IHost
+public class ScenarioHostService : IHost
 {
     public IHost Host => this;
 
@@ -28,8 +28,8 @@ public class ScenarioHostService: IHost
     public void Info(string? text) => Composer.Resolve<IHost>().Info(text);
 
     public void Trace(string? trace, string? origin = default) => Composer.Resolve<IHost>().Trace(trace, origin);
-        
-    private class Properties: IProperties
+
+    private class Properties : IProperties
     {
         private readonly Dictionary<string, string> _dict = new()
         {

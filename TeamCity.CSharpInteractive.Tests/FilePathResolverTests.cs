@@ -6,12 +6,12 @@ public class FilePathResolverTests
     private readonly Mock<IEnvironment> _environment;
     private readonly Mock<IFileSystem> _fileSystem;
     private readonly List<Text> _errors = new();
-        
+
     public FilePathResolverTests()
     {
         _log = new Mock<ILog<FilePathResolver>>();
-        _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
-            
+        _log.Setup(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
+
         _environment = new Mock<IEnvironment>();
         _fileSystem = new Mock<IFileSystem>();
 

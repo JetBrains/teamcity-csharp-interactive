@@ -1,7 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-internal class SettingCommandRunner<TOption>: ICommandRunner
+internal class SettingCommandRunner<TOption> : ICommandRunner
     where TOption: struct, Enum
 {
     private readonly ILog<SettingCommandRunner<TOption>> _log;
@@ -23,7 +23,7 @@ internal class SettingCommandRunner<TOption>: ICommandRunner
         }
 
         var previousValue = _settingSetter.SetSetting(settingCommand.Value);
-        _log.Trace(() => { return new[] { new Text($"Change the {typeof(TOption).Name} from {previousValue} to {settingCommand.Value}.") }; });
+        _log.Trace(() => { return new[] {new Text($"Change the {typeof(TOption).Name} from {previousValue} to {settingCommand.Value}.")}; });
 
         return new CommandResult(command, true);
     }

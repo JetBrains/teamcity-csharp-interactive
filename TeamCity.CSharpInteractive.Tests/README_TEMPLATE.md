@@ -1,46 +1,45 @@
-﻿
-## Usage Scenarios
+﻿## Usage Scenarios
 
 - Global state
-  - [Using Args](#using-args)
-  - [Using Props dictionary](#using-props-dictionary)
-  - [Using the Host property](#using-the-host-property)
-  - [Get services](#get-services)
+    - [Using Args](#using-args)
+    - [Using Props dictionary](#using-props-dictionary)
+    - [Using the Host property](#using-the-host-property)
+    - [Get services](#get-services)
 - Logging
-  - [Write a line to a build log](#write-a-line-to-a-build-log)
-  - [Write a line highlighted with "Header" color to a build log](#write-a-line-highlighted-with-"header"-color-to-a-build-log)
-  - [Write an empty line to a build log](#write-an-empty-line-to-a-build-log)
-  - [Log an error to a build log](#log-an-error-to-a-build-log)
-  - [Log a warning to a build log](#log-a-warning-to-a-build-log)
-  - [Log information to a build log](#log-information-to-a-build-log)
-  - [Log trace information to a build log](#log-trace-information-to-a-build-log)
+    - [Write a line to a build log](#write-a-line-to-a-build-log)
+    - [Write a line highlighted with "Header" color to a build log](#write-a-line-highlighted-with-"header"-color-to-a-build-log)
+    - [Write an empty line to a build log](#write-an-empty-line-to-a-build-log)
+    - [Log an error to a build log](#log-an-error-to-a-build-log)
+    - [Log a warning to a build log](#log-a-warning-to-a-build-log)
+    - [Log information to a build log](#log-information-to-a-build-log)
+    - [Log trace information to a build log](#log-trace-information-to-a-build-log)
 - Command Line API
-  - [Build command lines](#build-command-lines)
-  - [Run a command line](#run-a-command-line)
-  - [Run a command line asynchronously](#run-a-command-line-asynchronously)
-  - [Run and process output](#run-and-process-output)
-  - [Run asynchronously in parallel](#run-asynchronously-in-parallel)
-  - [Cancellation of asynchronous run](#cancellation-of-asynchronous-run)
-  - [Run timeout](#run-timeout)
+    - [Build command lines](#build-command-lines)
+    - [Run a command line](#run-a-command-line)
+    - [Run a command line asynchronously](#run-a-command-line-asynchronously)
+    - [Run and process output](#run-and-process-output)
+    - [Run asynchronously in parallel](#run-asynchronously-in-parallel)
+    - [Cancellation of asynchronous run](#cancellation-of-asynchronous-run)
+    - [Run timeout](#run-timeout)
 - Docker API
-  - [Running in docker](#running-in-docker)
-  - [Build a project in a docker container](#build-a-project-in-a-docker-container)
+    - [Running in docker](#running-in-docker)
+    - [Build a project in a docker container](#build-a-project-in-a-docker-container)
 - .NET build API
-  - [Build a project](#build-a-project)
-  - [Build a project using MSBuild](#build-a-project-using-msbuild)
-  - [Clean a project](#clean-a-project)
-  - [Pack a project](#pack-a-project)
-  - [Publish a project](#publish-a-project)
-  - [Restore a project](#restore-a-project)
-  - [Run a custom .NET command](#run-a-custom-.net-command)
-  - [Run a project](#run-a-project)
-  - [Test a project](#test-a-project)
-  - [Test an assembly](#test-an-assembly)
+    - [Build a project](#build-a-project)
+    - [Build a project using MSBuild](#build-a-project-using-msbuild)
+    - [Clean a project](#clean-a-project)
+    - [Pack a project](#pack-a-project)
+    - [Publish a project](#publish-a-project)
+    - [Restore a project](#restore-a-project)
+    - [Run a custom .NET command](#run-a-custom-.net-command)
+    - [Run a project](#run-a-project)
+    - [Test a project](#test-a-project)
+    - [Test an assembly](#test-an-assembly)
 - NuGet API
-  - [Restore NuGet a package of newest version](#restore-nuget-a-package-of-newest-version)
-  - [Restore a NuGet package by a version range for the specified .NET and path](#restore-a-nuget-package-by-a-version-range-for-the-specified-.net-and-path)
+    - [Restore NuGet a package of newest version](#restore-nuget-a-package-of-newest-version)
+    - [Restore a NuGet package by a version range for the specified .NET and path](#restore-a-nuget-package-by-a-version-range-for-the-specified-.net-and-path)
 - TeamCity Service Messages API
-  - [TeamCity integration via service messages](#teamcity-integration-via-service-messages)
+    - [TeamCity integration via service messages](#teamcity-integration-via-service-messages)
 
 ### Using Args
 
@@ -58,8 +57,6 @@ if (Args.Count > 1)
 }
 ```
 
-
-
 ### Using Props dictionary
 
 Properties _Props_ have got from TeamCity system properties automatically.
@@ -73,8 +70,6 @@ WriteLine(Props["TEAMCITY_PROJECT_NAME"]);
 Props["Version"] = "1.1.6";
 ```
 
-
-
 ### Using the Host property
 
 [_Host_](TeamCity.CSharpInteractive.HostApi/IHost.cs) is actually the provider of all global properties and methods.
@@ -84,11 +79,10 @@ var packages = Host.GetService<INuGet>();
 Host.WriteLine("Hello");
 ```
 
-
-
 ### Get services
 
-This method might be used to get access to different APIs like [INuGet](TeamCity.CSharpInteractive.HostApi/INuGet.cs) or [ICommandLine](TeamCity.CSharpInteractive.HostApi/ICommandLine.cs).
+This method might be used to get access to different APIs like [INuGet](TeamCity.CSharpInteractive.HostApi/INuGet.cs)
+or [ICommandLine](TeamCity.CSharpInteractive.HostApi/ICommandLine.cs).
 
 ``` CSharp
 GetService<INuGet>();
@@ -97,81 +91,52 @@ var serviceProvider = GetService<IServiceProvider>();
 serviceProvider.GetService(typeof(INuGet));
 ```
 
-Besides that, it is possible to get an instance of [System.IServiceProvider](https://docs.microsoft.com/en-US/dotnet/api/system.iserviceprovider) to access APIs.
+Besides that, it is possible to get an instance
+of [System.IServiceProvider](https://docs.microsoft.com/en-US/dotnet/api/system.iserviceprovider) to access APIs.
 
 ### Write a line to a build log
-
-
 
 ``` CSharp
 WriteLine("Hello");
 ```
 
-
-
 ### Write an empty line to a build log
-
-
 
 ``` CSharp
 WriteLine();
 ```
 
-
-
 ### Write a line highlighted with "Header" color to a build log
-
-
 
 ``` CSharp
 WriteLine("Hello", Header);
 ```
 
-
-
 ### Log an error to a build log
-
-
 
 ``` CSharp
 Error("Error info", "Error identifier");
 ```
 
-
-
 ### Log a warning to a build log
-
-
 
 ``` CSharp
 Warning("Warning info");
 ```
 
-
-
 ### Log information to a build log
-
-
 
 ``` CSharp
 Info("Some info");
 ```
 
-
-
 ### Log trace information to a build log
-
-
 
 ``` CSharp
 Trace("Some trace info");
 ```
 
-
-
 ### Build command lines
-
-
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
@@ -200,11 +165,7 @@ new CommandLine("cmd", "/c", "echo", "Hello")
     .WithArgs("/c", "echo", "Hello !!!");
 ```
 
-
-
 ### Run a command line
-
-
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
@@ -213,11 +174,7 @@ using Cmd;
 int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
 ```
 
-
-
 ### Run a command line asynchronously
-
-
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
@@ -226,11 +183,7 @@ using Cmd;
 int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/C", "DIR"));
 ```
 
-
-
 ### Run and process output
-
-
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
@@ -244,11 +197,7 @@ int? exitCode = GetService<ICommandLineRunner>().Run(
 lines.ShouldContain("MyEnv=MyVal");
 ```
 
-
-
 ### Run asynchronously in parallel
-
-
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
@@ -258,8 +207,6 @@ Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd
 int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
 task.Wait();
 ```
-
-
 
 ### Cancellation of asynchronous run
 
@@ -279,8 +226,6 @@ cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
 task.IsCompleted.ShouldBeFalse();
 ```
 
-
-
 ### Run timeout
 
 If timeout expired a process will be killed.
@@ -297,11 +242,7 @@ int? exitCode = GetService<ICommandLineRunner>().Run(
 exitCode.HasValue.ShouldBeFalse();
 ```
 
-
-
 ### Build a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -322,11 +263,7 @@ result.Errors.Any(message => message.State == BuildMessageState.StdError).Should
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Clean a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -350,11 +287,7 @@ result = buildRunner.Run(new Clean().WithWorkingDirectory("MyLib"));
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Run a custom .NET command
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -373,11 +306,7 @@ result.ExitCode.ShouldBe(0);
 version.ShouldNotBeNull();
 ```
 
-
-
 ### Build a project using MSBuild
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -404,11 +333,7 @@ result.Errors.Any(message => message.State == BuildMessageState.StdError).Should
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Pack a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -430,11 +355,7 @@ result = buildRunner.Run(
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Publish a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -452,11 +373,7 @@ result = buildRunner.Run(new Publish().WithWorkingDirectory("MyLib").WithFramewo
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Restore a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -474,11 +391,7 @@ result = buildRunner.Run(new Restore().WithWorkingDirectory("MyLib"));
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Run a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -500,11 +413,7 @@ result.ExitCode.ShouldBe(0);
 stdOut.ShouldBe(new []{ "Hello, World!" });
 ```
 
-
-
 ### Test a project
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -525,11 +434,7 @@ result.ExitCode.ShouldBe(0);
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 ```
 
-
-
 ### Test an assembly
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -557,11 +462,7 @@ result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### Restore NuGet a package of newest version
-
-
 
 ``` CSharp
 // Adds the namespace "Script.NuGet" to use INuGet
@@ -570,11 +471,7 @@ using NuGet;
 IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new RestoreSettings("IoC.Container").WithVersionRange(VersionRange.All));
 ```
 
-
-
 ### Restore a NuGet package by a version range for the specified .NET and path
-
-
 
 ``` CSharp
 // Adds the namespace "Script.NuGet" to use INuGet
@@ -592,11 +489,7 @@ var settings = new RestoreSettings("IoC.Container")
 IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
 ```
 
-
-
 ### Running in docker
-
-
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
@@ -615,11 +508,7 @@ var result = commandLineRunner.Run(new Run(cmd, "mcr.microsoft.com/dotnet/sdk").
 result.ShouldBe(0);
 ```
 
-
-
 ### Build a project in a docker container
-
-
 
 ``` CSharp
 // Adds the namespace "Script.DotNet" to use .NET build API
@@ -651,20 +540,24 @@ result.Errors.Any(message => message.State == BuildMessageState.StdError).Should
 result.ExitCode.ShouldBe(0);
 ```
 
-
-
 ### TeamCity integration via service messages
 
-For more details how to use TeamCity service message API please see [this](https://github.com/JetBrains/TeamCity.ServiceMessages) page. Instead of creating a root message writer like in the following example:
+For more details how to use TeamCity service message API please
+see [this](https://github.com/JetBrains/TeamCity.ServiceMessages) page. Instead of creating a root message writer like
+in the following example:
+
 ``` CSharp
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using var writer = new TeamCityServiceMessages().CreateWriter(Console.WriteLine);
 ```
+
 use this statement:
+
 ``` CSharp
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using var writer = GetService<ITeamCityWriter>();
 ```
+
 This sample opens a block _My Tests_ and reports about two tests:
 
 ``` CSharp
@@ -688,5 +581,6 @@ using (var tests = writer.OpenBlock("My Tests"))
 }
 ```
 
-For more information on TeamCity Service Messages, see [this](https://www.jetbrains.com/help/teamcity/service-messages.html) page.
+For more information on TeamCity Service Messages,
+see [this](https://www.jetbrains.com/help/teamcity/service-messages.html) page.
 

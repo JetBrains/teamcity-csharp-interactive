@@ -31,7 +31,7 @@ internal readonly record struct Text(string Value, Color Color)
             sb.Append(Color);
             sb.Append(']');
         }
-            
+
         return sb.ToString();
     }
 

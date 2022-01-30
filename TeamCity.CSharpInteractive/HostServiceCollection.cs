@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using Microsoft.Extensions.DependencyInjection;
 
-internal class HostServiceCollection: ServiceCollection
+internal class HostServiceCollection : ServiceCollection
 {
     public HostServiceCollection() => this.AddComposer();
 }

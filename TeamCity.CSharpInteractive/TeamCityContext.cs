@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using HostApi.DotNet;
 
-internal class TeamCityContext:
+internal class TeamCityContext :
     ITeamCityContext,
     IDotNetSettings
 {
@@ -26,13 +26,13 @@ internal class TeamCityContext:
     {
         set => _teamCityIntegration = value;
     }
-        
+
     public bool LoggersAreRequired => _teamCityIntegration;
 
     public string DotNetExecutablePath => _dotnetEnvironment.Path;
 
     public string DotNetMSBuildLoggerDirectory => Path.Combine(_environment.GetPath(SpecialFolder.Bin), "msbuild");
-    
+
     public string DotNetVSTestLoggerDirectory => Path.Combine(_environment.GetPath(SpecialFolder.Bin), "vstest");
 
     public string TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath;

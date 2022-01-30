@@ -8,7 +8,7 @@ public class ProcessRunnerTests
     private readonly Mock<IStartInfo> _startInfo = new();
     private readonly Mock<IProcessMonitor> _monitor = new();
     private readonly List<Output> _output = new();
-        
+
     [Fact]
     public void ShouldKillWhenTimeoutIsExpired()
     {
@@ -31,7 +31,7 @@ public class ProcessRunnerTests
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Canceled, default));
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Finished, It.IsAny<int>()), Times.Never);
     }
-        
+
     [Fact]
     public void ShouldRunWhenTimeoutIsSpecified()
     {
@@ -56,7 +56,7 @@ public class ProcessRunnerTests
         _monitor.Verify(i => i.Started(_startInfo.Object, 99));
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Finished, 1));
     }
-        
+
     [Fact]
     public void ShouldRunWhenTimeoutIsNotSpecified()
     {
@@ -80,7 +80,7 @@ public class ProcessRunnerTests
         _monitor.Verify(i => i.Started(_startInfo.Object, 99));
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Finished, 1));
     }
-        
+
     [Fact]
     public void ShouldNotWaitWhenCannotStart()
     {
@@ -101,7 +101,7 @@ public class ProcessRunnerTests
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Failed, default));
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Finished, It.IsAny<int>()), Times.Never);
     }
-        
+
     [Fact]
     public void ShouldProvideOutput()
     {
@@ -120,7 +120,7 @@ public class ProcessRunnerTests
         // Then
         _output.Count.ShouldBe(1);
     }
-        
+
     [Fact]
     public void ShouldRun()
     {
@@ -143,7 +143,7 @@ public class ProcessRunnerTests
         _monitor.Verify(i => i.Started(_startInfo.Object, 99));
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Finished, 1));
     }
-        
+
     [Fact]
     public void ShouldRunWhenStateProviderIsNotDefined()
     {
@@ -166,7 +166,7 @@ public class ProcessRunnerTests
         _monitor.Verify(i => i.Started(_startInfo.Object, 99));
         _monitor.Verify(i => i.Finished(_startInfo.Object, It.IsAny<long>(), ProcessState.Finished, 1));
     }
-        
+
     [Fact]
     public async Task ShouldRunAsync()
     {

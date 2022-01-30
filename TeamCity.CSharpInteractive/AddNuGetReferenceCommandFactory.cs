@@ -1,11 +1,10 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using NuGet.Versioning;
 
-internal class AddNuGetReferenceCommandFactory: ICommandFactory<string>
+internal class AddNuGetReferenceCommandFactory : ICommandFactory<string>
 {
     private static readonly Regex NuGetReferenceRegex = new(@"^\s*#r\s+""nuget:\s*([^,\s]+?)(,(.+?)|\s*)""\s*$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private readonly ILog<AddNuGetReferenceCommandFactory> _log;
@@ -25,7 +24,7 @@ internal class AddNuGetReferenceCommandFactory: ICommandFactory<string>
 
         var packageIdStr = match.Groups[1].Value;
         var versionRangeStr = match.Groups[3].Value.Trim();
-            
+
         VersionRange? versionRange = null;
         if (!string.IsNullOrWhiteSpace(versionRangeStr))
         {
@@ -39,8 +38,8 @@ internal class AddNuGetReferenceCommandFactory: ICommandFactory<string>
                 yield break;
             }
         }
-                
-        _log.Trace(() => new []{new Text($"REPL #r \"nuget:{packageIdStr}, {versionRange}\"")}, string.Empty);
+
+        _log.Trace(() => new[] {new Text($"REPL #r \"nuget:{packageIdStr}, {versionRange}\"")}, string.Empty);
         yield return new AddNuGetReferenceCommand(packageIdStr, versionRange);
     }
 }

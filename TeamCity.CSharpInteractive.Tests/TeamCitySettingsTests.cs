@@ -37,7 +37,7 @@ public class TeamCitySettingsTests
         // Then
         actualIsUnderTeamCity.ShouldBe(expectedFlowId);
     }
-        
+
     [Theory]
     [InlineData("Abc", "Abc")]
     [InlineData(null, "ROOT")]

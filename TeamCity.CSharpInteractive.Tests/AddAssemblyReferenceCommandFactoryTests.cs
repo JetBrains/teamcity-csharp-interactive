@@ -9,20 +9,20 @@ public class AddAssemblyReferenceCommandFactoryTests
     public AddAssemblyReferenceCommandFactoryTests()
     {
         _log = new Mock<ILog<AddAssemblyReferenceCommandFactory>>();
-        _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
+        _log.Setup(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
         _assemblyPathResolver = new Mock<IFilePathResolver>();
         var fullAssemblyPath = "wd/Abc.dll";
         _assemblyPathResolver.Setup(i => i.TryResolve("Abc.dll", out fullAssemblyPath)).Returns(true);
     }
-        
+
     [Fact]
     public void ShouldProvideOrder()
     {
         // Given
         var factory = CreateInstance();
-            
+
         // When
-            
+
         // Then
         factory.Order.ShouldBe(1);
     }
@@ -47,14 +47,14 @@ public class AddAssemblyReferenceCommandFactoryTests
         new object[]
         {
             "#r \"Abc.dll\"",
-            new [] { new ScriptCommand("Abc.dll", "#r \"wd/Abc.dll\"") },
+            new[] {new ScriptCommand("Abc.dll", "#r \"wd/Abc.dll\"")},
             false
         },
-            
+
         new object[]
         {
             "#r   \"Abc.dll\"  ",
-            new [] { new ScriptCommand("Abc.dll", "#r \"wd/Abc.dll\"") },
+            new[] {new ScriptCommand("Abc.dll", "#r \"wd/Abc.dll\"")},
             false
         },
 
@@ -64,42 +64,42 @@ public class AddAssemblyReferenceCommandFactoryTests
             Array.Empty<ICommand>(),
             false
         },
-            
+
         new object[]
         {
             "#r Abc.dll",
             Array.Empty<ICommand>(),
             false
         },
-            
+
         new object[]
         {
             "r \"Abc.dll\"",
             Array.Empty<ICommand>(),
             false
         },
-            
+
         new object[]
         {
             "\"Abc.dll\"",
             Array.Empty<ICommand>(),
             false
         },
-            
+
         new object[]
         {
             "Abc.dll",
             Array.Empty<ICommand>(),
             false
         },
-            
+
         new object[]
         {
             "   ",
             Array.Empty<ICommand>(),
             false
         },
-            
+
         new object[]
         {
             "",

@@ -17,27 +17,27 @@ public class AssembliesScriptOptionsProviderTests
         var assembly1 = new Mock<Assembly>();
         var assembly2 = new Mock<Assembly>();
         assembly2.SetupGet(i => i.Location).Returns(Assembly.GetCallingAssembly().Location);
-        _assembliesProvider.Setup(i => i.GetAssemblies(It.IsAny<IEnumerable<Type>>())).Returns(new [] { assembly1.Object, assembly2.Object });
+        _assembliesProvider.Setup(i => i.GetAssemblies(It.IsAny<IEnumerable<Type>>())).Returns(new[] {assembly1.Object, assembly2.Object});
         var provider = CreateInstance();
 
         // When
         var options = provider.Create(ScriptOptions.Default);
 
         // Then
-        _assembliesProvider.Verify(i => i.GetAssemblies(new []
+        _assembliesProvider.Verify(i => i.GetAssemblies(new[]
         {
-            typeof(System.String),
-            typeof(System.Collections.Generic.List<string>),
-            typeof(System.IO.Path),
-            typeof(System.Linq.Enumerable),
-            typeof(System.Net.Http.HttpRequestMessage),
-            typeof(System.Threading.Thread),
-            typeof(System.Threading.Tasks.Task)
+            typeof(String),
+            typeof(List<string>),
+            typeof(Path),
+            typeof(Enumerable),
+            typeof(HttpRequestMessage),
+            typeof(Thread),
+            typeof(Task)
         }));
-        
+
         options.MetadataReferences.Length.ShouldBe(ScriptOptions.Default.MetadataReferences.Length + 1);
     }
-    
+
     [Fact]
     [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     public void ShouldAddImports()

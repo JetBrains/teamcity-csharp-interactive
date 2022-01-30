@@ -1,8 +1,9 @@
 namespace HostApi;
 
 using System.Text;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record BuildStatistics(
     int Errors = default,
     int Warnings = default,
@@ -18,14 +19,14 @@ public record BuildStatistics(
         && FailedTests == 0
         && IgnoredTests == 0
         && PassedTests == 0;
-        
+
     public override string ToString()
     {
         if (IsEmpty)
         {
             return "Empty";
         }
-            
+
         var sb = new StringBuilder();
         foreach (var reason in FormatReasons(GetReasons(this).ToArray()))
         {
@@ -56,7 +57,7 @@ public record BuildStatistics(
             yield return reasons[i];
         }
     }
-        
+
     private static IEnumerable<string> GetReasons(BuildStatistics statistics)
     {
         if (statistics.Errors > 0)
@@ -83,7 +84,7 @@ public record BuildStatistics(
         {
             yield return $"{statistics.PassedTests} passed";
         }
-                
+
         if (statistics.Tests > 0)
         {
             yield return $"{statistics.Tests} total {GetName("test", statistics.Tests)}";

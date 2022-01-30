@@ -33,23 +33,23 @@ public class InteractiveRunnerTests
         actualExitCode.ShouldBe(expectedExitCode);
         _out.ToArray().ShouldBe(expectedOut);
     }
-        
-    public static IEnumerable<object?[]> Data => new List<object?[]> 
+
+    public static IEnumerable<object?[]> Data => new List<object?[]>
     {
         // Success
         new object[]
         {
-            new CommandResult[] { new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
+            new CommandResult[] {new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
             0,
-            new [] {"> ", ". ", ". ", "> "}
+            new[] {"> ", ". ", ". ", "> "}
         },
-            
+
         // Internal command
         new object[]
         {
-            new CommandResult[] { new(new CodeCommand(true), null), new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
+            new CommandResult[] {new(new CodeCommand(true), null), new(new CodeCommand(), null), new(new CodeCommand(), null), new(new ScriptCommand(string.Empty, string.Empty), null)},
             0,
-            new [] {"> ", ". ", ". ", "> "}
+            new[] {"> ", ". ", ". ", "> "}
         }
     };
 

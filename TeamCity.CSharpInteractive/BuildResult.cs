@@ -4,8 +4,9 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics;
 using System.Text;
 using HostApi;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 [DebuggerTypeProxy(typeof(BuildResultDebugView))]
 internal class BuildResult : IBuildResult
 {
@@ -15,8 +16,9 @@ internal class BuildResult : IBuildResult
     public BuildResult(IStartInfo startInfo)
         : this(startInfo, Array.Empty<BuildMessage>(), Array.Empty<BuildMessage>(), Array.Empty<TestResult>(), default)
     { }
-    
-    public BuildResult(IStartInfo startInfo,
+
+    public BuildResult(
+        IStartInfo startInfo,
         IReadOnlyList<BuildMessage> errors,
         IReadOnlyList<BuildMessage> warnings,
         IReadOnlyList<TestResult> tests,
@@ -33,13 +35,13 @@ internal class BuildResult : IBuildResult
     public BuildStatistics Summary => _summary.Value;
 
     public IStartInfo StartInfo { get; }
-    
+
     public IReadOnlyList<BuildMessage> Errors { get; }
-    
+
     public IReadOnlyList<BuildMessage> Warnings { get; }
-    
+
     public IReadOnlyList<TestResult> Tests { get; }
-    
+
     public int? ExitCode { get; }
 
     public override string ToString()
@@ -57,7 +59,7 @@ internal class BuildResult : IBuildResult
         sb.Append('.');
         return sb.ToString();
     }
-        
+
     private BuildStatistics CalculateSummary()
     {
         var testItems =
@@ -65,7 +67,7 @@ internal class BuildResult : IBuildResult
                 from testResult in Tests
                 group testResult by (testResult.AssemblyName, testResult.DisplayName)
             select testGroup.OrderByDescending(i => i.State).First();
-        
+
         var totalTests = 0;
         var failedTests = 0;
         var ignoredTests = 0;
@@ -98,18 +100,18 @@ internal class BuildResult : IBuildResult
             ignoredTests,
             passedTests);
     }
-        
+
     private class BuildResultDebugView
     {
         private readonly BuildResult _buildResult;
 
         public BuildResultDebugView(BuildResult buildResult) => _buildResult = buildResult;
-            
+
         public BuildStatistics Summary => _buildResult.Summary;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
         public IReadOnlyList<BuildMessage> Errors => _buildResult.Errors;
-            
+
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
         public IReadOnlyList<BuildMessage> Warnings => _buildResult.Warnings;
 
@@ -117,7 +119,7 @@ internal class BuildResult : IBuildResult
         public IReadOnlyList<TestResult> Tests => _buildResult.Tests;
 
         public IStartInfo StartInfo => _buildResult.StartInfo;
-            
+
         public int? ExitCode => _buildResult.ExitCode;
     }
 }

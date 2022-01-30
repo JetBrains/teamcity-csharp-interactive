@@ -5,7 +5,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 namespace HostApi.DotNet;
 
-using System.Linq;
 using Cmd;
 
 internal static class DotNetCommandLineExtensions
@@ -63,24 +62,24 @@ internal static class DotNetCommandLineExtensions
         cmd.AddArgs((
                 from arg in args
                 where !string.IsNullOrWhiteSpace(arg.value)
-                select new [] {arg.name, arg.value})
+                select new[] {arg.name, arg.value})
             .SelectMany(i => i)
             .ToArray());
-        
+
     public static CommandLine AddMSBuildArgs(this CommandLine cmd, params (string name, string? value)[] args) =>
         cmd.AddArgs((
                 from arg in args
                 where !string.IsNullOrWhiteSpace(arg.value)
                 select $"{arg.name}:{arg.value}")
             .ToArray());
-        
+
     public static CommandLine AddBooleanArgs(this CommandLine cmd, params (string name, bool? value)[] args) =>
         cmd.AddArgs((
                 from arg in args
                 where arg.value ?? false
                 select arg.name)
             .ToArray());
-        
+
     public static CommandLine AddProps(this CommandLine cmd, string propertyName, params (string name, string value)[] props) =>
         cmd.AddArgs(props.Select(i => $"{propertyName}:{i.name}={i.value}")
             .ToArray());

@@ -6,7 +6,7 @@ public class TeamCityContextTests
     private readonly Mock<IEnvironment> _environment = new();
     private readonly Mock<IDotNetEnvironment> _dotnetEnvironment = new();
     private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
-    
+
     [Fact]
     public void ShouldGetDotNetExecutablePath()
     {
@@ -19,7 +19,7 @@ public class TeamCityContextTests
         // Then
         settings.DotNetExecutablePath.ShouldBe("Bin");
     }
-    
+
     [Fact]
     public void ShouldGetDotNetMSBuildLoggerDirectory()
     {
@@ -32,7 +32,7 @@ public class TeamCityContextTests
         // Then
         settings.DotNetMSBuildLoggerDirectory.ShouldBe(Path.Combine("Bin", "msbuild"));
     }
-    
+
     [Fact]
     public void ShouldGetDotNetVSTestLoggerDirectory()
     {
@@ -45,7 +45,7 @@ public class TeamCityContextTests
         // Then
         settings.DotNetVSTestLoggerDirectory.ShouldBe(Path.Combine("Bin", "vstest"));
     }
-    
+
     [Fact]
     public void ShouldGetTeamCityMessagesPath()
     {

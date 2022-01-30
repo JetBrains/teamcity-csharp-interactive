@@ -42,7 +42,7 @@ internal class MessagesReader : IMessagesReader
                 _log.Warning($"Corrupted file \"{indicesFile}\", invalid index {index}.");
                 break;
             }
-                
+
             using var owner = _memoryPool.Rent(size);
             var buffer = owner.Memory[..size];
             if (reader.Read(buffer, (long)position) != size)

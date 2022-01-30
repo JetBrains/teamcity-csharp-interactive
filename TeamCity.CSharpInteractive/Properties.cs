@@ -4,11 +4,11 @@ namespace TeamCity.CSharpInteractive;
 using System.Collections;
 using HostApi;
 
-internal class Properties: IProperties
+internal class Properties : IProperties
 {
     private readonly ILog<Properties> _log;
     private readonly Dictionary<string, string> _props;
-        
+
     public Properties(
         ILog<Properties> log,
         ISettings settings)
@@ -35,14 +35,14 @@ internal class Properties: IProperties
         {
             lock (_props)
             {
-                _log.Trace(() => new []{new Text($"Props[\"{key}\"]=\"{value}\"")});
+                _log.Trace(() => new[] {new Text($"Props[\"{key}\"]=\"{value}\"")});
                 if (!string.IsNullOrEmpty(value))
                 {
                     _props[key] = value;
                 }
                 else
                 {
-                    _log.Trace(() => new []{new Text($"Props.Remove(\"{key}\")")});
+                    _log.Trace(() => new[] {new Text($"Props.Remove(\"{key}\")")});
                     _props.Remove(key);
                 }
             }
@@ -68,11 +68,11 @@ internal class Properties: IProperties
         {
             _props.TryGetValue(key, out var curValue);
             value = curValue ?? string.Empty;
-            _log.Trace(() => new []{new Text($"Props[\"{key}\"] returns \"{curValue ?? "empty"}\"")});
+            _log.Trace(() => new[] {new Text($"Props[\"{key}\"] returns \"{curValue ?? "empty"}\"")});
             return !string.IsNullOrEmpty(value);
         }
     }
-        
+
     private static IEnumerable<KeyValuePair<string, string>> FilterPairs(IEnumerable<KeyValuePair<string, string>> pairs) =>
         pairs.Where(i => !string.IsNullOrWhiteSpace(i.Key) && !string.IsNullOrEmpty(i.Value));
 }

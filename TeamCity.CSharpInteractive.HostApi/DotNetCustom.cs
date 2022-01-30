@@ -4,8 +4,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DotNetCustom(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
@@ -17,7 +18,7 @@ public record DotNetCustom(
     public DotNetCustom(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName(string.IsNullOrWhiteSpace(ShortName) ? ((ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath)) + " " + Args.FirstOrDefault()).TrimEnd() : ShortName)

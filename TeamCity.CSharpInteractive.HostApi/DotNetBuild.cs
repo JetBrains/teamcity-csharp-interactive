@@ -3,8 +3,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DotNetBuild(
     IEnumerable<(string name, string value)> Props,
     IEnumerable<string> Args,

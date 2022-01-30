@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using NuGet.Versioning;
 
 [ExcludeFromCodeCoverage]
-internal class AddNuGetReferenceCommand: ICommand
+internal class AddNuGetReferenceCommand : ICommand
 {
     public readonly string PackageId;
     public readonly VersionRange? VersionRange;
@@ -14,7 +14,7 @@ internal class AddNuGetReferenceCommand: ICommand
         PackageId = packageId;
         VersionRange = versionRange;
     }
-        
+
     public string Name => $"Package {PackageId} {VersionRange?.ToString() ?? "latest"}";
 
     public bool Internal => false;
@@ -24,7 +24,7 @@ internal class AddNuGetReferenceCommand: ICommand
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        var other = (AddNuGetReferenceCommand) obj;
+        var other = (AddNuGetReferenceCommand)obj;
         return PackageId == other.PackageId && Equals(VersionRange?.ToString(), other.VersionRange?.ToString());
     }
 

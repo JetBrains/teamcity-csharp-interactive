@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using HostApi;
 
-internal class CommandLineRunner: ICommandLineRunner
+internal class CommandLineRunner : ICommandLineRunner
 {
     private readonly IHost _host;
     private readonly IProcessRunner _processRunner;

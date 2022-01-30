@@ -12,9 +12,9 @@ internal class BuildEngine : IBuildEngine
 
     public BuildEngine(ILog<BuildEngine> log) => _log = log;
 
-    public void LogErrorEvent(BuildErrorEventArgs e) => _log.Error(new ErrorId(e.Code), new []{new Text(e.Message)});
+    public void LogErrorEvent(BuildErrorEventArgs e) => _log.Error(new ErrorId(e.Code), new[] {new Text(e.Message)});
 
-    public void LogWarningEvent(BuildWarningEventArgs e) => _log.Warning(new []{new Text(e.Message)});
+    public void LogWarningEvent(BuildWarningEventArgs e) => _log.Warning(new[] {new Text(e.Message)});
 
     public void LogMessageEvent(BuildMessageEventArgs e)
     {
@@ -24,18 +24,18 @@ internal class BuildEngine : IBuildEngine
             case MessageImportance.High:
                 _log.Info(new[] {new Text(e.Message)});
                 break;
-                
+
             case MessageImportance.Normal:
                 _log.Info(new[] {new Text(e.Message)});
                 break;
-                
+
             default:
-                _log.Trace(() => new []{ new Text(e.Message) }, "MSBuild");
+                _log.Trace(() => new[] {new Text(e.Message)}, "MSBuild");
                 break;
         }
     }
 
-    public void LogCustomEvent(CustomBuildEventArgs e) => _log.Trace(() => new []{ new Text(e.Message) }, "MSBuild");
+    public void LogCustomEvent(CustomBuildEventArgs e) => _log.Trace(() => new[] {new Text(e.Message)}, "MSBuild");
 
     public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs) =>
         true;

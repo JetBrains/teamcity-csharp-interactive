@@ -1,5 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
+using System;
 using HostApi;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
@@ -34,7 +35,7 @@ public class CSharpScriptRunnerTests
         // Given
         var runner = CreateInstance();
         var command = Mock.Of<ICommand>();
-            
+
         // When
         var result = runner.Run(command, script);
 
@@ -51,17 +52,17 @@ public class CSharpScriptRunnerTests
     {
         new object[] {"int i=10;"},
         // Multiline
-        new object[] {"class Abc" + System.Environment.NewLine + "{}"},
+        new object[] {"class Abc" + Environment.NewLine + "{}"},
         // using System;
         new object[] {"Console.WriteLine(10);"}
     };
-        
+
     [Fact]
     public void ShouldPreserveState()
     {
         // Given
         var runner = CreateInstance();
-            
+
         // When
         runner.Run(Mock.Of<ICommand>(), "int i=10;");
         var result = runner.Run(Mock.Of<ICommand>(), "Console.WriteLine(i);");
@@ -73,13 +74,13 @@ public class CSharpScriptRunnerTests
         _diagnosticsPresenter.Verify(i => i.Show(It.IsAny<CompilationDiagnostics>()));
         _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
     }
-        
+
     [Fact]
     public void ShouldResetState()
     {
         // Given
         var runner = CreateInstance();
-            
+
         // When
         runner.Run(Mock.Of<ICommand>(), "int i=10;");
         runner.Reset();
@@ -90,13 +91,13 @@ public class CSharpScriptRunnerTests
         _errors.Count.ShouldBe(0);
         _diagnostics.Count.ShouldBe(1);
     }
-        
+
     [Fact]
     public void ShouldRunInvalidCode()
     {
         // Given
         var runner = CreateInstance();
-            
+
         // When
         var result = runner.Run(Mock.Of<ICommand>(), "string i=10;");
 
@@ -106,13 +107,13 @@ public class CSharpScriptRunnerTests
         _diagnostics.Count.ShouldNotBe(0);
         _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()), Times.Never);
     }
-        
+
     [Fact]
     public void ShouldRunInvalidCodeAfterValid()
     {
         // Given
         var runner = CreateInstance();
-            
+
         // When
         runner.Run(Mock.Of<ICommand>(), "int j=10;");
         var result = runner.Run(Mock.Of<ICommand>(), "string i=10;");
@@ -123,13 +124,13 @@ public class CSharpScriptRunnerTests
         _diagnostics.Count.ShouldNotBe(0);
         _scriptStatePresenter.Verify(i => i.Show(It.IsAny<ScriptState<object>>()));
     }
-        
+
     [Fact]
     public void ShouldRunCodeWithException()
     {
         // Given
         var runner = CreateInstance();
-            
+
         // When
         var result = runner.Run(Mock.Of<ICommand>(), "throw new Exception();");
 
@@ -142,7 +143,7 @@ public class CSharpScriptRunnerTests
 
     private CSharpScriptRunner CreateInstance()
     {
-        var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider( Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(new FileSystem()), CancellationToken.None);
-        return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new []{ assembliesScriptOptionsProvider }, _exitCodeParser.Object, _host.Object);
+        var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider(Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(new FileSystem()), CancellationToken.None);
+        return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new[] {assembliesScriptOptionsProvider}, _exitCodeParser.Object, _host.Object);
     }
 }

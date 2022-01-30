@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 [ExcludeFromCodeCoverage]
-internal class DiagnosticsPresenter: IPresenter<CompilationDiagnostics>
+internal class DiagnosticsPresenter : IPresenter<CompilationDiagnostics>
 {
     private readonly ILog<DiagnosticsPresenter> _log;
 
@@ -20,25 +20,25 @@ internal class DiagnosticsPresenter: IPresenter<CompilationDiagnostics>
             switch (diagnostic.Severity)
             {
                 case DiagnosticSeverity.Hidden:
-                    _log.Trace(() => new []{new Text(diagnostic.ToString())});
+                    _log.Trace(() => new[] {new Text(diagnostic.ToString())});
                     break;
 
                 case DiagnosticSeverity.Info:
-                    _log.Info(new []{new Text(diagnostic.ToString())});
+                    _log.Info(new[] {new Text(diagnostic.ToString())});
                     break;
 
                 case DiagnosticSeverity.Warning:
-                    _log.Warning(new []{new Text(diagnostic.ToString())});
+                    _log.Warning(new[] {new Text(diagnostic.ToString())});
                     break;
 
                 case DiagnosticSeverity.Error:
                     var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(sourceCommand.Name))}";
-                    _log.Error(new ErrorId(errorId), new []{new Text(diagnostic.ToString())});
+                    _log.Error(new ErrorId(errorId), new[] {new Text(diagnostic.ToString())});
                     break;
             }
         }
     }
-        
+
     private static string GetProperty(string? value, string prefix = ",") =>
         string.IsNullOrWhiteSpace(value) ? string.Empty : $"{prefix}{value}";
 

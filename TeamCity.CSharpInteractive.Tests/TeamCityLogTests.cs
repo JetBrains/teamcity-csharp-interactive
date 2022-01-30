@@ -9,7 +9,7 @@ public class TeamCityLogTests
     private readonly Mock<ITeamCityWriter> _teamCityWriter;
     private readonly Text[] _text = {new("line1"), new("line2")};
     private readonly Mock<IStatistics> _statistics;
-        
+
     public TeamCityLogTests()
     {
         _settings = new Mock<ISettings>();
@@ -28,7 +28,7 @@ public class TeamCityLogTests
         // Given
         var log = CreateInstance();
         _settings.SetupGet(i => i.VerbosityLevel).Returns(verbosityLevel);
-            
+
         // When
         log.Error(new ErrorId("id"), _text);
 
@@ -36,7 +36,7 @@ public class TeamCityLogTests
         _teamCityWriter.Verify(i => i.WriteBuildProblem("id", "line1line2"));
         _statistics.Verify(i => i.RegisterError("line1line2"));
     }
-        
+
     [Theory]
     [InlineData(VerbosityLevel.Normal)]
     [InlineData(VerbosityLevel.Quiet)]
@@ -46,7 +46,7 @@ public class TeamCityLogTests
         // Given
         var log = CreateInstance();
         _settings.SetupGet(i => i.VerbosityLevel).Returns(verbosityLevel);
-            
+
         // When
         log.Warning(_text);
 
@@ -54,7 +54,7 @@ public class TeamCityLogTests
         _teamCityWriter.Verify(i => i.WriteWarning("line1line2"));
         _statistics.Verify(i => i.RegisterWarning("line1line2"));
     }
-        
+
     [Theory]
     [InlineData(VerbosityLevel.Normal, true)]
     [InlineData(VerbosityLevel.Quiet, false)]
@@ -65,14 +65,14 @@ public class TeamCityLogTests
         var times = Times.Exactly(enabled ? 1 : 0);
         var log = CreateInstance();
         _settings.SetupGet(i => i.VerbosityLevel).Returns(verbosityLevel);
-            
+
         // When
         log.Info(_text);
 
         // Then
         _teamCityWriter.Verify(i => i.WriteMessage("F_line1line2"), times);
     }
-        
+
     [Theory]
     [InlineData(VerbosityLevel.Normal, false)]
     [InlineData(VerbosityLevel.Quiet, false)]
@@ -83,12 +83,12 @@ public class TeamCityLogTests
         var times = Times.Exactly(enabled ? 1 : 0);
         var log = CreateInstance();
         _settings.SetupGet(i => i.VerbosityLevel).Returns(verbosityLevel);
-            
+
         // When
         log.Trace(() => _text, "Orig");
 
         // Then
-        _teamCityWriter.Verify(i => i.WriteMessage($"F_{"Orig", -40}line1line2"), times);
+        _teamCityWriter.Verify(i => i.WriteMessage($"F_{"Orig",-40}line1line2"), times);
     }
 
     private TeamCityLog<string> CreateInstance() =>

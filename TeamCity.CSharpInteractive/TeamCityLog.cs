@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-internal class TeamCityLog<T>: ILog<T>
+internal class TeamCityLog<T> : ILog<T>
 {
     private readonly ISettings _settings;
     private readonly ITeamCityWriter _teamCityWriter;
@@ -51,7 +51,7 @@ internal class TeamCityLog<T>: ILog<T>
         if (_settings.VerbosityLevel >= VerbosityLevel.Diagnostic)
         {
             origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
-            _teamCityWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin, -40}") + traceMessagesFactory()).WithDefaultColor(Color.Trace)));
+            _teamCityWriter.WriteMessage(_lineFormatter.Format((new Text($"{origin,-40}") + traceMessagesFactory()).WithDefaultColor(Color.Trace)));
         }
     }
 }

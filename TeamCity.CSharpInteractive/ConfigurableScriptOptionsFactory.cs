@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
-internal class ConfigurableScriptOptionsFactory: IScriptOptionsFactory
+internal class ConfigurableScriptOptionsFactory : IScriptOptionsFactory
 {
     private readonly ISettingGetter<LanguageVersion> _languageVersion;
     private readonly ISettingGetter<OptimizationLevel> _optimizationLevel;
@@ -28,7 +28,7 @@ internal class ConfigurableScriptOptionsFactory: IScriptOptionsFactory
         _allowUnsafe = allowUnsafe;
     }
 
-    public ScriptOptions Create(ScriptOptions baseOptions) => 
+    public ScriptOptions Create(ScriptOptions baseOptions) =>
         baseOptions
             .WithLanguageVersion(_languageVersion.GetSetting())
             .WithOptimizationLevel(_optimizationLevel.GetSetting())

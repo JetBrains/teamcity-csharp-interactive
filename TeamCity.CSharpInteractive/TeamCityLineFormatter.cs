@@ -8,12 +8,12 @@ using HostApi;
 internal class TeamCityLineFormatter : ITeamCityLineFormatter
 {
     private readonly IColorTheme _colorTheme;
-        
+
     public TeamCityLineFormatter(IColorTheme colorTheme) => _colorTheme = colorTheme;
 
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    internal char EscapeSymbol { get; set; }  = '\x001B';
+    internal char EscapeSymbol { get; set; } = '\x001B';
 
     public string Format(params Text[] line)
     {

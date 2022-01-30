@@ -20,7 +20,7 @@ internal class FileExplorer : IFileExplorer
         var paths = _hostEnvironment.GetEnvironmentVariable("PATH")?.Split(";", StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>();
         var allPaths = additionalPaths.Concat(paths).Where(i => !string.IsNullOrWhiteSpace(i)).Select(i => i?.Trim()).Distinct();
         return (
-                from path in allPaths 
+                from path in allPaths
                 where _fileSystem.IsDirectoryExist(path)
                 from file in _fileSystem.EnumerateFileSystemEntries(path, searchPattern, SearchOption.TopDirectoryOnly)
                 where _fileSystem.IsFileExist(file)

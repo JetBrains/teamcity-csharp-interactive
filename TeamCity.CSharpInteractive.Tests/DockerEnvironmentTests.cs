@@ -17,7 +17,7 @@ public class DockerEnvironmentTests
     {
         // Given
         _environment.SetupGet(i => i.OperatingSystemPlatform).Returns(platform);
-        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOCKER_HOME")).Returns(new [] { "Abc", "Xyz" });
+        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOCKER_HOME")).Returns(new[] {"Abc", "Xyz"});
 
         // When
         var instance = CreateInstance();
@@ -25,7 +25,7 @@ public class DockerEnvironmentTests
         // Then
         instance.Path.ShouldBe("Abc");
     }
-        
+
     [Theory]
     [InlineData(Platform.Windows, "docker.exe")]
     [InlineData(Platform.Linux, "docker")]

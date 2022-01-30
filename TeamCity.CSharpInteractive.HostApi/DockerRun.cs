@@ -9,8 +9,9 @@ namespace HostApi;
 
 using Cmd;
 using Docker;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DockerRun(
     // Process to run in container
     ICommandLine CommandLine,
@@ -63,9 +64,9 @@ public record DockerRun(
     string ShortName = "")
     : ICommandLine
 {
-    public DockerRun(): this(new CommandLine(string.Empty), string.Empty) 
+    public DockerRun() : this(new CommandLine(string.Empty), string.Empty)
     { }
-        
+
     public DockerRun(ICommandLine commandLine, string image)
         : this(
             commandLine,
@@ -126,7 +127,7 @@ public record DockerRun(
             .WithVars(Vars.ToArray());
     }
 
-    private class PathResolver: IPathResolver
+    private class PathResolver : IPathResolver
     {
         private readonly string _platform;
         private readonly IDictionary<string, string> _directoryMap;

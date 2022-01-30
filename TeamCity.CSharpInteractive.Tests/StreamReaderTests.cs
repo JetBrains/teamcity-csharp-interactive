@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using System.Buffers;
-using StreamReader = StreamReader;
 
 public class StreamReaderTests
 {
@@ -22,7 +21,7 @@ public class StreamReaderTests
         buffer.Span[0].ShouldBe((byte)1);
         buffer.Span[1].ShouldBe((byte)2);
     }
-    
+
     [Fact]
     public void ShouldReadAndChangePosition()
     {
@@ -40,7 +39,7 @@ public class StreamReaderTests
         // Then
         buffer.Span[0].ShouldBe((byte)3);
     }
-    
+
     [Fact]
     public void ShouldReadToTheEnd()
     {
@@ -59,7 +58,7 @@ public class StreamReaderTests
         buffer.Span[1].ShouldBe((byte)2);
         buffer.Span[2].ShouldBe((byte)3);
     }
-    
+
     [Fact]
     public void ShouldReadWithOffset()
     {
@@ -77,7 +76,7 @@ public class StreamReaderTests
         buffer.Span[0].ShouldBe((byte)2);
         buffer.Span[1].ShouldBe((byte)3);
     }
-    
+
     [Fact]
     public void ShouldReadWithOffsetToTheEnd()
     {
@@ -95,7 +94,7 @@ public class StreamReaderTests
         buffer.Span[0].ShouldBe((byte)2);
         buffer.Span[1].ShouldBe((byte)3);
     }
-    
+
     [Fact]
     public void ShouldReadWithOffsetToChangeIt()
     {

@@ -19,9 +19,11 @@ using JetBrains.TeamCity.ServiceMessages.Write.Special.Impl.Updater;
 using Microsoft.Build.Framework;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.DependencyInjection;
 using Pure.DI;
 using static Pure.DI.Lifetime;
+using ILogger = NuGet.Common.ILogger;
 
 [ExcludeFromCodeCoverage]
 internal static partial class Composer
@@ -35,7 +37,6 @@ internal static partial class Composer
         DI.Setup()
             .Default(Singleton)
 #if TOOL
-
             .Bind<Program>().To<Program>()
             .Bind<RunningMode>().To(_ => RunningMode.Tool)
 #endif
@@ -84,10 +85,10 @@ internal static partial class Composer
             .Bind<IPresenter<IEnumerable<ITraceSource>>>().To<TracePresenter>()
             .Bind<IPresenter<IStatistics>>().To<StatisticsPresenter>()
             .Bind<IPresenter<CompilationDiagnostics>>().To<DiagnosticsPresenter>()
-            .Bind<IPresenter<Microsoft.CodeAnalysis.Scripting.ScriptState<object>>>().To<ScriptStatePresenter>()
+            .Bind<IPresenter<ScriptState<object>>>().To<ScriptStatePresenter>()
             .Bind<IBuildEngine>().To<BuildEngine>()
             .Bind<INuGetRestoreService>().Bind<ISettingSetter<NuGetRestoreSetting>>().To<NuGetRestoreService>()
-            .Bind<NuGet.Common.ILogger>().To<NuGetLogger>()
+            .Bind<ILogger>().To<NuGetLogger>()
             .Bind<IUniqueNameGenerator>().To<UniqueNameGenerator>()
             .Bind<INuGetAssetsReader>().To<NuGetAssetsReader>()
             .Bind<ICleaner>().To<Cleaner>()
@@ -115,7 +116,7 @@ internal static partial class Composer
             .Bind<IBuildOutputProcessor>().To<BuildOutputProcessor>()
             .Bind<IBuildMessagesProcessor>("default").To<DefaultBuildMessagesProcessor>()
             .Bind<IBuildMessagesProcessor>("custom").To<CustomMessagesProcessor>()
-            .Bind<ScriptHostComponents>().To<ScriptHostComponents>() 
+            .Bind<ScriptHostComponents>().To<ScriptHostComponents>()
             .Bind<IPresenter<Summary>>().To<SummaryPresenter>()
             .Bind<IExitCodeParser>().To<ExitCodeParser>()
             .Bind<IProcessRunner>("base").To<ProcessRunner>()
@@ -125,9 +126,9 @@ internal static partial class Composer
             // Script options factory
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))
             .Bind<ISettingGetter<OptimizationLevel>>().Bind<ISettingSetter<OptimizationLevel>>().To(_ => new Setting<OptimizationLevel>(OptimizationLevel.Release))
-            .Bind<ISettingGetter<WarningLevel>>().Bind<ISettingSetter<WarningLevel>>().To(_ => new Setting<WarningLevel>((WarningLevel)Microsoft.CodeAnalysis.Scripting.ScriptOptions.Default.WarningLevel))
-            .Bind<ISettingGetter<CheckOverflow>>().Bind<ISettingSetter<CheckOverflow>>().To(_ => new Setting<CheckOverflow>(Microsoft.CodeAnalysis.Scripting.ScriptOptions.Default.CheckOverflow ? CheckOverflow.On : CheckOverflow.Off))
-            .Bind<ISettingGetter<AllowUnsafe>>().Bind<ISettingSetter<AllowUnsafe>>().To(_ => new Setting<AllowUnsafe>(Microsoft.CodeAnalysis.Scripting.ScriptOptions.Default.AllowUnsafe ? AllowUnsafe.On : AllowUnsafe.Off))
+            .Bind<ISettingGetter<WarningLevel>>().Bind<ISettingSetter<WarningLevel>>().To(_ => new Setting<WarningLevel>((WarningLevel)ScriptOptions.Default.WarningLevel))
+            .Bind<ISettingGetter<CheckOverflow>>().Bind<ISettingSetter<CheckOverflow>>().To(_ => new Setting<CheckOverflow>(ScriptOptions.Default.CheckOverflow ? CheckOverflow.On : CheckOverflow.Off))
+            .Bind<ISettingGetter<AllowUnsafe>>().Bind<ISettingSetter<AllowUnsafe>>().To(_ => new Setting<AllowUnsafe>(ScriptOptions.Default.AllowUnsafe ? AllowUnsafe.On : AllowUnsafe.Off))
             .Bind<IAssembliesProvider>().To<AssembliesProvider>()
             .Bind<IScriptOptionsFactory>().Bind<IActive>().Tags(typeof(AssembliesScriptOptionsProvider)).To<AssembliesScriptOptionsProvider>()
             .Bind<IScriptOptionsFactory>(typeof(ConfigurableScriptOptionsFactory)).To<ConfigurableScriptOptionsFactory>()

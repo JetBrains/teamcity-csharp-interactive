@@ -9,10 +9,10 @@ internal enum NuGetRestoreSetting
 
     IgnoreFailedSources,
     ConsiderFailedSources,
-        
+
     HideWarningsAndErrors,
     ShowWarningsAndErrors,
-        
+
     NoCache,
     WithCache
 }

@@ -57,7 +57,7 @@ public class Program
             _info.ShowHelp();
             return 0;
         }
-            
+
         using var exitToken = _exitTracker.Track();
         try
         {
@@ -72,7 +72,7 @@ public class Program
                 return result;
             }
         }
-        catch(Exception error)
+        catch (Exception error)
         {
             _log.Error(ErrorId.Unhandled, error);
             return 1;

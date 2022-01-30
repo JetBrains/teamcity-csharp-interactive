@@ -6,8 +6,9 @@ namespace HostApi;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 [DebuggerTypeProxy(typeof(StartInfoDebugView))]
 public record CommandLine(
     string ExecutablePath,
@@ -20,7 +21,7 @@ public record CommandLine(
     private readonly string _shortName = ShortName;
 
     public CommandLine(string executablePath, params string[] args)
-        :this(executablePath, string.Empty, args, ImmutableArray<(string name, string value)>.Empty)
+        : this(executablePath, string.Empty, args, ImmutableArray<(string name, string value)>.Empty)
     { }
 
     public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : Path.GetFileNameWithoutExtension(ExecutablePath);
@@ -42,12 +43,12 @@ public record CommandLine(
             sb.Append(' ');
             sb.Append(Escape(arg));
         }
-            
+
         return sb.ToString();
     }
-        
+
     private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
-        
+
     internal class StartInfoDebugView
     {
         private readonly IStartInfo _startInfo;

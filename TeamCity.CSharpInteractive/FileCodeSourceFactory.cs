@@ -8,7 +8,7 @@ internal class FileCodeSourceFactory : IFileCodeSourceFactory
 {
     private readonly Func<FileCodeSource> _fileCodeSourceFactory;
 
-    public FileCodeSourceFactory(Func<FileCodeSource> fileCodeSourceFactory) => 
+    public FileCodeSourceFactory(Func<FileCodeSource> fileCodeSourceFactory) =>
         _fileCodeSourceFactory = fileCodeSourceFactory;
 
     public ICodeSource Create(string fileName)

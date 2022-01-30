@@ -4,7 +4,7 @@ public class FileExplorerTests
 {
     private readonly Mock<IHostEnvironment> _hostEnvironment;
     private readonly Mock<IFileSystem> _fileSystem;
-    
+
     public FileExplorerTests()
     {
         _hostEnvironment = new Mock<IHostEnvironment>();
@@ -20,7 +20,7 @@ public class FileExplorerTests
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("DOTNET_HOME")).Returns("DotNet");
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("PATH")).Returns(default(string));
         _fileSystem.Setup(i => i.IsDirectoryExist("DotNet")).Returns(true);
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new[] {"ab", "C", "dd"});
         _fileSystem.Setup(i => i.IsFileExist("ab")).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist("C")).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist("dd")).Returns(true);
@@ -29,9 +29,9 @@ public class FileExplorerTests
         var actual = explorer.FindFiles("*", "Abc", "DOTNET_HOME").ToArray();
 
         // Then
-        actual.ShouldBe(new []{ "C", "dd" });
+        actual.ShouldBe(new[] {"C", "dd"});
     }
-    
+
     [Fact]
     public void ShouldFindFiles()
     {
@@ -43,8 +43,8 @@ public class FileExplorerTests
         _fileSystem.Setup(i => i.IsDirectoryExist("DotNet")).Returns(true);
         _fileSystem.Setup(i => i.IsDirectoryExist("Bin1")).Returns(false);
         _fileSystem.Setup(i => i.IsDirectoryExist("bin2")).Returns(true);
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd" });
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("bin2", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "Zz", "zz" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new[] {"ab", "C", "dd"});
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("bin2", "*", SearchOption.TopDirectoryOnly)).Returns(new[] {"Zz", "zz"});
         _fileSystem.Setup(i => i.IsFileExist("ab")).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist("C")).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist("dd")).Returns(true);
@@ -55,9 +55,9 @@ public class FileExplorerTests
         var actual = explorer.FindFiles("*", "Abc", "DOTNET_HOME").ToArray();
 
         // Then
-        actual.ShouldBe(new []{ "C", "dd", "zz" });
+        actual.ShouldBe(new[] {"C", "dd", "zz"});
     }
-    
+
     [Fact]
     public void ShouldSkipDuplicates()
     {
@@ -67,7 +67,7 @@ public class FileExplorerTests
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("DOTNET_HOME")).Returns("DotNet");
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("PATH")).Returns(default(string));
         _fileSystem.Setup(i => i.IsDirectoryExist("DotNet")).Returns(true);
-        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new []{ "ab", "C", "dd", "C" });
+        _fileSystem.Setup(i => i.EnumerateFileSystemEntries("DotNet", "*", SearchOption.TopDirectoryOnly)).Returns(new[] {"ab", "C", "dd", "C"});
         _fileSystem.Setup(i => i.IsFileExist("ab")).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist("C")).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist("dd")).Returns(true);
@@ -76,7 +76,7 @@ public class FileExplorerTests
         var actual = explorer.FindFiles("*", "Abc", "DOTNET_HOME").ToArray();
 
         // Then
-        actual.ShouldBe(new []{ "C", "dd" });
+        actual.ShouldBe(new[] {"C", "dd"});
     }
 
     private FileExplorer CreateInstance() =>

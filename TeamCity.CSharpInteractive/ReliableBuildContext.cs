@@ -6,7 +6,7 @@ using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using Pure.DI;
 
-internal class ReliableBuildContext: IBuildContext
+internal class ReliableBuildContext : IBuildContext
 {
     private readonly ITeamCitySettings _teamCitySettings;
     private readonly IFileSystem _fileSystem;
@@ -43,7 +43,7 @@ internal class ReliableBuildContext: IBuildContext
 
     public IBuildResult Create(IStartInfo startInfo, int? exitCode)
     {
-        var items = 
+        var items =
             from source in _sources
             let indicesFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key)
             where _fileSystem.IsFileExist(indicesFile)
@@ -57,7 +57,7 @@ internal class ReliableBuildContext: IBuildContext
         {
             _baseBuildContext.ProcessMessage(output, message);
         }
-            
+
         return _baseBuildContext.Create(startInfo, exitCode);
     }
 }

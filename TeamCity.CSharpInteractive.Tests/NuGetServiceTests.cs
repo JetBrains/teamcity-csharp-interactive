@@ -7,8 +7,8 @@ public class NuGetServiceTests
 {
     private static readonly NuGetPackage NuGetPackage1 = new("Abc", new Version(1, 2, 3), new NuGetVersion(1, 2, 3), "package", "AbcPath", "111222", Array.Empty<string>(), false, false);
     private static readonly NuGetPackage NuGetPackage2 = new("Abc.Contracts", new Version(1, 2, 3), new NuGetVersion(3, 2, 1), "package", "AbcContractsPath", "111233", Array.Empty<string>(), false, false);
-    private static readonly IEnumerable<string> Sources = new []{"src1", "src2"};
-    private static readonly IEnumerable<string> FallBacks = new []{"fb1", "fb2"};
+    private static readonly IEnumerable<string> Sources = new[] {"src1", "src2"};
+    private static readonly IEnumerable<string> FallBacks = new[] {"fb1", "fb2"};
 
     private readonly Mock<ILog<NuGetService>> _log;
     private readonly Mock<IFileSystem> _fileSystem;
@@ -40,9 +40,9 @@ public class NuGetServiceTests
 
     public static IEnumerable<object?[]> Data => new List<object?[]>
     {
-        new object?[] { "myPackages", false, Path.Combine("WD", "myPackages") },
-        new object?[] { "myPackages", true, "myPackages" },
-        new object?[] { default, true, "defaultPackagesPath" }
+        new object?[] {"myPackages", false, Path.Combine("WD", "myPackages")},
+        new object?[] {"myPackages", true, "myPackages"},
+        new object?[] {default, true, "defaultPackagesPath"}
     };
 
     [Theory]
@@ -54,7 +54,7 @@ public class NuGetServiceTests
         var nuGet = CreateInstance();
         _nugetEnvironment.SetupGet(i => i.PackagesPath).Returns("defaultPackagesPath");
         _fileSystem.Setup(i => i.IsPathRooted(It.IsAny<string>())).Returns(isPathRooted);
-        _nugetAssetsReader.Setup(i => i.ReadPackages(expectedNuGtePackagesDir, projectAssetsJson)).Returns(new [] {NuGetPackage1, NuGetPackage2});
+        _nugetAssetsReader.Setup(i => i.ReadPackages(expectedNuGtePackagesDir, projectAssetsJson)).Returns(new[] {NuGetPackage1, NuGetPackage2});
         _nugetRestoreService.Setup(i => i.TryRestore(It.IsAny<NuGetRestore>(), out projectAssetsJson)).Returns(true);
 
         // When
@@ -69,8 +69,8 @@ public class NuGetServiceTests
                 .WithTargetFrameworkMoniker(".NETCoreApp,Version=v3.1")
                 .WithPackagesPath(expectedNuGtePackagesDir),
             out projectAssetsJson));
-            
-        packages.ShouldBe(new []{NuGetPackage1, NuGetPackage2});
+
+        packages.ShouldBe(new[] {NuGetPackage1, NuGetPackage2});
         _trackToken.Verify(i => i.Dispose());
     }
 

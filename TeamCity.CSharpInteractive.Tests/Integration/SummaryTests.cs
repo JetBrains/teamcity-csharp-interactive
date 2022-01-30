@@ -22,7 +22,7 @@ public class SummaryTests
         result.StdOut.Contains("StdErr").ShouldBeFalse(result.ToString());
         result.StdErr.Contains("StdErr").ShouldBeTrue(result.ToString());
     }
-    
+
     [Fact]
     public void ShouldInterpretAsFailedWhenError()
     {

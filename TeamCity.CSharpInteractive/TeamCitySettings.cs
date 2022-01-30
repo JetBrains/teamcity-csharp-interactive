@@ -18,7 +18,7 @@ internal class TeamCitySettings : ITeamCitySettings
         IEnvironment environment)
     {
         _hostEnvironment = hostEnvironment;
-        _isUnderTeamCity = new Lazy<bool>(() => 
+        _isUnderTeamCity = new Lazy<bool>(() =>
             !string.IsNullOrWhiteSpace(_hostEnvironment.GetEnvironmentVariable(ProjectNameVariableName))
             || !string.IsNullOrWhiteSpace(_hostEnvironment.GetEnvironmentVariable(VersionVariableName)));
 
@@ -27,7 +27,7 @@ internal class TeamCitySettings : ITeamCitySettings
             var flowId = _hostEnvironment.GetEnvironmentVariable(FlowIdEnvironmentVariableName);
             return string.IsNullOrWhiteSpace(flowId) ? DefaultFlowId : flowId;
         });
-            
+
         _serviceMessagesPath = new Lazy<string>(() =>
         {
             var serviceMessagesPath = _hostEnvironment.GetEnvironmentVariable(ServiceMessagesPathEnvironmentVariableName);
@@ -36,7 +36,7 @@ internal class TeamCitySettings : ITeamCitySettings
     }
 
     public bool IsUnderTeamCity => _isUnderTeamCity.Value;
-        
+
     public string Version => (_hostEnvironment.GetEnvironmentVariable(VersionVariableName) ?? string.Empty).Trim();
 
     public string FlowId => _flowId.Value;

@@ -5,7 +5,7 @@ namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using HostApi;
 
-public class HostProperty: ScenarioHostService
+public class HostProperty : ScenarioHostService
 {
     [Fact]
     public void Run()

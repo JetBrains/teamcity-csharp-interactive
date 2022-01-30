@@ -18,7 +18,7 @@ internal class ConsoleSource : ICodeSource, IEnumerator<string?>
     public IEnumerator<string?> GetEnumerator() => this;
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        
+
     public string? Current { get; private set; } = string.Empty;
 
     object? IEnumerator.Current => Current;
@@ -33,7 +33,7 @@ internal class ConsoleSource : ICodeSource, IEnumerator<string?>
         {
             Current = null;
         }
-            
+
         return true;
     }
 

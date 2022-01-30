@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 
 [ExcludeFromCodeCoverage]
-internal class ExitManager: IActive
+internal class ExitManager : IActive
 {
     private readonly ISettings _settings;
     private readonly CancellationTokenSource _cancellationTokenSource;

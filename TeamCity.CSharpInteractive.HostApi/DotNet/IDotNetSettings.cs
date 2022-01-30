@@ -4,12 +4,12 @@ namespace HostApi.DotNet;
 internal interface IDotNetSettings
 {
     bool LoggersAreRequired { get; }
-        
+
     string DotNetExecutablePath { get; }
 
-    string DotNetMSBuildLoggerDirectory  { get; }
-    
-    string DotNetVSTestLoggerDirectory  { get; }
+    string DotNetMSBuildLoggerDirectory { get; }
 
-    string TeamCityMessagesPath  { get; }
+    string DotNetVSTestLoggerDirectory { get; }
+
+    string TeamCityMessagesPath { get; }
 }

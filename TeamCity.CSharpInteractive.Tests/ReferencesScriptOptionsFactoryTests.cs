@@ -18,7 +18,7 @@ public class ReferencesScriptOptionsFactoryTests
 
         // Then
     }
-    
+
     [Fact]
     public void ShouldRegisterDuplicatedAssembly()
     {
@@ -32,7 +32,7 @@ public class ReferencesScriptOptionsFactoryTests
 
         // Then
     }
-    
+
     [Fact]
     public void ShouldCreateOptions()
     {

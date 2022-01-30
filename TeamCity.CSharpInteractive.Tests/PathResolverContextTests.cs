@@ -19,7 +19,7 @@ public class PathResolverContextTests
         // Then
         resolvedPath.ShouldBe("Abc");
     }
-    
+
     [Fact]
     public void ShouldUseRegisteredResolver()
     {
@@ -35,7 +35,7 @@ public class PathResolverContextTests
         // Then
         resolvedPath.ShouldBe("XyzAbc");
     }
-    
+
     [Fact]
     public void ShouldReleaseRegisteredResolver()
     {
@@ -52,7 +52,7 @@ public class PathResolverContextTests
         // Then
         resolvedPath.ShouldBe("Abc");
     }
-    
+
     [Fact]
     public void ShouldPassNextResolver()
     {

@@ -14,7 +14,7 @@ internal class FileSystem : IFileSystem
         {
             Directory.CreateDirectory(path);
         }
-            
+
         File.AppendAllLines(file, lines);
     }
 }

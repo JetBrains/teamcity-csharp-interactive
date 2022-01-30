@@ -20,7 +20,7 @@ internal class Log<T> : ILog<T>
         _stdOut = stdOut;
         _statistics = statistics;
     }
-        
+
     public void Error(ErrorId id, params Text[] error)
     {
         if (!error.Any())
@@ -31,7 +31,7 @@ internal class Log<T> : ILog<T>
         _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
         _stdOut.WriteLine(GetMessage(error, Color.Error));
     }
-        
+
     public void Warning(params Text[] warning)
     {
         if (!warning.Any())
@@ -57,7 +57,7 @@ internal class Log<T> : ILog<T>
         if (_settings.VerbosityLevel >= VerbosityLevel.Diagnostic)
         {
             origin = string.IsNullOrWhiteSpace(origin) ? typeof(T).Name : origin.Trim();
-            _stdOut.WriteLine(GetMessage(new Text($"{origin, -40}") + traceMessagesFactory(), Color.Trace));
+            _stdOut.WriteLine(GetMessage(new Text($"{origin,-40}") + traceMessagesFactory(), Color.Trace));
         }
     }
 

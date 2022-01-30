@@ -1,5 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
+using System;
+
 public class CodeSourceCommandFactoryTests
 {
     private const string SourceName = "Abc";
@@ -21,16 +23,16 @@ public class CodeSourceCommandFactoryTests
         _replCommandFactory1.Setup(i => i.Create(It.IsAny<string>())).Returns(Enumerable.Empty<ICommand>());
         _replCommandFactory1.SetupGet(i => i.Order).Returns(1);
         _replCommandFactory2 = new Mock<ICommandFactory<string>>();
-        _replCommandFactory2.Setup(i => i.Create("#help")).Returns(new [] {HelpCommand.Shared });
+        _replCommandFactory2.Setup(i => i.Create("#help")).Returns(new[] {HelpCommand.Shared});
         _replCommandFactory2.SetupGet(i => i.Order).Returns(2);
         _scriptCommandFactory = new Mock<ICommandFactory<ScriptCommand>>();
-        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + System.Environment.NewLine, false))).Returns(new[] {ScriptCommand11, ScriptCommand12});
-        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code2" + System.Environment.NewLine, false))).Returns(new[] {ScriptCommand2});
-        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "#code3" + System.Environment.NewLine, false))).Returns(new[] {ScriptCommand3});
-        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + System.Environment.NewLine + "code2" + System.Environment.NewLine, false))).Returns(new[] {ScriptCommand4});
+        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine, false))).Returns(new[] {ScriptCommand11, ScriptCommand12});
+        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code2" + Environment.NewLine, false))).Returns(new[] {ScriptCommand2});
+        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "#code3" + Environment.NewLine, false))).Returns(new[] {ScriptCommand3});
+        _scriptCommandFactory.Setup(i => i.Create(new ScriptCommand(SourceName, "code1" + Environment.NewLine + "code2" + Environment.NewLine, false))).Returns(new[] {ScriptCommand4});
         _codeSource = new Mock<ICodeSource>();
     }
-        
+
     [Theory]
     [MemberData(nameof(Data))]
     internal void ShouldCreateCodeSource(IEnumerable<string> lines, ICommand[] expectedCommands)

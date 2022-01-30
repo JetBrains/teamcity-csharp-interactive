@@ -1,7 +1,6 @@
-﻿using JetBrains.TeamCity.ServiceMessages.Write.Special;
+﻿using HostApi;
+using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
-using HostApi;
-
 const string packageId = "TeamCity.CSharpInteractive";
 const string toolPackageId = "TeamCity.csi";
 const string templatesPackageId = "TeamCity.CSharpInteractive.Templates";
@@ -25,7 +24,7 @@ if (!dockerLinuxTests)
 }
 
 var currentDir = Environment.CurrentDirectory;
-const string solutionFile = "TeamCity.CSharpInteractive.sln"; 
+const string solutionFile = "TeamCity.CSharpInteractive.sln";
 if (!File.Exists(solutionFile))
 {
     Error($"Cannot find the solution \"{solutionFile}\". Current directory is \"{currentDir}\".");
@@ -45,7 +44,7 @@ NuGetVersion GetNextVersion(NuGetRestore settings) =>
         .DefaultIfEmpty(string.IsNullOrWhiteSpace(Props["version"]) ? new NuGetVersion(1, 0, 0, "dev") : new NuGetVersion(Props["version"]))
         .Max()!;
 
-var nextToolAndPackageVersion = new []
+var nextToolAndPackageVersion = new[]
 {
     GetNextVersion(new NuGetRestore(toolPackageId).WithPackageType(NuGetPackageType.Tool)),
     GetNextVersion(new NuGetRestore(packageId))
@@ -57,7 +56,7 @@ var nextTemplateVersion = GetNextVersion(new NuGetRestore(templatesPackageId));
 
 WriteLine($"Template version: {nextTemplateVersion}");
 
-var buildProps = new[] { ("version", nextToolAndPackageVersion.ToString()) };
+var buildProps = new[] {("version", nextToolAndPackageVersion.ToString())};
 
 var runner = GetService<IBuildRunner>();
 
@@ -65,14 +64,14 @@ var clean = new DotNetClean()
     .WithProject(solutionFile)
     .WithConfiguration(configuration);
 
-if(runner.Run(clean).ExitCode != 0) return 1;
+if (runner.Run(clean).ExitCode != 0) return 1;
 
 var build = new DotNetBuild()
     .WithProject(solutionFile)
     .WithConfiguration(configuration)
     .WithProps(buildProps);
 
-if(runner.Run(build).ExitCode != 0) return 1;
+if (runner.Run(build).ExitCode != 0) return 1;
 
 var test = new DotNetTest()
     .WithProject(solutionFile)
@@ -105,7 +104,7 @@ var pack = new DotNetPack()
     .WithProject(solutionFile)
     .WithConfiguration(configuration)
     .WithProps(buildProps);
-    
+
 if (runner.Run(pack).ExitCode != 0) return 1;
 
 var uninstallTool = new DotNetCustom("tool", "uninstall", toolPackageId, "-g");
@@ -114,7 +113,7 @@ if (runner.Run(uninstallTool).ExitCode != 0) return 1;
 var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", outputDir);
 if (runner.Run(installTool).ExitCode != 0) return 1;
 
-var runTool = new DotNetCustom( "csi", "/?");
+var runTool = new DotNetCustom("csi", "/?");
 if (runner.Run(runTool).ExitCode != 0) return 1;
 
 var uninstallTemplates = new DotNetCustom("new", "-u", templatesPackageId)
@@ -125,7 +124,7 @@ var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{ne
     .WithWorkingDirectory(templatesOutputDir);
 if (runner.Run(installTemplates).ExitCode != 0) return 1;
 
-var runTemplates = new DotNetCustom("new",  "build",  "--help");
+var runTemplates = new DotNetCustom("new", "build", "--help");
 if (runner.Run(runTemplates).ExitCode != 0) return 1;
 
 Info("Publishing artifacts.");

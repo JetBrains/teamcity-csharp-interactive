@@ -1,6 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using CSharpInteractive;
 using HostApi;
 
 public class BuildResultTests
@@ -13,15 +12,15 @@ public class BuildResultTests
     [InlineData("Abc", 3, 2, 0, 2, 3, 4, "\"Abc\" is finished with 2 errors, 2 failed, 3 ignored, 4 passed and 9 total tests.")]
     [InlineData("Abc", 4, 0, 0, 2, 3, 4, "\"Abc\" is finished with 2 failed, 3 ignored, 4 passed and 9 total tests.")]
     [InlineData("Abc", 5, 0, 0, 1, 0, 0, "\"Abc\" is finished with 1 failed and 1 total test.")]
-    [InlineData("", 6 ,0, 0, 1, 0, 0, "Build is finished with 1 failed and 1 total test.")]
-    [InlineData("", null ,0, 0, 0, 0, 0, "Build is not finished.")]
-    [InlineData("Abc", null ,0, 0, 0, 0, 0, "\"Abc\" is not finished.")]
+    [InlineData("", 6, 0, 0, 1, 0, 0, "Build is finished with 1 failed and 1 total test.")]
+    [InlineData("", null, 0, 0, 0, 0, 0, "Build is not finished.")]
+    [InlineData("Abc", null, 0, 0, 0, 0, 0, "\"Abc\" is not finished.")]
     public void ShouldSupportToString(string shortName, int? exitCode, int errors, int warnings, int failedTests, int ignoredTests, int passedTests, string expected)
     {
         // Given
         var startInfo = new Mock<IStartInfo>();
         startInfo.SetupGet(i => i.ShortName).Returns(shortName);
-        var result = 
+        var result =
             new BuildResult(startInfo.Object)
                 .WithExitCode(exitCode)
                 .WithErrors(Enumerable.Repeat(new BuildMessage(BuildMessageState.StdError), errors).ToArray())
@@ -31,7 +30,7 @@ public class BuildResultTests
                         .Concat(GetTests(TestState.Ignored, ignoredTests))
                         .Concat(GetTests(TestState.Passed, passedTests))
                         .ToArray());
-        
+
         // When
         var actual = result.ToString();
 

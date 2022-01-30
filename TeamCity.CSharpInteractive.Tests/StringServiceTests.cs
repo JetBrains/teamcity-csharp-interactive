@@ -16,7 +16,7 @@ public class StringServiceTests
     {
         // Given
         var stringService = new StringService();
-            
+
         // When
         var actualResult = stringService.TrimAndUnquote(text);
 

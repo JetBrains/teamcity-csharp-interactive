@@ -1,6 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using CSharpInteractive;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Write;
@@ -12,7 +11,7 @@ public class ReliableBuildContextTests
     private readonly Mock<IMessagesReader> _messagesReader = new();
     private readonly Mock<IBuildContext> _baseBuildResult = new();
     private readonly Mock<IStartInfo> _startInfo = new();
-    
+
     [Fact]
     public void ShouldProcessMessageWithoutSourceByBaseImplementation()
     {
@@ -40,29 +39,29 @@ public class ReliableBuildContextTests
         _baseBuildResult.Setup(i => i.ProcessMessage(output, It.IsAny<IServiceMessage>())).Returns(messages);
         _baseBuildResult.Setup(i => i.Create(_startInfo.Object, 33)).Returns(buildResult);
         _teamCitySettings.SetupGet(i => i.ServiceMessagesPath).Returns("Messages");
-        
-        var message1 = new ServiceMessage("some message") { { "source", "Abc" }};
+
+        var message1 = new ServiceMessage("some message") {{"source", "Abc"}};
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Abc"))).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Abc.msg"))).Returns(true);
         var msg1 = new ServiceMessage("1");
         var msg11 = new ServiceMessage("11");
-        _messagesReader.Setup(i => i.Read(Path.Combine("Messages", "Abc"), Path.Combine("Messages", "Abc.msg"))).Returns(new [] { msg1, msg11 });
+        _messagesReader.Setup(i => i.Read(Path.Combine("Messages", "Abc"), Path.Combine("Messages", "Abc.msg"))).Returns(new[] {msg1, msg11});
 
-        var message2 = new ServiceMessage("some message") { { "source", "Xyz" }};
+        var message2 = new ServiceMessage("some message") {{"source", "Xyz"}};
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Xyz"))).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Xyz.msg"))).Returns(true);
         var msg2 = new ServiceMessage("2");
-        _messagesReader.Setup(i => i.Read(Path.Combine("Messages", "Xyz"), Path.Combine("Messages", "Xyz.msg"))).Returns(new [] { msg2 });
-        
-        var message3 = new ServiceMessage("some message") { { "source", "Fff" }};
+        _messagesReader.Setup(i => i.Read(Path.Combine("Messages", "Xyz"), Path.Combine("Messages", "Xyz.msg"))).Returns(new[] {msg2});
+
+        var message3 = new ServiceMessage("some message") {{"source", "Fff"}};
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Fff"))).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Fff.msg"))).Returns(true);
-        
-        var message4 = new ServiceMessage("some message") { { "source", "Bbb" }};
+
+        var message4 = new ServiceMessage("some message") {{"source", "Bbb"}};
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Bbb"))).Returns(true);
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Bbb.msg"))).Returns(false);
-        
-        var message5 = new ServiceMessage("some message") { { "source", "Ccc" }};
+
+        var message5 = new ServiceMessage("some message") {{"source", "Ccc"}};
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Ccc"))).Returns(false);
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Ccc.msg"))).Returns(false);
 
@@ -73,7 +72,7 @@ public class ReliableBuildContextTests
         result.ProcessMessage(output, message2).ShouldBeEmpty();
         result.ProcessMessage(output, message5).ShouldBeEmpty();
         var actualBuildResult = result.Create(_startInfo.Object, 33);
-        
+
         // Then
         actualBuildResult.ShouldBe(buildResult);
         _baseBuildResult.Verify(i => i.Create(_startInfo.Object, 33));

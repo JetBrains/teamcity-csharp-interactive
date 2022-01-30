@@ -6,15 +6,15 @@ using System.Diagnostics.CodeAnalysis;
 using NuGet.Common;
 
 [ExcludeFromCodeCoverage]
-internal class NuGetLogger: ILogger
+internal class NuGetLogger : ILogger
 {
     private readonly ILog<NuGetLogger> _log;
 
     public NuGetLogger(ILog<NuGetLogger> log) => _log = log;
 
-    public void LogDebug(string data) => _log.Trace(() => new []{new Text(data)}, "NuGet");
+    public void LogDebug(string data) => _log.Trace(() => new[] {new Text(data)}, "NuGet");
 
-    public void LogVerbose(string data) => _log.Trace(() => new []{new Text(data)}, "NuGet");
+    public void LogVerbose(string data) => _log.Trace(() => new[] {new Text(data)}, "NuGet");
 
     public void LogInformation(string data) => _log.Info(data);
 
@@ -24,7 +24,7 @@ internal class NuGetLogger: ILogger
 
     public void LogError(string data) => _log.Error(ErrorId.NuGet, data);
 
-    public void LogInformationSummary(string data) => _log.Trace(() => new []{new Text(data)}, "NuGet");
+    public void LogInformationSummary(string data) => _log.Trace(() => new[] {new Text(data)}, "NuGet");
 
     public void Log(LogLevel level, string data)
     {
@@ -33,23 +33,23 @@ internal class NuGetLogger: ILogger
             case LogLevel.Debug:
                 LogDebug(data);
                 break;
-                
+
             case LogLevel.Verbose:
                 LogVerbose(data);
                 break;
-                
+
             case LogLevel.Information:
                 LogInformation(data);
                 break;
-                
+
             case LogLevel.Minimal:
                 LogMinimal(data);
                 break;
-                
+
             case LogLevel.Warning:
                 LogWarning(data);
                 break;
-                
+
             case LogLevel.Error:
                 LogError(data);
                 break;

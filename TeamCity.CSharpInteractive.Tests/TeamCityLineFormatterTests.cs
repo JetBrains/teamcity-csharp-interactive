@@ -20,7 +20,7 @@ public class TeamCityLineFormatterTests
     {
         // Give
         var formatter = CreateInstance();
-            
+
         // When
         var actualLine = formatter.Format(line);
 
@@ -30,14 +30,14 @@ public class TeamCityLineFormatterTests
 
     public static IEnumerable<object?[]> Data => new List<object?[]>
     {
-        new object[] {new [] {new Text("Abc")}, "Abc"},
-        new object[] {new [] {new Text("Abc", Color.Error)}, "^[EmAbc"},
-        new object[] {new [] {new Text("Abc", Color.Error), new Text("Xyz", Color.Error)}, "^[EmAbcXyz"},
-        new object[] {new [] {new Text("1"), new Text("Abc", Color.Error), new Text("Xyz", Color.Error), new Text("2")}, "1^[EmAbcXyz^[Dm2"},
-        new object[] {new [] {new Text("", Color.Error)}, ""},
-        new object[] {new [] {new Text("   ", Color.Error)}, "   "}
+        new object[] {new[] {new Text("Abc")}, "Abc"},
+        new object[] {new[] {new Text("Abc", Color.Error)}, "^[EmAbc"},
+        new object[] {new[] {new Text("Abc", Color.Error), new Text("Xyz", Color.Error)}, "^[EmAbcXyz"},
+        new object[] {new[] {new Text("1"), new Text("Abc", Color.Error), new Text("Xyz", Color.Error), new Text("2")}, "1^[EmAbcXyz^[Dm2"},
+        new object[] {new[] {new Text("", Color.Error)}, ""},
+        new object[] {new[] {new Text("   ", Color.Error)}, "   "}
     };
 
     private TeamCityLineFormatter CreateInstance() =>
-        new(_colorTheme.Object) { EscapeSymbol = '^' };
+        new(_colorTheme.Object) {EscapeSymbol = '^'};
 }

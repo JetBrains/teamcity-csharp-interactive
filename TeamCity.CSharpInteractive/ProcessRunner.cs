@@ -3,10 +3,8 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
-internal class ProcessRunner: IProcessRunner
+internal class ProcessRunner : IProcessRunner
 {
     private readonly Func<IProcessManager> _processManagerFactory;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -74,7 +72,7 @@ internal class ProcessRunner: IProcessRunner
         {
             processManager.OnOutput += handler;
         }
-            
+
         var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
         // ReSharper disable once AccessToDisposedClosure
         processManager.OnExit += () => completionSource.TrySetResult(processManager.ExitCode);
@@ -86,7 +84,7 @@ internal class ProcessRunner: IProcessRunner
             processManager.Dispose();
             return new ProcessResult(ProcessState.Failed);
         }
-            
+
         monitor.Started(startInfo, processManager.Id);
         void Cancel()
         {
@@ -94,7 +92,7 @@ internal class ProcessRunner: IProcessRunner
             {
                 completionSource.TrySetCanceled(cancellationToken);
             }
-                
+
             processManager.Dispose();
             stopwatch.Stop();
             monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);

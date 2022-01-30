@@ -2,7 +2,7 @@
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
-public class WriteLine: ScenarioHostService
+public class WriteLine : ScenarioHostService
 {
     [Fact]
     public void Run()

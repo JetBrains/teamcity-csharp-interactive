@@ -12,7 +12,7 @@ public class CommandLineParserTests
     {
         // Given
         var parser = CreateInstance();
-        _fileSystem.Setup(i => i.ReadAllLines("rspFile")).Returns(new [] {"-S", "Src2", "/Source", "Src3"});
+        _fileSystem.Setup(i => i.ReadAllLines("rspFile")).Returns(new[] {"-S", "Src2", "/Source", "Src3"});
 
         // When
         var actualArguments = parser.Parse(arguments, defaultArgType);
@@ -20,7 +20,7 @@ public class CommandLineParserTests
         // Then
         actualArguments.ShouldBe(expectedArguments);
     }
-        
+
     public static IEnumerable<object?[]> Data => new List<object?[]>
     {
         // help
@@ -30,49 +30,49 @@ public class CommandLineParserTests
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         new object[]
         {
             new[] {"--help", "--version"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         new object[]
         {
             new[] {"--HelP", "--version"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         new object[]
         {
             new[] {"-h", "--version"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         new object[]
         {
             new[] {"/help", "--version"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         new object[]
         {
             new[] {"/h", "--version"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         new object[]
         {
             new[] {"/?", "--version"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
-            
+
         // version
         new object[]
         {
@@ -80,28 +80,28 @@ public class CommandLineParserTests
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
         },
-            
+
         new object[]
         {
             new[] {"--version", "-h"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
         },
-            
+
         new object[]
         {
             new[] {"--VerSion", "-h"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
         },
-            
+
         new object[]
         {
             new[] {"/version", "-h"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Version)}
         },
-            
+
         // nuget source
         new object[]
         {
@@ -129,7 +129,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src4")
             }
         },
-            
+
         // Script
         new object[]
         {
@@ -141,7 +141,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptFile, "scriptFile")
             }
         },
-            
+
         // Script with arguments
         new object[]
         {
@@ -155,7 +155,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg 2")
             }
         },
-        
+
         // Script with arguments when is not Tool
         new object[]
         {
@@ -169,7 +169,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Arg 2")
             }
         },
-        
+
         new object[]
         {
             new[] {"--", "--source", "Src1", "Abc", "-v", "Arg 2"},
@@ -210,7 +210,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src2")
             }
         },
-        
+
         // when Tool
         new object[]
         {
@@ -223,7 +223,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src2")
             }
         },
-            
+
         // script properties
         new object[]
         {
@@ -234,7 +234,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
             }
         },
-            
+
         new object[]
         {
             new[] {"--Property", "Key1=Val1"},
@@ -244,7 +244,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
             }
         },
-            
+
         new object[]
         {
             new[] {"/P", "Key1=Val1"},
@@ -254,7 +254,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
             }
         },
-            
+
         new object[]
         {
             new[] {"/property", "Key1=Val1"},
@@ -264,7 +264,7 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
             }
         },
-            
+
         new object[]
         {
             new[] {"-p", "Key1"},

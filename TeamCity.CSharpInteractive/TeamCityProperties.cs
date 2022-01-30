@@ -6,7 +6,7 @@ using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using Pure.DI;
 
-internal class TeamCityProperties: IProperties
+internal class TeamCityProperties : IProperties
 {
     private readonly IProperties _props;
     private readonly ITeamCityWriter _teamCityWriter;
@@ -18,7 +18,7 @@ internal class TeamCityProperties: IProperties
         _props = properties;
         _teamCityWriter = teamCityWriter;
     }
-        
+
     public int Count => _props.Count;
 
     public string this[string key]
@@ -34,6 +34,6 @@ internal class TeamCityProperties: IProperties
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _props.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_props).GetEnumerator();
-        
+
     public bool TryGetValue(string key, out string value) => _props.TryGetValue(key, out value);
 }

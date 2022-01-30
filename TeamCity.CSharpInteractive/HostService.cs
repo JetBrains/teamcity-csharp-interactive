@@ -25,7 +25,7 @@ internal class HostService : IHost
     public IHost Host => this;
 
     public IReadOnlyList<string> Args => _settings.ScriptArguments;
-        
+
     public IProperties Props { get; }
 
     public void WriteLine() => _stdOut.WriteLine();

@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using HostApi;
 
-internal class AddNuGetReferenceCommandRunner: ICommandRunner
+internal class AddNuGetReferenceCommandRunner : ICommandRunner
 {
     private readonly ILog<AddNuGetReferenceCommandRunner> _log;
     private readonly INuGetEnvironment _nugetEnvironment;
@@ -37,7 +37,7 @@ internal class AddNuGetReferenceCommandRunner: ICommandRunner
 
         var packageName = $"{addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.VersionRange}".Trim();
         var success = true;
-        _log.Info(new[] { new Text($"Restoring package {packageName}.", Color.Highlighted) });
+        _log.Info(new[] {new Text($"Restoring package {packageName}.", Color.Highlighted)});
         var restoreResult = _nugetRestoreService.TryRestore(
             new NuGetRestore(
                 addPackageReferenceCommand.PackageId,

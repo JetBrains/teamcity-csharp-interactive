@@ -48,7 +48,7 @@ internal class BuildContext : IBuildContext
             message = new BuildMessage(BuildMessageState.StdOut, default, output.Line);
         }
 
-        return new []{ message };
+        return new[] {message};
     }
 
     public IBuildResult Create(IStartInfo startInfo, int? exitCode) =>
@@ -80,25 +80,25 @@ internal class BuildContext : IBuildContext
     {
         var name = message.GetValue("name") ?? string.Empty;
         var flowId = message.GetValue("flowId") ?? string.Empty;
-        if(!_assemblies.TryGetValue(flowId, out var names))
+        if (!_assemblies.TryGetValue(flowId, out var names))
         {
             names = new LinkedList<string>();
             _assemblies.Add(flowId, names);
         }
-            
+
         names.AddLast(name);
         yield break;
     }
-        
+
     private IEnumerable<BuildMessage> OnTestSuiteFinished(IServiceMessage message)
     {
         var name = message.GetValue("name") ?? string.Empty;
         var flowId = message.GetValue("flowId") ?? string.Empty;
-        if(_assemblies.TryGetValue(flowId, out var names) && name.Length > 0)
+        if (_assemblies.TryGetValue(flowId, out var names) && name.Length > 0)
         {
             names.RemoveLast();
         }
-            
+
         yield break;
     }
 
@@ -145,7 +145,7 @@ internal class BuildContext : IBuildContext
                 string.Empty,
                 TimeSpan.Zero,
                 ctx.Output));
-            
+
         yield break;
     }
 
@@ -164,7 +164,7 @@ internal class BuildContext : IBuildContext
                 message.GetValue("details") ?? string.Empty,
                 TimeSpan.Zero,
                 ctx.Output));
-            
+
         yield break;
     }
 
@@ -189,7 +189,7 @@ internal class BuildContext : IBuildContext
                 case BuildMessageState.Warning:
                     _warnings.Add(buildMessage);
                     break;
-                    
+
                 case BuildMessageState.Failure:
                 case BuildMessageState.StdError:
                 // ReSharper disable once UnreachableSwitchCaseDueToIntegerAnalysis
@@ -210,7 +210,7 @@ internal class BuildContext : IBuildContext
         _errors.Add(buildMessage);
         yield return buildMessage;
     }
-        
+
     private TestContext GetTestContext(TestKey testKey, bool remove = false)
     {
         if (!_currentTests.TryGetValue(testKey, out var testContext))
@@ -249,10 +249,10 @@ internal class BuildContext : IBuildContext
         var name = message.GetValue("name") ?? string.Empty;
         return new TestKey(flowId, assemblyName, name);
     }
-        
+
     // ReSharper disable once NotAccessedPositionalProperty.Local
     private readonly record struct TestKey(string FlowId, string AssemblyName, string TestName);
-        
+
     private class TestContext
     {
         public readonly string Name;

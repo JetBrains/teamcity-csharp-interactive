@@ -16,7 +16,7 @@
         <SuppressDependenciesWhenPacking>True</SuppressDependenciesWhenPacking>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Remove="Microsoft.NETCore.App" />
+        <PackageReference Remove="Microsoft.NETCore.App"/>
         <Content Include="content\**">
             <PackagePath>content</PackagePath>
         </Content>

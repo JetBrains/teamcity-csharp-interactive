@@ -25,6 +25,6 @@ internal class ConsoleInOut : IStdOut, IStdErr
     public void Write(params Text[] text) => _console.WriteToOut(text.SelectMany(i => _textToColorStrings.Convert(i.Value, _colorTheme.GetConsoleColor(i.Color))).ToArray());
 
     void IStdOut.WriteLine(params Text[] line) => Write(line + Text.NewLine);
-        
+
     private void WriteStdErr(params Text[] text) => _console.WriteToErr(text.Select(i => i.Value).ToArray());
 }

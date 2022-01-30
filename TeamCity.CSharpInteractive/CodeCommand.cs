@@ -3,12 +3,12 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 
 [ExcludeFromCodeCoverage]
-internal class CodeCommand: ICommand
+internal class CodeCommand : ICommand
 {
     public CodeCommand(bool isInternal = false) => Internal = isInternal;
 
     public string Name => "Code";
-        
+
     public bool Internal { get; }
 
     public override string ToString() => Name;
@@ -18,7 +18,7 @@ internal class CodeCommand: ICommand
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        var other = (CodeCommand) obj;
+        var other = (CodeCommand)obj;
         return Internal == other.Internal;
     }
 

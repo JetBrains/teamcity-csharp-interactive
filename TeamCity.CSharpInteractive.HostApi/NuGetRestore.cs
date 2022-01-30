@@ -1,11 +1,14 @@
 namespace HostApi;
 
-[Immutype.Target]
+using Immutype;
+using NuGet.Versioning;
+
+[Target]
 public record NuGetRestore(
     string PackageId,
     IEnumerable<string> Sources,
     IEnumerable<string> FallbackFolders,
-    NuGet.Versioning.VersionRange? VersionRange = default,
+    VersionRange? VersionRange = default,
     string? TargetFrameworkMoniker = default,
     string? PackagesPath = default,
     NuGetPackageType? PackageType = default,

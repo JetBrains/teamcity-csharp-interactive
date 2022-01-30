@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Text;
 
-internal class CodeSourceCommandFactory: ICommandFactory<ICodeSource>
+internal class CodeSourceCommandFactory : ICommandFactory<ICodeSource>
 {
     private readonly ILog<CodeSourceCommandFactory> _log;
     private readonly ICommandFactory<string>[] _replCommandFactories;
@@ -26,7 +26,7 @@ internal class CodeSourceCommandFactory: ICommandFactory<ICodeSource>
     {
         var sb = new StringBuilder();
         using var codeEnumerator = codeSource.GetEnumerator();
-        while(codeEnumerator.MoveNext())
+        while (codeEnumerator.MoveNext())
         {
             var code = codeEnumerator.Current;
             if (code == null)
@@ -38,18 +38,18 @@ internal class CodeSourceCommandFactory: ICommandFactory<ICodeSource>
 
                 continue;
             }
-                
+
             foreach (var line in code.Split(System.Environment.NewLine))
             {
                 var trimmedLine = line.Trim();
-                _log.Trace(() => new []{new Text($"Line: \"{trimmedLine}\".")});
+                _log.Trace(() => new[] {new Text($"Line: \"{trimmedLine}\".")});
                 if (trimmedLine.StartsWith("#"))
                 {
                     var hasReplCommand = false;
                     foreach (var replCommandFactory in _replCommandFactories)
                     {
                         var commands = replCommandFactory.Create(trimmedLine).ToArray();
-                        _log.Trace(() => new []{new Text($"REPL commands count: {commands.Length}.")});
+                        _log.Trace(() => new[] {new Text($"REPL commands count: {commands.Length}.")});
                         if (!commands.Any())
                         {
                             continue;

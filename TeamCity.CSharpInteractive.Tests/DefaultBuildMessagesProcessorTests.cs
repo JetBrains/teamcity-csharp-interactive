@@ -1,6 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using CSharpInteractive;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 
@@ -33,7 +32,7 @@ public class DefaultBuildMessagesProcessorTests
         _processOutputWriter.Verify(i => i.Write(output));
         nextHandler.Verify(i => i(It.IsAny<BuildMessage>()), Times.Never);
     }
-    
+
     [Fact]
     public void ShouldProcessBuildMessageWhenIsNotUnderTeamCity()
     {
@@ -47,7 +46,7 @@ public class DefaultBuildMessagesProcessorTests
         var processor = CreateInstance();
 
         // When
-        processor.ProcessMessages(output, new[] { msg1, msg2 }, nextHandler.Object);
+        processor.ProcessMessages(output, new[] {msg1, msg2}, nextHandler.Object);
 
         // Then
         _buildMessageLogWriter.Verify(i => i.Write(msg1));
@@ -55,7 +54,7 @@ public class DefaultBuildMessagesProcessorTests
         _processOutputWriter.Verify(i => i.Write(It.IsAny<Output>()), Times.Never);
         nextHandler.Verify(i => i(It.IsAny<BuildMessage>()), Times.Never);
     }
-    
+
     [Fact]
     public void ShouldProcessBuildMessageWhenHasNotTeamCityServiceMessages()
     {
@@ -69,7 +68,7 @@ public class DefaultBuildMessagesProcessorTests
         var processor = CreateInstance();
 
         // When
-        processor.ProcessMessages(output, new[] { msg1, msg2 }, nextHandler.Object);
+        processor.ProcessMessages(output, new[] {msg1, msg2}, nextHandler.Object);
 
         // Then
         _buildMessageLogWriter.Verify(i => i.Write(msg1));

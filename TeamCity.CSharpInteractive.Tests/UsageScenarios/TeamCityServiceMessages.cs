@@ -2,14 +2,15 @@
 // ReSharper disable ConvertToUsingDeclaration
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
+using System;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-public class TeamCityServiceMessages: ScenarioHostService
+public class TeamCityServiceMessages : ScenarioHostService
 {
     [SkippableFact]
     public void Run()
     {
-        Skip.IfNot(string.IsNullOrWhiteSpace(System.Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
+        Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
         // $visible=true
         // $tag=3 TeamCity Service Messages API
@@ -40,7 +41,7 @@ public class TeamCityServiceMessages: ScenarioHostService
                 test.WriteImage("TestsResults/Test1Screenshot.jpg", "Screenshot");
                 test.WriteDuration(TimeSpan.FromMilliseconds(10));
             }
-                
+
             using (var test = tests.OpenTest("Test2"))
             {
                 test.WriteIgnored("Some reason");

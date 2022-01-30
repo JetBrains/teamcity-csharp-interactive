@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using HostApi;
 using HostApi.Cmd;
 
-internal class PathResolverContext: IPathResolverContext, IVirtualContext
+internal class PathResolverContext : IPathResolverContext, IVirtualContext
 {
     private readonly IHost _host;
     private IPathResolver _currentResolver = EmptyResolver.Shared;
@@ -29,7 +29,7 @@ internal class PathResolverContext: IPathResolverContext, IVirtualContext
     private class EmptyResolver : IPathResolver
     {
         public static readonly IPathResolver Shared = new EmptyResolver();
-            
+
         public string Resolve(IHost host, string path, IPathResolver nextResolver) => path;
     }
 }

@@ -1,6 +1,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using HostApi;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 internal record ProcessInfo(IStartInfo StartInfo, IProcessMonitor Monitor, Action<Output>? Handler = default);

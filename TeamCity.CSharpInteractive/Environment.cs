@@ -43,7 +43,7 @@ internal class Environment : IEnvironment, ITraceSource, IScriptContext
                     SpecialFolder.Working => GetWorkingDirectory(),
                     _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                 };
-                
+
             default:
                 throw new ArgumentOutOfRangeException(nameof(specialFolder));
         }

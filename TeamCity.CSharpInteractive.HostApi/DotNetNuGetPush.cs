@@ -3,8 +3,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DotNetNuGetPush(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
@@ -27,7 +28,7 @@ public record DotNetNuGetPush(
     public DotNetNuGetPush(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>(), Enumerable.Empty<string>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName("dotnet nuget push".GetShortName(ShortName, Package))

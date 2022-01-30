@@ -4,8 +4,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DotNetPublish(
     IEnumerable<(string name, string value)> Props,
     IEnumerable<string> Args,
@@ -34,7 +35,7 @@ public record DotNetPublish(
     public DotNetPublish(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName("dotnet publish".GetShortName(ShortName, Project))

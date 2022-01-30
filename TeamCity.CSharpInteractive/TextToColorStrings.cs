@@ -25,7 +25,7 @@ internal class TextToColorStrings : ITextToColorStrings
         {96, ConsoleColor.Cyan},
         {97, ConsoleColor.White}
     };
-        
+
     public IEnumerable<(ConsoleColor? color, string text)> Convert(string text, ConsoleColor? defaultColor)
     {
         var curColor = defaultColor;
@@ -78,7 +78,7 @@ internal class TextToColorStrings : ITextToColorStrings
                         isColor = false;
                         break;
                     }
-                        
+
                     if (isColor && sb.Length > 0)
                     {
                         yield return (color, sb.ToString());
@@ -88,7 +88,7 @@ internal class TextToColorStrings : ITextToColorStrings
 
                     sb.Append(ch);
                     break;
-                    
+
                 case '0':
                 case '1':
                 case '2':
@@ -102,7 +102,7 @@ internal class TextToColorStrings : ITextToColorStrings
                 case ';':
                     sb.Append(ch);
                     break;
-                    
+
                 case 'm':
                     if (isColor && sb.Length > 1)
                     {
@@ -124,7 +124,7 @@ internal class TextToColorStrings : ITextToColorStrings
                     break;
             }
         }
-            
+
         yield return (color, sb.ToString());
     }
 }

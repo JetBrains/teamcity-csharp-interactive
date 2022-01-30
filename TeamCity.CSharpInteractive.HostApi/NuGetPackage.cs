@@ -3,11 +3,14 @@
 // ReSharper disable NotAccessedPositionalProperty.Global
 namespace HostApi;
 
-[Immutype.Target]
+using Immutype;
+using NuGet.Versioning;
+
+[Target]
 public readonly record struct NuGetPackage(
     string Name,
     Version Version,
-    NuGet.Versioning.NuGetVersion NuGetVersion,
+    NuGetVersion NuGetVersion,
     string Type,
     string Path,
     string Sha512,

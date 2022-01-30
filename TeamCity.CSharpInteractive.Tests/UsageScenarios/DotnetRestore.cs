@@ -8,7 +8,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class DotNetRestore: ScenarioHostService
+public class DotNetRestore : ScenarioHostService
 {
     [Fact]
     public void Run()
@@ -23,7 +23,7 @@ public class DotNetRestore: ScenarioHostService
 
         // Resolves a build service
         var buildRunner = GetService<IBuildRunner>();
-            
+
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
         var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
         result.ExitCode.ShouldBe(0);

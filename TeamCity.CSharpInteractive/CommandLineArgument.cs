@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 [ExcludeFromCodeCoverage]
-internal readonly record struct CommandLineArgument(CommandLineArgumentType ArgumentType, string Value = "", string Key= "")
+internal readonly record struct CommandLineArgument(CommandLineArgumentType ArgumentType, string Value = "", string Key = "")
 {
     public override string ToString()
     {
@@ -18,7 +18,7 @@ internal readonly record struct CommandLineArgument(CommandLineArgumentType Argu
         {
             sb.Append($": {Value}");
         }
-            
+
         return sb.ToString();
     }
 }

@@ -22,7 +22,7 @@ public class HostServiceTests
         // Then
         host.Args.ShouldBe(args);
     }
-    
+
     [Fact]
     public void ShouldProvideHost()
     {
@@ -34,7 +34,7 @@ public class HostServiceTests
         // Then
         host.Host.ShouldBe(host);
     }
-    
+
     [Fact]
     public void ShouldProvideProps()
     {
@@ -46,7 +46,7 @@ public class HostServiceTests
         // Then
         host.Props.ShouldBe(_properties.Object);
     }
-    
+
     [Fact]
     public void ShouldWritEmptyLine()
     {
@@ -59,7 +59,7 @@ public class HostServiceTests
         // Then
         _stdOut.Verify(i => i.WriteLine());
     }
-    
+
     [Fact]
     public void ShouldWritLine()
     {
@@ -72,7 +72,7 @@ public class HostServiceTests
         // Then
         _stdOut.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.Length == 1 && text[0].Value == "Out" && text[0].Color == Color.Default)));
     }
-    
+
     [Fact]
     public void ShouldSendError()
     {
@@ -85,7 +85,7 @@ public class HostServiceTests
         // Then
         _log.Verify(i => i.Error(new ErrorId("Id"), It.Is<Text[]>(text => text.Length == 1 && text[0].Value == "Err" && text[0].Color == Color.Default)));
     }
-    
+
     [Fact]
     public void ShouldSendWarning()
     {
@@ -98,7 +98,7 @@ public class HostServiceTests
         // Then
         _log.Verify(i => i.Warning(It.Is<Text[]>(text => text.Length == 1 && text[0].Value == "Warn" && text[0].Color == Color.Default)));
     }
-    
+
     [Fact]
     public void ShouldSendInfo()
     {
@@ -111,7 +111,7 @@ public class HostServiceTests
         // Then
         _log.Verify(i => i.Info(It.Is<Text[]>(text => text.Length == 1 && text[0].Value == "Info" && text[0].Color == Color.Default)));
     }
-    
+
     [Fact]
     public void ShouldSendTrace()
     {
@@ -124,7 +124,7 @@ public class HostServiceTests
         // Then
         _log.Verify(i => i.Trace(It.Is<Func<Text[]>>(textProvider => CheckTrace(textProvider())), string.Empty));
     }
-    
+
     [Fact]
     public void ShouldGetServiceProvider()
     {
@@ -137,7 +137,7 @@ public class HostServiceTests
         // Then
         serviceProvider.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void ShouldProvideHostViaServiceProvider()
     {

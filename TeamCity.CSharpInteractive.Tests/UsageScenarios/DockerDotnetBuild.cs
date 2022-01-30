@@ -3,13 +3,14 @@
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
 [Trait("Docker", "true")]
-public class DockerDotNetBuild: ScenarioHostService
+public class DockerDotNetBuild : ScenarioHostService
 {
     [Fact(Skip = "Linux Docker only")]
     [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped")]
@@ -34,8 +35,8 @@ public class DockerDotNetBuild: ScenarioHostService
             .WithImage("mcr.microsoft.com/dotnet/sdk")
             .WithPlatform("linux")
             .WithContainerWorkingDirectory("/MyProjects")
-            .AddVolumes((System.Environment.CurrentDirectory, "/MyProjects"));
-            
+            .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
+
         // Creates a new library project in a docker container
         var customCmd = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
         var result = buildRunner.Run(baseDockerCmd.WithCommandLine(customCmd));
@@ -43,8 +44,8 @@ public class DockerDotNetBuild: ScenarioHostService
 
         // Builds the library project in a docker container
         var buildCmd = new HostApi.DotNetBuild().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
-        result = buildRunner.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => {});
-            
+        result = buildRunner.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => { });
+
         // The "result" variable provides details about a build
         result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
         result.ExitCode.ShouldBe(0);

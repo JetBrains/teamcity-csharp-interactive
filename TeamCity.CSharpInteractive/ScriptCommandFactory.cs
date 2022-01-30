@@ -28,13 +28,13 @@ internal class ScriptCommandFactory : ICommandFactory<ScriptCommand>
         var script = _scriptBuilder.ToString();
         if (_scriptSubmissionAnalyzer.IsCompleteSubmission(script, ParseOptions))
         {
-            _log.Trace(() => new []{new Text("Completed submission")});
+            _log.Trace(() => new[] {new Text("Completed submission")});
             _scriptBuilder.Clear();
             yield return new ScriptCommand(scriptCommand.Name, script, scriptCommand.Internal);
             yield break;
         }
 
-        _log.Trace(() => new []{new Text("Incomplete submission")});
+        _log.Trace(() => new[] {new Text("Incomplete submission")});
         yield return new CodeCommand(scriptCommand.Internal);
     }
 }

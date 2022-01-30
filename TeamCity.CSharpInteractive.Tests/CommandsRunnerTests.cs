@@ -41,26 +41,26 @@ public class CommandsRunnerTests
     {
         new object[]
         {
-            new [] { HelpCommand.Shared },
-            new [] { new CommandResult(HelpCommand.Shared, true)}
+            new[] {HelpCommand.Shared},
+            new[] {new CommandResult(HelpCommand.Shared, true)}
         },
         new object[]
         {
-            new [] { ResetCommand.Shared },
-            new [] { new CommandResult(ResetCommand.Shared, false)}
+            new[] {ResetCommand.Shared},
+            new[] {new CommandResult(ResetCommand.Shared, false)}
         },
         new object[]
         {
-            new [] { new CodeCommand() },
-            new [] { new CommandResult(new CodeCommand(), default)}
+            new[] {new CodeCommand()},
+            new[] {new CommandResult(new CodeCommand(), default)}
         },
         new object[]
         {
-            new [] { new CodeCommand(), HelpCommand.Shared, ResetCommand.Shared},
-            new [] { new CommandResult(new CodeCommand(), default), new CommandResult(HelpCommand.Shared, true), new CommandResult(ResetCommand.Shared, false)}
+            new[] {new CodeCommand(), HelpCommand.Shared, ResetCommand.Shared},
+            new[] {new CommandResult(new CodeCommand(), default), new CommandResult(HelpCommand.Shared, true), new CommandResult(ResetCommand.Shared, false)}
         }
     };
 
-    private CommandsRunner CreateInstance() => 
-        new(new [] {_commandRunner1.Object, _commandRunner2.Object}, _statistics.Object);
+    private CommandsRunner CreateInstance() =>
+        new(new[] {_commandRunner1.Object, _commandRunner2.Object}, _statistics.Object);
 }

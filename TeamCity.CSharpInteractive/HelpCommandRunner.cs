@@ -1,7 +1,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-internal class HelpCommandRunner: ICommandRunner
+internal class HelpCommandRunner : ICommandRunner
 {
     private readonly IInfo _info;
 

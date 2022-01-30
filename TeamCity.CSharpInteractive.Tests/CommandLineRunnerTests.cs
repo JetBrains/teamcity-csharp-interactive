@@ -28,7 +28,7 @@ public class CommandLineRunnerTests
         // Then
         exitCode.ShouldBe(33);
     }
-    
+
     [Fact]
     public async Task ShouldRunProcessAsync()
     {

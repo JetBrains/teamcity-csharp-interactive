@@ -17,7 +17,7 @@ internal class StatisticsPresenter : IPresenter<IStatistics>
         {
             _log.Info(Text.Tab, new Text(error, Color.Error));
         }
-            
+
         foreach (var warning in statistics.Warnings)
         {
             _log.Info(Text.Tab, new Text(warning, Color.Warning));
@@ -27,12 +27,12 @@ internal class StatisticsPresenter : IPresenter<IStatistics>
         {
             _log.Info(new Text($"{statistics.Warnings.Count} Warning(s)"));
         }
-            
+
         if (statistics.Errors.Count > 0)
         {
             _log.Info(new Text($"{statistics.Errors.Count} Error(s)", Color.Error));
         }
-            
+
         _log.Info(new Text($"Time Elapsed {statistics.TimeElapsed:g}"));
     }
 }

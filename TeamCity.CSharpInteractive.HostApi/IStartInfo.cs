@@ -3,7 +3,7 @@ namespace HostApi;
 public interface IStartInfo
 {
     string ShortName { get; }
-        
+
     string ExecutablePath { get; }
 
     string WorkingDirectory { get; }

@@ -22,7 +22,7 @@ public class HelpTests
 
         // When
         var result = TestTool.Run(cmd);
-            
+
         // Then
         result.ExitCode.ShouldBe(0);
         result.StdErr.ShouldBeEmpty();

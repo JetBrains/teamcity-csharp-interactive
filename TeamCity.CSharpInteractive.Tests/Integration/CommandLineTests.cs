@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 using System.Diagnostics;
 using Core;
 using HostApi;
-using Composer = Composer;
+using Composer = CSharpInteractive.Composer;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -25,7 +25,7 @@ public class CommandLineTests
         events.Any(i => i.IsError).ShouldBeFalse();
         events.Any(i => !i.IsError && i.Line.Contains("Hello")).ShouldBeTrue();
     }
-        
+
     [Fact]
     public void ShouldRunWithEnvironmentVariable()
     {
@@ -43,7 +43,7 @@ public class CommandLineTests
         events.Any(i => i.IsError).ShouldBeFalse();
         events.Any(i => !i.IsError && i.Line.Contains("VAL=123")).ShouldBeTrue();
     }
-        
+
     [Fact]
     public void ShouldRunUsingTimeout()
     {
@@ -79,7 +79,7 @@ public class CommandLineTests
         events.Any(i => i.IsError).ShouldBeFalse();
         events.Any(i => !i.IsError && i.Line.Contains("Hello")).ShouldBeTrue();
     }
-        
+
     [Fact]
     public void ShouldRunAsyncUsingCancellationToken()
     {
@@ -93,7 +93,7 @@ public class CommandLineTests
             DotNetScript.Create("System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));"),
             _ => { },
             cancellationTokenSource.Token);
-            
+
         Thread.Sleep(100);
         cancellationTokenSource.Cancel();
         stopwatch.Stop();

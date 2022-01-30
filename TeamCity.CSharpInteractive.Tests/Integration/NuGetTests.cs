@@ -19,22 +19,22 @@ public class NuGetTests
 
         // When
         var nuget = Composer.ResolveINuGet();
-        var result = nuget.Restore(new NuGetRestore("IoC.Container").WithVersionRange(VersionRange.Parse( "1.3.6")).WithTargetFrameworkMoniker("net5.0").WithPackagesPath(tempPath)).ToList();
-            
+        var result = nuget.Restore(new NuGetRestore("IoC.Container").WithVersionRange(VersionRange.Parse("1.3.6")).WithTargetFrameworkMoniker("net5.0").WithPackagesPath(tempPath)).ToList();
+
         // Then
         result.Count.ShouldBe(1);
         result[0].Name.ShouldBe("IoC.Container");
     }
-        
+
     [Fact]
     public void ShouldSupportRestoreForDefaults()
     {
         // Given
-            
+
         // When
         var nuget = Composer.ResolveINuGet();
         var result = nuget.Restore(new NuGetRestore("IoC.Container")).ToList();
-            
+
         // Then
         result.Count.ShouldBeGreaterThan(0);
     }
@@ -49,10 +49,10 @@ public class NuGetTests
         var result = TestTool.Run(
             "using HostApi;"
             + $"GetService<INuGet>().Restore(\"IoC.Container\", \"1.3.6\", \"net5.0\", @\"{tempPath}\");");
-            
+
         // Then
         result.ExitCode.ShouldBe(0, result.ToString());
     }
-        
+
     private static string CreateTempDirectory() => Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()[..4]);
 }

@@ -3,8 +3,8 @@ namespace TeamCity.CSharpInteractive;
 
 internal class TestDisplayNameToFullyQualifiedNameConverter : ITestDisplayNameToFullyQualifiedNameConverter
 {
-    private static readonly string[] ArgsStartPrefix = { "(", "<" };
-        
+    private static readonly string[] ArgsStartPrefix = {"(", "<"};
+
     public string Convert(string displayName)
     {
         if (!displayName.TrimEnd().EndsWith(")"))

@@ -12,8 +12,8 @@ public class ProcessInFlowRunnerTests
     private readonly Mock<ITeamCityWriter> _blockWriter = new();
     private readonly Mock<IFlowContext> _flowContext = new();
     private readonly Mock<IProcessMonitor> _monitor = new();
-    private static readonly (string name, string value)[] InitialVars = { ("Var1", "Val 1") }; 
-    private static readonly (string name, string value)[] ModifiedVars = new (string name, string value)[]{ (TeamCitySettings.FlowIdEnvironmentVariableName, "FlowId123") }.Concat(InitialVars).ToArray();
+    private static readonly (string name, string value)[] InitialVars = {("Var1", "Val 1")};
+    private static readonly (string name, string value)[] ModifiedVars = new (string name, string value)[] {(TeamCitySettings.FlowIdEnvironmentVariableName, "FlowId123")}.Concat(InitialVars).ToArray();
     private static readonly ProcessResult ProcessResult = new(ProcessState.Finished, 33);
 
     public ProcessInFlowRunnerTests()
@@ -39,7 +39,7 @@ public class ProcessInFlowRunnerTests
         _blockWriter.Verify(i => i.Dispose());
         result.ShouldBe(ProcessResult);
     }
-    
+
     [Fact]
     public void ShouldRunWithoutFlowWhenNotUnderTeamCity()
     {
@@ -56,7 +56,7 @@ public class ProcessInFlowRunnerTests
         _blockWriter.Verify(i => i.Dispose(), Times.Never);
         result.ShouldBe(ProcessResult);
     }
-    
+
     [Fact]
     public async Task ShouldRunAsyncInBlock()
     {
@@ -75,7 +75,7 @@ public class ProcessInFlowRunnerTests
         _blockWriter.Verify(i => i.Dispose());
         result.ShouldBe(ProcessResult);
     }
-    
+
     [Fact]
     public async Task ShouldRunAsyncWithoutFlowWhenNotUnderTeamCity()
     {

@@ -3,8 +3,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record DotNetRestore(
     IEnumerable<(string name, string value)> Props,
     IEnumerable<string> Args,
@@ -33,7 +34,7 @@ public record DotNetRestore(
     public DotNetRestore(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName("dotnet restore".GetShortName(ShortName, Project))

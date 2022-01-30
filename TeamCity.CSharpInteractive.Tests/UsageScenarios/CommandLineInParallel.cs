@@ -3,17 +3,18 @@
 // ReSharper disable SuggestVarOrType_Elsewhere
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
+using System;
 using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class CommandLineInParallel: ScenarioHostService
+public class CommandLineInParallel : ScenarioHostService
 {
     [SkippableFact]
     public void Run()
     {
-        Skip.IfNot(System.Environment.OSVersion.Platform == PlatformID.Win32NT);
-        Skip.IfNot(string.IsNullOrWhiteSpace(System.Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
+        Skip.IfNot(Environment.OSVersion.Platform == PlatformID.Win32NT);
+        Skip.IfNot(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("TEAMCITY_VERSION")));
 
         // $visible=true
         // $tag=10 Command Line API
@@ -27,7 +28,7 @@ public class CommandLineInParallel: ScenarioHostService
         int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
         task.Wait();
         // }
-            
+
         task.Result.HasValue.ShouldBeTrue();
         exitCode.HasValue.ShouldBeTrue();
     }

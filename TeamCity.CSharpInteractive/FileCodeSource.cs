@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using System.Collections;
 
-internal class FileCodeSource: ICodeSource
+internal class FileCodeSource : ICodeSource
 {
     private readonly ILog<FileCodeSource> _log;
     private readonly IFileSystem _fileSystem;
@@ -24,7 +24,7 @@ internal class FileCodeSource: ICodeSource
     }
 
     public string Name => Path.GetFileName(FileName);
-        
+
     public bool Internal => false;
 
     public string FileName
@@ -36,7 +36,7 @@ internal class FileCodeSource: ICodeSource
             {
                 fullFilePath = value;
             }
-                
+
             _fileName = fullFilePath;
         }
     }
@@ -46,19 +46,19 @@ internal class FileCodeSource: ICodeSource
         var resource = _scriptContext.OverrideScriptDirectory(Path.GetDirectoryName(FileName));
         try
         {
-            _log.Trace(() => new []{new Text($@"Read file ""{FileName}"".")});
+            _log.Trace(() => new[] {new Text($@"Read file ""{FileName}"".")});
             return new LinesEnumerator(_fileSystem.ReadAllLines(FileName).GetEnumerator(), () => resource.Dispose());
         }
         catch (Exception e)
         {
-            _log.Error(ErrorId.File, new []{new Text(e.Message)});
+            _log.Error(ErrorId.File, new[] {new Text(e.Message)});
             return Enumerable.Empty<string>().GetEnumerator();
         }
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        
-    private class LinesEnumerator: IEnumerator<string>
+
+    private class LinesEnumerator : IEnumerator<string>
     {
         private readonly IEnumerator<string> _baseEnumerator;
         private readonly Action _onDispose;
@@ -75,7 +75,7 @@ internal class FileCodeSource: ICodeSource
 
         public string Current => _baseEnumerator.Current;
 
-        object? IEnumerator.Current => ((IEnumerator) _baseEnumerator).Current;
+        object? IEnumerator.Current => ((IEnumerator)_baseEnumerator).Current;
 
         public void Dispose()
         {

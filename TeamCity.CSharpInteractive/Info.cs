@@ -32,7 +32,7 @@ internal class Info : IInfo
         _traceSources = traceSources;
         _settingDescriptions = settingDescriptions;
     }
-        
+
     public void ShowHeader()
     {
         _stdOut.WriteLine(new Text(_description, Color.Header));
@@ -59,10 +59,10 @@ internal class Info : IInfo
             Text.Tab, new("#help        ", Color.Header), new("Display help on available commands and key bindings."), Text.NewLine
         };
 
-        var settingLines = 
+        var settingLines =
             from setting in _settingDescriptions
             where setting.IsVisible
-            select new []
+            select new[]
             {
                 Text.Tab, new Text($"#{setting.Key.PadRight(12, ' ')}", Color.Header),
                 new Text($"{setting.Description} {string.Join(", ", Enum.GetValues(setting.SettingType).OfType<Enum>().Select(i => i.ToString()))}, e.g. "),
@@ -72,8 +72,8 @@ internal class Info : IInfo
             };
 
         lines.AddRange(settingLines.SelectMany(i => i));
-            
-        lines.AddRange(new []
+
+        lines.AddRange(new[]
         {
             new Text("Script directives:", Color.Header), Text.NewLine,
             Text.Tab, new Text("#r           ", Color.Header), new Text("Add a reference to a NuGet package or specified assembly and all its dependencies, e.g., "), new Text("#r \"nuget:MyPackage, 1.2.3\"", Color.Highlighted), new Text(" or "), new Text("#r \"nuget:MyPackage\"", Color.Highlighted), new Text(" or "), new Text("#r \"MyLib.dll\"", Color.Highlighted), new Text("."), Text.NewLine,

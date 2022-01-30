@@ -30,7 +30,7 @@ public class StartInfoFactoryTests
         startInfo.RedirectStandardOutput.ShouldBeTrue();
         startInfo.RedirectStandardError.ShouldBeTrue();
     }
-        
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]

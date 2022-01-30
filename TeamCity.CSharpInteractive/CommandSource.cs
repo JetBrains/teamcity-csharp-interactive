@@ -13,7 +13,7 @@ internal class CommandSource : ICommandSource
         _settings = settings;
         _codeSourceCommandFactory = codeSourceCommandFactory;
     }
-        
-    public IEnumerable<ICommand> GetCommands() => 
+
+    public IEnumerable<ICommand> GetCommands() =>
         _settings.CodeSources.SelectMany(source => _codeSourceCommandFactory.Create(source));
 }

@@ -1,9 +1,10 @@
 namespace TeamCity.CSharpInteractive;
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 [ExcludeFromCodeCoverage]
-internal class Debugger: IActive
+internal class Debugger : IActive
 {
     private readonly ILog<Debugger> _log;
     private readonly IEnvironmentVariables _environmentVariables;
@@ -23,7 +24,7 @@ internal class Debugger: IActive
             return Disposable.Empty;
         }
 
-        _log.Warning($"\nWaiting for debugger in process [{System.Environment.ProcessId}] \"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}\".");
+        _log.Warning($"\nWaiting for debugger in process [{System.Environment.ProcessId}] \"{Process.GetCurrentProcess().ProcessName}\".");
         while (!System.Diagnostics.Debugger.IsAttached)
         {
             Thread.Sleep(100);

@@ -29,7 +29,7 @@ public class NuGetEnvironmentTests
         // Then
         actualFallbackFolders.ShouldBe(Array.Empty<string>());
     }
-        
+
     [Fact]
     public void ShouldProvideFallbackFoldersWhenEnvVarNUGET_FALLBACK_PACKAGES()
     {
@@ -41,7 +41,7 @@ public class NuGetEnvironmentTests
         var actualFallbackFolders = instance.FallbackFolders.ToArray();
 
         // Then
-        actualFallbackFolders.ShouldBe(new []{"path1", "Path2"});
+        actualFallbackFolders.ShouldBe(new[] {"path1", "Path2"});
     }
 
     [Theory]
@@ -73,20 +73,20 @@ public class NuGetEnvironmentTests
             trackToken.Verify(i => i.Dispose());
         }
     }
-        
+
     [Fact]
     public void ShouldProvideSources()
     {
         // Given
         var instance = CreateInstance();
-        var sources = new [] {"Src1", "Src2"};
+        var sources = new[] {"Src1", "Src2"};
 
         // When
         _settings.SetupGet(i => i.NuGetSources).Returns(sources);
         var actualSources = instance.Sources.ToArray();
 
         // Then
-        actualSources.ShouldBe(new []{"Src1", "Src2", @"https://api.nuget.org/v3/index.json"});
+        actualSources.ShouldBe(new[] {"Src1", "Src2", @"https://api.nuget.org/v3/index.json"});
     }
 
     private NuGetEnvironment CreateInstance() =>

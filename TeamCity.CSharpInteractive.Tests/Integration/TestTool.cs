@@ -5,60 +5,62 @@ using Core;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
-using Composer = Composer;
+using Composer = CSharpInteractive.Composer;
 
 internal static class TestTool
 {
-    public static readonly (string, string)[] DefaultVars = {
+    public static readonly (string, string)[] DefaultVars =
+    {
         ("TEAMCITY_VERSION", string.Empty),
         ("TEAMCITY_PROJECT_NAME", string.Empty)
     };
 
-    private static readonly (string, string)[] TeamCityVars = {
+    private static readonly (string, string)[] TeamCityVars =
+    {
         ("TEAMCITY_VERSION", "2021.2"),
         ("TEAMCITY_PROJECT_NAME", "Test")
     };
-        
+
     public static IProcessResult Run(in CommandLine commandLine)
     {
         var events = new List<Output>();
         var exitCode = Composer.ResolveICommandLineRunner().Run(commandLine, e => events.Add(e));
         return new ProcessResult(exitCode!.Value, events);
     }
-        
-    private static CommandLine CreateScriptCommandLine(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines) => 
+
+    private static CommandLine CreateScriptCommandLine(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines) =>
         DotNetScript.Create(args, lines).AddArgs(scriptArgs.ToArray()).AddVars(vars.ToArray());
 
     public static IProcessResult Run(IEnumerable<string> args, IEnumerable<string> scriptArgs, IEnumerable<(string, string)> vars, params string[] lines) =>
         Run(CreateScriptCommandLine(args, scriptArgs, vars, lines));
-        
+
     public static IProcessResult Run(params string[] lines) =>
         Run(DotNetScript.Create(lines).WithVars(DefaultVars));
-        
+
     public static IProcessResult RunUnderTeamCity(params string[] lines) =>
         Run(CreateScriptCommandLine(Array.Empty<string>(), Array.Empty<string>(), TeamCityVars, lines));
 
     public static void ShouldContainNormalTextMessage(this IEnumerable<IServiceMessage> messages, Predicate<string> textMatcher) =>
-        messages.Count(i => 
+        messages.Count(i =>
                 i.Name == "message"
                 && i.GetValue("status") == "NORMAL"
                 && textMatcher(i.GetValue("text")))
             .ShouldBe(1);
-        
+
     public static void ShouldContainWarningTextMessage(this IEnumerable<IServiceMessage> messages, Predicate<string> textMatcher) =>
-        messages.Count(i => 
+        messages.Count(i =>
                 i.Name == "message"
                 && i.GetValue("status") == "WARNING"
                 && textMatcher(i.GetValue("text")))
             .ShouldBe(1);
 
     public static void ShouldContainBuildProblem(this IEnumerable<IServiceMessage> messages, Predicate<string> errorMatcher, Predicate<string> errorIdMatcher) =>
-        messages.Count(i => 
+        messages.Count(i =>
                 i.Name == "buildProblem"
                 && errorIdMatcher(i.GetValue("identity"))
                 && errorMatcher(i.GetValue("description")))
             .ShouldBe(1);
-        
+
     public static IReadOnlyCollection<IServiceMessage> ParseMessages(this IEnumerable<string> lines) =>
         lines.ParseMessagesInternal().ToList().AsReadOnly();
 
@@ -73,8 +75,8 @@ internal static class TestTool
             }
         }
     }
-        
-    private class ProcessResult: IProcessResult
+
+    private class ProcessResult : IProcessResult
     {
         public ProcessResult(int exitCode, IReadOnlyList<Output> events)
         {
@@ -100,7 +102,7 @@ internal static class TestTool
                 sb.Append("  ");
                 sb.AppendLine(line);
             }
-                
+
             sb.AppendLine();
             sb.AppendLine($"StdErr({StdErr.Count}):");
             foreach (var line in StdErr)

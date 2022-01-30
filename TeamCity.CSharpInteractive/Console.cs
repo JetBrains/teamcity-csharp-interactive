@@ -10,7 +10,7 @@ internal class Console : IConsole
     private readonly object _lockObject = new();
     private readonly ConsoleColor _errorColor;
 
-    public Console(IColorTheme colorTheme) => 
+    public Console(IColorTheme colorTheme) =>
         _errorColor = colorTheme.GetConsoleColor(Color.Error);
 
     public void WriteToOut(params (ConsoleColor? color, string output)[] text)

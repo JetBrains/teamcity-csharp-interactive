@@ -15,14 +15,14 @@ public class SettingCommandRunnerTests
         // Then
         settingSetter.Verify(i => i.SetSetting(VerbosityLevel.Diagnostic));
     }
-        
+
     [Fact]
     public void ShouldNotSetValueWhenOtherCommand()
     {
         // Given
         var settingSetter = new Mock<ISettingSetter<VerbosityLevel>>();
         var runner = new SettingCommandRunner<VerbosityLevel>(Mock.Of<ILog<SettingCommandRunner<VerbosityLevel>>>(), settingSetter.Object);
-            
+
         // When
         runner.TryRun(HelpCommand.Shared);
 

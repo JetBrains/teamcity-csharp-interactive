@@ -46,7 +46,7 @@ public class ProgramTests
         _active.Verify(i => i.Activate());
         _activationToken.Verify(i => i.Dispose());
     }
-        
+
     [Fact]
     public void ShouldRunLogUnhandledException()
     {
@@ -64,7 +64,7 @@ public class ProgramTests
         _activationToken.Verify(i => i.Dispose());
         _log.Verify(i => i.Error(ErrorId.Unhandled, It.IsAny<Text[]>()));
     }
-        
+
     [Fact]
     public void ShouldShowVersion()
     {
@@ -79,7 +79,7 @@ public class ProgramTests
         _info.Verify(i => i.ShowVersion());
         actualResult.ShouldBe(0);
     }
-        
+
     [Fact]
     public void ShouldShowHelp()
     {
@@ -95,7 +95,7 @@ public class ProgramTests
         _info.Verify(i => i.ShowHelp());
         actualResult.ShouldBe(0);
     }
-        
+
     [Fact]
     public void ShouldFailedWhenHasErrors()
     {
@@ -103,7 +103,7 @@ public class ProgramTests
         var program = CreateInstance();
 
         // When
-        _statistics.SetupGet(i => i.Errors).Returns(new []{"some error"});
+        _statistics.SetupGet(i => i.Errors).Returns(new[] {"some error"});
         var actualResult = program.Run();
 
         // Then
@@ -113,7 +113,7 @@ public class ProgramTests
     private Program CreateInstance() =>
         new(
             _log.Object,
-            new []{_active.Object},
+            new[] {_active.Object},
             _info.Object,
             _settings.Object,
             _exitTracker.Object,

@@ -1,8 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using System.Buffers;
-using Moq;
-using StreamReader = StreamReader;
 
 public class MessageIndicesReaderTests
 {
@@ -24,9 +22,9 @@ public class MessageIndicesReaderTests
         var expectedIndices = reader.Read("data").ToArray();
 
         // Then
-        expectedIndices.ShouldBe(new []{ 1UL, 123456789UL });
+        expectedIndices.ShouldBe(new[] {1UL, 123456789UL});
     }
-    
+
     [Fact]
     public void ShouldReadIndicesWhenEmpty()
     {
@@ -42,7 +40,7 @@ public class MessageIndicesReaderTests
         // Then
         expectedIndices.ShouldBe(Array.Empty<ulong>());
     }
-    
+
     [Fact]
     public void ShouldShowWarningWhenCorrupted()
     {
@@ -60,9 +58,9 @@ public class MessageIndicesReaderTests
 
         // Then
         _log.Verify(i => i.Warning(It.Is<Text[]>(warning => warning.Single().Value.Contains("invalid size"))));
-        expectedIndices.ShouldBe(new []{ 1UL, 123456789UL });
+        expectedIndices.ShouldBe(new[] {1UL, 123456789UL});
     }
-    
+
     [Fact]
     public void ShouldShowWarningWhenInvalidValues()
     {
@@ -80,7 +78,7 @@ public class MessageIndicesReaderTests
 
         // Then
         _log.Verify(i => i.Warning(It.Is<Text[]>(warning => warning.Single().Value.Contains("invalid index"))));
-        expectedIndices.ShouldBe(new []{ 123UL });
+        expectedIndices.ShouldBe(new[] {123UL});
     }
 
     private static void Write(Stream stream, ulong index)

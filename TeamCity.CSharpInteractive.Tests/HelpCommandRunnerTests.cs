@@ -16,7 +16,7 @@ public class HelpCommandRunnerTests
         actualResult.Success.ShouldBe(true);
         info.Verify(i => i.ShowReplHelp());
     }
-        
+
     [Fact]
     public void ShouldNotShowHelpWhenOtherCommand()
     {

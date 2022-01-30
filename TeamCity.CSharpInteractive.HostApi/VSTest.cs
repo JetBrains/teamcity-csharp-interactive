@@ -4,8 +4,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record VSTest(
     IEnumerable<string> TestFileNames,
     IEnumerable<string> Args,
@@ -36,10 +37,10 @@ public record VSTest(
     public VSTest(params string[] args)
         : this(Enumerable.Empty<string>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host)
     {
-        var cmd =  new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
+        var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet vstest")
             .WithArgs("vstest")
             .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
@@ -67,9 +68,9 @@ public record VSTest(
             )
             .AddArgs(Loggers.ToArray())
             .AddArgs(Args.ToArray());
-                
+
         var runSettings = RunSettings.Select(i => $"{i.name}={i.value}").ToArray();
-        if(runSettings.Any())
+        if (runSettings.Any())
         {
             cmd = cmd.AddArgs("--").AddArgs(runSettings);
         }

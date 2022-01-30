@@ -5,8 +5,9 @@
 namespace HostApi;
 
 using DotNet;
+using Immutype;
 
-[Immutype.Target]
+[Target]
 public record MSBuild(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Props,
@@ -41,12 +42,12 @@ public record MSBuild(
     public MSBuild()
         : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>())
     { }
-        
+
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
             .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath))
-            .WithArgs(ExecutablePath == string.Empty ? new [] {"msbuild"} : Array.Empty<string>())
-            .AddArgs(new []{ Project }.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
+            .WithArgs(ExecutablePath == string.Empty ? new[] {"msbuild"} : Array.Empty<string>())
+            .AddArgs(new[] {Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildIntegration(host, Verbosity)

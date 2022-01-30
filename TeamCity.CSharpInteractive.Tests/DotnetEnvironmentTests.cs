@@ -6,7 +6,7 @@ public class DotNetEnvironmentTests
 {
     private readonly Mock<IEnvironment> _environment = new();
     private readonly Mock<IFileExplorer> _fileExplorer = new();
-            
+
     [Fact]
     public void ShouldProvideTargetFrameworkMoniker()
     {
@@ -18,7 +18,7 @@ public class DotNetEnvironmentTests
         // Then
         instance.TargetFrameworkMoniker.ShouldBe(".NETCoreApp,Version=v3.1");
     }
-        
+
     [Theory]
     [InlineData(Platform.Windows, "dotnet.exe")]
     [InlineData(Platform.Linux, "dotnet")]
@@ -37,7 +37,7 @@ public class DotNetEnvironmentTests
         // Then
         instance.Path.ShouldBe(modulePath);
     }
-        
+
     [Theory]
     [InlineData(Platform.Windows, "dotnet.exe")]
     [InlineData(Platform.Linux, "dotnet")]
@@ -48,7 +48,7 @@ public class DotNetEnvironmentTests
     {
         // Given
         _environment.SetupGet(i => i.OperatingSystemPlatform).Returns(platform);
-        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOTNET_HOME")).Returns(new [] { "Abc", "Xyz" });
+        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOTNET_HOME")).Returns(new[] {"Abc", "Xyz"});
 
         // When
         var instance = CreateInstance(".NETCoreApp,Version=v3.1", "Abc");
@@ -56,7 +56,7 @@ public class DotNetEnvironmentTests
         // Then
         instance.Path.ShouldBe("Abc");
     }
-        
+
     [Theory]
     [InlineData(Platform.Windows, "dotnet.exe")]
     [InlineData(Platform.Linux, "dotnet")]
@@ -75,7 +75,7 @@ public class DotNetEnvironmentTests
         // Then
         instance.Path.ShouldBe(defaultPath);
     }
-        
-    private DotNetEnvironment CreateInstance(string frameworkName, string moduleFile) => 
+
+    private DotNetEnvironment CreateInstance(string frameworkName, string moduleFile) =>
         new(frameworkName, moduleFile, _environment.Object, _fileExplorer.Object);
 }

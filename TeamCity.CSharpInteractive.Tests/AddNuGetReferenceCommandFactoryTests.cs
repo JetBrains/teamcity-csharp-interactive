@@ -10,7 +10,7 @@ public class AddNuGetReferenceCommandFactoryTests
     public AddNuGetReferenceCommandFactoryTests()
     {
         _log = new Mock<ILog<AddNuGetReferenceCommandFactory>>();
-        _log.Setup(i => i.Error(It.IsAny<ErrorId>(),It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
+        _log.Setup(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>())).Callback<ErrorId, Text[]>((_, text) => _errors.AddRange(text));
     }
 
     [Fact]
@@ -18,9 +18,9 @@ public class AddNuGetReferenceCommandFactoryTests
     {
         // Given
         var factory = CreateInstance();
-            
+
         // When
-            
+
         // Then
         factory.Order.ShouldBe(0);
     }
@@ -75,31 +75,31 @@ public class AddNuGetReferenceCommandFactoryTests
         new object[]
         {
             "#r \"nuget:Abc, 1.2.3\"",
-            new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1,2,3)))},
+            new[] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)))},
             false
         },
         new object[]
         {
             "#r \"nuget:Abc, [1.2.3, 1.4)\"",
-            new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1,2,3), true, new NuGetVersion(1,4, 0)))},
+            new[] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3), true, new NuGetVersion(1, 4, 0)))},
             false
         },
         new object[]
         {
             "  #r  \"NuGet:  Abc,    1.2.3 \"",
-            new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1,2,3)))},
+            new[] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)))},
             false
         },
         new object[]
         {
             "#r \"nuget:Abc, 1.2.3-beta1\"",
-            new [] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(new Version(1,2,3), "beta1")))},
+            new[] {new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(new Version(1, 2, 3), "beta1")))},
             false
         },
         new object[]
         {
             "#r \"nuget:Abc\"",
-            new [] {new AddNuGetReferenceCommand("Abc", default)},
+            new[] {new AddNuGetReferenceCommand("Abc", default)},
             false
         },
         // Errors

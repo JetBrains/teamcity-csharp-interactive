@@ -1,6 +1,5 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using CSharpInteractive;
 using HostApi;
 
 public class BuildRunnerTests
@@ -40,12 +39,12 @@ public class BuildRunnerTests
 
         var output = new Output(_startInfo.Object, true, "Msg1", 11);
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
-        
+
         var buildService = CreateInstance();
         _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), TimeSpan.FromSeconds(1)))
             .Callback<ProcessInfo, TimeSpan>((processRun, _) => processRun.Handler!(output))
             .Returns(ProcessResult);
-        
+
         var customHandler = Mock.Of<Action<BuildMessage>>();
 
         // When
@@ -56,7 +55,7 @@ public class BuildRunnerTests
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = true);
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = false);
     }
-    
+
     [Fact]
     public void ShouldRunBuildWhenHasNoHandler()
     {
@@ -69,12 +68,12 @@ public class BuildRunnerTests
 
         var output = new Output(_startInfo.Object, true, "Msg1", 11);
         _buildOutputConverter.Setup(i => i.Convert(output, _buildResult.Object)).Returns(buildMessages);
-        
+
         var buildService = CreateInstance();
         _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), TimeSpan.FromSeconds(1)))
             .Callback<ProcessInfo, TimeSpan>((processRun, _) => processRun.Handler!(output))
             .Returns(ProcessResult);
-        
+
         // When
         buildService.Run(_process.Object, default, TimeSpan.FromSeconds(1));
 
@@ -100,7 +99,7 @@ public class BuildRunnerTests
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = true);
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = false);
     }
-    
+
     private BuildRunner CreateInstance() =>
         new(
             _processRunner.Object,

@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using HostApi;
 using NuGet.Versioning;
 
-internal class NuGetService: INuGet
+internal class NuGetService : INuGet
 {
     private readonly ILog<NuGetService> _log;
     private readonly IFileSystem _fileSystem;
@@ -50,19 +50,19 @@ internal class NuGetService: INuGet
         {
             settings = settings.WithSources(_nugetEnvironment.Sources);
         }
-            
+
         if (!settings.FallbackFolders.Any())
         {
             settings = settings.WithFallbackFolders(_nugetEnvironment.FallbackFolders);
         }
-            
+
         var restoreResult = _nugetRestoreService.TryRestore(settings, out var projectAssetsJson);
         if (restoreResult == false)
         {
             _log.Warning($"Cannot restore the NuGet package {settings.PackageId} {settings.VersionRange}.");
             return Enumerable.Empty<NuGetPackage>();
         }
-            
+
         var output = Path.GetDirectoryName(projectAssetsJson);
         var outputPathToken = Disposable.Empty;
         if (!string.IsNullOrWhiteSpace(output))
@@ -88,7 +88,7 @@ internal class NuGetService: INuGet
         {
             settings = settings.WithTargetFrameworkMoniker(targetFrameworkMoniker);
         }
-            
+
         if (packagesPath != default)
         {
             settings = settings.WithPackagesPath(packagesPath);

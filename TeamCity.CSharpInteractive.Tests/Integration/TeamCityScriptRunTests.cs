@@ -37,7 +37,7 @@ public class ScriptRunTeamCityScriptRunTestsTests
         messages.Count.ShouldBe(InitialMessagesCount + 1);
         messages.ShouldContainNormalTextMessage(i => i == "99");
     }
-        
+
     [Fact]
     public void ShouldSupportError()
     {
@@ -52,7 +52,7 @@ public class ScriptRunTeamCityScriptRunTestsTests
         var messages = result.StdOut.ParseMessages();
         messages.ShouldContainBuildProblem(i => i == "My error", i => i == "errId");
     }
-        
+
     [Fact]
     public void ShouldSupportWarning()
     {
@@ -67,7 +67,7 @@ public class ScriptRunTeamCityScriptRunTestsTests
         var messages = result.StdOut.ParseMessages();
         messages.ShouldContainWarningTextMessage(i => i == "My warning");
     }
-        
+
     [Fact]
     public void ShouldSupportInfo()
     {
@@ -83,7 +83,7 @@ public class ScriptRunTeamCityScriptRunTestsTests
         messages.Count.ShouldBe(InitialMessagesCount + 1);
         messages.ShouldContainNormalTextMessage(i => i == "My info");
     }
-        
+
     [Fact]
     public void ShouldProcessCompilationError()
     {
@@ -98,7 +98,7 @@ public class ScriptRunTeamCityScriptRunTestsTests
         var messages = result.StdOut.ParseMessages();
         messages.ShouldContainBuildProblem(i => i.Contains("error CS0103"), i => i.StartsWith("CS0103,0,1"));
     }
-        
+
     [Fact]
     public void ShouldProcessRuntimeException()
     {
@@ -113,7 +113,7 @@ public class ScriptRunTeamCityScriptRunTestsTests
         var messages = result.StdOut.ParseMessages();
         messages.ShouldContainBuildProblem(i => i.Contains("System.Exception: Test"), i => i == "CSI006");
     }
-        
+
     [Fact]
     public void ShouldSendBuildProblemWhenScripIsUncompleted()
     {

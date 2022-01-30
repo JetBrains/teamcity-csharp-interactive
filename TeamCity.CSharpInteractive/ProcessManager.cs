@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using HostApi;
 
 [ExcludeFromCodeCoverage]
-internal class ProcessManager: IProcessManager
+internal class ProcessManager : IProcessManager
 {
     private static readonly Text StdOutPrefix = new("OUT: ");
     private static readonly Text StdErrPrefix = new("ERR: ", Color.Error);
@@ -26,7 +26,7 @@ internal class ProcessManager: IProcessManager
         _log = log;
         _processOutputWriter = processOutputWriter;
         _startInfoFactory = startInfoFactory;
-        _process = new Process{ EnableRaisingEvents = true };
+        _process = new Process {EnableRaisingEvents = true};
         _process.OutputDataReceived += ProcessOnOutputDataReceived;
         _process.ErrorDataReceived += ProcessOnErrorDataReceived;
         _process.Exited += ProcessOnExited;
@@ -80,9 +80,9 @@ internal class ProcessManager: IProcessManager
     {
         try
         {
-            _log.Trace(() => new []{new Text($"{_description} is terminating.")}, _description);
+            _log.Trace(() => new[] {new Text($"{_description} is terminating.")}, _description);
             _process.Kill();
-            _log.Trace(() => new []{new Text($"{_description} was terminated.")}, _description);
+            _log.Trace(() => new[] {new Text($"{_description} was terminated.")}, _description);
         }
         catch (Exception ex)
         {
@@ -96,7 +96,7 @@ internal class ProcessManager: IProcessManager
     private void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, false);
 
     private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, true);
-            
+
     private void ProcessOnExited(object? sender, EventArgs e) => OnExit?.Invoke();
 
     private void ProcessOutput(DataReceivedEventArgs e, bool isError)
@@ -111,7 +111,7 @@ internal class ProcessManager: IProcessManager
         var output = new Output(_startInfo!, isError, line, Id);
         if (handler != default)
         {
-            _log.Trace(() => new []{ isError ? StdErrPrefix : StdOutPrefix, new Text(line) }, _description);
+            _log.Trace(() => new[] {isError ? StdErrPrefix : StdOutPrefix, new Text(line)}, _description);
             handler(output);
         }
         else
@@ -128,7 +128,7 @@ internal class ProcessManager: IProcessManager
             {
                 return;
             }
-                
+
             _process.Exited -= ProcessOnExited;
             _process.OutputDataReceived -= ProcessOnOutputDataReceived;
             _process.ErrorDataReceived -= ProcessOnErrorDataReceived;
@@ -136,7 +136,7 @@ internal class ProcessManager: IProcessManager
         }
         catch (Exception exception)
         {
-            _log.Trace(() => new []{new Text($"Exception during disposing: {exception}.")});
+            _log.Trace(() => new[] {new Text($"Exception during disposing: {exception}.")});
         }
     }
 }

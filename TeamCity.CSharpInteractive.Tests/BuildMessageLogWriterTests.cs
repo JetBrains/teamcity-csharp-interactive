@@ -1,13 +1,12 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using CSharpInteractive;
 using HostApi;
 
 public class BuildMessageLogWriterTests
 {
     private readonly Mock<ILog<BuildMessageLogWriter>> _log = new();
-    private readonly Mock<IStdOut> _stdOut = new ();
-    private readonly Mock<IStdErr> _stdErr = new ();
+    private readonly Mock<IStdOut> _stdOut = new();
+    private readonly Mock<IStdErr> _stdErr = new();
 
     [Fact]
     public void ShouldWriteInfo()
@@ -19,9 +18,9 @@ public class BuildMessageLogWriterTests
         writer.Write(new BuildMessage(BuildMessageState.StdOut, default, "Abc"));
 
         // Then
-        _stdOut.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new [] {new Text("Abc")}))));
+        _stdOut.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new[] {new Text("Abc")}))));
     }
-    
+
     [Fact]
     public void ShouldWriteStdErr()
     {
@@ -32,9 +31,9 @@ public class BuildMessageLogWriterTests
         writer.Write(new BuildMessage(BuildMessageState.StdError, default, "Abc"));
 
         // Then
-        _stdErr.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new [] {new Text("Abc")}))));
+        _stdErr.Verify(i => i.WriteLine(It.Is<Text[]>(text => text.SequenceEqual(new[] {new Text("Abc")}))));
     }
-    
+
     [Fact]
     public void ShouldWriteWarning()
     {
@@ -47,7 +46,7 @@ public class BuildMessageLogWriterTests
         // Then
         _log.Verify(i => i.Warning(It.IsAny<Text[]>()));
     }
-    
+
     [Theory]
     [InlineData(BuildMessageState.Failure)]
     [InlineData(BuildMessageState.BuildProblem)]

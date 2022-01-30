@@ -36,7 +36,7 @@ public class ConfigurableScriptOptionsFactoryTests
         // Then
         options.OptimizationLevel.ShouldBe(value);
     }
-    
+
     [Theory]
     [InlineData(WarningLevel.L0, 0)]
     [InlineData(WarningLevel.L1, 1)]
@@ -56,7 +56,7 @@ public class ConfigurableScriptOptionsFactoryTests
         // Then
         options.WarningLevel.ShouldBe(expectedValue);
     }
-    
+
     [Theory]
     [InlineData(CheckOverflow.Off, false)]
     [InlineData(CheckOverflow.On, true)]
@@ -72,7 +72,7 @@ public class ConfigurableScriptOptionsFactoryTests
         // Then
         options.CheckOverflow.ShouldBe(expectedValue);
     }
-    
+
     [Theory]
     [InlineData(AllowUnsafe.Off, false)]
     [InlineData(AllowUnsafe.On, true)]

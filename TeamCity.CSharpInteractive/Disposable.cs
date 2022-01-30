@@ -17,9 +17,9 @@ internal static class Disposable
     }
 
     public static IDisposable Create(params IDisposable[] disposables) =>
-        Create((IEnumerable<IDisposable>) disposables);
+        Create((IEnumerable<IDisposable>)disposables);
 
-    public static IDisposable Create(IEnumerable<IDisposable> disposables) => 
+    public static IDisposable Create(IEnumerable<IDisposable> disposables) =>
         new CompositeDisposable(disposables);
 
     private sealed class DisposableAction : IDisposable
@@ -42,8 +42,7 @@ internal static class Disposable
                 _action();
             }
             catch
-            {
-            }
+            { }
         }
 
         public override bool Equals(object? obj)
@@ -53,7 +52,7 @@ internal static class Disposable
             return obj is DisposableAction other && Equals(_key, other._key);
         }
 
-        public override int GetHashCode() => 
+        public override int GetHashCode() =>
             _key != null ? _key.GetHashCode() : 0;
     }
 
@@ -75,8 +74,7 @@ internal static class Disposable
                     disposable.Dispose();
                 }
                 catch
-                {
-                }
+                { }
             }
         }
     }

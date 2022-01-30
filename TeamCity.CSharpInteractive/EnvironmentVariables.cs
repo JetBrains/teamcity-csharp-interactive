@@ -14,7 +14,7 @@ internal class EnvironmentVariables : IEnvironmentVariables, ITraceSource
     public string? GetEnvironmentVariable(string variable)
     {
         var value = System.Environment.GetEnvironmentVariable(variable);
-        _log.Trace(() => new []{new Text($"Get environment variable {variable} = \"{value}\".")});
+        _log.Trace(() => new[] {new Text($"Get environment variable {variable} = \"{value}\".")});
         return value;
     }
 

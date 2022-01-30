@@ -16,19 +16,19 @@ public class AddNuGetReferenceCommandRunnerTests
     private static readonly string[] Sources = {"src"};
     private static readonly string[] FallbackFolders = {"fallback"};
     private const string PackagesPath = "packages";
-        
+
     public AddNuGetReferenceCommandRunnerTests()
     {
         _command = new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)));
-            
+
         _log = new Mock<ILog<AddNuGetReferenceCommandRunner>>();
         _log.Setup(i => i.Info(It.IsAny<Text[]>()));
-            
+
         _nugetEnv = new Mock<INuGetEnvironment>();
         _nugetEnv.SetupGet(i => i.Sources).Returns(Sources);
         _nugetEnv.SetupGet(i => i.FallbackFolders).Returns(FallbackFolders);
         _nugetEnv.SetupGet(i => i.PackagesPath).Returns(PackagesPath);
-            
+
         _nugetRestoreService = new Mock<INuGetRestoreService>();
         var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
         var settings = new NuGetRestore(
@@ -42,10 +42,10 @@ public class AddNuGetReferenceCommandRunnerTests
 
         ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
         ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
-            
+
         _nugetAssetsReader = new Mock<INuGetAssetsReader>();
-        _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(new [] {referencingAssembly1, referencingAssembly2});
-            
+        _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(new[] {referencingAssembly1, referencingAssembly2});
+
         _trackToken = new Mock<IDisposable>();
         _cleaner = new Mock<ICleaner>();
         _cleaner.Setup(i => i.Track("TMP")).Returns(_trackToken.Object);
@@ -53,11 +53,11 @@ public class AddNuGetReferenceCommandRunnerTests
         _referenceRegistry = new Mock<IReferenceRegistry>();
         var referencingAssembly1Description = referencingAssembly1.Name;
         _referenceRegistry.Setup(i => i.TryRegisterAssembly(referencingAssembly1.FilePath, out referencingAssembly1Description)).Returns(true);
-            
+
         var referencingAssembly2Description = referencingAssembly2.Name;
         _referenceRegistry.Setup(i => i.TryRegisterAssembly(referencingAssembly2.FilePath, out referencingAssembly2Description)).Returns(true);
     }
-        
+
     [Fact]
     public void ShouldSkipWhenNotPassAddPackageReferenceCommand()
     {
@@ -86,7 +86,7 @@ public class AddNuGetReferenceCommandRunnerTests
         result.Success.ShouldBe(true);
         _trackToken.Verify(i => i.Dispose());
     }
-        
+
     [Fact]
     public void ShouldFailWhenRestoreFail()
     {
@@ -109,7 +109,7 @@ public class AddNuGetReferenceCommandRunnerTests
         result.Command.ShouldBe(_command);
         result.Success.ShouldBe(false);
     }
-        
+
     [Fact]
     public void ShouldRestoreWhenHasNoAssemblies()
     {
@@ -126,7 +126,7 @@ public class AddNuGetReferenceCommandRunnerTests
         result.Success.ShouldBe(true);
         _trackToken.Verify(i => i.Dispose());
     }
-        
+
     [Fact]
     public void ShouldFailWhenCannotAddRef()
     {
@@ -136,7 +136,7 @@ public class AddNuGetReferenceCommandRunnerTests
         // When
         var referencingAssembly2Description = "Error";
         _referenceRegistry.Setup(i => i.TryRegisterAssembly("Abc2.dll", out referencingAssembly2Description)).Returns(false);
-            
+
         var result = runner.TryRun(_command);
 
         // Then

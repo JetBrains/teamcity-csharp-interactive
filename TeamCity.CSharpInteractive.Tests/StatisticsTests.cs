@@ -13,11 +13,11 @@ public class StatisticsTests
         {
             Thread.Sleep(2);
         }
-            
+
         // Then
         statistics.TimeElapsed.ShouldNotBe(TimeSpan.Zero);
     }
-        
+
     [Fact]
     public void ShouldRegisterError()
     {
@@ -31,9 +31,9 @@ public class StatisticsTests
         statistics.RegisterError("error2");
 
         // Then
-        statistics.Errors.ToArray().ShouldBe(new []{"error1", "error2"});
+        statistics.Errors.ToArray().ShouldBe(new[] {"error1", "error2"});
     }
-        
+
     [Fact]
     public void ShouldRegisterWarning()
     {
@@ -47,6 +47,6 @@ public class StatisticsTests
         statistics.RegisterWarning("warning2");
 
         // Then
-        statistics.Warnings.ToArray().ShouldBe(new []{"warning1", "warning2"});
+        statistics.Warnings.ToArray().ShouldBe(new[] {"warning1", "warning2"});
     }
 }

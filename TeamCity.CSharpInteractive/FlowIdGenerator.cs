@@ -3,7 +3,7 @@ namespace TeamCity.CSharpInteractive;
 
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-internal class FlowIdGenerator: IFlowIdGenerator, IFlowContext
+internal class FlowIdGenerator : IFlowIdGenerator, IFlowContext
 {
     private readonly object _lockObject = new();
     private string _nextFlowId;

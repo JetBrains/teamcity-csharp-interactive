@@ -13,7 +13,7 @@ public class ExitCodeTests
 
         // When
         var result = TestTool.Run("return 33;");
-            
+
         // Then
         result.ExitCode.ShouldBe(33, result.ToString());
     }
@@ -25,7 +25,7 @@ public class ExitCodeTests
 
         // When
         var result = TestTool.Run("Environment.Exit(33);");
-            
+
         // Then
         result.ExitCode.ShouldBe(33, result.ToString());
     }
@@ -37,11 +37,11 @@ public class ExitCodeTests
 
         // When
         var result = TestTool.Run("throw new Exception();");
-            
+
         // Then
         result.ExitCode.ShouldBe(1, result.ToString());
     }
-    
+
     [Fact]
     public void ExitCodeShouldBe0ByDefault()
     {
@@ -49,7 +49,7 @@ public class ExitCodeTests
 
         // When
         var result = TestTool.Run("var i=10;");
-            
+
         // Then
         result.ExitCode.ShouldBe(0, result.ToString());
     }

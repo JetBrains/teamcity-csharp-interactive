@@ -9,7 +9,7 @@ namespace TeamCity.CSharpInteractive;
 using HostApi;
 using Pure.DI;
 
-internal class BuildRunner: IBuildRunner
+internal class BuildRunner : IBuildRunner
 {
     private readonly IProcessRunner _processRunner;
     private readonly IHost _host;
@@ -70,7 +70,7 @@ internal class BuildRunner: IBuildRunner
             _teamCityContext.TeamCityIntegration = false;
         }
     }
-        
+
     private void Handle(Action<BuildMessage>? handler, in Output output, IBuildContext context)
     {
         var messages = _buildOutputProcessor.Convert(output, context);

@@ -39,7 +39,7 @@ internal class ProcessMonitor : IProcessMonitor
         {
             workingDirectory = _environment.GetPath(SpecialFolder.Working);
         }
-        
+
         if (!string.IsNullOrWhiteSpace(workingDirectory))
         {
             _log.Info(new Text("in directory: "), new Text(workingDirectory.EscapeArg()));
@@ -56,7 +56,7 @@ internal class ProcessMonitor : IProcessMonitor
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 _log.Error(ErrorId.Process, footer);
                 break;
-            
+
             case ProcessState.Canceled:
                 _log.Warning(footer);
                 break;
@@ -77,7 +77,7 @@ internal class ProcessMonitor : IProcessMonitor
             case ProcessState.Failed:
                 stateText = "failed";
                 break;
-            
+
             case ProcessState.Canceled:
                 stateText = "canceled";
                 break;
@@ -95,7 +95,7 @@ internal class ProcessMonitor : IProcessMonitor
         {
             yield return new Text($" with exit code {exitCode}");
         }
-        
+
         yield return new Text(".");
     }
 }

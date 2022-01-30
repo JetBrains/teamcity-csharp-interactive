@@ -12,7 +12,7 @@ internal class ExitCodeParser : IExitCodeParser
                 case int intExitCode:
                     exitCode = intExitCode;
                     return true;
-                
+
                 case uint uintExitCode:
                     exitCode = (int)uintExitCode;
                     return true;
@@ -24,11 +24,11 @@ internal class ExitCodeParser : IExitCodeParser
                 case ushort ushortExitCode:
                     exitCode = ushortExitCode;
                     return true;
-                
+
                 case sbyte sbyteExitCode:
                     exitCode = sbyteExitCode;
                     return true;
-                
+
                 case byte byteExitCode:
                     exitCode = byteExitCode;
                     return true;
@@ -36,7 +36,7 @@ internal class ExitCodeParser : IExitCodeParser
                 case long longExitCode:
                     exitCode = (int)longExitCode;
                     return true;
-                
+
                 case ulong ulongExitCode:
                     exitCode = (int)ulongExitCode;
                     return true;
