@@ -1,6 +1,14 @@
 ﻿using HostApi;
+using static Host;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
+
+Host.Props["aa"] = "bb";
+if (Host.Props["aa"] != Props["aa"])
+{
+    Error("aa");
+}
+
 const string packageId = "TeamCity.CSharpInteractive";
 const string toolPackageId = "TeamCity.csi";
 const string templatesPackageId = "TeamCity.CSharpInteractive.Templates";

@@ -5,7 +5,6 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 using HostApi;
 using NuGet;
 using NuGet.Versioning;
-using Script;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]

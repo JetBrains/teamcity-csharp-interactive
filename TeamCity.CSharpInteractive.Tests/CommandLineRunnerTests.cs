@@ -7,11 +7,6 @@ public class CommandLineRunnerTests
     private readonly Mock<IHost> _host = new();
     private readonly Mock<IProcessRunner> _processRunner = new();
 
-    public CommandLineRunnerTests()
-    {
-        _host.SetupGet(i => i.Host).Returns(_host.Object);
-    }
-
     [Fact]
     public void ShouldRunProcess()
     {

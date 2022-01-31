@@ -4,7 +4,7 @@
 // #l Diagnostic
 
 // Adds a NuGet package and references to assemblies
-// #r "nuget: Microsoft.Extensions.DependencyInjection, 6.0.0"
+// #r "nuget: MyPackage, 1.2.3"
 
 // Adds an assembly reference
 // #r "MyAssembly.dll"

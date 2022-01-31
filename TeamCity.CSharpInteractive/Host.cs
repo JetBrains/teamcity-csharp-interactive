@@ -2,46 +2,27 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable CheckNamespace
-namespace Script;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Loader;
 using HostApi;
 using TeamCity.CSharpInteractive;
 
 [ExcludeFromCodeCoverage]
-public static class StaticHost
+public static class Host
 {
     private static readonly ScriptHostComponents Components = Composer.ResolveScriptHostComponents();
+    private static readonly IHost CurHost = Components.Host;
+
+#if APPLICATION
     private static readonly IDisposable FinishToken;
 
-    static StaticHost()
+    static Host()
     {
         Components.Info.ShowHeader();
         FinishToken = Disposable.Create(Components.ExitTracker.Track(), Components.Statistics.Start());
         AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
     }
-
-    public static IHost Host => Components.Host;
-
-    public static IReadOnlyList<string> Args => Components.Host.Args;
-
-    public static IProperties Props => Components.Host.Props;
-
-    public static void WriteLine() => Components.Host.WriteLine();
-
-    public static void WriteLine<T>(T line, Color color = Color.Default) => Components.Host.WriteLine(line, color);
-
-    public static void Error(string? error, string? errorId = default) => Components.Host.Error(error, errorId);
-
-    public static void Warning(string? warning) => Components.Host.Warning(warning);
-
-    public static void Info(string? text) => Components.Host.Info(text);
-
-    public static void Trace(string? trace, string? origin = default) => Components.Host.Trace(trace, origin);
-
-    public static T GetService<T>() => Components.Host.GetService<T>();
-
+    
     private static void OnDefaultOnUnloading(AssemblyLoadContext ctx)
     {
         try
@@ -61,4 +42,23 @@ public static class StaticHost
             }
         }
     }
+#endif
+
+    public static IReadOnlyList<string> Args => CurHost.Args;
+
+    public static IProperties Props => CurHost.Props;
+
+    public static void WriteLine() => CurHost.WriteLine();
+
+    public static void WriteLine<T>(T line, Color color = Color.Default) => CurHost.WriteLine(line, color);
+
+    public static void Error(string? error, string? errorId = default) => CurHost.Error(error, errorId);
+
+    public static void Warning(string? warning) => CurHost.Warning(warning);
+
+    public static void Info(string? text) => CurHost.Info(text);
+
+    public static void Trace(string? trace, string? origin = default) => CurHost.Trace(trace, origin);
+
+    public static T GetService<T>() => CurHost.GetService<T>();
 }

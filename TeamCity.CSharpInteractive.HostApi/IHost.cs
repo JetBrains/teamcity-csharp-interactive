@@ -4,8 +4,6 @@ namespace HostApi;
 
 public interface IHost
 {
-    IHost Host { get; }
-
     IReadOnlyList<string> Args { get; }
 
     IProperties Props { get; }

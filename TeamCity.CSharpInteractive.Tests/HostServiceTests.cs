@@ -24,18 +24,6 @@ public class HostServiceTests
     }
 
     [Fact]
-    public void ShouldProvideHost()
-    {
-        // Given
-        var host = CreateInstance();
-
-        // When
-
-        // Then
-        host.Host.ShouldBe(host);
-    }
-
-    [Fact]
     public void ShouldProvideProps()
     {
         // Given

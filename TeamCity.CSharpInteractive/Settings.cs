@@ -1,7 +1,9 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
+using System.Collections;
 using System.Collections.Immutable;
+using Pure.DI;
 
 internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
 {
@@ -10,6 +12,7 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
     private readonly IEnvironment _environment;
     private readonly ICommandLineParser _commandLineParser;
     private readonly ICodeSource _consoleCodeSource;
+    private readonly ICodeSource _hostIntegrationCodeSource;
     private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
     private bool _isLoaded;
     private VerbosityLevel _verbosityLevel = VerbosityLevel.Normal;
@@ -26,12 +29,14 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
         IEnvironment environment,
         ICommandLineParser commandLineParser,
         ICodeSource consoleCodeSource,
+        [Tag("HostIntegration")] ICodeSource hostIntegrationCodeSource,
         IFileCodeSourceFactory fileCodeSourceFactory)
     {
         _runningMode = runningMode;
         _environment = environment;
         _commandLineParser = commandLineParser;
         _consoleCodeSource = consoleCodeSource;
+        _hostIntegrationCodeSource = hostIntegrationCodeSource;
         _fileCodeSourceFactory = fileCodeSourceFactory;
     }
 
@@ -147,6 +152,10 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
                 _showVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
                 _scriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToImmutableArray();
                 _codeSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value));
+                if (_runningMode != RunningMode.Application)
+                {
+                    _codeSources = new[] {_hostIntegrationCodeSource}.Concat(_codeSources);
+                }
             }
             else
             {

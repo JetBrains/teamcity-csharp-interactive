@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.DependencyInjection;
 
 public class AssembliesScriptOptionsProviderTests
 {
@@ -32,7 +33,8 @@ public class AssembliesScriptOptionsProviderTests
             typeof(Enumerable),
             typeof(HttpRequestMessage),
             typeof(Thread),
-            typeof(Task)
+            typeof(Task),
+            typeof(IServiceCollection)
         }));
 
         options.MetadataReferences.Length.ShouldBe(ScriptOptions.Default.MetadataReferences.Length + 1);
@@ -50,7 +52,7 @@ public class AssembliesScriptOptionsProviderTests
         var options = provider.Create(ScriptOptions.Default);
 
         // Then
-        options.Imports.ShouldBe(AssembliesScriptOptionsProvider.Refs.Select(i => i.ns));
+        options.Imports.ShouldBe(AssembliesScriptOptionsProvider.Refs.Select(i => i.ns).Where(i => !string.IsNullOrWhiteSpace(i)));
     }
 
     private AssembliesScriptOptionsProvider CreateInstance() =>

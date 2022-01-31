@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.DependencyInjection;
 
 internal class AssembliesScriptOptionsProvider : IScriptOptionsFactory, IActive
 {
@@ -18,7 +19,8 @@ internal class AssembliesScriptOptionsProvider : IScriptOptionsFactory, IActive
         ("System.Linq", typeof(Enumerable)),
         ("System.Net.Http", typeof(HttpRequestMessage)),
         ("System.Threading", typeof(Thread)),
-        ("System.Threading.Tasks", typeof(Task))
+        ("System.Threading.Tasks", typeof(Task)),
+        ("", typeof(IServiceCollection))
     };
 
     private readonly ILog<AssembliesScriptOptionsProvider> _log;
@@ -40,7 +42,7 @@ internal class AssembliesScriptOptionsProvider : IScriptOptionsFactory, IActive
     public ScriptOptions Create(ScriptOptions baseOptions) =>
         baseOptions
             .AddReferences(_assemblies.Value)
-            .AddImports(Refs.Select(i => i.ns));
+            .AddImports(Refs.Select(i => i.ns).Where(i => !string.IsNullOrWhiteSpace(i)));
 
     public IDisposable Activate()
     {

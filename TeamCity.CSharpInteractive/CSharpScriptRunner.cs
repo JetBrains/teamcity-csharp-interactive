@@ -15,7 +15,6 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
     private readonly IPresenter<CompilationDiagnostics> _diagnosticsPresenter;
     private readonly IReadOnlyCollection<IScriptOptionsFactory> _scriptOptionsFactories;
     private readonly IExitCodeParser _exitCodeParser;
-    private readonly IHost _host;
     private ScriptState<object>? _scriptState;
 
     public CSharpScriptRunner(
@@ -31,7 +30,6 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
         _diagnosticsPresenter = diagnosticsPresenter;
         _scriptOptionsFactories = scriptOptionsFactories;
         _exitCodeParser = exitCodeParser;
-        _host = host;
     }
 
     public CommandResult Run(ICommand sourceCommand, string script)
@@ -44,7 +42,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
             stopwatch.Start();
 
             _scriptState =
-                (_scriptState ?? CSharpScript.RunAsync(string.Empty, options, _host, typeof(IHost)).Result)
+                (_scriptState ?? CSharpScript.RunAsync(string.Empty, options).Result)
                 .ContinueWithAsync(
                     script,
                     options,

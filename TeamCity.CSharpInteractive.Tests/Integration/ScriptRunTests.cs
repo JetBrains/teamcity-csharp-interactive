@@ -4,7 +4,6 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using Core;
 using HostApi;
-using Script;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -337,7 +336,7 @@ public class ScriptRunTests
     }
 
     [Fact]
-    public void ShouldSupportHostFromLocalFunctions()
+    public void ShouldSupportHostOperationsFromLocalFunctions()
     {
         // Given
 
@@ -347,17 +346,16 @@ public class ScriptRunTests
             "class Abc",
             "{",
             "  private readonly IHost _host;",
-            "  public Abc(IHost host) => _host = host;",
             "  public void Fun()",
             "  {",
             "    void LocalFun()",
             "    {",
-            @"      _host.Info(""Abc"");",
+            @"      Info(""Abc"");",
             "    }",
             "    LocalFun();",
             "  }",
             "}",
-            "new Abc(Host).Fun();"
+            "new Abc().Fun();"
         );
 
         // Then

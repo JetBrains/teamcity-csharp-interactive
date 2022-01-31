@@ -1,6 +1,7 @@
 ﻿using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
+
 var currentDirectory = Environment.CurrentDirectory;
 var outputDir = Path.Combine(currentDirectory, "bin");
 Host.WriteLine($"Starting {Args[0]} at \"{currentDirectory}\".");
