@@ -24,8 +24,16 @@ internal class ExitManager : IActive
             return Disposable.Empty;
         }
 
-        System.Console.TreatControlCAsInput = false;
-        System.Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+        try
+        {
+            System.Console.TreatControlCAsInput = false;
+            System.Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+        }
+        catch
+        {
+            // ignored
+        }
+
         return Disposable.Create(() => System.Console.CancelKeyPress -= ConsoleOnCancelKeyPress);
     }
 

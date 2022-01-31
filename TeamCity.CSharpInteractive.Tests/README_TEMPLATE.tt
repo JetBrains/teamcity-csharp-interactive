@@ -3,6 +3,7 @@
 <#@ output extension=".md" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
 
 <#
     var currentPath = Host.ResolvePath(string.Empty);
