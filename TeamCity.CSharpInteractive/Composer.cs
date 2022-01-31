@@ -63,7 +63,7 @@ internal static partial class Composer
             .Bind<ILog<TT>>("TeamCity").To<TeamCityLog<TT>>()
             .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySpecific<ILog<TT>>>().Instance)
             .Bind<IFileSystem>().To<FileSystem>()
-            .Bind<IEnvironment>().Bind<IScriptContext>().Bind<ITraceSource>(typeof(Environment)).To<Environment>()
+            .Bind<IEnvironment>().Bind<IScriptContext>().Bind<IErrorContext>().Bind<ITraceSource>(typeof(Environment)).To<Environment>()
             .Bind<ITeamCitySettings>().To<TeamCitySettings>()
             .Bind<IExitTracker>().To<ExitTracker>()
             .Bind<IDotNetEnvironment>().Bind<ITraceSource>(typeof(DotNetEnvironment)).To<DotNetEnvironment>()

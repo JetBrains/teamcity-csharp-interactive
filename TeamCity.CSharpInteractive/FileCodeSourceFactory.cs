@@ -14,7 +14,7 @@ internal class FileCodeSourceFactory : IFileCodeSourceFactory
     public ICodeSource Create(string fileName)
     {
         var fileCodeSource = _fileCodeSourceFactory();
-        fileCodeSource.FileName = fileName;
+        fileCodeSource.Name = fileName;
         return fileCodeSource;
     }
 }

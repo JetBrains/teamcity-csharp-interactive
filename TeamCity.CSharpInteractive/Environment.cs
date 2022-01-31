@@ -4,10 +4,13 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.DotNet.PlatformAbstractions;
 
-[ExcludeFromCodeCoverage]
-internal class Environment : IEnvironment, ITraceSource, IScriptContext
+internal class Environment:
+    IEnvironment,
+    ITraceSource,
+    IScriptContext,
+    IErrorContext
 {
-    private readonly LinkedList<string> _scriptDirectories = new();
+    private readonly LinkedList<ICodeSource> _sources = new();
 
     public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
@@ -76,20 +79,36 @@ internal class Environment : IEnvironment, ITraceSource, IScriptContext
         }
     }
 
-    public IDisposable OverrideScriptDirectory(string? scriptDirectory)
+    public IDisposable CreateScope(ICodeSource source)
     {
-        if (scriptDirectory == null)
+        _sources.AddLast(source);
+        return Disposable.Create(() => _sources.Remove(source));
+    }
+
+    public bool TryGetSourceName([NotNullWhen(true)] out string? name)
+    {
+        if (TryGetCurrentSource(out var source))
         {
-            return Disposable.Empty;
+            name = Path.GetFileName(source.Name);
+            return !string.IsNullOrWhiteSpace(name);
         }
 
-        _scriptDirectories.AddLast(scriptDirectory);
-        return Disposable.Create(() => _scriptDirectories.Remove(scriptDirectory));
+        name = default;
+        return false;
+    }
+
+    private bool TryGetCurrentSource([NotNullWhen(true)] out ICodeSource? source)
+    {
+        source = _sources.LastOrDefault();
+        return source != default;
     }
 
     private static string GetWorkingDirectory() => Directory.GetCurrentDirectory();
 
     private string GetBinDirectory() => Path.GetDirectoryName(typeof(Environment).Assembly.Location) ?? GetScriptDirectory();
 
-    private string GetScriptDirectory() => _scriptDirectories.Count > 0 ? _scriptDirectories.Last!.Value : GetWorkingDirectory();
+    private string GetScriptDirectory() => 
+        TryGetCurrentSource(out var source) 
+            ? Path.GetDirectoryName(source.Name) ?? GetWorkingDirectory()
+            : GetWorkingDirectory();
 }

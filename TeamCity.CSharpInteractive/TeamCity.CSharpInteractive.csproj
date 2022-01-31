@@ -22,7 +22,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <CompilerVisibleProperty Include="ImmutypeAPI"/>
+        <CompilerVisibleProperty Include="ImmutypeAPI" />
         <PackageReference Include="Pure.DI" Version="1.1.25">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,12 +31,12 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.0.1"/>
-        <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6"/>
-        <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0"/>
-        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13"/>
-        <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" PrivateAssets="all" GeneratePathProperty="true" IncludeAssets="All"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.0.1" />
+        <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0" />
+        <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
+        <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" PrivateAssets="all" GeneratePathProperty="true" IncludeAssets="All" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>TeamCity.CSharpInteractive.Tests</_Parameter1>
         </AssemblyAttribute>
@@ -54,17 +54,17 @@
 
     <Target Name="GetDependencyTargetPaths">
         <ItemGroup>
-            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*"/>
-            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*"/>
+            <MSBuildLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\msbuild15\*.*" />
+            <VSTestLoggerFiles Include="$(PKGTeamCity_Dotnet_Integration)\build\_common\vstest15\*.*" />
         </ItemGroup>
 
-        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild"/>
-        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest"/>
+        <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
+        <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
     </Target>
 
     <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
         <ItemGroup>
-            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
         </ItemGroup>
     </Target>
 
@@ -96,8 +96,8 @@
             <Pack>true</Pack>
         </Content>
 
-        <Compile Remove="ScriptGlobalUsings.cs"/>
-        <Compile Remove="Program.cs"/>
+        <Compile Remove="ScriptGlobalUsings.cs" />
+        <Compile Remove="Program.cs" />
     </ItemGroup>
 
 </Project>

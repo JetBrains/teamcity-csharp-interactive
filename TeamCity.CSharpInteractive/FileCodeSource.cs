@@ -22,12 +22,8 @@ internal class FileCodeSource : ICodeSource
         _filePathResolver = filePathResolver;
         _scriptContext = scriptContext;
     }
-
-    public string Name => Path.GetFileName(FileName);
-
-    public bool Internal => false;
-
-    public string FileName
+    
+    public string Name
     {
         get => _fileName;
         set
@@ -41,13 +37,15 @@ internal class FileCodeSource : ICodeSource
         }
     }
 
+    public bool Internal => false;
+
     public IEnumerator<string> GetEnumerator()
     {
-        var resource = _scriptContext.OverrideScriptDirectory(Path.GetDirectoryName(FileName));
+        var scope = _scriptContext.CreateScope(this);
         try
         {
-            _log.Trace(() => new[] {new Text($@"Read file ""{FileName}"".")});
-            return new LinesEnumerator(_fileSystem.ReadAllLines(FileName).GetEnumerator(), () => resource.Dispose());
+            _log.Trace(() => new[] {new Text($@"Reading file ""{Name}"".")});
+            return new LinesEnumerator(_fileSystem.ReadAllLines(Name).GetEnumerator(), () => scope.Dispose());
         }
         catch (Exception e)
         {

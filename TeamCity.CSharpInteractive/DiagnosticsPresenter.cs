@@ -9,31 +9,42 @@ using Microsoft.CodeAnalysis;
 internal class DiagnosticsPresenter : IPresenter<CompilationDiagnostics>
 {
     private readonly ILog<DiagnosticsPresenter> _log;
+    private readonly IErrorContext _errorContext;
 
-    public DiagnosticsPresenter(ILog<DiagnosticsPresenter> log) => _log = log;
+    public DiagnosticsPresenter(ILog<DiagnosticsPresenter> log, IErrorContext errorContext)
+    {
+        _log = log;
+        _errorContext = errorContext;
+    }
 
     public void Show(CompilationDiagnostics data)
     {
         var (sourceCommand, readOnlyCollection) = data;
+        var prefix = Text.Empty;
+        if(_errorContext.TryGetSourceName(out var name))
+        {
+            prefix = new Text($"{name} ");
+        }
+
         foreach (var diagnostic in readOnlyCollection)
         {
             switch (diagnostic.Severity)
             {
                 case DiagnosticSeverity.Hidden:
-                    _log.Trace(() => new[] {new Text(diagnostic.ToString())});
+                    _log.Trace(() => new[] {prefix, new Text(diagnostic.ToString())});
                     break;
 
                 case DiagnosticSeverity.Info:
-                    _log.Info(new[] {new Text(diagnostic.ToString())});
+                    _log.Info(new[] {prefix, new Text(diagnostic.ToString())});
                     break;
 
                 case DiagnosticSeverity.Warning:
-                    _log.Warning(new[] {new Text(diagnostic.ToString())});
+                    _log.Warning(new[] {prefix, new Text(diagnostic.ToString())});
                     break;
 
                 case DiagnosticSeverity.Error:
                     var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(sourceCommand.Name))}";
-                    _log.Error(new ErrorId(errorId), new[] {new Text(diagnostic.ToString())});
+                    _log.Error(new ErrorId(errorId), new[] {prefix, new Text(diagnostic.ToString())});
                     break;
             }
         }
