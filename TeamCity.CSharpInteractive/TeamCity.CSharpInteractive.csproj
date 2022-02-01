@@ -74,20 +74,26 @@
             <Pack>true</Pack>
         </None>
 
-        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*">
-            <PackagePath>contentFiles\cs\any\msbuild</PackagePath>
-            <PackageCopyToOutput>true</PackageCopyToOutput>
-            <PackageFlatten>false</PackageFlatten>
+        <None Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*">
+            <PackagePath>build\any\msbuild</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
+        </None>
+
+        <None Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*">
+            <PackagePath>build\any\vstest</PackagePath>
+            <Pack>true</Pack>
+            <Visible>false</Visible>
+        </None>
+
+        <Content Include="TeamCity.CSharpInteractive.props">
+            <PackagePath>build</PackagePath>
+            <Pack>true</Pack>
         </Content>
 
-        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*">
-            <PackagePath>contentFiles\cs\any\vstest</PackagePath>
-            <PackageCopyToOutput>true</PackageCopyToOutput>
-            <PackageFlatten>false</PackageFlatten>
+        <Content Include="TeamCity.CSharpInteractive.targets">
+            <PackagePath>build</PackagePath>
             <Pack>true</Pack>
-            <Visible>false</Visible>
         </Content>
 
         <Compile Remove="Program.cs" />

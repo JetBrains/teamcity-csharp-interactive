@@ -1,26 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace Condition="'$(name)' != '$(name{-VALUE-FORMS-}safe_namespace)'">Company.ConsoleApplication1</RootNamespace>
-        <LangVersion>latest</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace/>
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
-
     <ItemGroup>
-        <Using Include="System"/>
-        <Using Include="System.Collections.Generic"/>
-        <Using Include="System.IO"/>
-        <Using Include="System.Linq"/>
-        <Using Include="System.Net.Http"/>
-        <Using Include="System.Threading"/>
-        <Using Include="System.Threading.Tasks"/>
-        <Using Include="Host" Static="True"/>
         <PackageReference Include="TeamCity.CSharpInteractive" Version="$(PackageVersion)"/>
     </ItemGroup>
-
 </Project>

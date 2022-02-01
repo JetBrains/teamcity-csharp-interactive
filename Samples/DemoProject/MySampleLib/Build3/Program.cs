@@ -26,6 +26,6 @@ string GetProperty(string name, string defaultProp)
         return prop;
     }
 
-    Warning($"The property \"{name}\" was not defined. The default value is \"{defaultProp}\".");
+    Warning($"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.");
     return defaultProp;
 }

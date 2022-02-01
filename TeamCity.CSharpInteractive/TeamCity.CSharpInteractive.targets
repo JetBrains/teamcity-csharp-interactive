@@ -1,0 +1,11 @@
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPathsForTeamCityCSharpInteractive</GetTargetPathDependsOn>
+    </PropertyGroup>
+    <Target Name="GetDependencyTargetPathsForTeamCityCSharpInteractive">
+        <ItemGroup>
+            <BuildFiles Include="$(MSBuildThisFileDirectory)any/**/*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(OutDir)/%(RecursiveDir)" SkipUnchangedFiles="true" ContinueOnError="true"/>
+    </Target>
+</Project>
