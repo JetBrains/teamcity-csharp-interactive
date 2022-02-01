@@ -104,7 +104,8 @@ object BuildAndDeployBuildType: BuildType({
         csharpScript {
             name = "Evaluate a next NuGet package version"
             content =
-                    "using System.Linq;\n" +
+                    "using System.Linq;\n" + 
+                    "using HostApi;\n" +
                     "Props[\"version\"] = \n" +
                     "  GetService<INuGet>()\n" +
                     "  .Restore(Args[0], \"*\", \"netcoreapp3.1\")\n" +

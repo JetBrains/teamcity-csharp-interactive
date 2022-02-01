@@ -1,0 +1,14 @@
+﻿@page "/"
+@using MySampleLib
+@inject ICalculator _calculator
+
+<input placeholder="Operand #1" @bind="@_op1" /> + <input placeholder="Operand #2" @bind="@_op2" /> <button @onclick="AddNumbers" class="btn btn-light">=</button> <input readonly @bind="@_result" />
+
+@code {
+    string _op1 = string.Empty;
+    string _op2 = string.Empty;
+    string _result = string.Empty;
+    
+    void AddNumbers() => 
+        _result = _calculator.Add(Convert.ToInt32(_op1), Convert.ToInt32(_op2)).ToString();
+}

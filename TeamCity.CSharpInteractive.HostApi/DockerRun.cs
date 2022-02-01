@@ -64,7 +64,7 @@ public record DockerRun(
     string ShortName = "")
     : ICommandLine
 {
-    public DockerRun() : this(new CommandLine(string.Empty), string.Empty)
+    public DockerRun(string image = "") : this(new CommandLine(string.Empty), image)
     { }
 
     public DockerRun(ICommandLine commandLine, string image)

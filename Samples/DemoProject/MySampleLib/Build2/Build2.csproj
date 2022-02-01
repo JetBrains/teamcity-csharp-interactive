@@ -3,7 +3,6 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace Condition="'$(name)' != '$(name{-VALUE-FORMS-}safe_namespace)'">Company.ConsoleApplication1</RootNamespace>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -20,7 +19,7 @@
         <Using Include="System.Threading"/>
         <Using Include="System.Threading.Tasks"/>
         <Using Include="Host" Static="True"/>
-        <PackageReference Include="TeamCity.CSharpInteractive" Version="$(PackageVersion)"/>
+        <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.0-dev"/>
     </ItemGroup>
 
 </Project>

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySampleLib", "MySampleLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySampleLib.Tests", "MySampleLib.Tests\MySampleLib.Tests.csproj", "{209F21A5-80D3-4AF9-BEAA-893A5A555194}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorServerApp", "BlazorServerApp\BlazorServerApp.csproj", "{5C2CFAD1-1B85-4690-B4E9-48D556636E57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{209F21A5-80D3-4AF9-BEAA-893A5A555194}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{209F21A5-80D3-4AF9-BEAA-893A5A555194}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{209F21A5-80D3-4AF9-BEAA-893A5A555194}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C2CFAD1-1B85-4690-B4E9-48D556636E57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C2CFAD1-1B85-4690-B4E9-48D556636E57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C2CFAD1-1B85-4690-B4E9-48D556636E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C2CFAD1-1B85-4690-B4E9-48D556636E57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

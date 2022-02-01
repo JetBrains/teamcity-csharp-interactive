@@ -90,13 +90,6 @@
             <Visible>false</Visible>
         </Content>
 
-        <Content Include="ScriptGlobalUsings.cs">
-            <PackagePath>contentFiles\cs\any</PackagePath>
-            <BuildAction>Compile</BuildAction>
-            <Pack>true</Pack>
-        </Content>
-
-        <Compile Remove="ScriptGlobalUsings.cs" />
         <Compile Remove="Program.cs" />
     </ItemGroup>
 

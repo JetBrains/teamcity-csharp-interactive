@@ -89,7 +89,5 @@
             <Pack>true</Pack>
             <Visible>false</Visible>
         </Content>
-
-        <Compile Remove="ScriptGlobalUsings.cs" />
     </ItemGroup>
 </Project>

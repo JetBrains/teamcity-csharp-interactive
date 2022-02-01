@@ -15,6 +15,15 @@
         <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.25" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+
+        <Using Include="System"/>
+        <Using Include="System.Collections.Generic"/>
+        <Using Include="System.IO"/>
+        <Using Include="System.Linq"/>
+        <Using Include="System.Net.Http"/>
+        <Using Include="System.Threading"/>
+        <Using Include="System.Threading.Tasks"/>
+        <Using Include="Host" Static="True"/>
     </ItemGroup>
 
     <PropertyGroup>
@@ -30,11 +39,5 @@
         <Copy SourceFiles="@(MSBuildLoggerFiles)" DestinationFolder="$(OutDir)\msbuild" />
         <Copy SourceFiles="@(VSTestLoggerFiles)" DestinationFolder="$(OutDir)\vstest" />
     </Target>
-
-    <ItemGroup>
-        <Compile Include="..\..\TeamCity.CSharpInteractive\ScriptGlobalUsings.cs">
-            <Link>ScriptGlobalUsings.cs</Link>
-        </Compile>
-    </ItemGroup>
 
 </Project>

@@ -63,11 +63,10 @@ var vstest = new VSTest()
     .WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll"));
 
 var test = new DotNetTest()
-    .WithExecutablePath("dotnet")
     .WithNoBuild(true)
     .WithVerbosity(DotNetVerbosity.Normal);
 
-var testInContainer = new DockerRun(test, $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}")
+var testInContainer = new DockerRun(test.WithExecutablePath("dotnet"), $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}")
     .WithPlatform("linux")
     .AddVolumes((currentDirectory, "/project"))
     .WithContainerWorkingDirectory("/project");
