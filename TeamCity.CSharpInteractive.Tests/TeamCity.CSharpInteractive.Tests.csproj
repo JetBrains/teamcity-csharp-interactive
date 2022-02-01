@@ -24,7 +24,7 @@
         <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj" />
-        <PackageReference Update="TeamCity.DotNet.Integration" Version="1.0.24" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All">
+        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.25" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
@@ -55,18 +55,6 @@
         <None Update="README_TEMPLATE.md">
             <DependentUpon>README_TEMPLATE.tt</DependentUpon>
         </None>
-
-        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any\msbuild</PackagePath>
-            <Pack>true</Pack>
-            <Visible>false</Visible>
-        </Content>
-
-        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any\vstest</PackagePath>
-            <Pack>true</Pack>
-            <Visible>false</Visible>
-        </Content>
     </ItemGroup>
 
 </Project>

@@ -104,7 +104,6 @@ internal static partial class Composer
             .Bind<IBuildContext>("base").As(Transient).To<BuildContext>()
             .Bind<IBuildContext>().As(Transient).To<ReliableBuildContext>()
             .Bind<ITextToColorStrings>().To<TextToColorStrings>()
-            .Bind<ITestDisplayNameToFullyQualifiedNameConverter>().To<TestDisplayNameToFullyQualifiedNameConverter>()
             .Bind<IFileExplorer>().To<FileExplorer>()
             .Bind<IProcessOutputWriter>().To<ProcessOutputWriter>()
             .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()

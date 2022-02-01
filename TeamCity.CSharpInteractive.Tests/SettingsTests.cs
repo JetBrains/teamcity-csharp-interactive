@@ -79,7 +79,7 @@ public class SettingsTests
         // Then
         settings.VerbosityLevel.ShouldBe(VerbosityLevel.Quiet);
         settings.InteractionMode.ShouldBe(InteractionMode.Interactive);
-        settings.CodeSources.ToArray().ShouldBe(new[] {_consoleCodeSource});
+        settings.CodeSources.ToArray().ShouldBe(new[] {_hostIntegrationCodeSource, _consoleCodeSource});
     }
 
     private Settings CreateInstance(RunningMode runningMode) =>

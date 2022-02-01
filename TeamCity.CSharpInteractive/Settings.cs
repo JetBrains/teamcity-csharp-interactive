@@ -1,7 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using System.Collections;
 using System.Collections.Immutable;
 using Pure.DI;
 
@@ -161,7 +160,7 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
             {
                 _interactionMode = InteractionMode.Interactive;
                 _verbosityLevel = VerbosityLevel.Quiet;
-                _codeSources = new[] {_consoleCodeSource};
+                _codeSources = new[] {_hostIntegrationCodeSource, _consoleCodeSource};
             }
         }
     }

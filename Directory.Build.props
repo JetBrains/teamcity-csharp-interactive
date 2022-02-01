@@ -16,29 +16,5 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/JetBrains/teamcity-csharp-interactive</RepositoryUrl>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="TeamCity.Dotnet.Integration" Version="1.0.22" GeneratePathProperty="true" PrivateAssets="all">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <PropertyGroup>
-        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-    </PropertyGroup>
-
-    <Target Name="GetDependencyTargetPaths">
-        <PropertyGroup>
-            <Integration>$(PKGTeamCity_Dotnet_Integration)\build\_common</Integration>
-        </PropertyGroup>
-
-        <ItemGroup>
-            <VSTestFiles Include="$(Integration)\vstest15\*.*"/>
-            <MSBuildFiles Include="$(Integration)\msbuild15\*.*"/>
-        </ItemGroup>
-
-        <Copy SourceFiles="@(MSBuildFiles)" DestinationFolder="$(OutDir)"/>
-        <Copy SourceFiles="@(VSTestFiles)" DestinationFolder="$(OutDir)"/>
-    </Target>
 </Project>
 

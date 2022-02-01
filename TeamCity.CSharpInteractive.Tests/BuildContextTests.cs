@@ -5,13 +5,7 @@ using JetBrains.TeamCity.ServiceMessages.Write;
 
 public class BuildContextTests
 {
-    private readonly Mock<ITestDisplayNameToFullyQualifiedNameConverter> _testDisplayNameToFullyQualifiedNameConverter = new();
     private readonly Mock<IStartInfo> _startInfo = new();
-
-    public BuildContextTests()
-    {
-        _testDisplayNameToFullyQualifiedNameConverter.Setup(i => i.Convert(It.IsAny<string>())).Returns<string>(displayName => $"Full {displayName}");
-    }
 
     [Fact]
     public void ShouldProcessStdOutput()
@@ -50,14 +44,9 @@ public class BuildContextTests
     {
         // Given
         var result = CreateInstance();
-        var testSuiteStarted = new ServiceMessage("testSuiteStarted")
-        {
-            {"name", "Assembly1"},
-            {"flowId", "11"}
-        };
-
         var testStdout = new ServiceMessage("testStdout")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
             {"out", "Some output"}
@@ -65,6 +54,7 @@ public class BuildContextTests
 
         var testStderr = new ServiceMessage("testStderr")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
             {"out", "Some error"}
@@ -72,31 +62,28 @@ public class BuildContextTests
 
         var testFinished = new ServiceMessage("testFinished")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
-            {"duration", "123"}
-        };
-
-        var testSuiteFinished = new ServiceMessage("testSuiteFinished")
-        {
-            {"name", "Assembly1"},
-            {"flowId", "11"}
+            {"duration", "123"},
+            {"displayName", "Test1"},
+            {"fullyQualifiedName", "Full Test1"},
+            {"executorUri", "executor://mstestadapter/v2"},
+            {"lineNumber", "23"}
         };
 
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
         result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
         result.ProcessMessage(output, testStderr).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdError).WithText("Some error")});
         result.ProcessMessage(output, testFinished).ShouldBeEmpty();
-        result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
         var test = buildResult.Tests[0];
-        test.AssemblyName.ShouldBe("Assembly1");
+        test.SuiteName.ShouldBe("Assembly1");
         test.DisplayName.ShouldBe("Test1");
         test.FullyQualifiedName.ShouldBe("Full Test1");
         test.Duration.ShouldBe(TimeSpan.FromMilliseconds(123));
@@ -108,6 +95,8 @@ public class BuildContextTests
             new Output(_startInfo.Object, false, "Some output", 11),
             new Output(_startInfo.Object, true, "Some error", 11)
         });
+        test.ExecutorUri.ShouldBe(new Uri("executor://mstestadapter/v2", UriKind.RelativeOrAbsolute));
+        test.LineNumber.ShouldBe(23);
     }
 
     [Fact]
@@ -115,14 +104,9 @@ public class BuildContextTests
     {
         // Given
         var result = CreateInstance();
-        var testSuiteStarted = new ServiceMessage("testSuiteStarted")
-        {
-            {"name", "Assembly1"},
-            {"flowId", "11"}
-        };
-
         var testStdout = new ServiceMessage("testStdout")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
             {"out", "Some output"}
@@ -130,31 +114,26 @@ public class BuildContextTests
 
         var testFailed = new ServiceMessage("testFailed")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
             {"message", "Some message"},
-            {"details", "Error details"}
-        };
-
-        var testSuiteFinished = new ServiceMessage("testSuiteFinished")
-        {
-            {"name", "Assembly1"},
-            {"flowId", "11"}
+            {"details", "Error details"},
+            {"displayName", "Test1"},
+            {"fullyQualifiedName", "Full Test1"}
         };
 
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
         result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
         result.ProcessMessage(output, testFailed).ShouldBeEmpty();
-        result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
         var test = buildResult.Tests[0];
-        test.AssemblyName.ShouldBe("Assembly1");
+        test.SuiteName.ShouldBe("Assembly1");
         test.DisplayName.ShouldBe("Test1");
         test.FullyQualifiedName.ShouldBe("Full Test1");
         test.Duration.ShouldBe(TimeSpan.Zero);
@@ -169,14 +148,9 @@ public class BuildContextTests
     {
         // Given
         var result = CreateInstance();
-        var testSuiteStarted = new ServiceMessage("testSuiteStarted")
-        {
-            {"name", "Assembly1"},
-            {"flowId", "11"}
-        };
-
         var testStdout = new ServiceMessage("testStdout")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
             {"out", "Some output"}
@@ -184,30 +158,25 @@ public class BuildContextTests
 
         var testIgnored = new ServiceMessage("testIgnored")
         {
+            {"suiteName", "Assembly1"},
             {"name", "Test1"},
             {"flowId", "11"},
-            {"message", "Some message"}
-        };
-
-        var testSuiteFinished = new ServiceMessage("testSuiteFinished")
-        {
-            {"name", "Assembly1"},
-            {"flowId", "11"}
+            {"message", "Some message"},
+            {"displayName", "Test1"},
+            {"fullyQualifiedName", "Full Test1"}
         };
 
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
-        result.ProcessMessage(output, testSuiteStarted).ShouldBeEmpty();
         result.ProcessMessage(output, testStdout).ToArray().ShouldBe(new[] {new BuildMessage(BuildMessageState.StdOut).WithText("Some output")});
         result.ProcessMessage(output, testIgnored).ShouldBeEmpty();
-        result.ProcessMessage(output, testSuiteFinished).ShouldBeEmpty();
         var buildResult = result.Create(_startInfo.Object, 33);
 
         // Then
         buildResult.Tests.Count.ShouldBe(1);
         var test = buildResult.Tests[0];
-        test.AssemblyName.ShouldBe("Assembly1");
+        test.SuiteName.ShouldBe("Assembly1");
         test.DisplayName.ShouldBe("Test1");
         test.FullyQualifiedName.ShouldBe("Full Test1");
         test.Duration.ShouldBe(TimeSpan.Zero);
@@ -238,10 +207,34 @@ public class BuildContextTests
         {
             {"text", "some text"},
             {"status", status},
-            {"errorDetails", "error details"}
+            {"errorDetails", "error details"},
+            {"code", "xUnit1026"},
+            {"file", @"C:\Projects\_temp\xu\TestProject1\TestProject1.cs"},
+            {"subcategory", "Abc"},
+            {"projectFile", @"C:\Projects\_temp\xu\TestProject1\TestProject1.csproj"},
+            {"senderName", "Csc"},
+            {"columnNumber", "1"},
+            {"endColumnNumber", "2"},
+            {"lineNumber", "3"},
+            {"endLineNumber", "4"},
+            {"importance", "High"}
         };
 
-        var buildMessage = new BuildMessage(state, default, "some text", "error details");
+        var buildMessage = new BuildMessage(
+            state,
+            default,
+            "some text",
+            "error details",
+            "xUnit1026",
+            @"C:\Projects\_temp\xu\TestProject1\TestProject1.cs",
+            "Abc",
+            @"C:\Projects\_temp\xu\TestProject1\TestProject1.csproj",
+            "Csc",
+            1,
+            2,
+            3,
+            4,
+            DotNetMessageImportance.High);
 
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
@@ -280,10 +273,34 @@ public class BuildContextTests
         var buildProblem = new ServiceMessage("buildProblem")
         {
             {"description", "Problem description"},
-            {"identity", "ID123"}
+            {"errorDetails", "error details"},
+            {"code", "xUnit1026"},
+            {"file", @"C:\Projects\_temp\xu\TestProject1\TestProject1.cs"},
+            {"subcategory", "Abc"},
+            {"projectFile", @"C:\Projects\_temp\xu\TestProject1\TestProject1.csproj"},
+            {"senderName", "Csc"},
+            {"columnNumber", "1"},
+            {"endColumnNumber", "2"},
+            {"lineNumber", "3"},
+            {"endLineNumber", "4"},
+            {"importance", "High"}
         };
 
-        var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, default, "Problem description", "ID123");
+        var buildMessage = new BuildMessage(
+            BuildMessageState.BuildProblem,
+            default,
+            "Problem description",
+            "error details",
+            "xUnit1026", 
+            @"C:\Projects\_temp\xu\TestProject1\TestProject1.cs",
+            "Abc",
+            @"C:\Projects\_temp\xu\TestProject1\TestProject1.csproj",
+            "Csc",
+            1,
+            2,
+            3,
+            4,
+            DotNetMessageImportance.High);
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
 
         // When
@@ -295,6 +312,5 @@ public class BuildContextTests
         buildResult.Errors.ShouldBe(new[] {buildMessage});
     }
 
-    private BuildContext CreateInstance() =>
-        new(_testDisplayNameToFullyQualifiedNameConverter.Object);
+    private BuildContext CreateInstance() => new();
 }

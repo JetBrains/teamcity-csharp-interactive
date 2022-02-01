@@ -41,11 +41,9 @@ if (
     return 1;
 }
 
-if (buildRunner.Run(new DotNetClean()).ExitCode != 0)
-    return 1;
-
 if (buildRunner.Run(new MSBuild()
         .WithShortName("Rebuilding solution")
+        .AddProps(("configuration", configuration))
         .WithProject("MySampleLib.sln")
         .WithTarget("Rebuild")
         .WithRestore(true)

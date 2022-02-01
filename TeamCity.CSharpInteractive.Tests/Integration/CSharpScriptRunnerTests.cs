@@ -13,7 +13,6 @@ public class CSharpScriptRunnerTests
     private readonly Mock<IPresenter<ScriptState<object>>> _scriptStatePresenter;
     private readonly Mock<IPresenter<CompilationDiagnostics>> _diagnosticsPresenter;
     private readonly Mock<IExitCodeParser> _exitCodeParser;
-    private readonly Mock<IHost> _host;
     private readonly List<Text> _errors = new();
     private readonly List<Diagnostic> _diagnostics = new();
 
@@ -24,7 +23,6 @@ public class CSharpScriptRunnerTests
         _scriptStatePresenter = new Mock<IPresenter<ScriptState<object>>>();
         _diagnosticsPresenter = new Mock<IPresenter<CompilationDiagnostics>>();
         _diagnosticsPresenter.Setup(i => i.Show(It.IsAny<CompilationDiagnostics>())).Callback<CompilationDiagnostics>(i => _diagnostics.AddRange(i.Diagnostics));
-        _host = new Mock<IHost>();
         _exitCodeParser = new Mock<IExitCodeParser>();
     }
 
@@ -144,6 +142,6 @@ public class CSharpScriptRunnerTests
     private CSharpScriptRunner CreateInstance()
     {
         var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider(Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(new FileSystem()), CancellationToken.None);
-        return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new[] {assembliesScriptOptionsProvider}, _exitCodeParser.Object, _host.Object);
+        return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new[] {assembliesScriptOptionsProvider}, _exitCodeParser.Object);
     }
 }

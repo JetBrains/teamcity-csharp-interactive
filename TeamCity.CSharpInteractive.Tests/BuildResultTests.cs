@@ -42,7 +42,7 @@ public class BuildResultTests
     {
         for (var i = 0; i < count; i++)
         {
-            yield return new TestResult(state, $"Test_{state}_{i}").WithAssemblyName("aaa");
+            yield return new TestResult(state, $"Test_{state}_{i}").WithSuiteName("aaa");
         }
     }
 }

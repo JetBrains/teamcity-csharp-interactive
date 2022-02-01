@@ -23,7 +23,7 @@ internal class DiagnosticsPresenter : IPresenter<CompilationDiagnostics>
         var prefix = Text.Empty;
         if(_errorContext.TryGetSourceName(out var name))
         {
-            prefix = new Text($"{name} ");
+            prefix = new Text(name);
         }
 
         foreach (var diagnostic in readOnlyCollection)

@@ -59,7 +59,7 @@ internal class NuGetService : INuGet
         var restoreResult = _nugetRestoreService.TryRestore(settings, out var projectAssetsJson);
         if (restoreResult == false)
         {
-            _log.Warning($"Cannot restore the NuGet package {settings.PackageId} {settings.VersionRange}.");
+            _log.Warning($"Cannot restore the NuGet package {settings.PackageId} {settings.VersionRange}".Trim() + '.');
             return Enumerable.Empty<NuGetPackage>();
         }
 

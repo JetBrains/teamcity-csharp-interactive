@@ -8,16 +8,11 @@ using JetBrains.TeamCity.ServiceMessages;
 
 internal class BuildContext : IBuildContext
 {
-    private readonly ITestDisplayNameToFullyQualifiedNameConverter _testDisplayNameToFullyQualifiedNameConverter;
     private readonly List<BuildMessage> _errors = new();
     private readonly List<BuildMessage> _warnings = new();
     private readonly List<TestResult> _tests = new();
     private readonly HashSet<TestKey> _testKeys = new();
     private readonly Dictionary<TestKey, TestContext> _currentTests = new();
-    private readonly Dictionary<string, LinkedList<string>> _assemblies = new();
-
-    public BuildContext(ITestDisplayNameToFullyQualifiedNameConverter testDisplayNameToFullyQualifiedNameConverter) =>
-        _testDisplayNameToFullyQualifiedNameConverter = testDisplayNameToFullyQualifiedNameConverter;
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public IReadOnlyList<BuildMessage> ProcessMessage(in Output output, IServiceMessage message) => (
@@ -25,8 +20,6 @@ internal class BuildContext : IBuildContext
         {
             "teststdout" => OnStdOut(message, output.StartInfo, output.ProcessId),
             "teststderr" => OnStdErr(message, output.StartInfo, output.ProcessId),
-            "testsuitestarted" => OnTestSuiteStarted(message),
-            "testsuitefinished" => OnTestSuiteFinished(message),
             "testfinished" => OnTestFinished(message),
             "testignored" => OnTestIgnored(message),
             "testfailed" => OnTestFailed(message),
@@ -75,33 +68,7 @@ internal class BuildContext : IBuildContext
         _errors.Add(buildMessage);
         yield return buildMessage;
     }
-
-    private IEnumerable<BuildMessage> OnTestSuiteStarted(IServiceMessage message)
-    {
-        var name = message.GetValue("name") ?? string.Empty;
-        var flowId = message.GetValue("flowId") ?? string.Empty;
-        if (!_assemblies.TryGetValue(flowId, out var names))
-        {
-            names = new LinkedList<string>();
-            _assemblies.Add(flowId, names);
-        }
-
-        names.AddLast(name);
-        yield break;
-    }
-
-    private IEnumerable<BuildMessage> OnTestSuiteFinished(IServiceMessage message)
-    {
-        var name = message.GetValue("name") ?? string.Empty;
-        var flowId = message.GetValue("flowId") ?? string.Empty;
-        if (_assemblies.TryGetValue(flowId, out var names) && name.Length > 0)
-        {
-            names.RemoveLast();
-        }
-
-        yield break;
-    }
-
+    
     private IEnumerable<BuildMessage> OnTestFinished(IServiceMessage message)
     {
         var testKey = CreateKey(message);
@@ -118,16 +85,8 @@ internal class BuildContext : IBuildContext
             duration = TimeSpan.FromMilliseconds(durationMs);
         }
 
-        _tests.Add(
-            new TestResult(
-                TestState.Passed,
-                testKey.AssemblyName,
-                _testDisplayNameToFullyQualifiedNameConverter.Convert(ctx.Name),
-                ctx.Name,
-                string.Empty,
-                string.Empty,
-                duration,
-                ctx.Output));
+        
+        _tests.Add(CreateResult(testKey, message, TestState.Passed).WithDuration(duration).WithOutput(ctx.Output));
     }
 
     private IEnumerable<BuildMessage> OnTestIgnored(IServiceMessage message)
@@ -135,17 +94,7 @@ internal class BuildContext : IBuildContext
         var testKey = CreateKey(message);
         _testKeys.Add(testKey);
         var ctx = GetTestContext(testKey, true);
-        _tests.Add(
-            new TestResult(
-                TestState.Ignored,
-                testKey.AssemblyName,
-                _testDisplayNameToFullyQualifiedNameConverter.Convert(ctx.Name),
-                ctx.Name,
-                message.GetValue("message") ?? string.Empty,
-                string.Empty,
-                TimeSpan.Zero,
-                ctx.Output));
-
+        _tests.Add(CreateResult(testKey, message, TestState.Ignored).WithMessage(message.GetValue("message") ?? string.Empty).WithOutput(ctx.Output));
         yield break;
     }
 
@@ -154,18 +103,41 @@ internal class BuildContext : IBuildContext
         var testKey = CreateKey(message);
         _testKeys.Add(testKey);
         var ctx = GetTestContext(testKey, true);
-        _tests.Add(
-            new TestResult(
-                TestState.Failed,
-                testKey.AssemblyName,
-                _testDisplayNameToFullyQualifiedNameConverter.Convert(ctx.Name),
-                ctx.Name,
-                message.GetValue("message") ?? string.Empty,
-                message.GetValue("details") ?? string.Empty,
-                TimeSpan.Zero,
-                ctx.Output));
-
+        _tests.Add(CreateResult(testKey, message, TestState.Failed).WithMessage(message.GetValue("message") ?? string.Empty).WithDetails(message.GetValue("details") ?? string.Empty).WithOutput(ctx.Output));
         yield break;
+    }
+    
+    private static TestResult CreateResult(TestKey key, IServiceMessage message, TestState state)
+    {
+        var source = message.GetValue("source") ?? string.Empty;
+        var displayName = message.GetValue("displayName") ?? string.Empty; 
+        var codeFilePath = message.GetValue("codeFilePath") ?? string.Empty;
+        var fullyQualifiedName = message.GetValue("fullyQualifiedName") ?? string.Empty;
+        var (flowId, suiteName, testName) = key;
+        var result = new TestResult(state, testName)
+                .WithSuiteName(suiteName)
+                .WithFlowId(flowId)
+                .WithSource(source)
+                .WithDisplayName(displayName)
+                .WithCodeFilePath(codeFilePath)
+                .WithFullyQualifiedName(fullyQualifiedName);
+        
+        if (Guid.TryParse(message.GetValue("id"), out var id))
+        {
+            result = result.WithId(id);
+        }
+
+        if (Uri.TryCreate(message.GetValue("executorUri"), UriKind.RelativeOrAbsolute, out var executorUri))
+        {
+            result = result.WithExecutorUri(executorUri);
+        }
+
+        if (int.TryParse(message.GetValue("lineNumber"), out var lineNumber))
+        {
+            result = result.WithLineNumber(lineNumber);
+        }
+        
+        return result;
     }
 
     private IEnumerable<BuildMessage> OnMessage(IServiceMessage message)
@@ -178,9 +150,8 @@ internal class BuildContext : IBuildContext
             "ERROR" => BuildMessageState.StdError,
             _ => BuildMessageState.StdOut
         };
-
-        var errorDetails = message.GetValue("errorDetails") ?? string.Empty;
-        var buildMessage = new BuildMessage(state, default, text, errorDetails);
+        
+        var buildMessage = CreateMessage(message, state, text);
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         if (!string.IsNullOrWhiteSpace(buildMessage.Text))
         {
@@ -205,17 +176,57 @@ internal class BuildContext : IBuildContext
     private IEnumerable<BuildMessage> OnBuildProblem(IServiceMessage message)
     {
         var description = message.GetValue("description") ?? string.Empty;
-        var identity = message.GetValue("identity") ?? string.Empty;
-        var buildMessage = new BuildMessage(BuildMessageState.BuildProblem, default, description, identity);
+        var buildMessage = CreateMessage(message, BuildMessageState.BuildProblem, description);
         _errors.Add(buildMessage);
         yield return buildMessage;
+    }
+
+    private static BuildMessage CreateMessage(IServiceMessage message, BuildMessageState state, string text)
+    {
+        var buildMessage = new BuildMessage(
+            state,
+            default,
+            text,
+            message.GetValue("errorDetails") ?? string.Empty,
+            message.GetValue("code") ?? string.Empty,
+            message.GetValue("file") ?? string.Empty,
+            message.GetValue("subcategory") ?? string.Empty,
+            message.GetValue("projectFile") ?? string.Empty,
+            message.GetValue("senderName") ?? string.Empty);
+        
+        if (int.TryParse(message.GetValue("columnNumber"), out var columnNumber))
+        {
+            buildMessage = buildMessage.WithColumnNumber(columnNumber);
+        }
+        
+        if (int.TryParse(message.GetValue("endColumnNumber"), out var endColumnNumber))
+        {
+            buildMessage = buildMessage.WithEndColumnNumber(endColumnNumber);
+        }
+        
+        if (int.TryParse(message.GetValue("lineNumber"), out var lineNumber))
+        {
+            buildMessage = buildMessage.WithLineNumber(lineNumber);
+        }
+        
+        if (int.TryParse(message.GetValue("endLineNumber"), out var endLineNumber))
+        {
+            buildMessage = buildMessage.WithEndLineNumber(endLineNumber);
+        }
+        
+        if (Enum.TryParse<DotNetMessageImportance>(message.GetValue("importance"), out var importance))
+        {
+            buildMessage = buildMessage.WithImportance(importance);
+        }
+
+        return buildMessage;
     }
 
     private TestContext GetTestContext(TestKey testKey, bool remove = false)
     {
         if (!_currentTests.TryGetValue(testKey, out var testContext))
         {
-            testContext = new TestContext(testKey.TestName);
+            testContext = new TestContext();
             if (!remove)
             {
                 _currentTests.Add(testKey, testContext);
@@ -232,33 +243,20 @@ internal class BuildContext : IBuildContext
         return testContext;
     }
 
-    private string GetAssemblyName(string flowId)
-    {
-        if (!_assemblies.TryGetValue(flowId, out var names) || names.Count == 0)
-        {
-            return string.Empty;
-        }
-
-        return string.Join('.', names);
-    }
-
-    private TestKey CreateKey(IServiceMessage message)
+    private static TestKey CreateKey(IServiceMessage message)
     {
         var flowId = message.GetValue("flowId") ?? string.Empty;
-        var assemblyName = GetAssemblyName(flowId);
+        var suiteName = message.GetValue("suiteName") ?? string.Empty; 
         var name = message.GetValue("name") ?? string.Empty;
-        return new TestKey(flowId, assemblyName, name);
+        return new TestKey(flowId, suiteName, name);
     }
 
     // ReSharper disable once NotAccessedPositionalProperty.Local
-    private readonly record struct TestKey(string FlowId, string AssemblyName, string TestName);
+    private readonly record struct TestKey(string FlowId, string SuiteName, string TestName);
 
     private class TestContext
     {
-        public readonly string Name;
         public readonly List<Output> Output = new();
-
-        public TestContext(string name) => Name = name;
 
         public void AddStdOut(IStartInfo info, int processId, string? text)
         {

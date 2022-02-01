@@ -11,24 +11,46 @@ using Immutype;
 [DebuggerTypeProxy(typeof(TestResultDebugView))]
 public readonly record struct TestResult(
     TestState State,
-    string AssemblyName,
+    string Name,
+    string FlowId,
+    string SuiteName,
     string FullyQualifiedName,
     string DisplayName,
     string Message,
     string Details,
     TimeSpan Duration,
-    IReadOnlyList<Output> Output)
+    IReadOnlyList<Output> Output,
+    string Source,
+    string CodeFilePath,
+    Guid Id,
+    Uri? ExecutorUri,
+    int? LineNumber)
 {
-    public TestResult(TestState state, string displayName)
-        : this(state, string.Empty, string.Empty, displayName, string.Empty, string.Empty, TimeSpan.Zero, Array.Empty<Output>())
+    public TestResult(TestState state, string name)
+        : this(
+            state,
+            name,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            TimeSpan.Zero,
+            Array.Empty<Output>(),
+            string.Empty,
+            string.Empty,
+            Guid.Empty,
+            default,
+            default)
     { }
 
     public override string ToString()
     {
         var sb = new StringBuilder();
-        if (!string.IsNullOrWhiteSpace(AssemblyName))
+        if (!string.IsNullOrWhiteSpace(SuiteName))
         {
-            sb.Append(AssemblyName);
+            sb.Append(SuiteName);
             sb.Append(": ");
         }
 
@@ -46,8 +68,10 @@ public readonly record struct TestResult(
         public TestResultDebugView(TestResult testResult) => _testResult = testResult;
 
         public TestState State => _testResult.State;
+        
+        public string Name => _testResult.Name;
 
-        public string AssemblyName => _testResult.AssemblyName;
+        public string SuiteName => _testResult.SuiteName;
 
         public string FullyQualifiedName => _testResult.FullyQualifiedName;
 
@@ -61,5 +85,15 @@ public readonly record struct TestResult(
 
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
         public IReadOnlyList<Output> Output => _testResult.Output;
+        
+        public string Source => _testResult.Source;
+        
+        public string CodeFilePath => _testResult.CodeFilePath;
+        
+        public Guid Id => _testResult.Id;
+        
+        public Uri? ExecutorUri => _testResult.ExecutorUri;
+        
+        public int? LineNumber => _testResult.LineNumber;
     }
 }

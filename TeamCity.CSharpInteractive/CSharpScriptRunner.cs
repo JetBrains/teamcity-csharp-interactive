@@ -22,8 +22,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
         IPresenter<ScriptState<object>> scriptStatePresenter,
         IPresenter<CompilationDiagnostics> diagnosticsPresenter,
         IReadOnlyCollection<IScriptOptionsFactory> scriptOptionsFactories,
-        IExitCodeParser exitCodeParser,
-        IHost host)
+        IExitCodeParser exitCodeParser)
     {
         _log = log;
         _scriptStatePresenter = scriptStatePresenter;

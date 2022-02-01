@@ -65,7 +65,7 @@ internal class BuildResult : IBuildResult
         var testItems =
             from testGroup in
                 from testResult in Tests
-                group testResult by (testResult.AssemblyName, testResult.DisplayName)
+                group testResult by (AssemblyName: testResult.SuiteName, testResult.Name)
             select testGroup.OrderByDescending(i => i.State).First();
 
         var totalTests = 0;
