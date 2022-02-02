@@ -21,8 +21,8 @@ public class CommandLineInParallel : ScenarioHostService
         // $priority=05
         // $description=Run asynchronously in parallel
         // {
-        // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
+        // Adds the namespace "HostApi" to use Command Line API
+        // ## using HostApi;
 
         Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/c", "DIR"));
         int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));

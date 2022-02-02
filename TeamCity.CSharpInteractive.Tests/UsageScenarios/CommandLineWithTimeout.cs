@@ -21,8 +21,8 @@ public class CommandLineWithTimeout : ScenarioHostService
         // $description=Run timeout
         // $header=If timeout expired a process will be killed.
         // {
-        // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
+        // Adds the namespace "HostApi" to use Command Line API
+        // ## using HostApi;
 
         int? exitCode = GetService<ICommandLineRunner>().Run(
             new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),

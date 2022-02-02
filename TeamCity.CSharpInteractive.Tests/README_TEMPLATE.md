@@ -208,7 +208,7 @@ Trace("Some trace info");
 
 ``` CSharp
 // Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+using HostApi;
 
 // Creates a simple command line from just the name of the executable 
 new CommandLine("whoami");
@@ -240,8 +240,8 @@ new CommandLine("cmd", "/c", "echo", "Hello")
 
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+// Adds the namespace "HostApi" to use Command Line API
+using HostApi;
 
 int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
 ```
@@ -253,8 +253,8 @@ int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c"
 
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+// Adds the namespace "HostApi" to use Command Line API
+using HostApi;
 
 int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/C", "DIR"));
 ```
@@ -266,8 +266,8 @@ int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine(
 
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+// Adds the namespace "HostApi" to use Command Line API
+using HostApi;
 
 var lines = new List<string>();
 int? exitCode = GetService<ICommandLineRunner>().Run(
@@ -284,8 +284,8 @@ lines.ShouldContain("MyEnv=MyVal");
 
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+// Adds the namespace "HostApi" to use Command Line API
+using HostApi;
 
 Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/c", "DIR"));
 int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
@@ -299,8 +299,8 @@ task.Wait();
 The cancellation will kill a related process.
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+// Adds the namespace "HostApi" to use Command Line API
+using HostApi;
 
 var cancellationTokenSource = new CancellationTokenSource();
 Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
@@ -319,8 +319,8 @@ task.IsCompleted.ShouldBeFalse();
 If timeout expired a process will be killed.
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
+// Adds the namespace "HostApi" to use Command Line API
+using HostApi;
 
 int? exitCode = GetService<ICommandLineRunner>().Run(
     new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
@@ -337,8 +337,8 @@ exitCode.HasValue.ShouldBeFalse();
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -362,8 +362,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -390,8 +390,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -413,8 +413,8 @@ version.ShouldNotBeNull();
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -444,8 +444,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -470,8 +470,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -492,8 +492,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -514,8 +514,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -540,8 +540,8 @@ stdOut.ShouldBe(new[] {"Hello, World!"});
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var build = GetService<IBuildRunner>();
@@ -565,8 +565,8 @@ result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();
@@ -597,8 +597,8 @@ result.ExitCode.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.NuGet" to use INuGet
-using NuGet;
+// Adds the namespace "HostApi" to use INuGet
+using HostApi;
 
 IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new HostApi.NuGetRestore("IoC.Container").WithVersionRange(VersionRange.All));
 ```
@@ -610,8 +610,8 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new HostApi.Nu
 
 
 ``` CSharp
-// Adds the namespace "Script.NuGet" to use INuGet
-using NuGet;
+// Adds the namespace "HostApi" to use INuGet
+using HostApi;
 
 var packagesPath = Path.Combine(
     Path.GetTempPath(),
@@ -632,10 +632,8 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
 
 
 ``` CSharp
-// Adds the namespace "Script.Cmd" to use Command Line API
-using Cmd;
-// Adds the namespace "Script.Docker" to use Docker API
-using Docker;
+// Adds the namespace "HostApi" to use Command Line API and Docker API
+using HostApi;
 
 // Resolves a build service
 var commandLineRunner = GetService<ICommandLineRunner>();
@@ -655,10 +653,8 @@ result.ShouldBe(0);
 
 
 ``` CSharp
-// Adds the namespace "Script.DotNet" to use .NET build API
-using DotNet;
-// Adds the namespace "Script.Docker" to use Docker API
-using Docker;
+// Adds the namespace "HostApi" to use .NET build API and Docker API
+using HostApi;
 
 // Resolves a build service
 var buildRunner = GetService<IBuildRunner>();

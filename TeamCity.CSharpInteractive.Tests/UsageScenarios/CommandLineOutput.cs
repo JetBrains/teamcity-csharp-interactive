@@ -20,8 +20,8 @@ public class CommandLineOutput : ScenarioHostService
         // $priority=04
         // $description=Run and process output
         // {
-        // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
+        // Adds the namespace "HostApi" to use Command Line API
+        // ## using HostApi;
 
         var lines = new List<string>();
         int? exitCode = GetService<ICommandLineRunner>().Run(

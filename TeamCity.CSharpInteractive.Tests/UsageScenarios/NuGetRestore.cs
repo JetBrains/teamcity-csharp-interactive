@@ -17,8 +17,8 @@ public class NuGetRestore : ScenarioHostService
         // $priority=00
         // $description=Restore NuGet a package of newest version
         // {
-        // Adds the namespace "Script.NuGet" to use INuGet
-        // ## using NuGet;
+        // Adds the namespace "HostApi" to use INuGet
+        // ## using HostApi;
 
         IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new HostApi.NuGetRestore("IoC.Container").WithVersionRange(VersionRange.All));
         // }

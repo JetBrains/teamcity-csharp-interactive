@@ -22,10 +22,8 @@ public class DockerDotNetBuild : ScenarioHostService
         // $priority=01
         // $description=Build a project in a docker container
         // {
-        // Adds the namespace "Script.DotNet" to use .NET build API
-        // ## using DotNet;
-        // Adds the namespace "Script.Docker" to use Docker API
-        // ## using Docker;
+        // Adds the namespace "HostApi" to use .NET build API and Docker API
+        // ## using HostApi;
 
         // Resolves a build service
         var buildRunner = GetService<IBuildRunner>();

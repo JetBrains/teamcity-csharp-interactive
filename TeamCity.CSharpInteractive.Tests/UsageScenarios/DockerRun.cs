@@ -18,11 +18,9 @@ public class DockerRun : ScenarioHostService
         // $priority=00
         // $description=Running in docker
         // {
-        // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
-        // Adds the namespace "Script.Docker" to use Docker API
-        // ## using Docker;
-
+        // Adds the namespace "HostApi" to use Command Line API and Docker API
+        // ## using HostApi;
+        
         // Resolves a build service
         var commandLineRunner = GetService<ICommandLineRunner>();
 

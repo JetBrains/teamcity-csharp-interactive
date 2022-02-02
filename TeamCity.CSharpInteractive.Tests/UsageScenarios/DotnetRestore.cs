@@ -18,8 +18,8 @@ public class DotNetRestore : ScenarioHostService
         // $priority=00
         // $description=Restore a project
         // {
-        // Adds the namespace "Script.DotNet" to use .NET build API
-        // ## using DotNet;
+        // Adds the namespace "HostApi" to use .NET build API
+        // ## using HostApi;
 
         // Resolves a build service
         var buildRunner = GetService<IBuildRunner>();

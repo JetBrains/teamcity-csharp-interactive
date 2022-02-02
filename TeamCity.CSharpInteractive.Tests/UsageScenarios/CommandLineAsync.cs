@@ -20,8 +20,8 @@ public class CommandLineAsync : ScenarioHostService
         // $priority=02
         // $description=Run a command line asynchronously
         // {
-        // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
+        // Adds the namespace "HostApi" to use Command Line API
+        // ## using HostApi;
 
         int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/C", "DIR"));
         // }

@@ -21,7 +21,7 @@ public class CommandLineBuild : ScenarioHostService
         // $description=Build command lines
         // {
         // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
+        // ## using HostApi;
 
         // Creates a simple command line from just the name of the executable 
         new CommandLine("whoami");

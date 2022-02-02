@@ -17,8 +17,8 @@ public class NuGetRestoreAdvanced : ScenarioHostService
         // $priority=01
         // $description=Restore a NuGet package by a version range for the specified .NET and path
         // {
-        // Adds the namespace "Script.NuGet" to use INuGet
-        // ## using NuGet;
+        // Adds the namespace "HostApi" to use INuGet
+        // ## using HostApi;
 
         var packagesPath = Path.Combine(
             Path.GetTempPath(),

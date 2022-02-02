@@ -21,8 +21,8 @@ public class CommandLineAsyncCancellation : ScenarioHostService
         // $description=Cancellation of asynchronous run
         // $header=The cancellation will kill a related process.
         // {
-        // Adds the namespace "Script.Cmd" to use Command Line API
-        // ## using Cmd;
+        // Adds the namespace "HostApi" to use Command Line API
+        // ## using HostApi;
 
         var cancellationTokenSource = new CancellationTokenSource();
         Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
