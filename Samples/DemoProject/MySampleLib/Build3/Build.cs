@@ -19,7 +19,8 @@ class Build
             .WithConfiguration(_settings.Configuration)
             .AddProps(("version", _settings.Version.ToString()));
 
-        if (_runner.Run(build).ExitCode != 0)
+        var result = await _runner.RunAsync(build);
+        if (result.ExitCode != 0)
         {
             Error("Build failed.");
             return new BuildResult(false);
@@ -49,7 +50,7 @@ class Build
                 where testResult.State == TestState.Failed
                 select testResult.ToString();
 
-            foreach (var failedTest in failedTests)
+            foreach (var failedTest in failedTests.Distinct())
             {
                 Error(failedTest);
             }
@@ -67,12 +68,13 @@ class Build
             .WithOutput(output)
             .AddProps(("version", _settings.Version.ToString()));
 
-        if (_runner.Run(publish).ExitCode != 0)
+        result = await _runner.RunAsync(publish);
+        if (result.ExitCode != 0)
         {
             Error("Publishing failed.");
             return new BuildResult(false);
         }
-        
+
         return new BuildResult(true, Path.Combine("BlazorServerApp", output));
     }
 }

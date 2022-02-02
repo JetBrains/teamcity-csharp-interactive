@@ -47,6 +47,12 @@ class CreateImage
         }
 
         _teamCityWriter.PublishArtifact($"{Path.GetFullPath(imageFile)} -> .");
+
+        WriteLine("To load an image from a tar archive:", Color.Highlighted);
+        WriteLine($"    docker load -i \"{imageFile}\"", Color.Highlighted);
+        WriteLine("To run web application in container:", Color.Highlighted);
+        WriteLine("    docker run -it --rm -p 5000:80 blazorapp", Color.Highlighted);
+        WriteLine("Open url: http://localhost:5000", Color.Highlighted);
         return new BuildResult(true, imageFile);
     }
 }
