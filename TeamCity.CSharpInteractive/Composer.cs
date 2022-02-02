@@ -122,6 +122,7 @@ internal static partial class Composer
             .Bind<IProcessRunner>("base").To<ProcessRunner>()
             .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
             .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
+            .Bind<IProcessResultHandler>().To<ProcessResultHandler>()
 
             // Script options factory
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))

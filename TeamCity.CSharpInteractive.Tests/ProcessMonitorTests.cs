@@ -56,7 +56,7 @@ public class ProcessMonitorTests
 
     [Theory]
     [InlineData(ProcessState.Finished, "finished", Color.Highlighted)]
-    internal void ShouldLogWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
+    internal void ShouldCreateResultWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
     {
         // Given
         _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
@@ -64,17 +64,14 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(_startInfo.Object, 22, state, 33);
+        var result = monitor.Finished(_startInfo.Object, 22, state, 33);
 
         // Then
-        _log.Verify(i => i.Info(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process ", color), new(stateDescription, color), new(" (in 22 ms)"), new(" with exit code 33"), new(".")}))));
-        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
-        _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
-        _log.Verify(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>()), Times.Never);
+        result.Description.ShouldBe(new Text[] {new("99 \"Abc xyz\" process ", color), new(stateDescription, color), new(" (in 22 ms)"), new(" with exit code 33"), new(".")});
     }
 
     [Fact]
-    public void ShouldLogErrorWhenFailed()
+    public void ShouldCreateResultWhenFailed()
     {
         // Given
         var monitor = CreateInstance();
@@ -82,32 +79,28 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(_startInfo.Object, 22, ProcessState.Failed, 33);
+        var result = monitor.Finished(_startInfo.Object, 22, ProcessState.Failed, 33);
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process "), new("failed"), new(" (in 22 ms)"), new(" with exit code 33"), new(".")}))));
-        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
-        _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
+        result.Description.ShouldBe(new Text[] {new("99 \"Abc xyz\" process ", Color.Highlighted), new("failed", Color.Highlighted), new(" (in 22 ms)"), new(" with exit code 33"), new(".")});
     }
 
     [Fact]
-    public void ShouldLogErrorWhenFailedToStart()
+    public void ShouldCreateResultWhenFailedToStart()
     {
         // Given
         _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
         var monitor = CreateInstance();
 
         // When
-        monitor.Finished(_startInfo.Object, 22, ProcessState.Failed);
+        var result = monitor.Finished(_startInfo.Object, 22, ProcessState.Failed);
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("\"Abc xyz\" process "), new("failed"), new(" (in 22 ms)"), new(".")}))));
-        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
-        _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
+        result.Description.ShouldBe(new Text[] {new("\"Abc xyz\" process ", Color.Highlighted), new("failed to start", Color.Highlighted), new(" (in 22 ms)"), new(".")});
     }
 
     [Fact]
-    public void ShouldLogWarningWhenCanceled()
+    public void ShouldCreateResultWhenCanceled()
     {
         // Given
         _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
@@ -115,12 +108,10 @@ public class ProcessMonitorTests
         monitor.Started(_startInfo.Object, 99);
 
         // When
-        monitor.Finished(_startInfo.Object, 22, ProcessState.Canceled);
+        var result = monitor.Finished(_startInfo.Object, 22, ProcessState.Canceled);
 
         // Then
-        _log.Verify(i => i.Warning(It.Is<Text[]>(text => text.SequenceEqual(new Text[] {new("99 \"Abc xyz\" process "), new("canceled"), new(" (in 22 ms)"), new(".")}))));
-        _log.Verify(i => i.Trace(It.IsAny<Func<Text[]>>(), It.IsAny<string>()), Times.Never);
-        _log.Verify(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>()), Times.Never);
+        result.Description.ShouldBe(new Text[] {new("99 \"Abc xyz\" process ", Color.Highlighted), new("canceled", Color.Highlighted), new(" (in 22 ms)"), new(".")});
     }
 
     private ProcessMonitor CreateInstance() =>

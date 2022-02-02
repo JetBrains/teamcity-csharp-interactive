@@ -12,7 +12,7 @@ internal interface IProcessManager : IDisposable
 
     int ExitCode { get; }
 
-    bool Start(IStartInfo info);
+    bool Start(IStartInfo info, out Exception? error);
 
     void WaitForExit();
 

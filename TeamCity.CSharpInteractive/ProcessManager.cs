@@ -40,7 +40,7 @@ internal class ProcessManager : IProcessManager
 
     public int ExitCode => _process.ExitCode;
 
-    public bool Start(IStartInfo info)
+    public bool Start(IStartInfo info, out Exception? error)
     {
         _startInfo = info;
         _process.StartInfo = _startInfoFactory.Create(info);
@@ -48,12 +48,13 @@ internal class ProcessManager : IProcessManager
         {
             if (!_process.Start())
             {
+                error = default;
                 return false;
             }
         }
         catch (Exception e)
         {
-            _log.Error(ErrorId.Process, e.Message);
+            error = e;
             return false;
         }
 
@@ -69,6 +70,7 @@ internal class ProcessManager : IProcessManager
         _description = _startInfo.GetDescription(Id) + " process";
         _process.BeginOutputReadLine();
         _process.BeginErrorReadLine();
+        error = default;
         return true;
     }
 

@@ -1,4 +1,6 @@
 // ReSharper disable NotAccessedPositionalProperty.Global
 namespace TeamCity.CSharpInteractive;
 
-internal record ProcessResult(ProcessState State, int? ExitCode = default);
+using HostApi;
+
+internal record ProcessResult(IStartInfo StartInfo, ProcessState State, long ElapsedMilliseconds, Text[] Description, int? ExitCode = default, Exception? Error = default);

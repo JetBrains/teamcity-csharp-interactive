@@ -46,36 +46,23 @@ internal class ProcessMonitor : IProcessMonitor
         }
     }
 
-    public void Finished(IStartInfo startInfo, long elapsedMilliseconds, ProcessState state, int? exitCode = default)
-    {
-        var footer = GetFooter(startInfo, exitCode, elapsedMilliseconds, state).ToArray();
-        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-        switch (state)
-        {
-            case ProcessState.Failed:
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                _log.Error(ErrorId.Process, footer);
-                break;
-
-            case ProcessState.Canceled:
-                _log.Warning(footer);
-                break;
-
-            default:
-                _log.Info(footer);
-                break;
-        }
-    }
+    public ProcessResult Finished(IStartInfo startInfo, long elapsedMilliseconds, ProcessState state, int? exitCode = default, Exception? error = default) => 
+        new(
+            startInfo,
+            state,
+            elapsedMilliseconds,
+            GetFooter(startInfo,exitCode, elapsedMilliseconds, state).ToArray(),
+            exitCode,
+            error);
 
     private IEnumerable<Text> GetFooter(IStartInfo startInfo, int? exitCode, long elapsedMilliseconds, ProcessState? state)
     {
         string? stateText;
-        var color = Color.Default;
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (state)
         {
             case ProcessState.Failed:
-                stateText = "failed";
+                stateText = exitCode.HasValue ? "failed" : "failed to start";
                 break;
 
             case ProcessState.Canceled:
@@ -84,12 +71,11 @@ internal class ProcessMonitor : IProcessMonitor
 
             default:
                 stateText = "finished";
-                color = Color.Highlighted;
                 break;
         }
 
-        yield return new Text($"{startInfo.GetDescription(_processId)} process ", color);
-        yield return new Text(stateText, color);
+        yield return new Text($"{startInfo.GetDescription(_processId)} process ", Color.Highlighted);
+        yield return new Text(stateText, Color.Highlighted);
         yield return new Text($" (in {elapsedMilliseconds} ms)");
         if (exitCode.HasValue)
         {

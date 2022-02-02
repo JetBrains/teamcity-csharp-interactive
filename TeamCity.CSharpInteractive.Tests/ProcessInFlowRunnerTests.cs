@@ -12,12 +12,13 @@ public class ProcessInFlowRunnerTests
     private readonly Mock<ITeamCityWriter> _blockWriter = new();
     private readonly Mock<IFlowContext> _flowContext = new();
     private readonly Mock<IProcessMonitor> _monitor = new();
+    private readonly ProcessResult _processResult;
     private static readonly (string name, string value)[] InitialVars = {("Var1", "Val 1")};
     private static readonly (string name, string value)[] ModifiedVars = new (string name, string value)[] {(TeamCitySettings.FlowIdEnvironmentVariableName, "FlowId123")}.Concat(InitialVars).ToArray();
-    private static readonly ProcessResult ProcessResult = new(ProcessState.Finished, 33);
 
     public ProcessInFlowRunnerTests()
     {
+        _processResult = new ProcessResult(_startInfo.Object, ProcessState.Finished, 33, Array.Empty<Text>(), 12);
         _flowContext.SetupGet(i => i.CurrentFlowId).Returns("FlowId123");
         _startInfo.SetupGet(i => i.Vars).Returns(InitialVars);
         _teamCityWriter.Setup(i => i.OpenFlow()).Returns(_blockWriter.Object);
@@ -28,7 +29,7 @@ public class ProcessInFlowRunnerTests
     {
         // Given
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
-        _baseProcessRunner.Setup(i => i.Run(It.Is<ProcessInfo>(processRun => processRun.StartInfo.Vars.SequenceEqual(ModifiedVars)), TimeSpan.FromDays(1))).Returns(ProcessResult);
+        _baseProcessRunner.Setup(i => i.Run(It.Is<ProcessInfo>(processRun => processRun.StartInfo.Vars.SequenceEqual(ModifiedVars)), TimeSpan.FromDays(1))).Returns(_processResult);
         var runner = CreateInstance();
 
         // When
@@ -37,7 +38,7 @@ public class ProcessInFlowRunnerTests
         // Then
         _teamCityWriter.Verify(i => i.OpenFlow());
         _blockWriter.Verify(i => i.Dispose());
-        result.ShouldBe(ProcessResult);
+        result.ShouldBe(_processResult);
     }
 
     [Fact]
@@ -45,7 +46,7 @@ public class ProcessInFlowRunnerTests
     {
         // Given
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(false);
-        _baseProcessRunner.Setup(i => i.Run(new ProcessInfo(_startInfo.Object, _monitor.Object, Handler), TimeSpan.FromDays(1))).Returns(ProcessResult);
+        _baseProcessRunner.Setup(i => i.Run(new ProcessInfo(_startInfo.Object, _monitor.Object, Handler), TimeSpan.FromDays(1))).Returns(_processResult);
         var runner = CreateInstance();
 
         // When
@@ -54,7 +55,7 @@ public class ProcessInFlowRunnerTests
         // Then
         _teamCityWriter.Verify(i => i.OpenFlow(), Times.Never);
         _blockWriter.Verify(i => i.Dispose(), Times.Never);
-        result.ShouldBe(ProcessResult);
+        result.ShouldBe(_processResult);
     }
 
     [Fact]
@@ -64,7 +65,7 @@ public class ProcessInFlowRunnerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
-        _baseProcessRunner.Setup(i => i.RunAsync(It.Is<ProcessInfo>(processRun => processRun.StartInfo.Vars.SequenceEqual(ModifiedVars)), token)).Returns(Task.FromResult(ProcessResult));
+        _baseProcessRunner.Setup(i => i.RunAsync(It.Is<ProcessInfo>(processRun => processRun.StartInfo.Vars.SequenceEqual(ModifiedVars)), token)).Returns(Task.FromResult(_processResult));
         var runner = CreateInstance();
 
         // When
@@ -73,7 +74,7 @@ public class ProcessInFlowRunnerTests
         // Then
         _teamCityWriter.Verify(i => i.OpenFlow());
         _blockWriter.Verify(i => i.Dispose());
-        result.ShouldBe(ProcessResult);
+        result.ShouldBe(_processResult);
     }
 
     [Fact]
@@ -84,7 +85,7 @@ public class ProcessInFlowRunnerTests
         var token = tokenSource.Token;
         var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
         _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(false);
-        _baseProcessRunner.Setup(i => i.RunAsync(processRun, token)).Returns(Task.FromResult(ProcessResult));
+        _baseProcessRunner.Setup(i => i.RunAsync(processRun, token)).Returns(Task.FromResult(_processResult));
         var runner = CreateInstance();
 
         // When
@@ -93,7 +94,7 @@ public class ProcessInFlowRunnerTests
         // Then
         _teamCityWriter.Verify(i => i.OpenFlow(), Times.Never);
         _blockWriter.Verify(i => i.Dispose(), Times.Never);
-        result.ShouldBe(ProcessResult);
+        result.ShouldBe(_processResult);
     }
 
     private static void Handler(Output obj) { }

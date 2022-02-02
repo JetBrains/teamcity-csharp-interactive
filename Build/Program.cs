@@ -2,18 +2,30 @@
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
 
+const string solutionFile = "TeamCity.CSharpInteractive.sln";
 const string packageId = "TeamCity.CSharpInteractive";
 const string toolPackageId = "TeamCity.csi";
 const string templatesPackageId = "TeamCity.CSharpInteractive.Templates";
 
+var currentDir = Environment.CurrentDirectory;
+if (!File.Exists(solutionFile))
+{
+    Error($"Cannot find the solution \"{solutionFile}\". Current directory is \"{currentDir}\".");
+    return 1;
+}
+
+var underTeamCity = Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != default;
 var configuration = GetProperty("configuration", "Release");
-var integrationTests = bool.Parse(GetProperty("integrationTests", "false"));
-var defaultVersion = NuGetVersion.Parse(GetProperty("defaultVersion", "1.0.0-dev"));
+var integrationTests = bool.Parse(GetProperty("integrationTests", underTeamCity.ToString()));
+var defaultVersion = NuGetVersion.Parse(GetProperty("defaultVersion", "1.0.0-dev", underTeamCity));
+var outputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive", "bin", configuration);
+var templatesOutputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive.Templates", "bin", configuration);
 
 var dockerLinuxTests = false;
 var commandLineRunner = GetService<ICommandLineRunner>();
-commandLineRunner.Run(new DockerCustom("info"), output =>
+commandLineRunner.Run(new DockerCustom("info").WithShortName("Defining a docker container type"), output =>
 {
+    WriteLine("    " + output.Line, Color.Details);
     if (output.Line.Contains("OSType: linux"))
     {
         dockerLinuxTests = true;
@@ -24,17 +36,6 @@ if (!dockerLinuxTests)
 {
     Warning("The docker Linux container is not available.");
 }
-
-var currentDir = Environment.CurrentDirectory;
-const string solutionFile = "TeamCity.CSharpInteractive.sln";
-if (!File.Exists(solutionFile))
-{
-    Error($"Cannot find the solution \"{solutionFile}\". Current directory is \"{currentDir}\".");
-    return 1;
-}
-
-var outputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive", "bin", configuration);
-var templatesOutputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive.Templates", "bin", configuration);
 
 var nextToolAndPackageVersion = new[]
 {
@@ -112,71 +113,76 @@ if (runner.Run(pack).ExitCode != 0)
     return 1;
 }
 
-var uninstallTool = new DotNetCustom("tool", "uninstall", toolPackageId, "-g");
-runner.Run(uninstallTool);
-
-var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", outputDir);
-if (runner.Run(installTool).ExitCode != 0)
+if (!underTeamCity)
 {
-    Error($"{installTool.ShortName} failed.");
-    return 1;
-}
+    var uninstallTool = new DotNetCustom("tool", "uninstall", toolPackageId, "-g");
+    runner.Run(uninstallTool);
 
-var runTool = new DotNetCustom("csi", "/?");
-if (runner.Run(runTool).ExitCode != 0)
-{
-    Error($"{runTool.ShortName} failed.");
-    return 1;
-}
-
-var uninstallTemplates = new DotNetCustom("new", "-u", templatesPackageId)
-    .WithWorkingDirectory(templatesOutputDir);
-runner.Run(uninstallTemplates);
-
-var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{nextTemplateVersion.ToString()}", "--nuget-source", templatesOutputDir)
-    .WithWorkingDirectory(templatesOutputDir);
-if (runner.Run(installTemplates).ExitCode != 0)
-{
-    Error($"{installTemplates.ShortName} failed.");
-    return 1;
-}
-
-var runTemplates = new DotNetCustom("new", "build", "--help");
-if (runner.Run(runTemplates).ExitCode != 0)
-{
-    Error($"{runTemplates.ShortName} failed.");
-    return 1;
-}
-
-Info("Publishing artifacts.");
-var teamCityWriter = GetService<ITeamCityWriter>();
-
-var nugetPackages = new[]
-{
-    Path.Combine(outputDir, $"{toolPackageId}.{nextToolAndPackageVersion.ToString()}.nupkg"),
-    Path.Combine(outputDir, $"{packageId}.{nextToolAndPackageVersion.ToString()}.nupkg"),
-    Path.Combine(templatesOutputDir, $"{templatesPackageId}.{nextTemplateVersion.ToString()}.nupkg")
-};
-
-foreach (var nugetPackage in nugetPackages)
-{
-    if (!File.Exists(nugetPackage))
+    var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", Path.Combine(outputDir, "TeamCity.CSharpInteractive.Tool"));
+    if (runner.Run(installTool).ExitCode != 0)
     {
-        Error($"NuGet package {nugetPackage} does not exist.");
+        Error($"{installTool.ShortName} failed.");
         return 1;
     }
 
-    teamCityWriter.PublishArtifact($"{nugetPackage} => .");
-}
+    var runTool = new DotNetCustom("csi", "/?");
+    if (runner.Run(runTool).ExitCode != 0)
+    {
+        Error($"{runTool.ShortName} failed.");
+        return 1;
+    }
 
-WriteLine("To use the csi tool:", Color.Highlighted);
-WriteLine("    dotnet csi /?", Color.Highlighted);
-WriteLine("To create a build project from the template:", Color.Highlighted);
-WriteLine("    dotnet new build --package-version=1.0.0-dev", Color.Highlighted);
+    var uninstallTemplates = new DotNetCustom("new", "-u", templatesPackageId)
+        .WithWorkingDirectory(templatesOutputDir);
+    runner.Run(uninstallTemplates);
+
+    var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{nextTemplateVersion.ToString()}", "--nuget-source", templatesOutputDir)
+        .WithWorkingDirectory(templatesOutputDir);
+    if (runner.Run(installTemplates).ExitCode != 0)
+    {
+        Error($"{installTemplates.ShortName} failed.");
+        return 1;
+    }
+
+    var runTemplates = new DotNetCustom("new", "build", "--help");
+    if (runner.Run(runTemplates).ExitCode != 0)
+    {
+        Error($"{runTemplates.ShortName} failed.");
+        return 1;
+    }
+    
+    WriteLine("To use the csi tool:", Color.Highlighted);
+    WriteLine("    dotnet csi /?", Color.Highlighted);
+    WriteLine("To create a build project from the template:", Color.Highlighted);
+    WriteLine($"    dotnet new build --package-version={nextToolAndPackageVersion}", Color.Highlighted);
+}
+else
+{
+    Info("Publishing artifacts.");
+    var teamCityWriter = GetService<ITeamCityWriter>();
+
+    var nugetPackages = new[]
+    {
+        Path.Combine(outputDir, "TeamCity.CSharpInteractive.Tool", $"{toolPackageId}.{nextToolAndPackageVersion.ToString()}.nupkg"),
+        Path.Combine(outputDir, "TeamCity.CSharpInteractive", $"{packageId}.{nextToolAndPackageVersion.ToString()}.nupkg"),
+        Path.Combine(templatesOutputDir, $"{templatesPackageId}.{nextTemplateVersion.ToString()}.nupkg")
+    };
+
+    foreach (var nugetPackage in nugetPackages)
+    {
+        if (!File.Exists(nugetPackage))
+        {
+            Error($"NuGet package {nugetPackage} does not exist.");
+            return 1;
+        }
+
+        teamCityWriter.PublishArtifact($"{nugetPackage} => .");
+    }
+}
 
 return 0;
 
-string GetProperty(string name, string defaultProp)
+string GetProperty(string name, string defaultProp, bool showWarning = false)
 {
     var prop = Props[name];
     if (!string.IsNullOrWhiteSpace(prop))
@@ -184,14 +190,31 @@ string GetProperty(string name, string defaultProp)
         return prop;
     }
 
-    Warning($"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.");
+    var message = $"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.";
+    if (showWarning)
+    {
+        Warning(message);
+    }
+    else
+    {
+        Info(message);
+    }
+
     return defaultProp;
 }
 
-NuGetVersion? GetNextVersion(NuGetRestore settings) =>
-    GetService<INuGet>()
-        .Restore(settings.WithHideWarningsAndErrors(true))
+NuGetVersion? GetNextVersion(NuGetRestore settings)
+{
+    var floatRange = defaultVersion.Release != string.Empty
+        ? new FloatRange(NuGetVersionFloatBehavior.Prerelease, defaultVersion)
+        : new FloatRange(NuGetVersionFloatBehavior.Minor, defaultVersion);
+
+    return GetService<INuGet>()
+        .Restore(settings.WithHideWarningsAndErrors(true).WithVersionRange(new VersionRange(defaultVersion, floatRange)))
         .Where(i => i.Name == settings.PackageId)
         .Select(i => i.NuGetVersion)
-        .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
+        .Select(i => defaultVersion.Release != string.Empty 
+            ? new NuGetVersion(i.Major, i.Minor, i.Patch, defaultVersion.Release)
+            : new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
         .Max();
+}

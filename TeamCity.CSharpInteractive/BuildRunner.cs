@@ -19,6 +19,7 @@ internal class BuildRunner : IBuildRunner
     private readonly Func<IProcessMonitor> _monitorFactory;
     private readonly IBuildMessagesProcessor _defaultBuildMessagesProcessor;
     private readonly IBuildMessagesProcessor _customBuildMessagesProcessor;
+    private readonly IProcessResultHandler _processResultHandler;
 
     public BuildRunner(
         IProcessRunner processRunner,
@@ -28,7 +29,8 @@ internal class BuildRunner : IBuildRunner
         IBuildOutputProcessor buildOutputProcessor,
         Func<IProcessMonitor> monitorFactory,
         [Tag("default")] IBuildMessagesProcessor defaultBuildMessagesProcessor,
-        [Tag("custom")] IBuildMessagesProcessor customBuildMessagesProcessor)
+        [Tag("custom")] IBuildMessagesProcessor customBuildMessagesProcessor,
+        IProcessResultHandler processResultHandler)
     {
         _processRunner = processRunner;
         _host = host;
@@ -38,6 +40,7 @@ internal class BuildRunner : IBuildRunner
         _monitorFactory = monitorFactory;
         _defaultBuildMessagesProcessor = defaultBuildMessagesProcessor;
         _customBuildMessagesProcessor = customBuildMessagesProcessor;
+        _processResultHandler = processResultHandler;
     }
 
     public IBuildResult Run(ICommandLine commandLine, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
@@ -46,6 +49,7 @@ internal class BuildRunner : IBuildRunner
         var startInfo = CreateStartInfo(commandLine);
         var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
         var result = _processRunner.Run(processInfo, timeout);
+        _processResultHandler.Handle(result, handler);
         return buildResult.Create(startInfo, result.ExitCode);
     }
 
@@ -55,6 +59,7 @@ internal class BuildRunner : IBuildRunner
         var startInfo = CreateStartInfo(commandLine);
         var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
         var result = await _processRunner.RunAsync(processInfo, cancellationToken);
+        _processResultHandler.Handle(result, handler);
         return buildResult.Create(startInfo, result.ExitCode);
     }
 

@@ -28,11 +28,10 @@ internal class ProcessRunner : IProcessRunner
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        if (!processManager.Start(startInfo))
+        if (!processManager.Start(startInfo, out var error))
         {
             stopwatch.Stop();
-            monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed);
-            return new ProcessResult(ProcessState.Failed);
+            return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed, default, error);
         }
 
         monitor.Started(startInfo, processManager.Id);
@@ -49,14 +48,12 @@ internal class ProcessRunner : IProcessRunner
         if (finished)
         {
             stopwatch.Stop();
-            monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Finished, processManager.ExitCode);
-            return new ProcessResult(ProcessState.Finished, processManager.ExitCode);
+            return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Finished, processManager.ExitCode);
         }
 
         processManager.Kill();
         stopwatch.Stop();
-        monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
-        return new ProcessResult(ProcessState.Canceled);
+        return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
     }
 
     public async Task<ProcessResult> RunAsync(ProcessInfo processInfo, CancellationToken cancellationToken)
@@ -77,12 +74,12 @@ internal class ProcessRunner : IProcessRunner
         // ReSharper disable once AccessToDisposedClosure
         processManager.OnExit += () => completionSource.TrySetResult(processManager.ExitCode);
         var stopwatch = new Stopwatch();
-        if (!processManager.Start(startInfo))
+        if (!processManager.Start(startInfo, out var error))
         {
             stopwatch.Stop();
-            monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed);
+            var result = monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed, default, error);
             processManager.Dispose();
-            return new ProcessResult(ProcessState.Failed);
+            return result;
         }
 
         monitor.Started(startInfo, processManager.Id);
@@ -94,8 +91,6 @@ internal class ProcessRunner : IProcessRunner
             }
 
             processManager.Dispose();
-            stopwatch.Stop();
-            monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
         }
 
         await using (cancellationToken.Register(Cancel, false))
@@ -103,9 +98,8 @@ internal class ProcessRunner : IProcessRunner
             using (processManager)
             {
                 var exitCode = await completionSource.Task.ConfigureAwait(false);
-                stopwatch.Start();
-                monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Finished, exitCode);
-                return new ProcessResult(ProcessState.Finished, exitCode);
+                stopwatch.Stop();
+                return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, cancellationToken.IsCancellationRequested ? ProcessState.Canceled : ProcessState.Finished, exitCode);
             }
         }
     }
