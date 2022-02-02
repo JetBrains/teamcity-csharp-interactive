@@ -51,20 +51,13 @@ if (buildRunner.Run(new MSBuild()
         .AddProps(props)).ExitCode != 0)
     return 1;
 
-if (buildRunner.Run(new DotNetBuild()
-        .WithShortName($"Building {configuration} version")
-        .WithConfiguration(configuration)
-        .WithOutput(outputDir)
-        .WithVerbosity(DotNetVerbosity.Normal)
-        .AddProps(props)).ExitCode != 0)
-    return 1;
-
 var vstest = new VSTest()
     .WithTestFileNames(Path.Combine(outputDir, "MySampleLib.Tests.dll"));
 
 var test = new DotNetTest()
     .WithNoBuild(true)
-    .WithVerbosity(DotNetVerbosity.Normal);
+    .WithConfiguration(configuration)
+    .WithVerbosity(DotNetVerbosity.Minimal);
 
 var testInContainer = new DockerRun(test.WithExecutablePath("dotnet"), $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}")
     .WithPlatform("linux")

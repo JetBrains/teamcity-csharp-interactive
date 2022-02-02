@@ -1,6 +1,5 @@
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using Microsoft.CodeAnalysis;
 
 class CreateImage
 {

@@ -1,5 +1,4 @@
-﻿using HostApi;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NuGet.Versioning;
 
 var action = Enum.Parse<BuildAction>(GetProperty("action", BuildAction.Build.ToString()));
@@ -16,7 +15,6 @@ var result = await
     .GetRequiredService<Root>()
     .RunAsync();
 
-WriteLine(result, Color.Success);
 return result.HasValue ? 0 : 1;
 
 string GetProperty(string name, string defaultProp)
@@ -26,7 +24,7 @@ string GetProperty(string name, string defaultProp)
     {
         return prop;
     }
-
+    
     Warning($"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.");
     return defaultProp;
 }

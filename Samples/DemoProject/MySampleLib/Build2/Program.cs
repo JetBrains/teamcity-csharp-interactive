@@ -40,7 +40,7 @@ if (results.Any(result => result.ExitCode != 0))
         where testResult.State == TestState.Failed
         select testResult.ToString();
 
-    foreach (var failedTest in failedTests)
+    foreach (var failedTest in failedTests.Distinct())
     {
         Error(failedTest);
     }
@@ -58,7 +58,7 @@ string GetProperty(string name, string defaultProp)
     {
         return prop;
     }
-
-    Warning($"The property \"{name}\" was not defined. The default value is \"{defaultProp}\".");
+    
+    Warning($"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.");
     return defaultProp;
 }

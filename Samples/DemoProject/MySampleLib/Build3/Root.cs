@@ -1,5 +1,3 @@
-using Microsoft.CodeAnalysis;
-
 class Root
 {
     private readonly Settings _settings;
