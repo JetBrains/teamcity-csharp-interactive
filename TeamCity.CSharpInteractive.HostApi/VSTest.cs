@@ -41,7 +41,7 @@ public record VSTest(
     public IStartInfo GetStartInfo(IHost host)
     {
         var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : "dotnet vstest")
+            .WithShortName(ToString())
             .WithArgs("vstest")
             .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
@@ -77,4 +77,6 @@ public record VSTest(
 
         return cmd;
     }
+    
+    public override string ToString() => (string.IsNullOrWhiteSpace(ShortName) ? "dotnet vstest" : ShortName).GetShortName(ShortName, string.Empty);
 }

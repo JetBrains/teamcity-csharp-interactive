@@ -31,7 +31,7 @@ public record DotNetRun(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet run".GetShortName(ShortName, Project))
+            .WithShortName(ToString())
             .WithArgs("run")
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
@@ -51,4 +51,6 @@ public record DotNetRun(
                 ("--force", Force)
             )
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet run".GetShortName(ShortName, Project);
 }

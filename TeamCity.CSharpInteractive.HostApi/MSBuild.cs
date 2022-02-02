@@ -45,7 +45,7 @@ public record MSBuild(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath))
+            .WithShortName(ToString())
             .WithArgs(ExecutablePath == string.Empty ? new[] {"msbuild"} : Array.Empty<string>())
             .AddArgs(new[] {Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
@@ -78,4 +78,6 @@ public record MSBuild(
             .AddProps("-restoreProperty", RestoreProps.ToArray())
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
+    
+    public override string ToString() => (ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath)).GetShortName(ShortName, Project);
 }

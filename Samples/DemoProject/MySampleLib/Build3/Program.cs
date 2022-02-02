@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HostApi;
+using Microsoft.Extensions.DependencyInjection;
 using NuGet.Versioning;
 
 var action = Enum.Parse<BuildAction>(GetProperty("action", BuildAction.Build.ToString()));
@@ -15,8 +16,8 @@ var result = await
     .GetRequiredService<Root>()
     .RunAsync();
 
-Info(result.ToString());
-return result.Success ? 0 : 1;
+WriteLine(result, Color.Success);
+return result.HasValue ? 0 : 1;
 
 string GetProperty(string name, string defaultProp)
 {

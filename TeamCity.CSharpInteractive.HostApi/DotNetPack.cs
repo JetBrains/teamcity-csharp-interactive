@@ -33,7 +33,7 @@ public record DotNetPack(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet pack".GetShortName(ShortName, Project))
+            .WithShortName(ToString())
             .WithArgs("pack")
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
@@ -55,4 +55,6 @@ public record DotNetPack(
             )
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet pack".GetShortName(ShortName, Project);
 }

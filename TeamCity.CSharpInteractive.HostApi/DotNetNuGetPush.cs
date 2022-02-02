@@ -31,7 +31,7 @@ public record DotNetNuGetPush(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet nuget push".GetShortName(ShortName, Package))
+            .WithShortName(ToString())
             .WithArgs("nuget", "push")
             .AddNotEmptyArgs(Package)
             .WithWorkingDirectory(WorkingDirectory)
@@ -51,4 +51,6 @@ public record DotNetNuGetPush(
                 ("--skip-duplicate", SkipDuplicate)
             )
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet nuget push".GetShortName(ShortName, Package);
 }

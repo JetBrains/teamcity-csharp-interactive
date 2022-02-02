@@ -39,7 +39,7 @@ public record DotNetTest(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet test".GetShortName(ShortName, Project))
+            .WithShortName(ToString())
             .WithArgs("test")
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
@@ -68,4 +68,6 @@ public record DotNetTest(
             )
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet test".GetShortName(ShortName, Project);
 }

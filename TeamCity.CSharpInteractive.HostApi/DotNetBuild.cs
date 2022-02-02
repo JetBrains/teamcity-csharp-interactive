@@ -33,7 +33,7 @@ public record DotNetBuild(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet build".GetShortName(ShortName, Project))
+            .WithShortName(ToString())
             .WithArgs("build")
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
@@ -56,4 +56,6 @@ public record DotNetBuild(
             )
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet build".GetShortName(ShortName, Project);
 }

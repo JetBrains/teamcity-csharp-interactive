@@ -38,7 +38,7 @@ public record DotNetPublish(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet publish".GetShortName(ShortName, Project))
+            .WithShortName(ToString())
             .WithArgs("publish")
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
@@ -64,4 +64,6 @@ public record DotNetPublish(
             )
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet publish".GetShortName(ShortName, Project);
 }

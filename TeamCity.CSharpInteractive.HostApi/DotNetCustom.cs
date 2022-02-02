@@ -18,11 +18,13 @@ public record DotNetCustom(
     public DotNetCustom(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>())
     { }
-
+    
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName(string.IsNullOrWhiteSpace(ShortName) ? ((ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath)) + " " + Args.FirstOrDefault()).TrimEnd() : ShortName)
+            .WithShortName(ToString())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .WithArgs(Args.ToArray());
+
+    public override string ToString() => (ExecutablePath == string.Empty ? "dotnet" : Path.GetFileNameWithoutExtension(ExecutablePath)).GetShortName(ShortName, Args.FirstOrDefault() ?? string.Empty);
 }

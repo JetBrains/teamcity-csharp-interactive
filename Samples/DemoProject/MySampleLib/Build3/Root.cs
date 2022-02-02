@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis;
+
 class Root
 {
     private readonly Settings _settings;
@@ -14,7 +16,7 @@ class Root
         _createImage = createImage;
     }
 
-    public Task<BuildResult> RunAsync() =>
+    public Task<Optional<string>> RunAsync() =>
         _settings.Action switch
         {
             BuildAction.Build => _build.RunAsync(),

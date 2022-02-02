@@ -7,5 +7,3 @@ enum BuildAction
 }
 
 record Settings(BuildAction Action, string Configuration, NuGetVersion Version);
-    
-record BuildResult(bool Success, string Output = "");

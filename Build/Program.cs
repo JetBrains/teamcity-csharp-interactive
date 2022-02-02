@@ -115,39 +115,48 @@ if (runner.Run(pack).ExitCode != 0)
 
 if (!underTeamCity)
 {
-    var uninstallTool = new DotNetCustom("tool", "uninstall", toolPackageId, "-g");
-    runner.Run(uninstallTool);
-
-    var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", Path.Combine(outputDir, "TeamCity.CSharpInteractive.Tool"));
-    if (runner.Run(installTool).ExitCode != 0)
+    var uninstallTool = new DotNetCustom("tool", "uninstall", toolPackageId, "-g")
+        .WithShortName("Uninstalling tool");
+    if (runner.Run(uninstallTool, output => WriteLine(output.Text)).ExitCode != 0)
     {
-        Error($"{installTool.ShortName} failed.");
-        return 1;
+        Warning($"{uninstallTool} failed.");
+    }
+
+    var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", Path.Combine(outputDir, "TeamCity.CSharpInteractive.Tool"))
+        .WithShortName("Installing tool");;
+    if (runner.Run(installTool, output => WriteLine(output.Text)).ExitCode != 0)
+    {
+        Warning($"{installTool} failed.");
     }
 
     var runTool = new DotNetCustom("csi", "/?");
     if (runner.Run(runTool).ExitCode != 0)
     {
-        Error($"{runTool.ShortName} failed.");
+        Error($"{runTool} failed.");
         return 1;
     }
 
     var uninstallTemplates = new DotNetCustom("new", "-u", templatesPackageId)
-        .WithWorkingDirectory(templatesOutputDir);
-    runner.Run(uninstallTemplates);
+        .WithWorkingDirectory(templatesOutputDir)
+        .WithShortName("Uninstalling template");
+    if (runner.Run(uninstallTemplates, output => WriteLine(output.Text)).ExitCode != 0)
+    {
+        Warning($"{uninstallTemplates} failed.");
+    }
 
     var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{nextTemplateVersion.ToString()}", "--nuget-source", templatesOutputDir)
-        .WithWorkingDirectory(templatesOutputDir);
+        .WithWorkingDirectory(templatesOutputDir)
+        .WithShortName("Installing template");;
     if (runner.Run(installTemplates).ExitCode != 0)
     {
-        Error($"{installTemplates.ShortName} failed.");
+        Error($"{installTemplates} failed.");
         return 1;
     }
 
     var runTemplates = new DotNetCustom("new", "build", "--help");
     if (runner.Run(runTemplates).ExitCode != 0)
     {
-        Error($"{runTemplates.ShortName} failed.");
+        Error($"{runTemplates} failed.");
         return 1;
     }
     

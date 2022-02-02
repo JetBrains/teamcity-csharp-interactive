@@ -1,4 +1,5 @@
 using HostApi;
+using Microsoft.CodeAnalysis;
 
 class Build
 {
@@ -13,7 +14,7 @@ class Build
         _runner = runner;
     }
     
-    public async Task<BuildResult> RunAsync()
+    public async Task<Optional<string>> RunAsync()
     {
         var build = new DotNetBuild()
             .WithConfiguration(_settings.Configuration)
@@ -23,7 +24,7 @@ class Build
         if (result.ExitCode != 0)
         {
             Error("Build failed.");
-            return new BuildResult(false);
+            return new Optional<string>();
         }
 
         var test = new DotNetTest()
@@ -42,7 +43,7 @@ class Build
             _runner.RunAsync(testInContainer)
         );
 
-        if (results.Any(result => result.ExitCode != 0))
+        if (results.Any(testResult => testResult.ExitCode != 0))
         {
             var failedTests =
                 from buildResult in results
@@ -56,8 +57,8 @@ class Build
             }
 
             Error("Tests failed.");
-            return new BuildResult(false);
-        };
+            return new Optional<string>();
+        }
 
         var output = Path.Combine("bin", _settings.Configuration, "output");
 
@@ -72,9 +73,9 @@ class Build
         if (result.ExitCode != 0)
         {
             Error("Publishing failed.");
-            return new BuildResult(false);
+            return new Optional<string>();
         }
 
-        return new BuildResult(true, Path.Combine("BlazorServerApp", output));
+        return Path.Combine("BlazorServerApp", output);
     }
 }

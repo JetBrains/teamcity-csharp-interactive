@@ -28,7 +28,7 @@ public record DotNetClean(
 
     public IStartInfo GetStartInfo(IHost host) =>
         new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
-            .WithShortName("dotnet clean".GetShortName(ShortName, Project))
+            .WithShortName(ToString())
             .WithArgs("clean")
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
@@ -46,4 +46,6 @@ public record DotNetClean(
             )
             .AddProps("/p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public override string ToString() => "dotnet clean".GetShortName(ShortName, Project);
 }

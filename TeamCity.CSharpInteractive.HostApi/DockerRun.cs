@@ -126,6 +126,8 @@ public record DockerRun(
             .AddArgs(processInfo.Args.ToArray())
             .WithVars(Vars.ToArray());
     }
+    
+    public override string ToString() => !string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{CommandLine} in the docker container {Image}";
 
     private class PathResolver : IPathResolver
     {
