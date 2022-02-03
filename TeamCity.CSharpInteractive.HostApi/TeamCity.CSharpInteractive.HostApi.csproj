@@ -27,8 +27,6 @@
         </AssemblyAttribute>
         <PackageReference Include="NuGet.Versioning" Version="6.0.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
-        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.25" PrivateAssets="all">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.26" PrivateAssets="all" IncludeAssets="build"/>
     </ItemGroup>
 </Project>
