@@ -17,8 +17,8 @@ class Root
     public Task<Optional<string>> RunAsync() =>
         _settings.Action switch
         {
-            BuildAction.Build => _build.RunAsync(),
-            BuildAction.CreateImage => _createImage.RunAsync(),
+            Target.Build => _build.RunAsync(),
+            Target.CreateImage => _createImage.RunAsync(),
             _ => throw new ArgumentOutOfRangeException()
         };
 }

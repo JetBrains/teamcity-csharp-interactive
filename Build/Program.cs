@@ -39,11 +39,11 @@ if (!dockerLinuxTests)
 
 var nextToolAndPackageVersion = new[]
 {
-    GetNextVersion(new NuGetRestore(toolPackageId).WithPackageType(NuGetPackageType.Tool)) ?? defaultVersion,
-    GetNextVersion(new NuGetRestore(packageId)) ?? defaultVersion
+    GetNextVersion(new NuGetRestoreSettings(toolPackageId).WithPackageType(NuGetPackageType.Tool)) ?? defaultVersion,
+    GetNextVersion(new NuGetRestoreSettings(packageId)) ?? defaultVersion
 }.Max()!;
 
-var nextTemplateVersion = GetNextVersion(new NuGetRestore(templatesPackageId)) ?? defaultVersion;
+var nextTemplateVersion = GetNextVersion(new NuGetRestoreSettings(templatesPackageId)) ?? defaultVersion;
 
 WriteLine($"Tool and package version: {nextToolAndPackageVersion}");
 WriteLine($"Template version: {nextTemplateVersion}");
@@ -212,7 +212,7 @@ string GetProperty(string name, string defaultProp, bool showWarning = false)
     return defaultProp;
 }
 
-NuGetVersion? GetNextVersion(NuGetRestore settings)
+NuGetVersion? GetNextVersion(NuGetRestoreSettings settings)
 {
     var floatRange = defaultVersion.Release != string.Empty
         ? new FloatRange(NuGetVersionFloatBehavior.Prerelease, defaultVersion)

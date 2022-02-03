@@ -1,12 +1,12 @@
 using NuGet.Versioning;
 
-enum BuildAction
+enum Target
 {
     Build,
     CreateImage
 }
 
-record Settings(BuildAction Action, string Configuration, NuGetVersion Version);
+record Settings(Target Action, string Configuration, NuGetVersion Version);
 
 readonly record struct Optional<T>(T Value, bool HasValue = true)
 {
