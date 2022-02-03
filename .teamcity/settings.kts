@@ -33,8 +33,9 @@ project {
 object BuildAndTestBuildType: BuildType({
     name = "Build and test"
     artifactRules =
-        "TeamCity.CSharpInteractive/bin/Release/TeamCity.csi.*.nupkg => ." +
-        "\nTeamCity.CSharpInteractive/bin/Release/TeamCity.CSharpInteractive.*.nupkg => ."
+        "TeamCity.CSharpInteractive/bin/Release/TeamCity.CSharpInteractive.Tool/TeamCity.csi.*.nupkg => ." +
+        "\nTeamCity.CSharpInteractive/bin/Release/TeamCity.CSharpInteractive/TeamCity.CSharpInteractive.*.nupkg => ." +
+        "\nTeamCity.CSharpInteractive.Templates/bin/Release/TeamCity.CSharpInteractive.Templates.*.nupkg => ."
 
     params {
         param("system.version", "1.0.0")
