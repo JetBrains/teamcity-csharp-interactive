@@ -7,19 +7,9 @@ using HostApi;
 [ExcludeFromCodeCoverage]
 internal class ColorTheme : IColorTheme
 {
-    private static readonly HashSet<ConsoleColor> DarkColors = new()
-    {
-        ConsoleColor.Black,
-        ConsoleColor.DarkBlue,
-        ConsoleColor.DarkCyan,
-        ConsoleColor.DarkGreen,
-        ConsoleColor.DarkMagenta,
-        ConsoleColor.DarkRed
-    };
-
     public ConsoleColor GetConsoleColor(Color color)
     {
-        if (DarkColors.Contains(System.Console.BackgroundColor))
+        if (System.Console.BackgroundColor != ConsoleColor.White)
         {
             return color switch
             {
