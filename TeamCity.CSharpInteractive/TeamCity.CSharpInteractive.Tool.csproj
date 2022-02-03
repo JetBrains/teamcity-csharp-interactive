@@ -31,7 +31,7 @@
 
     <ItemGroup>
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.25">
+        <PackageReference Include="Pure.DI" Version="1.1.26">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
