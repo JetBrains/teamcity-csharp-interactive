@@ -39,7 +39,7 @@ internal class AddNuGetReferenceCommandRunner : ICommandRunner
         var success = true;
         _log.Info(new[] {new Text($"Restoring package {packageName}.", Color.Highlighted)});
         var restoreResult = _nugetRestoreService.TryRestore(
-            new NuGetRestore(
+            new NuGetRestoreSettings(
                 addPackageReferenceCommand.PackageId,
                 _nugetEnvironment.Sources,
                 _nugetEnvironment.FallbackFolders,

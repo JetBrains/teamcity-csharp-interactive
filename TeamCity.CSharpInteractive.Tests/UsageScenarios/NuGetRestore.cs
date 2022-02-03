@@ -20,7 +20,7 @@ public class NuGetRestore : ScenarioHostService
         // Adds the namespace "HostApi" to use INuGet
         // ## using HostApi;
 
-        IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new HostApi.NuGetRestore("IoC.Container").WithVersionRange(VersionRange.All));
+        IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(new HostApi.NuGetRestoreSettings("IoC.Container").WithVersionRange(VersionRange.All));
         // }
 
         packages.ShouldNotBeEmpty();

@@ -4,7 +4,7 @@ using Immutype;
 using NuGet.Versioning;
 
 [Target]
-public record NuGetRestore(
+public record NuGetRestoreSettings(
     string PackageId,
     IEnumerable<string> Sources,
     IEnumerable<string> FallbackFolders,
@@ -17,7 +17,7 @@ public record NuGetRestore(
     bool? HideWarningsAndErrors = default,
     bool? NoCache = default)
 {
-    public NuGetRestore(string packageId)
+    public NuGetRestoreSettings(string packageId)
         : this(packageId, Enumerable.Empty<string>(), Enumerable.Empty<string>())
     { }
 }

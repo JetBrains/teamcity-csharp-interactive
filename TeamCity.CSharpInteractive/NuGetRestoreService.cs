@@ -43,7 +43,7 @@ internal class NuGetRestoreService : INuGetRestoreService, ISettingSetter<NuGetR
         SetSetting(NuGetRestoreSetting.Default);
     }
 
-    public bool TryRestore(NuGetRestore settings, out string projectAssetsJson)
+    public bool TryRestore(NuGetRestoreSettings settings, out string projectAssetsJson)
     {
         var tempDirectory = _environment.GetPath(SpecialFolder.Temp);
         var outputPath = Path.Combine(tempDirectory, _uniqueNameGenerator.Generate());

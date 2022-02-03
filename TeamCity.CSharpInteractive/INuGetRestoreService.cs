@@ -4,5 +4,5 @@ using HostApi;
 
 internal interface INuGetRestoreService
 {
-    bool TryRestore(NuGetRestore settings, out string projectAssetsJson);
+    bool TryRestore(NuGetRestoreSettings settings, out string projectAssetsJson);
 }

@@ -32,7 +32,7 @@ internal class NuGetService : INuGet
         _cleaner = cleaner;
     }
 
-    public IEnumerable<NuGetPackage> Restore(NuGetRestore settings)
+    public IEnumerable<NuGetPackage> Restore(NuGetRestoreSettings settings)
     {
         var packagesPath = settings.PackagesPath;
         if (string.IsNullOrWhiteSpace(packagesPath))
@@ -78,7 +78,7 @@ internal class NuGetService : INuGet
 
     public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
     {
-        var settings = new NuGetRestore(packageId);
+        var settings = new NuGetRestoreSettings(packageId);
         if (versionRange != default)
         {
             settings = settings.WithVersionRange(VersionRange.Parse(versionRange));

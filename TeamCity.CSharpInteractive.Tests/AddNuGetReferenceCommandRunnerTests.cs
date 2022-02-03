@@ -31,7 +31,7 @@ public class AddNuGetReferenceCommandRunnerTests
 
         _nugetRestoreService = new Mock<INuGetRestoreService>();
         var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        var settings = new NuGetRestore(
+        var settings = new NuGetRestoreSettings(
             _command.PackageId,
             Sources,
             FallbackFolders,
@@ -95,7 +95,7 @@ public class AddNuGetReferenceCommandRunnerTests
 
         // When
         var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        var settings = new NuGetRestore(
+        var settings = new NuGetRestoreSettings(
             _command.PackageId,
             Sources,
             FallbackFolders,

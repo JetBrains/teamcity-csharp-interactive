@@ -24,7 +24,7 @@ public class NuGetRestoreAdvanced : ScenarioHostService
             Path.GetTempPath(),
             Guid.NewGuid().ToString()[..4]);
 
-        var settings = new HostApi.NuGetRestore("IoC.Container")
+        var settings = new NuGetRestoreSettings("IoC.Container")
             .WithVersionRange(VersionRange.Parse("[1.3, 1.3.8)"))
             .WithTargetFrameworkMoniker("net5.0")
             .WithPackagesPath(packagesPath);
