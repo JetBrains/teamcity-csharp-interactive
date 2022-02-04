@@ -3,6 +3,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable CheckNamespace
 using System.Diagnostics.CodeAnalysis;
+// ReSharper disable once RedundantUsingDirective
 using System.Runtime.Loader;
 using HostApi;
 using TeamCity.CSharpInteractive;

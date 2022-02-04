@@ -5,7 +5,7 @@ using Core;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages;
 using JetBrains.TeamCity.ServiceMessages.Read;
-using Composer = CSharpInteractive.Composer;
+using Composer = Composer;
 
 internal static class TestTool
 {

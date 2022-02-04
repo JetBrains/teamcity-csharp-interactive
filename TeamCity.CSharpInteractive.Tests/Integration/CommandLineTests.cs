@@ -4,7 +4,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 using System.Diagnostics;
 using Core;
 using HostApi;
-using Composer = CSharpInteractive.Composer;
+using Composer = Composer;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]

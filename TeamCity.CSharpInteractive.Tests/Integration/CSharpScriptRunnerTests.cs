@@ -1,7 +1,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 using System;
-using HostApi;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 

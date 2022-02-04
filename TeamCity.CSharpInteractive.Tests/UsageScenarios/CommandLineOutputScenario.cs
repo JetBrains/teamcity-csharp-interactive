@@ -1,5 +1,5 @@
 // ReSharper disable StringLiteralTypo
-// ReSharper disable SuggestVarOrType_Elsewhere
+// ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System;
@@ -7,7 +7,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class CommandLineAsyncCancellation : BaseScenario
+public class CommandLineOutputScenario : BaseScenario
 {
     [SkippableFact]
     public void Run()
@@ -17,21 +17,20 @@ public class CommandLineAsyncCancellation : BaseScenario
 
         // $visible=true
         // $tag=10 Command Line API
-        // $priority=06
-        // $description=Cancellation of asynchronous run
-        // $header=The cancellation will kill a related process.
+        // $priority=04
+        // $description=Run and process output
         // {
         // Adds the namespace "HostApi" to use Command Line API
         // ## using HostApi;
 
-        var cancellationTokenSource = new CancellationTokenSource();
-        Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
-            new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
-            default,
-            cancellationTokenSource.Token);
+        var lines = new List<string>();
+        int? exitCode = GetService<ICommandLineRunner>().Run(
+            new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
+            i => lines.Add(i.Line));
 
-        cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
-        task.IsCompleted.ShouldBeFalse();
+        lines.ShouldContain("MyEnv=MyVal");
         // }
+
+        exitCode.HasValue.ShouldBeTrue();
     }
 }

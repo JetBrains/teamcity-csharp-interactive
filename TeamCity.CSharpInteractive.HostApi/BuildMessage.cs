@@ -2,7 +2,6 @@
 // ReSharper disable NotAccessedPositionalProperty.Global
 namespace HostApi;
 
-using System.Text;
 using Immutype;
 using JetBrains.TeamCity.ServiceMessages;
 

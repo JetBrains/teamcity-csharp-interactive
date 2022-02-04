@@ -49,7 +49,7 @@ public class EnvironmentTests
         // When
 
         // Then
-        environment.TryGetSourceName(out var name).ShouldBeFalse();
+        environment.TryGetSourceName(out _).ShouldBeFalse();
     }
     
     [Theory]
@@ -66,7 +66,7 @@ public class EnvironmentTests
         using var scope = environment.CreateScope(source.Object);
 
         // Then
-        environment.TryGetSourceName(out var name).ShouldBeFalse();
+        environment.TryGetSourceName(out _).ShouldBeFalse();
     }
     
     [Fact]
