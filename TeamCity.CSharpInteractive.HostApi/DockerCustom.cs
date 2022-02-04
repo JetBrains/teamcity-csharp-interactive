@@ -6,6 +6,9 @@ namespace HostApi;
 using Docker;
 using Immutype;
 
+/// <summary>
+/// The docker custom command is used to execute any docker commands with any arguments.
+/// </summary>
 [Target]
 public record DockerCustom(
     // Specifies the set of command line arguments to use when starting the tool.

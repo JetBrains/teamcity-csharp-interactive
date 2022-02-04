@@ -6,6 +6,9 @@ namespace HostApi;
 using DotNet;
 using Immutype;
 
+/// <summary>
+/// The dotnet custom command is used to execute any dotnet commands with any arguments. 
+/// </summary>
 [Target]
 public record DotNetCustom(
     IEnumerable<string> Args,

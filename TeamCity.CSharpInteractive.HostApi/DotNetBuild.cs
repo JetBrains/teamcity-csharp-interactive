@@ -6,6 +6,9 @@ namespace HostApi;
 using DotNet;
 using Immutype;
 
+/// <summary>
+/// The dotnet build command builds the project and its dependencies into a set of binaries. The binaries include the project's code in Intermediate Language (IL) files with a .dll extension. Depending on the project type and settings, other files may be included.
+/// </summary>
 [Target]
 public record DotNetBuild(
     // MSBuild options for setting properties.

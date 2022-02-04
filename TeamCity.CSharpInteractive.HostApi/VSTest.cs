@@ -6,6 +6,9 @@ namespace HostApi;
 using DotNet;
 using Immutype;
 
+/// <summary>
+/// The dotnet vstest command runs the VSTest.Console command-line application to run automated unit tests.
+/// </summary>
 [Target]
 public record VSTest(
     IEnumerable<string> TestFileNames,
