@@ -308,7 +308,8 @@ public class ScriptRunTests
 
         // Then
         result.ExitCode.ShouldBe(1, result.ToString());
-        result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(2, result.ToString());
+        result.StdErr.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1, result.ToString());
+        result.StdOut.Count(i => i.Contains("System.Exception: Test")).ShouldBe(1, result.ToString());
     }
 
     [Theory]

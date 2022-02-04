@@ -16,7 +16,7 @@ public class MSBuildScenario : BaseScenario
     {
         // $visible=true
         // $tag=11 .NET build API
-        // $priority=00
+        // $priority=01
         // $description=Build a project using MSBuild
         // {
         // Adds the namespace "HostApi" to use .NET build API

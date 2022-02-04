@@ -10,14 +10,17 @@ internal class Log<T> : ILog<T>
     private readonly IStatistics _statistics;
     private readonly ISettings _settings;
     private readonly IStdOut _stdOut;
+    private readonly IStdErr _stdErr;
 
     public Log(
         ISettings settings,
         IStdOut stdOut,
+        IStdErr stdErr,
         IStatistics statistics)
     {
         _settings = settings;
         _stdOut = stdOut;
+        _stdErr = stdErr;
         _statistics = statistics;
     }
 
@@ -29,7 +32,7 @@ internal class Log<T> : ILog<T>
         }
 
         _statistics.RegisterError(string.Join("", error.Select(i => i.Value)));
-        _stdOut.WriteLine(GetMessage(error, Color.Error));
+        _stdErr.WriteLine(GetMessage(error, Color.Default));
     }
 
     public void Warning(params Text[] warning)

@@ -15,7 +15,7 @@ public class DockerRunScenario : BaseScenario
     {
         // $visible=true
         // $tag=12 Docker API
-        // $priority=00
+        // $priority=01
         // $description=Running in docker
         // {
         // Adds the namespace "HostApi" to use Command Line API and Docker API

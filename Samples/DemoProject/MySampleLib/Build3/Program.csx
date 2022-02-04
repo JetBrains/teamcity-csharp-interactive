@@ -15,6 +15,7 @@
 // Please see the page below for more details.
 // https://github.com/JetBrains/teamcity-csharp-interactive
 
+#load "Tools.cs"
 #load "Settings.cs"
 #load "Build.cs"
 #load "CreateImage.cs"

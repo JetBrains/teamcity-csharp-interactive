@@ -17,7 +17,9 @@ public record DockerRun(
     ICommandLine CommandLine,
     // Docker image
     string Image,
+    // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
+    // Specifies the set of environment variables that apply to this process and its child processes.
     IEnumerable<(string name, string value)> Vars,
     // Additional docker options
     IEnumerable<string> Options,
@@ -29,7 +31,9 @@ public record DockerRun(
     IEnumerable<string> Mounts,
     // Bind mount a volume
     IEnumerable<(string from, string to)> Volumes,
+    // Overrides the tool executable path.
     string ExecutablePath = "",
+    // Specifies the working directory for the tool to be started.
     string WorkingDirectory = "",
     // Number of CPUs
     int? CPUs = default,
@@ -48,19 +52,20 @@ public record DockerRun(
     // Set platform if server is multi-platform capable
     string Platform = "",
     // Give extended privileges to this container
-    bool Privileged = false,
+    bool? Privileged = default,
     // Pull image before running ("always"|"missing"|"never")
     DockerPullType? Pull = default,
     // Mount the container's root filesystem as read only
-    bool ReadOnly = false,
+    bool? ReadOnly = default,
     // Automatically remove the container when it exits
-    bool AutoRemove = true,
+    bool? AutoRemove = default,
     // Username or UID (format: <name|uid>[:<group|gid>])
     string User = "",
     // Working directory inside the container
     string ContainerWorkingDirectory = "",
     // A file with environment variables inside the container
     string EnvFile = "",
+    // Specifies a short name for this operation.
     string ShortName = "")
     : ICommandLine
 {

@@ -14,7 +14,7 @@ public class DotNetTestScenario : BaseScenario
     {
         // $visible=true
         // $tag=11 .NET build API
-        // $priority=00
+        // $priority=01
         // $description=Test a project
         // {
         // Adds the namespace "HostApi" to use .NET build API

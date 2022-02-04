@@ -30,6 +30,7 @@ public class DockerDotNetBuildScenario : BaseScenario
 
         // Creates a base docker command line
         var baseDockerCmd = new DockerRun()
+            .WithAutoRemove(true)
             .WithImage("mcr.microsoft.com/dotnet/sdk")
             .WithPlatform("linux")
             .WithContainerWorkingDirectory("/MyProjects")

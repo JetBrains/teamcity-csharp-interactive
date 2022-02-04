@@ -48,7 +48,9 @@ internal class ScriptRunner : IScriptRunner
                 exitCode = currentExitCode;
             }
 
-            return exitCode ?? (summary.Success == false || _statistics.Errors.Count > 0 ? 1 : 0);
+            var actualExitCode = exitCode ?? (summary.Success == false || _statistics.Errors.Count > 0 ? 1 : 0);
+            _log.Trace(() => new []{new Text($"Exit code: {actualExitCode}.")});
+            return actualExitCode;
         }
         finally
         {

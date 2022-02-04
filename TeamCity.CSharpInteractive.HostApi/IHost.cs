@@ -2,6 +2,8 @@
 // ReSharper disable UnusedMemberInSuper.Global
 namespace HostApi;
 
+using System.Diagnostics.Contracts;
+
 public interface IHost
 {
     IReadOnlyList<string> Args { get; }
@@ -20,5 +22,6 @@ public interface IHost
 
     void Trace(string? trace, string? origin = default);
 
+    [Pure]
     T GetService<T>();
 }

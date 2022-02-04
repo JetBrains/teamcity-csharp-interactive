@@ -8,10 +8,15 @@ using Immutype;
 
 [Target]
 public record DockerCustom(
+    // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
+    // Specifies the set of environment variables that apply to this process and its child processes.
     IEnumerable<(string name, string value)> Vars,
+    // Overrides the tool executable path.
     string ExecutablePath = "",
+    // Specifies the working directory for the tool to be started.
     string WorkingDirectory = "",
+    // Specifies a short name for this operation.
     string ShortName = "")
     : ICommandLine
 {

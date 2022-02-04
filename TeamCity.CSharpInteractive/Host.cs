@@ -3,10 +3,10 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable CheckNamespace
 using System.Diagnostics.CodeAnalysis;
-// ReSharper disable once RedundantUsingDirective
-using System.Runtime.Loader;
+using System.Diagnostics.Contracts;
 using HostApi;
 using TeamCity.CSharpInteractive;
+using Environment = System.Environment;
 
 [ExcludeFromCodeCoverage]
 public static class Host
@@ -21,10 +21,11 @@ public static class Host
     {
         Components.Info.ShowHeader();
         FinishToken = Disposable.Create(Components.ExitTracker.Track(), Components.Statistics.Start());
-        AssemblyLoadContext.Default.Unloading += OnDefaultOnUnloading;
+        AppDomain.CurrentDomain.DomainUnload += (_, _) => Finish();
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
     }
-    
-    private static void OnDefaultOnUnloading(AssemblyLoadContext ctx)
+
+    private static void Finish()
     {
         try
         {
@@ -41,6 +42,20 @@ public static class Host
             {
                 // ignored
             }
+        }
+    }
+    
+    private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        try
+        {
+            Components.Log.Error(ErrorId.Exception, new[] {new Text(e.ExceptionObject.ToString() ?? "Unhandled exception.")});
+            Finish();
+            Environment.Exit(1);
+        }
+        catch
+        {
+            // ignored
         }
     }
 #endif
@@ -61,5 +76,6 @@ public static class Host
 
     public static void Trace(string? trace, string? origin = default) => CurHost.Trace(trace, origin);
 
+    [Pure]
     public static T GetService<T>() => CurHost.GetService<T>();
 }

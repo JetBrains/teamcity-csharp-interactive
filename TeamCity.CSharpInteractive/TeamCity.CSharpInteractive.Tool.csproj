@@ -35,7 +35,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Immutype" Version="1.0.10">
+        <PackageReference Include="Immutype" Version="1.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -51,7 +51,7 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
         </AssemblyAttribute>
-        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.26" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build"/>
+        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.26" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -90,5 +90,7 @@
             <Pack>true</Pack>
             <Visible>false</Visible>
         </Content>
+
+        <Compile Remove="TeamCityCSharpInteractiveHostInitializer.cs"/>
     </ItemGroup>
 </Project>

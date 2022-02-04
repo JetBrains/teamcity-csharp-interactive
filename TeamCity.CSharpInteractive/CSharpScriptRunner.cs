@@ -47,6 +47,7 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
                     exception =>
                     {
                         success = false;
+                        _log.Trace(() => new[] {new Text($"Exception: {exception}.")});
                         _log.Error(ErrorId.Exception, new[] {new Text(exception.ToString())});
                         return true;
                     })
@@ -57,13 +58,16 @@ internal class CSharpScriptRunner : ICSharpScriptRunner
             _diagnosticsPresenter.Show(new CompilationDiagnostics(sourceCommand, _scriptState.Script.GetCompilation().GetDiagnostics().ToList().AsReadOnly()));
             if (_scriptState.ReturnValue != default)
             {
-                if (_exitCodeParser.TryParse(_scriptState.ReturnValue, out var exitCode))
+                if (success && _exitCodeParser.TryParse(_scriptState.ReturnValue, out var exitCode))
                 {
                     return new CommandResult(sourceCommand, success, exitCode);
                 }
 
-                _log.Trace(() => new[] {new Text("Return value is \""), new Text(_scriptState.ReturnValue.ToString() ?? "empty"), new Text("\".")});
-                return new CommandResult(sourceCommand, success);
+                _log.Trace(() => new[] {new Text("The return value is \""), new Text(_scriptState.ReturnValue.ToString() ?? "empty"), new Text("\".")});
+            }
+            else
+            {
+                _log.Trace(() => new[] {new Text("The return value is \"null\".")});
             }
         }
         catch (CompilationErrorException e)

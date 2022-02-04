@@ -13,5 +13,6 @@
         <Using Include="System.Threading"/>
         <Using Include="System.Threading.Tasks"/>
         <Using Include="Host" Static="True"/>
+        <Compile Include="$(MSBuildThisFileDirectory)/TeamCityCSharpInteractiveHostInitializer.cs" Visible="false"/>
     </ItemGroup>
 </Project>
