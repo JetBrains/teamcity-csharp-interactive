@@ -148,7 +148,7 @@ public class ScriptRunTests
 
         // Then
         result.ExitCode.ShouldBe(1, result.ToString());
-        result.StdOut.Contains("My error").ShouldBeTrue(result.ToString());
+        result.StdErr.Contains("My error").ShouldBeTrue(result.ToString());
     }
 
     [Fact]
@@ -295,7 +295,8 @@ public class ScriptRunTests
 
         // Then
         result.ExitCode.ShouldBe(1, result.ToString());
-        result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(2, result.ToString());
+        result.StdOut.Count(i => i.Contains("CS0103")).ShouldBe(1, result.ToString());
+        result.StdErr.Count(i => i.Contains("CS0103")).ShouldBe(1, result.ToString());
     }
 
     [Fact]
@@ -428,7 +429,6 @@ public class ScriptRunTests
 
         // Then
         result.ExitCode.ShouldBe(1, result.ToString());
-        result.StdErr.ShouldBeEmpty();
-        result.StdOut.Any(i => i.Contains("error CS0103")).ShouldBeTrue(result.ToString());
+        result.StdErr.Any(i => i.Contains("error CS0103")).ShouldBeTrue(result.ToString());
     }
 }

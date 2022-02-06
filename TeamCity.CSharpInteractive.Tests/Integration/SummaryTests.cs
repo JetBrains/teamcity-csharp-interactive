@@ -34,7 +34,7 @@ public class SummaryTests
         // Then
         result.ExitCode.ShouldBe(1, result.ToString());
         result.StdOut.Contains("Running FAILED.").ShouldBeTrue(result.ToString());
-        result.StdOut.Any(i => i.Contains("StdErr")).ShouldBeTrue(result.ToString());
-        result.StdErr.Contains("StdErr").ShouldBeFalse(result.ToString());
+        result.StdErr.Any(i => i.Contains("StdErr")).ShouldBeTrue(result.ToString());
+        result.StdOut.Contains("StdErr").ShouldBeFalse(result.ToString());
     }
 }
