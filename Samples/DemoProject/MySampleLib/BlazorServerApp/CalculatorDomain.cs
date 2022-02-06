@@ -4,8 +4,7 @@
 namespace BlazorServerApp
 {
     using MySampleLib;
-    using Pure.DI;
-    using static Pure.DI.Lifetime;
+    using static Lifetime;
 
     internal static partial class CalculatorDomain
     {

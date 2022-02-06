@@ -4,7 +4,6 @@ namespace TeamCity.CSharpInteractive;
 using System.Collections;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using Pure.DI;
 
 internal class TeamCityProperties : IProperties
 {

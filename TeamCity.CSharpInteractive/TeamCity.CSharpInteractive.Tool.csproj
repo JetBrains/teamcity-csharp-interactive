@@ -13,7 +13,12 @@
         <ProjectOutputPath>$(configuration)/$(MSBuildThisFileName)</ProjectOutputPath>
         <OutputPath>bin/$(ProjectOutputPath)</OutputPath>
         <IntermediateOutputPath>obj/$(ProjectOutputPath)/</IntermediateOutputPath>
+        <PureDINamespace>$(RootNamespace)</PureDINamespace>
     </PropertyGroup>
+
+    <ItemGroup>
+        <CompilerVisibleProperty Include="PureDINamespace" />
+    </ItemGroup>
 
     <PropertyGroup>
         <PackageType>DotNetCliTool</PackageType>
@@ -31,7 +36,7 @@
 
     <ItemGroup>
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.26">
+        <PackageReference Include="Pure.DI" Version="1.1.27">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -91,6 +96,6 @@
             <Visible>false</Visible>
         </Content>
 
-        <Compile Remove="TeamCityCSharpInteractiveHostInitializer.cs"/>
+        <Compile Remove="TeamCityCSharpInteractiveHostInitializer.cs" />
     </ItemGroup>
 </Project>

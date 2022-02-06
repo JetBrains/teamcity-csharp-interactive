@@ -3,7 +3,6 @@
 namespace TeamCity.CSharpInteractive.Tests.Integration.Core;
 
 using JetBrains.TeamCity.ServiceMessages.Read;
-using Pure.DI;
 
 internal static partial class Composer
 {

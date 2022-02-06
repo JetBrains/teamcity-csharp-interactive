@@ -5,7 +5,6 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.DotNet.PlatformAbstractions;
-using Pure.DI;
 
 internal class DotNetEnvironment : IDotNetEnvironment, ITraceSource
 {

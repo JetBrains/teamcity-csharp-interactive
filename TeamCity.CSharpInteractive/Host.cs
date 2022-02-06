@@ -1,3 +1,4 @@
+// ReSharper disable RedundantUsingDirective
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global

@@ -1,8 +1,6 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace TeamCity.CSharpInteractive;
 
-using Pure.DI;
-
 internal class TeamCitySpecific<T> : ITeamCitySpecific<T>
 {
     private readonly ITeamCitySettings _settings;

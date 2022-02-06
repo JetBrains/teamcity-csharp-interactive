@@ -21,8 +21,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.DependencyInjection;
-using Pure.DI;
-using static Pure.DI.Lifetime;
 using ILogger = NuGet.Common.ILogger;
 
 [ExcludeFromCodeCoverage]
@@ -35,7 +33,7 @@ internal static partial class Composer
         // #verbosity=diagnostic
         // #out=C:\Projects\TeamCity\Teamcity.CSharpInteractive\TeamCity.CSharpInteractive\obj\Generated
         DI.Setup()
-            .Default(Singleton)
+            .Default(Lifetime.Singleton)
 #if TOOL
             .Bind<Program>().To<Program>()
             .Bind<RunningMode>().To(_ => RunningMode.Tool)
@@ -48,7 +46,7 @@ internal static partial class Composer
             .Bind<Process>().To(_ => Process.GetCurrentProcess())
             .Bind<string>("ModuleFile").To(ctx => ctx.Resolve<Process>().MainModule?.FileName ?? string.Empty)
             .Bind<CancellationTokenSource>().To(_ => new CancellationTokenSource())
-            .Bind<CancellationToken>().As(Transient).To(ctx => ctx.Resolve<CancellationTokenSource>().Token)
+            .Bind<CancellationToken>().As(Lifetime.Transient).To(ctx => ctx.Resolve<CancellationTokenSource>().Token)
             .Bind<IActive>(typeof(ExitManager)).To<ExitManager>()
             .Bind<IHostEnvironment>().To<HostEnvironment>()
             .Bind<IColorTheme>().To<ColorTheme>()
@@ -79,7 +77,7 @@ internal static partial class Composer
             .Bind<IFileCodeSourceFactory>().To<FileCodeSourceFactory>()
             .Bind<IScriptRunner>().Tags(InteractionMode.Interactive).To<InteractiveRunner>()
             .Bind<IScriptRunner>().Tags(InteractionMode.NonInteractive).To<ScriptRunner>()
-            .Bind<IScriptRunner>().As(Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IScriptRunner>(InteractionMode.Interactive) : ctx.Resolve<IScriptRunner>(InteractionMode.NonInteractive))
+            .Bind<IScriptRunner>().As(Lifetime.Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IScriptRunner>(InteractionMode.Interactive) : ctx.Resolve<IScriptRunner>(InteractionMode.NonInteractive))
             .Bind<ICommandSource>().To<CommandSource>()
             .Bind<IStringService>().To<StringService>()
             .Bind<IStatistics>().To<Statistics>()
@@ -95,14 +93,14 @@ internal static partial class Composer
             .Bind<ICleaner>().To<Cleaner>()
             .Bind<ICommandsRunner>().To<CommandsRunner>()
             .Bind<ICommandFactory<ICodeSource>>().To<CodeSourceCommandFactory>()
-            .Bind<ICommandFactory<ScriptCommand>>().As(Transient).To<ScriptCommandFactory>()
+            .Bind<ICommandFactory<ScriptCommand>>().As(Lifetime.Transient).To<ScriptCommandFactory>()
             .Bind<ICSharpScriptRunner>().To<CSharpScriptRunner>()
             .Bind<ITargetFrameworkMonikerParser>().To<TargetFrameworkMonikerParser>()
             .Bind<IEnvironmentVariables>().Bind<ITraceSource>(typeof(EnvironmentVariables)).To<EnvironmentVariables>()
             .Bind<IActive>(typeof(Debugger)).To<Debugger>()
             .Bind<IDockerSettings>().To<DockerSettings>()
-            .Bind<IBuildContext>("base").As(Transient).To<BuildContext>()
-            .Bind<IBuildContext>().As(Transient).To<ReliableBuildContext>()
+            .Bind<IBuildContext>("base").As(Lifetime.Transient).To<BuildContext>()
+            .Bind<IBuildContext>().As(Lifetime.Transient).To<ReliableBuildContext>()
             .Bind<ITextToColorStrings>().To<TextToColorStrings>()
             .Bind<IFileExplorer>().To<FileExplorer>()
             .Bind<IProcessOutputWriter>().To<ProcessOutputWriter>()
@@ -112,7 +110,7 @@ internal static partial class Composer
             .Bind<IMessagesReader>().To<MessagesReader>()
             .Bind<IPathResolverContext>().Bind<IVirtualContext>().To<PathResolverContext>()
             .Bind<IEncoding>().To<Utf8Encoding>()
-            .Bind<IProcessMonitor>().As(Transient).To<ProcessMonitor>()
+            .Bind<IProcessMonitor>().As(Lifetime.Transient).To<ProcessMonitor>()
             .Bind<IBuildOutputProcessor>().To<BuildOutputProcessor>()
             .Bind<IBuildMessagesProcessor>("default").To<DefaultBuildMessagesProcessor>()
             .Bind<IBuildMessagesProcessor>("custom").To<CustomMessagesProcessor>()
@@ -166,7 +164,7 @@ internal static partial class Composer
 
         DI.Setup()
             .Bind<IStartInfoFactory>().To<StartInfoFactory>()
-            .Bind<IProcessManager>().As(Transient).To<ProcessManager>()
+            .Bind<IProcessManager>().As(Lifetime.Transient).To<ProcessManager>()
             .Bind<IProperties>("Default").To<Properties>()
             .Bind<IProperties>("TeamCity").To<TeamCityProperties>()
 
@@ -182,7 +180,7 @@ internal static partial class Composer
             .Bind<ITeamCityServiceMessages>().To<TeamCityServiceMessages>()
             .Bind<IServiceMessageFormatter>().To<ServiceMessageFormatter>()
             .Bind<IFlowIdGenerator>().Bind<IFlowContext>().To<FlowIdGenerator>()
-            .Bind<DateTime>().As(Transient).To(_ => DateTime.Now)
+            .Bind<DateTime>().As(Lifetime.Transient).To(_ => DateTime.Now)
             .Bind<IServiceMessageUpdater>().To<TimestampUpdater>()
             .Bind<ITeamCityWriter>().To(
                 ctx => ctx.Resolve<ITeamCityServiceMessages>().CreateWriter(

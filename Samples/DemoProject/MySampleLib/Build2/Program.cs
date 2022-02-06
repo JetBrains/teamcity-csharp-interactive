@@ -2,7 +2,7 @@
 using NuGet.Versioning;
 
 var configuration = GetProperty("configuration", "Release");
-var version = NuGetVersion.Parse(GetProperty("version", "1.0.0-dev"));
+var version = NuGetVersion.Parse(GetProperty("version", "1.0.0-dev", true));
 
 var runner = GetService<IBuildRunner>();
 
@@ -47,18 +47,26 @@ if (results.Any(result => result.ExitCode != 0))
 
     Error("Tests failed.");
     return 1;
-};
+}
 
 return 0;
 
-string GetProperty(string name, string defaultProp)
+string GetProperty(string name, string defaultProp, bool showWarning = false)
 {
-    var prop = Props[name];
-    if (!string.IsNullOrWhiteSpace(prop))
+    if (Props.TryGetValue(name, out var prop) && !string.IsNullOrWhiteSpace(prop))
     {
         return prop;
     }
-    
-    Warning($"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.");
+
+    var message = $"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.";
+    if (showWarning)
+    {
+        Warning(message);
+    }
+    else
+    {
+        Info(message);
+    }
+
     return defaultProp;
 }

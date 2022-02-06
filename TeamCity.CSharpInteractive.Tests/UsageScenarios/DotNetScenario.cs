@@ -2,6 +2,7 @@
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 // ReSharper disable CommentTypo
+// ReSharper disable UnusedVariable
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using HostApi;

@@ -2,7 +2,6 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Collections.Immutable;
-using Pure.DI;
 
 internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
 {

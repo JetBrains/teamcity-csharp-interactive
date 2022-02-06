@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_BuiltInTypes
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using HostApi;

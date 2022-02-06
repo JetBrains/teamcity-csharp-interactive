@@ -4,7 +4,6 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
-using Pure.DI;
 
 internal class ProcessInFlowRunner : IProcessRunner
 {

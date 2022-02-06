@@ -2,8 +2,7 @@ static class Tools
 {
     public static string GetProperty(string name, string defaultProp, bool showWarning = false)
     {
-        var prop = Props[name];
-        if (!string.IsNullOrWhiteSpace(prop))
+        if (Props.TryGetValue(name, out var prop) && !string.IsNullOrWhiteSpace(prop))
         {
             return prop;
         }

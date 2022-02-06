@@ -123,7 +123,7 @@ if (!underTeamCity)
     }
 
     var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", Path.Combine(outputDir, "TeamCity.CSharpInteractive.Tool"))
-        .WithShortName("Installing tool");;
+        .WithShortName("Installing tool");
     if (runner.Run(installTool, output => WriteLine(output.Text)).ExitCode != 0)
     {
         Warning($"{installTool} failed.");
@@ -146,7 +146,7 @@ if (!underTeamCity)
 
     var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{nextTemplateVersion.ToString()}", "--nuget-source", templatesOutputDir)
         .WithWorkingDirectory(templatesOutputDir)
-        .WithShortName("Installing template");;
+        .WithShortName("Installing template");
     if (runner.Run(installTemplates).ExitCode != 0)
     {
         Error($"{installTemplates} failed.");
