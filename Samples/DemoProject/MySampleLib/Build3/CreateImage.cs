@@ -1,46 +1,47 @@
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
-class CreateImage
+interface ICreateImage
+{
+    Task<string> BuildAsync();
+}
+
+class CreateImage : ICreateImage
 {
     private readonly Settings _settings;
-    private readonly Build _build;
+    private readonly IBuild _build;
+    private readonly ICommandLineRunner _runner;
     private readonly ITeamCityWriter _teamCityWriter;
 
     public CreateImage(
         Settings settings,
-        Build build,
+        IBuild build,
+        ICommandLineRunner runner,
         ITeamCityWriter teamCityWriter)
     {
         _settings = settings;
         _build = build;
+        _runner = runner;
         _teamCityWriter = teamCityWriter;
     }
 
-    public async Task<Optional<string>> RunAsync()
+    public async Task<string> BuildAsync()
     {
-        var result = await _build.RunAsync();
-        if (!result.HasValue)
-        {
-            return result;
-        }
+        var buildOutputPath = await _build.BuildAsync();
 
         var dockerfile = Path.Combine("BlazorServerApp", "Dockerfile");
-        var exitCode = await new DockerCustom("build", "-f", dockerfile, "-t", "blazorapp", result.Value)
-            .RunAsync(output => {WriteLine("    " + output.Line, Color.Details);});
-        if (exitCode != 0)
-        {
-            Error("Failed to build a docker image.");
-            return new Optional<string>();
-        }
-        
+        var build = new DockerCustom("build", "-f", dockerfile, "-t", "blazorapp", buildOutputPath);
+        await Assertion.Succeed(
+            _runner.RunAsync(build, output => { WriteLine("    " + output.Line, Color.Details); }),
+            "build a docker image"
+        );
+
         var imageFile = Path.Combine("BlazorServerApp", "bin", _settings.Configuration, "BlazorServerApp.tar");
-        exitCode = await new DockerCustom("image", "save", "-o", imageFile, "blazorapp").RunAsync();
-        if (exitCode != 0)
-        {
-            Error("Failed to save docker image.");
-            return new Optional<string>();
-        }
+        var save = new DockerCustom("image", "save", "-o", imageFile, "blazorapp");
+        await Assertion.Succeed(
+            _runner.RunAsync(save),
+            "Saving a docker image"
+        );
 
         _teamCityWriter.PublishArtifact($"{Path.GetFullPath(imageFile)} -> .");
 

@@ -1,20 +1,31 @@
-class Root
-{
-    private readonly Build _build;
-    private readonly CreateImage _createImage;
+using HostApi;
 
-    public Root(Build build,
-        CreateImage createImage)
+interface IRoot
+{
+    Task<string> BuildAsync();
+}
+
+class Root : IRoot
+{
+    private readonly IProperties _properties;
+    private readonly IBuild _build;
+    private readonly ICreateImage _createImage;
+
+    public Root(
+        IProperties properties,
+        IBuild build,
+        ICreateImage createImage)
     {
+        _properties = properties;
         _build = build;
         _createImage = createImage;
     }
 
-    public Task<Optional<string>> RunAsync() =>
-        Tools.GetProperty("target", "Build") switch
+    public Task<string> BuildAsync() =>
+        Property.Get(_properties, "target", "Build") switch
         {
-            "Build" => _build.RunAsync(),
-            "CreateImage" => _createImage.RunAsync(),
-            _ => throw new ArgumentOutOfRangeException("target")
+            "Build" => _build.BuildAsync(),
+            "CreateImage" => _createImage.BuildAsync(),
+            _ => throw new ArgumentOutOfRangeException()
         };
 }

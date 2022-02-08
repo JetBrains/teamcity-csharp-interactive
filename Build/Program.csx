@@ -12,4 +12,5 @@
 // Includes code from a file in the order it should run.
 // #load "MyClass.cs"
 
+#load "Tools.cs"
 #load "Program.cs"

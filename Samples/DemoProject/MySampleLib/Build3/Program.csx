@@ -1,4 +1,4 @@
-// Run this script from the working directory where a target solution or project is located.
+// Run this from the working directory where the solution or project to build is located.
 
 // Changes a verbosity level (Quiet, Normal, or Diagnostic).
 // #l Diagnostic

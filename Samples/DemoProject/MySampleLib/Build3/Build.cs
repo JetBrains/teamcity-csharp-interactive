@@ -1,26 +1,30 @@
 using HostApi;
 
-class Build
+interface IBuild
+{
+    Task<string> BuildAsync();
+}
+
+class Build : IBuild
 {
     private readonly Settings _settings;
+    private readonly IBuildRunner _runner;
 
-    public Build(Settings settings)
+    public Build(
+        Settings settings,
+        IBuildRunner runner)
     {
         _settings = settings;
+        _runner = runner;
     }
-    
-    public async Task<Optional<string>> RunAsync()
-    {
-        var result = await new DotNetBuild()
-            .WithConfiguration(_settings.Configuration)
-            .AddProps(("version", _settings.Version.ToString()))
-            .BuildAsync();
 
-        if (result.ExitCode != 0)
-        {
-            Error("Build failed.");
-            return new Optional<string>();
-        }
+    public async Task<string> BuildAsync()
+    {
+        var build = new DotNetBuild()
+            .WithConfiguration(_settings.Configuration)
+            .AddProps(("version", _settings.Version.ToString()));
+
+        await Assertion.Succeed(_runner.RunAsync(build));
 
         var test = new DotNetTest()
             .WithConfiguration(_settings.Configuration)
@@ -33,44 +37,23 @@ class Build
             .AddVolumes((Environment.CurrentDirectory, "/project"))
             .WithContainerWorkingDirectory("/project");
 
-        var results = await Task.WhenAll(
-            test.BuildAsync(),
-            testInContainer.BuildAsync()
+        await Assertion.Succeed(
+            Task.WhenAll(
+                _runner.RunAsync(test),
+                _runner.RunAsync(testInContainer)
+            )
         );
-
-        if (results.Any(testResult => testResult.ExitCode != 0))
-        {
-            var failedTests =
-                from buildResult in results
-                from testResult in buildResult.Tests
-                where testResult.State == TestState.Failed
-                select testResult.ToString();
-
-            foreach (var failedTest in failedTests.Distinct())
-            {
-                Error(failedTest);
-            }
-
-            Error("Tests failed.");
-            return new Optional<string>();
-        }
 
         var output = Path.Combine("bin", _settings.Configuration, "output");
 
-        result = await new DotNetPublish()
+        var publish = new DotNetPublish()
             .WithWorkingDirectory("BlazorServerApp")
             .WithConfiguration(_settings.Configuration)
             .WithNoBuild(true)
             .WithOutput(output)
-            .AddProps(("version", _settings.Version.ToString()))
-            .BuildAsync();
-        
-        if (result.ExitCode != 0)
-        {
-            Error("Publishing failed.");
-            return new Optional<string>();
-        }
+            .AddProps(("version", _settings.Version.ToString()));
 
+        await Assertion.Succeed(_runner.RunAsync(publish));
         return Path.Combine("BlazorServerApp", output);
     }
 }

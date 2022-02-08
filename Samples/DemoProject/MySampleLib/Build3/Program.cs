@@ -1,17 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿// Run this from the working directory where the solution or project to build is located.
+using Microsoft.Extensions.DependencyInjection;
 using NuGet.Versioning;
 
-var configuration = Tools.GetProperty("configuration", "Release");
-var version = NuGetVersion.Parse(Tools.GetProperty("version", "1.0.0-dev", true));
+var configuration = Property.Get("configuration", "Release");
+var version = NuGetVersion.Parse(Property.Get("version", "1.0.0-dev", true));
 
-var result = await
+await 
     GetService<IServiceCollection>()
         .AddSingleton(_ => new Settings(configuration, version))
-        .AddSingleton<Root>()
-        .AddSingleton<Build>()
-        .AddSingleton<CreateImage>()
+        .AddSingleton<IRoot, Root>()
+        .AddSingleton<IBuild, Build>()
+        .AddSingleton<ICreateImage, CreateImage>()
     .BuildServiceProvider()
-    .GetRequiredService<Root>()
-    .RunAsync();
-
-return result.HasValue ? 0 : 1;
+    .GetRequiredService<IRoot>()
+    .BuildAsync();

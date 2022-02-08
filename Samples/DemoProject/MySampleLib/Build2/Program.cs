@@ -1,19 +1,16 @@
-﻿using HostApi;
+﻿// Run this from the working directory where the solution or project to build is located.
+using HostApi;
 using NuGet.Versioning;
 
-var configuration = GetProperty("configuration", "Release");
-var version = NuGetVersion.Parse(GetProperty("version", "1.0.0-dev", true));
+var configuration = Property.Get("configuration", "Release");
+var version = NuGetVersion.Parse(Property.Get("version", "1.0.0-dev", true));
 
 var result = new DotNetBuild()
     .WithConfiguration(configuration)
     .AddProps(("version", version.ToString()))
     .Build();
 
-if (result.ExitCode != 0)
-{
-    Error("Build failed.");
-    return 1;
-}
+Assertion.Succeed(result);
 
 var test = new DotNetTest()
     .WithConfiguration(configuration)
@@ -31,41 +28,4 @@ var results = await Task.WhenAll(
     testInContainer.BuildAsync()
 );
 
-if (results.Any(i => i.ExitCode != 0))
-{
-    var failedTests =
-        from buildResult in results
-        from testResult in buildResult.Tests
-        where testResult.State == TestState.Failed
-        select testResult.ToString();
-
-    foreach (var failedTest in failedTests.Distinct())
-    {
-        Error(failedTest);
-    }
-
-    Error("Tests failed.");
-    return 1;
-}
-
-return 0;
-
-string GetProperty(string name, string defaultProp, bool showWarning = false)
-{
-    if (Props.TryGetValue(name, out var prop) && !string.IsNullOrWhiteSpace(prop))
-    {
-        return prop;
-    }
-
-    var message = $"The property \"{name}\" was not defined, the default value \"{defaultProp}\" was used.";
-    if (showWarning)
-    {
-        Warning(message);
-    }
-    else
-    {
-        Info(message);
-    }
-
-    return defaultProp;
-}
+Assertion.Succeed(results);

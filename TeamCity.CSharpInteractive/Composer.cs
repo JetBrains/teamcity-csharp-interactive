@@ -28,10 +28,6 @@ internal static partial class Composer
 {
     private static void Setup()
     {
-        // #trace=true
-        // #debug=true
-        // #verbosity=diagnostic
-        // #out=C:\Projects\TeamCity\Teamcity.CSharpInteractive\TeamCity.CSharpInteractive\obj\Generated
         DI.Setup()
             .Default(Lifetime.Singleton)
 #if TOOL
