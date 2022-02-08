@@ -4,11 +4,11 @@
 namespace BlazorServerApp
 {
     using MySampleLib;
-    using static Lifetime;
+    using Pure.DI;
 
     internal static partial class CalculatorDomain
     {
         private static void Setup() => DI.Setup()
-            .Bind<ICalculator>().As(ContainerSingleton).To<Calculator>();
+            .Bind<ICalculator>().As(Lifetime.ContainerSingleton).To<Calculator>();
     }
 }

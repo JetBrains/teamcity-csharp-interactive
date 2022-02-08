@@ -24,6 +24,10 @@ public class CommandLineScenario : BaseScenario
         // ## using HostApi;
 
         int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
+        
+        // or the same thing using the extension method
+        exitCode = new CommandLine("cmd", "/c", "DIR").Run();
+
         // }
 
         exitCode.HasValue.ShouldBeTrue();

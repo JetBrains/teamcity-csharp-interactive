@@ -5,18 +5,15 @@ class CreateImage
 {
     private readonly Settings _settings;
     private readonly Build _build;
-    private readonly ICommandLineRunner _runner;
     private readonly ITeamCityWriter _teamCityWriter;
 
     public CreateImage(
         Settings settings,
         Build build,
-        ICommandLineRunner runner,
         ITeamCityWriter teamCityWriter)
     {
         _settings = settings;
         _build = build;
-        _runner = runner;
         _teamCityWriter = teamCityWriter;
     }
 
@@ -29,8 +26,8 @@ class CreateImage
         }
 
         var dockerfile = Path.Combine("BlazorServerApp", "Dockerfile");
-        var build = new DockerCustom("build", "-f", dockerfile, "-t", "blazorapp", result.Value);
-        var exitCode = await _runner.RunAsync(build, output => {WriteLine("    " + output.Line, Color.Details);});
+        var exitCode = await new DockerCustom("build", "-f", dockerfile, "-t", "blazorapp", result.Value)
+            .RunAsync(output => {WriteLine("    " + output.Line, Color.Details);});
         if (exitCode != 0)
         {
             Error("Failed to build a docker image.");
@@ -38,8 +35,7 @@ class CreateImage
         }
         
         var imageFile = Path.Combine("BlazorServerApp", "bin", _settings.Configuration, "BlazorServerApp.tar");
-        var save = new DockerCustom("image", "save", "-o", imageFile, "blazorapp");
-        exitCode = await _runner.RunAsync(save);
+        exitCode = await new DockerCustom("image", "save", "-o", imageFile, "blazorapp").RunAsync();
         if (exitCode != 0)
         {
             Error("Failed to save docker image.");

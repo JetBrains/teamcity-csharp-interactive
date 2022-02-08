@@ -21,15 +21,12 @@ public class DotNetPublishScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
-        result = buildRunner.Run(new DotNetPublish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
+        result = new DotNetPublish().WithWorkingDirectory("MyLib").WithFramework("net6.0").Build();
         result.ExitCode.ShouldBe(0);
         // }
     }

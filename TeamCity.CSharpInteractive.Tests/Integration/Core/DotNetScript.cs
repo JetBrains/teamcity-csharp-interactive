@@ -19,7 +19,7 @@ internal static class DotNetScript
     {
         workingDirectory ??= GetWorkingDirectory();
         var scriptFile = Path.Combine(workingDirectory, scriptName);
-        Composer.ResolveIFileSystem().AppendAllLines(scriptFile, lines);
+        TestComposer.ResolveIFileSystem().AppendAllLines(scriptFile, lines);
         return Create().AddArgs(args.ToArray()).AddArgs(scriptFile).WithWorkingDirectory(workingDirectory);
     }
 

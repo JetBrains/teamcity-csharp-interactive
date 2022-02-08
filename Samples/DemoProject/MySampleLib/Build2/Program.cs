@@ -4,13 +4,12 @@ using NuGet.Versioning;
 var configuration = GetProperty("configuration", "Release");
 var version = NuGetVersion.Parse(GetProperty("version", "1.0.0-dev", true));
 
-var runner = GetService<IBuildRunner>();
-
-var build = new DotNetBuild()
+var result = new DotNetBuild()
     .WithConfiguration(configuration)
-    .AddProps(("version", version.ToString()));
+    .AddProps(("version", version.ToString()))
+    .Build();
 
-if (runner.Run(build).ExitCode != 0)
+if (result.ExitCode != 0)
 {
     Error("Build failed.");
     return 1;
@@ -28,11 +27,11 @@ var testInContainer = new DockerRun(
     .WithContainerWorkingDirectory("/project");
 
 var results = await Task.WhenAll(
-    runner.RunAsync(test),
-    runner.RunAsync(testInContainer)
+    test.BuildAsync(),
+    testInContainer.BuildAsync()
 );
 
-if (results.Any(result => result.ExitCode != 0))
+if (results.Any(i => i.ExitCode != 0))
 {
     var failedTests =
         from buildResult in results

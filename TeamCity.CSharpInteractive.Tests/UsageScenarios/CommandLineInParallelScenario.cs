@@ -25,7 +25,7 @@ public class CommandLineInParallelScenario : BaseScenario
         // ## using HostApi;
 
         Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/c", "DIR"));
-        int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
+        int? exitCode = new CommandLine("cmd", "/c", "SET").Run();
         task.Wait();
         // }
 

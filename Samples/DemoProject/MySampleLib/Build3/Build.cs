@@ -3,23 +3,19 @@ using HostApi;
 class Build
 {
     private readonly Settings _settings;
-    private readonly IBuildRunner _runner;
 
-    public Build(
-        Settings settings,
-        IBuildRunner runner)
+    public Build(Settings settings)
     {
         _settings = settings;
-        _runner = runner;
     }
     
     public async Task<Optional<string>> RunAsync()
     {
-        var build = new DotNetBuild()
+        var result = await new DotNetBuild()
             .WithConfiguration(_settings.Configuration)
-            .AddProps(("version", _settings.Version.ToString()));
+            .AddProps(("version", _settings.Version.ToString()))
+            .BuildAsync();
 
-        var result = await _runner.RunAsync(build);
         if (result.ExitCode != 0)
         {
             Error("Build failed.");
@@ -38,8 +34,8 @@ class Build
             .WithContainerWorkingDirectory("/project");
 
         var results = await Task.WhenAll(
-            _runner.RunAsync(test),
-            _runner.RunAsync(testInContainer)
+            test.BuildAsync(),
+            testInContainer.BuildAsync()
         );
 
         if (results.Any(testResult => testResult.ExitCode != 0))
@@ -61,14 +57,14 @@ class Build
 
         var output = Path.Combine("bin", _settings.Configuration, "output");
 
-        var publish = new DotNetPublish()
+        result = await new DotNetPublish()
             .WithWorkingDirectory("BlazorServerApp")
             .WithConfiguration(_settings.Configuration)
             .WithNoBuild(true)
             .WithOutput(output)
-            .AddProps(("version", _settings.Version.ToString()));
-
-        result = await _runner.RunAsync(publish);
+            .AddProps(("version", _settings.Version.ToString()))
+            .BuildAsync();
+        
         if (result.ExitCode != 0)
         {
             Error("Publishing failed.");

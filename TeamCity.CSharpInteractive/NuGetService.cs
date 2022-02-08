@@ -75,25 +75,4 @@ internal class NuGetService : INuGet
             return _nugetAssetsReader.ReadPackages(packagesPath, projectAssetsJson);
         }
     }
-
-    public IEnumerable<NuGetPackage> Restore(string packageId, string? versionRange, string? targetFrameworkMoniker, string? packagesPath)
-    {
-        var settings = new NuGetRestoreSettings(packageId);
-        if (versionRange != default)
-        {
-            settings = settings.WithVersionRange(VersionRange.Parse(versionRange));
-        }
-
-        if (targetFrameworkMoniker != default)
-        {
-            settings = settings.WithTargetFrameworkMoniker(targetFrameworkMoniker);
-        }
-
-        if (packagesPath != default)
-        {
-            settings = settings.WithPackagesPath(packagesPath);
-        }
-
-        return Restore(settings);
-    }
 }

@@ -22,15 +22,15 @@ var outputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive", "bin", co
 var templatesOutputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive.Templates", "bin", configuration);
 
 var dockerLinuxTests = false;
-var commandLineRunner = GetService<ICommandLineRunner>();
-commandLineRunner.Run(new DockerCustom("info").WithShortName("Defining a docker container type"), output =>
-{
-    WriteLine("    " + output.Line, Color.Details);
-    if (output.Line.Contains("OSType: linux"))
+new DockerCustom("info").WithShortName("Defining a docker container type")
+    .Run(output =>
     {
-        dockerLinuxTests = true;
-    }
-});
+        WriteLine("    " + output.Line, Color.Details);
+        if (output.Line.Contains("OSType: linux"))
+        {
+            dockerLinuxTests = true;
+        }
+    });
 
 if (!dockerLinuxTests)
 {
@@ -48,13 +48,11 @@ var nextTemplateVersion = GetNextVersion(new NuGetRestoreSettings(templatesPacka
 WriteLine($"Tool and package version: {nextToolAndPackageVersion}");
 WriteLine($"Template version: {nextTemplateVersion}");
 
-var runner = GetService<IBuildRunner>();
-
 var clean = new DotNetClean()
     .WithProject(solutionFile)
     .WithConfiguration(configuration);
 
-if (runner.Run(clean).ExitCode != 0)
+if (clean.Build().ExitCode != 0)
 {
     Error("Cleaning failed.");
     return 1;
@@ -66,7 +64,7 @@ var build = new DotNetBuild()
     .WithConfiguration(configuration)
     .WithProps(buildProps);
 
-if (runner.Run(build).ExitCode != 0)
+if (build.Build().ExitCode != 0)
 {
     Error("Building failed.");
     return 1;
@@ -90,7 +88,7 @@ if (!dockerLinuxTests)
     Warning("Docker tests were skipped.");
 }
 
-var result = runner.Run(test);
+var result = test.Build();
 if (result.ExitCode != 0 || result.Summary.FailedTests != 0)
 {
     foreach (var failedTest in result.Tests.Where(i => i.State == TestState.Failed))
@@ -107,7 +105,7 @@ var pack = new DotNetPack()
     .WithConfiguration(configuration)
     .WithProps(buildProps);
 
-if (runner.Run(pack).ExitCode != 0)
+if (pack.Build().ExitCode != 0)
 {
     Error("Packing failed.");
     return 1;
@@ -117,20 +115,20 @@ if (!underTeamCity)
 {
     var uninstallTool = new DotNetCustom("tool", "uninstall", toolPackageId, "-g")
         .WithShortName("Uninstalling tool");
-    if (runner.Run(uninstallTool, output => WriteLine(output.Text)).ExitCode != 0)
+    if (uninstallTool.Build(output => WriteLine(output.Text)).ExitCode != 0)
     {
         Warning($"{uninstallTool} failed.");
     }
 
     var installTool = new DotNetCustom("tool", "install", toolPackageId, "-g", "--version", nextToolAndPackageVersion.ToString(), "--add-source", Path.Combine(outputDir, "TeamCity.CSharpInteractive.Tool"))
         .WithShortName("Installing tool");
-    if (runner.Run(installTool, output => WriteLine(output.Text)).ExitCode != 0)
+    if (installTool.Run(output => WriteLine(output.Line)) != 0)
     {
         Warning($"{installTool} failed.");
     }
 
     var runTool = new DotNetCustom("csi", "/?");
-    if (runner.Run(runTool).ExitCode != 0)
+    if (runTool.Run() != 0)
     {
         Error($"{runTool} failed.");
         return 1;
@@ -139,7 +137,7 @@ if (!underTeamCity)
     var uninstallTemplates = new DotNetCustom("new", "-u", templatesPackageId)
         .WithWorkingDirectory(templatesOutputDir)
         .WithShortName("Uninstalling template");
-    if (runner.Run(uninstallTemplates, output => WriteLine(output.Text)).ExitCode != 0)
+    if (uninstallTemplates.Run(output => WriteLine(output.Line)) != 0)
     {
         Warning($"{uninstallTemplates} failed.");
     }
@@ -147,14 +145,14 @@ if (!underTeamCity)
     var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{nextTemplateVersion.ToString()}", "--nuget-source", templatesOutputDir)
         .WithWorkingDirectory(templatesOutputDir)
         .WithShortName("Installing template");
-    if (runner.Run(installTemplates).ExitCode != 0)
+    if (installTemplates.Run() != 0)
     {
         Error($"{installTemplates} failed.");
         return 1;
     }
 
     var runTemplates = new DotNetCustom("new", "build", "--help");
-    if (runner.Run(runTemplates).ExitCode != 0)
+    if (runTemplates.Run() != 0)
     {
         Error($"{runTemplates} failed.");
         return 1;

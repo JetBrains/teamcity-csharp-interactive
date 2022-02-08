@@ -20,16 +20,13 @@ public class DotNetRunScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
-        var result = buildRunner.Run(new DotNetCustom("new", "console", "-n", "MyApp", "--force"));
+        var result = new DotNetCustom("new", "console", "-n", "MyApp", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
         var stdOut = new List<string>();
-        result = buildRunner.Run(new DotNetRun().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
+        result = new DotNetRun().WithWorkingDirectory("MyApp").Build(message => stdOut.Add(message.Text));
         result.ExitCode.ShouldBe(0);
 
         // Checks StdOut

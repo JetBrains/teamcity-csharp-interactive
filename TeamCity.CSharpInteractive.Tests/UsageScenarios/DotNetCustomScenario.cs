@@ -20,14 +20,10 @@ public class DotNetCustomScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Gets the dotnet version, running a command like: "dotnet --version"
         Version? version = default;
-        var result = buildRunner.Run(
-            new DotNetCustom("--version"),
-            message => Version.TryParse(message.Text, out version));
+        var result = new DotNetCustom("--version")
+            .Build(message => Version.TryParse(message.Text, out version));
 
         result.ExitCode.ShouldBe(0);
         version.ShouldNotBeNull();

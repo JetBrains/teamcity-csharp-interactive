@@ -18,7 +18,7 @@ public class BuildTests
             "WriteLine(\"Custom=\" + result.ExitCode);",
             "result = buildRunner.Run(new DotNetRestore());",
             "WriteLine(\"Restore=\" + result.Tests.Count());",
-            "result = buildRunner.Run(new DotNetBuild());",
+            "result = new DotNetBuild().Build();",
             "WriteLine(\"Build=\" + result.Tests.Count());",
             "result = buildRunner.Run(new DotNetTest());",
             "WriteLine(\"Tests=\" + result.Tests.Count());"

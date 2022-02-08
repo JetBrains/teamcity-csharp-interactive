@@ -10,6 +10,7 @@ using TeamCity.CSharpInteractive;
 using Environment = System.Environment;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("Design", "CA1050:Declare types in namespaces")]
 public static class Host
 {
     private static readonly ScriptHostComponents Components = Composer.ResolveScriptHostComponents();

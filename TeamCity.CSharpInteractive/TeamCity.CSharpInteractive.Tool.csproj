@@ -13,7 +13,7 @@
         <ProjectOutputPath>$(configuration)/$(MSBuildThisFileName)</ProjectOutputPath>
         <OutputPath>bin/$(ProjectOutputPath)</OutputPath>
         <IntermediateOutputPath>obj/$(ProjectOutputPath)/</IntermediateOutputPath>
-        <PureDINamespace>$(RootNamespace)</PureDINamespace>
+        <PureDINamespace>TeamCity.CSharpInteractive</PureDINamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -35,8 +35,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <CompilerVisibleProperty Include="PureDINamespace" />
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.27">
+        <PackageReference Include="Pure.DI" Version="1.1.31">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

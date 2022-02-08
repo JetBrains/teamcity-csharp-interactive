@@ -21,18 +21,15 @@ public class DotNetPackScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Creates a NuGet package of version 1.2.3 for the project, running a command like: "dotnet pack /p:version=1.2.3" from the directory "MyLib"
-        result = buildRunner.Run(
-            new DotNetPack()
+        result = new DotNetPack()
                 .WithWorkingDirectory("MyLib")
-                .AddProps(("version", "1.2.3")));
+                .AddProps(("version", "1.2.3"))
+                .Build();
 
         result.ExitCode.ShouldBe(0);
         // }

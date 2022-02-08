@@ -21,15 +21,12 @@ public class DotNetRestoreScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
-        result = buildRunner.Run(new DotNetRestore().WithWorkingDirectory("MyLib"));
+        result = new DotNetRestore().WithWorkingDirectory("MyLib").Build();
         result.ExitCode.ShouldBe(0);
         // }
     }

@@ -22,21 +22,18 @@ public class MSBuildScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
-        result = buildRunner.Run(
-            new MSBuild()
-                .WithWorkingDirectory("MyLib")
-                .WithTarget("Build")
-                .WithRestore(true)
-                .AddProps(("configuration", "Release"))
-                .WithVerbosity(DotNetVerbosity.Detailed));
+        result = new MSBuild()
+            .WithWorkingDirectory("MyLib")
+            .WithTarget("Build")
+            .WithRestore(true)
+            .AddProps(("configuration", "Release"))
+            .WithVerbosity(DotNetVerbosity.Detailed)
+            .Build();
 
         // The "result" variable provides details about a build
         result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();

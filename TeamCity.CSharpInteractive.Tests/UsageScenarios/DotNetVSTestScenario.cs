@@ -21,22 +21,19 @@ public class DotNetVSTestScenario : BaseScenario
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
 
-        // Resolves a build service
-        var buildRunner = GetService<IBuildRunner>();
-
         // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-        var result = buildRunner.Run(new DotNetCustom("new", "mstest", "-n", "MyTests", "--force"));
+        var result = new DotNetCustom("new", "mstest", "-n", "MyTests", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
-        result = buildRunner.Run(new DotNetBuild().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
+        result = new DotNetBuild().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput").Build();
         result.ExitCode.ShouldBe(0);
 
         // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
-        result = buildRunner.Run(
-            new VSTest()
-                .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
-                .WithWorkingDirectory("MyTests"));
+        result = new VSTest()
+            .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
+            .WithWorkingDirectory("MyTests")
+            .Build();
 
         // The "result" variable provides details about a build
         result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);

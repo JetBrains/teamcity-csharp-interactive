@@ -32,6 +32,12 @@ public class DotNetScenario : BaseScenario
 
         // Resolves a build service
         var buildRunner = GetService<IBuildRunner>();
+        
+        // runs using a runner
+        buildRunner.Run(restore);
+
+        // or using the extension method
+        build.Build();
         // }
     }
 }

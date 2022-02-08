@@ -37,13 +37,17 @@ public class DockerDotNetBuildScenario : BaseScenario
             .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
 
         // Creates a new library project in a docker container
-        var customCmd = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
-        var result = buildRunner.Run(baseDockerCmd.WithCommandLine(customCmd));
+        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force")
+            .WithExecutablePath("dotnet")
+            .Build();
+
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project in a docker container
-        var buildCmd = new DotNetBuild().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
-        result = buildRunner.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => { });
+        result = new DotNetBuild()
+            .WithProject("MyLib/MyLib.csproj")
+            .WithExecutablePath("dotnet")
+            .Build(_ => { });
 
         // The "result" variable provides details about a build
         result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();

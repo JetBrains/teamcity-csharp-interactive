@@ -21,15 +21,12 @@ if (!Props.TryGetValue("version", out var packageVersion))
 
 var props = new[] {("Version", packageVersion)};
 
-var buildRunner = GetService<IBuildRunner>();
-
 var requiredSdkVersion = new Version(6, 0);
 Version? sdkVersion = default;
-var getVersion = new DotNetCustom("--version")
-    .WithShortName($"Checking the .NET SDK version {requiredSdkVersion}");
-
 if (
-    buildRunner.Run(getVersion, message => Version.TryParse(message.Text, out sdkVersion)).ExitCode == 0
+    new DotNetCustom("--version")
+        .WithShortName($"Checking the .NET SDK version {requiredSdkVersion}")
+        .Run(output=> Version.TryParse(output.Line, out sdkVersion)) == 0
     && sdkVersion != default
     && sdkVersion < requiredSdkVersion)
 {
@@ -45,7 +42,7 @@ var msbuild = new MSBuild()
     .WithRestore(true)
     .AddProps(props);
 
-if (buildRunner.Run(msbuild).ExitCode != 0)
+if (msbuild.Build().ExitCode != 0)
 {
     Error("Build failed.");
     return 1;
@@ -64,9 +61,9 @@ var testInContainer = new DockerRun(test.WithExecutablePath("dotnet"), $"mcr.mic
     .WithContainerWorkingDirectory("/project");
 
 var results = await Task.WhenAll(
-    buildRunner.RunAsync(testInContainer),
-    buildRunner.RunAsync(test),
-    buildRunner.RunAsync(vstest));
+    testInContainer.BuildAsync(),
+    test.BuildAsync(),
+    vstest.BuildAsync());
 
 if (results.Any(i => i.ExitCode != 0))
 {
@@ -83,7 +80,7 @@ var pack = new DotNetPack()
     .WithIncludeSource(true)
     .AddProps(props);
 
-if (buildRunner.Run(pack).ExitCode != 0)
+if (pack.Build().ExitCode != 0)
 {
     Error("Packing MySampleLib failed.");
     return 1;

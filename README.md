@@ -99,9 +99,10 @@ related issues.
   - [Cancellation of asynchronous run](#cancellation-of-asynchronous-run)
   - [Run timeout](#run-timeout)
 - Docker API
-  - [Running in docker](#running-in-docker)
   - [Build a project in a docker container](#build-a-project-in-a-docker-container)
+  - [Running in docker](#running-in-docker)
 - .NET build API
+  - [.NET Scenarios](#.net-scenarios)
   - [Build a project](#build-a-project)
   - [Build a project using MSBuild](#build-a-project-using-msbuild)
   - [Clean a project](#clean-a-project)
@@ -319,6 +320,10 @@ new CommandLine("cmd", "/c", "echo", "Hello")
 using HostApi;
 
 int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
+
+// or the same thing using the extension method
+exitCode = new CommandLine("cmd", "/c", "DIR").Run();
+
 ```
 
 
@@ -332,6 +337,9 @@ int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c"
 using HostApi;
 
 int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/C", "DIR"));
+
+// or the same thing using the extension method
+exitCode = await new CommandLine("cmd", "/c", "DIR").RunAsync();
 ```
 
 
@@ -345,9 +353,10 @@ int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine(
 using HostApi;
 
 var lines = new List<string>();
-int? exitCode = GetService<ICommandLineRunner>().Run(
-    new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
-    i => lines.Add(i.Line));
+int? exitCode = new CommandLine("cmd")
+    .AddArgs("/c", "SET")
+    .AddVars(("MyEnv", "MyVal"))
+    .Run(output => lines.Add(output.Line));
 
 lines.ShouldContain("MyEnv=MyVal");
 ```
@@ -363,7 +372,7 @@ lines.ShouldContain("MyEnv=MyVal");
 using HostApi;
 
 Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/c", "DIR"));
-int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "SET"));
+int? exitCode = new CommandLine("cmd", "/c", "SET").Run();
 task.Wait();
 ```
 
@@ -407,6 +416,34 @@ exitCode.HasValue.ShouldBeFalse();
 
 
 
+### .NET Scenarios
+
+
+
+``` CSharp
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
+
+var clean = new DotNetClean();
+
+var restore = new DotNetRestore()
+    .WithWorkingDirectory("MyLib");
+
+var build = new DotNetBuild()
+    .WithConfiguration("Release");
+
+// Resolves a build service
+var buildRunner = GetService<IBuildRunner>();
+
+// runs using a runner
+buildRunner.Run(restore);
+
+// or using the extension method
+build.Build();
+```
+
+
+
 ### Build a project
 
 
@@ -415,15 +452,12 @@ exitCode.HasValue.ShouldBeFalse();
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
-result = buildRunner.Run(new DotNetBuild().WithWorkingDirectory("MyLib"));
+result = new DotNetBuild().WithWorkingDirectory("MyLib").Build();
 
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
@@ -440,19 +474,16 @@ result.ExitCode.ShouldBe(0);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
-result = buildRunner.Run(new DotNetBuild().WithWorkingDirectory("MyLib"));
+result = new DotNetBuild().WithWorkingDirectory("MyLib").Build();
 result.ExitCode.ShouldBe(0);
 
 // Clean the project, running a command like: "dotnet clean" from the directory "MyLib"
-result = buildRunner.Run(new DotNetClean().WithWorkingDirectory("MyLib"));
+result = new DotNetClean().WithWorkingDirectory("MyLib").Build();
 
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
@@ -468,14 +499,10 @@ result.ExitCode.ShouldBe(0);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Gets the dotnet version, running a command like: "dotnet --version"
 Version? version = default;
-var result = buildRunner.Run(
-    new DotNetCustom("--version"),
-    message => Version.TryParse(message.Text, out version));
+var result = new DotNetCustom("--version")
+    .Build(message => Version.TryParse(message.Text, out version));
 
 result.ExitCode.ShouldBe(0);
 version.ShouldNotBeNull();
@@ -491,18 +518,15 @@ version.ShouldNotBeNull();
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Creates a NuGet package of version 1.2.3 for the project, running a command like: "dotnet pack /p:version=1.2.3" from the directory "MyLib"
-result = buildRunner.Run(
-    new DotNetPack()
+result = new DotNetPack()
         .WithWorkingDirectory("MyLib")
-        .AddProps(("version", "1.2.3")));
+        .AddProps(("version", "1.2.3"))
+        .Build();
 
 result.ExitCode.ShouldBe(0);
 ```
@@ -517,15 +541,12 @@ result.ExitCode.ShouldBe(0);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
-result = buildRunner.Run(new DotNetPublish().WithWorkingDirectory("MyLib").WithFramework("net6.0"));
+result = new DotNetPublish().WithWorkingDirectory("MyLib").WithFramework("net6.0").Build();
 result.ExitCode.ShouldBe(0);
 ```
 
@@ -539,15 +560,12 @@ result.ExitCode.ShouldBe(0);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
-result = buildRunner.Run(new DotNetRestore().WithWorkingDirectory("MyLib"));
+result = new DotNetRestore().WithWorkingDirectory("MyLib").Build();
 result.ExitCode.ShouldBe(0);
 ```
 
@@ -561,16 +579,13 @@ result.ExitCode.ShouldBe(0);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
-var result = buildRunner.Run(new DotNetCustom("new", "console", "-n", "MyApp", "--force"));
+var result = new DotNetCustom("new", "console", "-n", "MyApp", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
 var stdOut = new List<string>();
-result = buildRunner.Run(new DotNetRun().WithWorkingDirectory("MyApp"), message => stdOut.Add(message.Text));
+result = new DotNetRun().WithWorkingDirectory("MyApp").Build(message => stdOut.Add(message.Text));
 result.ExitCode.ShouldBe(0);
 
 // Checks StdOut
@@ -587,15 +602,12 @@ stdOut.ShouldBe(new[] {"Hello, World!"});
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var build = GetService<IBuildRunner>();
-
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-var result = build.Run(new DotNetCustom("new", "mstest", "-n", "MyTests", "--force"));
+var result = new DotNetCustom("new", "mstest", "-n", "MyTests", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Runs tests via a command like: "dotnet test" from the directory "MyTests"
-result = build.Run(new DotNetTest().WithWorkingDirectory("MyTests"));
+result = new DotNetTest().WithWorkingDirectory("MyTests").Build();
 
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
@@ -612,22 +624,19 @@ result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-var result = buildRunner.Run(new DotNetCustom("new", "mstest", "-n", "MyTests", "--force"));
+var result = new DotNetCustom("new", "mstest", "-n", "MyTests", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
-result = buildRunner.Run(new DotNetBuild().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput"));
+result = new DotNetBuild().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput").Build();
 result.ExitCode.ShouldBe(0);
 
 // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
-result = buildRunner.Run(
-    new VSTest()
-        .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
-        .WithWorkingDirectory("MyTests"));
+result = new VSTest()
+    .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
+    .WithWorkingDirectory("MyTests")
+    .Build();
 
 // The "result" variable provides details about a build
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
@@ -644,21 +653,18 @@ result.ExitCode.ShouldBe(0);
 // Adds the namespace "HostApi" to use .NET build API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = buildRunner.Run(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
-result = buildRunner.Run(
-    new MSBuild()
-        .WithWorkingDirectory("MyLib")
-        .WithTarget("Build")
-        .WithRestore(true)
-        .AddProps(("configuration", "Release"))
-        .WithVerbosity(DotNetVerbosity.Detailed));
+result = new MSBuild()
+    .WithWorkingDirectory("MyLib")
+    .WithTarget("Build")
+    .WithRestore(true)
+    .AddProps(("configuration", "Release"))
+    .WithVerbosity(DotNetVerbosity.Detailed)
+    .Build();
 
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
@@ -702,27 +708,6 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
 
 
 
-### Running in docker
-
-
-
-``` CSharp
-// Adds the namespace "HostApi" to use Command Line API and Docker API
-using HostApi;
-
-// Resolves a build service
-var commandLineRunner = GetService<ICommandLineRunner>();
-
-// Creates some command line to run in a docker container
-var cmd = new CommandLine("whoami");
-
-// Runs the command line in a docker container
-var result = commandLineRunner.Run(new DockerRun(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
-result.ShouldBe(0);
-```
-
-
-
 ### Build a project in a docker container
 
 
@@ -736,23 +721,49 @@ var buildRunner = GetService<IBuildRunner>();
 
 // Creates a base docker command line
 var baseDockerCmd = new DockerRun()
+    .WithAutoRemove(true)
     .WithImage("mcr.microsoft.com/dotnet/sdk")
     .WithPlatform("linux")
     .WithContainerWorkingDirectory("/MyProjects")
     .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
 
 // Creates a new library project in a docker container
-var customCmd = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").WithExecutablePath("dotnet");
-var result = buildRunner.Run(baseDockerCmd.WithCommandLine(customCmd));
+var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force")
+    .WithExecutablePath("dotnet")
+    .Build();
+
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project in a docker container
-var buildCmd = new DotNetBuild().WithProject("MyLib/MyLib.csproj").WithExecutablePath("dotnet");
-result = buildRunner.Run(baseDockerCmd.WithCommandLine(buildCmd), _ => { });
+result = new DotNetBuild()
+    .WithProject("MyLib/MyLib.csproj")
+    .WithExecutablePath("dotnet")
+    .Build(_ => { });
 
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
+```
+
+
+
+### Running in docker
+
+
+
+``` CSharp
+// Adds the namespace "HostApi" to use Command Line API and Docker API
+using HostApi;
+
+// Creates some command line to run in a docker container
+var cmd = new CommandLine("whoami");
+
+// Runs the command line in a docker container
+var result = new DockerRun(cmd, "mcr.microsoft.com/dotnet/sdk")
+    .WithAutoRemove(true)
+    .Run();
+
+result.ShouldBe(0);
 ```
 
 

@@ -24,9 +24,10 @@ public class CommandLineOutputScenario : BaseScenario
         // ## using HostApi;
 
         var lines = new List<string>();
-        int? exitCode = GetService<ICommandLineRunner>().Run(
-            new CommandLine("cmd").AddArgs("/c", "SET").AddVars(("MyEnv", "MyVal")),
-            i => lines.Add(i.Line));
+        int? exitCode = new CommandLine("cmd")
+            .AddArgs("/c", "SET")
+            .AddVars(("MyEnv", "MyVal"))
+            .Run(output => lines.Add(output.Line));
 
         lines.ShouldContain("MyEnv=MyVal");
         // }

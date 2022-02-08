@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable SuggestVarOrType_BuiltInTypes
+// ReSharper disable RedundantAssignment
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System;
@@ -24,6 +25,9 @@ public class CommandLineAsyncScenario : BaseScenario
         // ## using HostApi;
 
         int? exitCode = await GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/C", "DIR"));
+        
+        // or the same thing using the extension method
+        exitCode = await new CommandLine("cmd", "/c", "DIR").RunAsync();
         // }
 
         exitCode.HasValue.ShouldBeTrue();

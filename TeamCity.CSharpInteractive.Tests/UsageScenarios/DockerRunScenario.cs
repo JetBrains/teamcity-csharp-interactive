@@ -21,14 +21,14 @@ public class DockerRunScenario : BaseScenario
         // Adds the namespace "HostApi" to use Command Line API and Docker API
         // ## using HostApi;
         
-        // Resolves a build service
-        var commandLineRunner = GetService<ICommandLineRunner>();
-
         // Creates some command line to run in a docker container
         var cmd = new CommandLine("whoami");
 
         // Runs the command line in a docker container
-        var result = commandLineRunner.Run(new DockerRun(cmd, "mcr.microsoft.com/dotnet/sdk").WithAutoRemove(true));
+        var result = new DockerRun(cmd, "mcr.microsoft.com/dotnet/sdk")
+            .WithAutoRemove(true)
+            .Run();
+
         result.ShouldBe(0);
         // }
     }
