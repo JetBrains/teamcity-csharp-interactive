@@ -12,13 +12,16 @@ class CreateImage : ICreateImage
     private readonly IBuild _build;
     private readonly ICommandLineRunner _runner;
     private readonly ITeamCityWriter _teamCityWriter;
+    private readonly IProperties _properties;
 
     public CreateImage(
+        IProperties properties,
         Settings settings,
         IBuild build,
         ICommandLineRunner runner,
         ITeamCityWriter teamCityWriter)
     {
+        _properties = properties;
         _settings = settings;
         _build = build;
         _runner = runner;
@@ -43,7 +46,10 @@ class CreateImage : ICreateImage
             "Saving a docker image"
         );
 
-        _teamCityWriter.PublishArtifact($"{Path.GetFullPath(imageFile)} -> .");
+        if (_properties.TryGetValue("teamcity.version", out _))
+        {
+            _teamCityWriter.PublishArtifact($"{Path.GetFullPath(imageFile)} -> .");
+        }
 
         WriteLine("To load an image from a tar archive:", Color.Highlighted);
         WriteLine($"    docker load -i \"{imageFile}\"", Color.Highlighted);
