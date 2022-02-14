@@ -38,6 +38,7 @@ internal static partial class Composer
             .Bind<RunningMode>().To(_ => RunningMode.Application)
 #endif
             .Bind<Assembly>().To(_ => typeof(Composer).Assembly)
+            .Bind<string>("RuntimePath").To(ctx => Path.GetDirectoryName(typeof(object).Assembly.Location) ?? String.Empty)
             .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<Process>().To(_ => Process.GetCurrentProcess())
             .Bind<string>("ModuleFile").To(ctx => ctx.Resolve<Process>().MainModule?.FileName ?? string.Empty)
@@ -117,6 +118,7 @@ internal static partial class Composer
             .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
             .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
             .Bind<IProcessResultHandler>().To<ProcessResultHandler>()
+            .Bind<IRuntimeExplorer>().To<RuntimeExplorer>()
 
             // Script options factory
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))

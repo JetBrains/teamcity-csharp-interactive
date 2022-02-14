@@ -23,7 +23,7 @@ internal class DiagnosticsPresenter : IPresenter<CompilationDiagnostics>
         var prefix = Text.Empty;
         if(_errorContext.TryGetSourceName(out var name))
         {
-            prefix = new Text(name);
+            prefix = new Text(name + " ");
         }
 
         foreach (var diagnostic in readOnlyCollection)
@@ -35,16 +35,16 @@ internal class DiagnosticsPresenter : IPresenter<CompilationDiagnostics>
                     break;
 
                 case DiagnosticSeverity.Info:
-                    _log.Info(new[] {prefix, new Text(diagnostic.ToString())});
+                    _log.Info(prefix, new Text(diagnostic.ToString()));
                     break;
 
                 case DiagnosticSeverity.Warning:
-                    _log.Warning(new[] {prefix, new Text(diagnostic.ToString())});
+                    _log.Warning(prefix, new Text(diagnostic.ToString()));
                     break;
 
                 case DiagnosticSeverity.Error:
                     var errorId = $"{GetProperty(diagnostic.Id, string.Empty)},{diagnostic.Location.SourceSpan.Start},{diagnostic.Location.SourceSpan.Length}{GetProperty(GetFileName(sourceCommand.Name))}";
-                    _log.Error(new ErrorId(errorId), new[] {prefix, new Text(diagnostic.ToString())});
+                    _log.Error(new ErrorId(errorId), prefix, new Text(diagnostic.ToString()));
                     break;
             }
         }

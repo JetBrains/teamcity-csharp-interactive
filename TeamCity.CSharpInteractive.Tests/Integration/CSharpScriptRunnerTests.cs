@@ -140,7 +140,7 @@ public class CSharpScriptRunnerTests
 
     private CSharpScriptRunner CreateInstance()
     {
-        var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider(Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(new FileSystem()), CancellationToken.None);
+        var assembliesScriptOptionsProvider = new AssembliesScriptOptionsProvider(Mock.Of<ILog<AssembliesScriptOptionsProvider>>(), new AssembliesProvider(), CancellationToken.None);
         return new CSharpScriptRunner(_log.Object, _scriptStatePresenter.Object, _diagnosticsPresenter.Object, new[] {assembliesScriptOptionsProvider}, _exitCodeParser.Object);
     }
 }
