@@ -72,22 +72,22 @@
     </Target>
 
     <ItemGroup>
-        <None Include="$(MSBuildProjectDirectory)\..\icon.png">
+        <Content Include="$(MSBuildProjectDirectory)\..\icon.png">
             <PackagePath>_common</PackagePath>
             <Pack>true</Pack>
-        </None>
+        </Content>
 
-        <None Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*">
+        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*">
             <PackagePath>build\any\msbuild</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
-        </None>
+        </Content>
 
-        <None Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*">
+        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*">
             <PackagePath>build\any\vstest</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
-        </None>
+        </Content>
 
         <Content Include="TeamCity.CSharpInteractive.props">
             <PackagePath>build</PackagePath>

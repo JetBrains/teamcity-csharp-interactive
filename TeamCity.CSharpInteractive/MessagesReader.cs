@@ -58,7 +58,7 @@ internal class MessagesReader : IMessagesReader
                 continue;
             }
 
-            foreach (var message in _serviceMessageParser.ParseServiceMessages(line))
+            foreach (var message in _serviceMessageParser.ParseServiceMessages(line).Where(message => message != default))
             {
                 yield return message;
             }

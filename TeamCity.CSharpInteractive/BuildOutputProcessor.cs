@@ -16,7 +16,7 @@ internal class BuildOutputProcessor : IBuildOutputProcessor
     public IEnumerable<BuildMessage> Convert(in Output output, IBuildContext context)
     {
         var messages = new List<BuildMessage>();
-        foreach (var message in _serviceMessageParser.ParseServiceMessages(output.Line))
+        foreach (var message in _serviceMessageParser.ParseServiceMessages(output.Line).Where(message => message != default))
         {
             messages.Add(new BuildMessage(BuildMessageState.ServiceMessage, message));
             messages.AddRange(context.ProcessMessage(output, message));

@@ -24,13 +24,11 @@ static class Property
 
         return defaultProp;
     }
-
-
 }
 
 static class Assertion
 {
-    private static bool Succeed(int? exitCode, string shortName)
+    public static bool Succeed(int? exitCode, string shortName)
     {
         if (exitCode == 0)
         {

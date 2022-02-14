@@ -1,4 +1,24 @@
 using HostApi;
+using NuGet.Versioning;
+
+static class Version
+{
+    public static NuGetVersion GetNext(NuGetRestoreSettings settings, NuGetVersion defaultVersion)
+    {
+        var floatRange = defaultVersion.Release != string.Empty
+            ? new FloatRange(NuGetVersionFloatBehavior.Prerelease, defaultVersion)
+            : new FloatRange(NuGetVersionFloatBehavior.Minor, defaultVersion);
+
+        return GetService<INuGet>()
+            .Restore(settings.WithHideWarningsAndErrors(true).WithVersionRange(new VersionRange(defaultVersion, floatRange)))
+            .Where(i => i.Name == settings.PackageId)
+            .Select(i => i.NuGetVersion)
+            .Select(i => defaultVersion.Release != string.Empty
+                ? new NuGetVersion(i.Major, i.Minor, i.Patch, defaultVersion.Release)
+                : new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
+            .Max() ?? defaultVersion;
+    }
+}
 
 static class Property
 {
@@ -6,6 +26,7 @@ static class Property
     {
         if (Props.TryGetValue(name, out var prop) && !string.IsNullOrWhiteSpace(prop))
         {
+            WriteLine($"{name}: {prop}", Color.Highlighted);
             return prop;
         }
 
@@ -25,6 +46,21 @@ static class Property
 
 static class Assertion
 {
+    public static bool Succeed(int? exitCode, string shortName)
+    {
+        if (exitCode == 0)
+        {
+            return true;
+        }
+
+        Error($"{shortName} failed.");
+        Environment.Exit(1);
+        return false;
+    }
+
+    public static async Task<bool> Succeed(Task<int?> exitCodeTask, string shortName) =>
+        Succeed(await exitCodeTask, shortName);
+
     private static bool CheckBuildResult(IBuildResult result)
     {
         if (result.ExitCode == 0)
@@ -52,22 +88,25 @@ static class Assertion
         }
     }
 
-    public static void Succeed(IEnumerable<IBuildResult> resultsTask)
+    public static async Task<bool> Succeed(Task<IBuildResult> resultTask)
     {
-        if (!resultsTask.All(CheckBuildResult))
+        if (CheckBuildResult(await resultTask))
         {
-            Environment.Exit(1);
-        }
-    }
-    
-    public static void Succeed(int? exitCode, string shortName)
-    {
-        if (exitCode == 0)
-        {
-            return;
+            return true;
         }
 
-        Error($"{shortName} failed.");
         Environment.Exit(1);
+        return true;
+    }
+
+    public static async Task<bool> Succeed(Task<IBuildResult[]> resultsTask)
+    {
+        if ((await resultsTask).All(CheckBuildResult))
+        {
+            return true;
+        }
+
+        Environment.Exit(1);
+        return true;
     }
 }

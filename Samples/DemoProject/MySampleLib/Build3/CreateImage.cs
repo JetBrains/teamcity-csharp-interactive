@@ -46,7 +46,7 @@ class CreateImage : ICreateImage
             "Saving a docker image"
         );
 
-        if (_properties.TryGetValue("teamcity.version", out _))
+        if (Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != default)
         {
             _teamCityWriter.PublishArtifact($"{Path.GetFullPath(imageFile)} -> .");
         }
