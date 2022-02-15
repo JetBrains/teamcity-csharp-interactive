@@ -20,7 +20,8 @@ internal class AssembliesScriptOptionsProvider : IScriptOptionsFactory, IActive
         ("System.Net.Http", typeof(HttpRequestMessage)),
         ("System.Threading", typeof(Thread)),
         ("System.Threading.Tasks", typeof(Task)),
-        ("", typeof(IServiceCollection))
+        ("", typeof(IServiceCollection)),
+        ("", typeof(ServiceCollectionContainerBuilderExtensions))
     };
 
     private readonly ILog<AssembliesScriptOptionsProvider> _log;

@@ -34,7 +34,8 @@ public class AssembliesScriptOptionsProviderTests
             typeof(HttpRequestMessage),
             typeof(Thread),
             typeof(Task),
-            typeof(IServiceCollection)
+            typeof(IServiceCollection),
+            typeof(ServiceCollectionContainerBuilderExtensions)
         }));
 
         options.MetadataReferences.Length.ShouldBe(ScriptOptions.Default.MetadataReferences.Length + 1);
