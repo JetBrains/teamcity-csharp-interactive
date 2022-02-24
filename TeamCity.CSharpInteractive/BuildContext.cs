@@ -109,7 +109,7 @@ internal class BuildContext : IBuildContext
     
     private static TestResult CreateResult(TestKey key, IServiceMessage message, TestState state)
     {
-        var source = message.GetValue("source") ?? string.Empty;
+        var testSource = message.GetValue("testSource") ?? string.Empty;
         var displayName = message.GetValue("displayName") ?? string.Empty; 
         var codeFilePath = message.GetValue("codeFilePath") ?? string.Empty;
         var fullyQualifiedName = message.GetValue("fullyQualifiedName") ?? string.Empty;
@@ -117,7 +117,7 @@ internal class BuildContext : IBuildContext
         var result = new TestResult(state, testName)
                 .WithSuiteName(suiteName)
                 .WithFlowId(flowId)
-                .WithSource(source)
+                .WithSource(testSource)
                 .WithDisplayName(displayName)
                 .WithCodeFilePath(codeFilePath)
                 .WithFullyQualifiedName(fullyQualifiedName);
