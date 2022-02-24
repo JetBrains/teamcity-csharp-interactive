@@ -77,17 +77,17 @@
             <Pack>true</Pack>
         </Content>
 
-        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*">
+        <None Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*">
             <PackagePath>build\any\msbuild</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
-        </Content>
+        </None>
 
-        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*">
+        <None Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*">
             <PackagePath>build\any\vstest</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
-        </Content>
+        </None>
 
         <Content Include="TeamCity.CSharpInteractive.props">
             <PackagePath>build</PackagePath>

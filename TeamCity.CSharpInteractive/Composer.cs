@@ -38,7 +38,7 @@ internal static partial class Composer
             .Bind<RunningMode>().To(_ => RunningMode.Application)
 #endif
             .Bind<Assembly>().To(_ => typeof(Composer).Assembly)
-            .Bind<string>("RuntimePath").To(ctx => Path.GetDirectoryName(typeof(object).Assembly.Location) ?? String.Empty)
+            .Bind<string>("RuntimePath").To(_ => Path.GetDirectoryName(typeof(object).Assembly.Location) ?? string.Empty)
             .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<Process>().To(_ => Process.GetCurrentProcess())
             .Bind<string>("ModuleFile").To(ctx => ctx.Resolve<Process>().MainModule?.FileName ?? string.Empty)
@@ -130,6 +130,7 @@ internal static partial class Composer
             .Bind<IScriptOptionsFactory>().Bind<IActive>().Tags(typeof(AssembliesScriptOptionsProvider)).To<AssembliesScriptOptionsProvider>()
             .Bind<IScriptOptionsFactory>(typeof(ConfigurableScriptOptionsFactory)).To<ConfigurableScriptOptionsFactory>()
             .Bind<IScriptOptionsFactory>(typeof(ReferencesScriptOptionsFactory)).Bind<IReferenceRegistry>().To<ReferencesScriptOptionsFactory>()
+            .Bind<IScriptOptionsFactory>().Tags(typeof(SourceFileScriptOptionsFactory)).To<SourceFileScriptOptionsFactory>()
             .Bind<ICommandFactory<string>>("REPL Set a C# language version parser").To<SettingCommandFactory<LanguageVersion>>()
             .Bind<ICommandRunner>("REPL Set a C# language version").To<SettingCommandRunner<LanguageVersion>>()
             .Bind<ISettingDescription>(typeof(LanguageVersion)).To<LanguageVersionSettingDescription>()
@@ -157,8 +158,7 @@ internal static partial class Composer
             .Bind<ICommandFactory<string>>("REPL Add NuGet reference parser").To<AddNuGetReferenceCommandFactory>()
             .Bind<IFilePathResolver>().To<FilePathResolver>()
             .Bind<ICommandFactory<string>>("REPL Add assembly reference parser").To<AddAssemblyReferenceCommandFactory>()
-            .Bind<ICommandRunner>("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>()
-            .Bind<ICommandFactory<string>>("REPL Load script").To<LoadCommandFactory>();
+            .Bind<ICommandRunner>("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>();
 
         DI.Setup()
             .Bind<IStartInfoFactory>().To<StartInfoFactory>()

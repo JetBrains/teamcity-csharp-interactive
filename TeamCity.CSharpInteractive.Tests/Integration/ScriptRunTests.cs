@@ -431,4 +431,23 @@ public class ScriptRunTests
         result.ExitCode.ShouldBe(1, result.ToString());
         result.StdErr.Any(i => i.Contains("error CS0103")).ShouldBeTrue(result.ToString());
     }
+    
+    [Fact]
+    public void ShouldSupportCallerFilePathWhenLoad()
+    {
+        // Given
+        var workingDirectory = DotNetScript.GetWorkingDirectory();
+        // ReSharper disable once UnusedVariable
+        var scriptAbc = DotNetScript.Create("abc.csx", workingDirectory, Enumerable.Empty<string>(), "Console.WriteLine(GetCurrentFileName());", "string GetCurrentFileName([System.Runtime.CompilerServices.CallerFilePath] string fileName = null) => fileName;");
+        var script = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"abc.csx\"").WithVars(TestTool.DefaultVars);
+
+        // When
+        var result = TestTool.Run(script);
+
+        // Then
+        result.ExitCode.ShouldBe(0, result.ToString());
+        result.StdErr.ShouldBeEmpty(result.ToString());
+        result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+        result.StdOut.Any(i => i.EndsWith("abc.csx")).ShouldBeTrue(result.ToString());
+    }
 }
