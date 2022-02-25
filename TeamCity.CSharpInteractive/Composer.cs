@@ -130,7 +130,8 @@ internal static partial class Composer
             .Bind<IScriptOptionsFactory>().Bind<IActive>().Tags(typeof(AssembliesScriptOptionsProvider)).To<AssembliesScriptOptionsProvider>()
             .Bind<IScriptOptionsFactory>(typeof(ConfigurableScriptOptionsFactory)).To<ConfigurableScriptOptionsFactory>()
             .Bind<IScriptOptionsFactory>(typeof(ReferencesScriptOptionsFactory)).Bind<IReferenceRegistry>().To<ReferencesScriptOptionsFactory>()
-            .Bind<IScriptOptionsFactory>().Tags(typeof(SourceFileScriptOptionsFactory)).To<SourceFileScriptOptionsFactory>()
+            .Bind<IScriptOptionsFactory>(typeof(SourceFileScriptOptionsFactory)).To<SourceFileScriptOptionsFactory>()
+            .Bind<IScriptOptionsFactory>(typeof(MetadataResolverOptionsFactory)).To<MetadataResolverOptionsFactory>()
             .Bind<ICommandFactory<string>>("REPL Set a C# language version parser").To<SettingCommandFactory<LanguageVersion>>()
             .Bind<ICommandRunner>("REPL Set a C# language version").To<SettingCommandRunner<LanguageVersion>>()
             .Bind<ISettingDescription>(typeof(LanguageVersion)).To<LanguageVersionSettingDescription>()
@@ -157,7 +158,6 @@ internal static partial class Composer
             .Bind<ICommandRunner>("REPL Set verbosity level runner").To<SettingCommandRunner<VerbosityLevel>>()
             .Bind<ICommandFactory<string>>("REPL Add NuGet reference parser").To<AddNuGetReferenceCommandFactory>()
             .Bind<IFilePathResolver>().To<FilePathResolver>()
-            .Bind<ICommandFactory<string>>("REPL Add assembly reference parser").To<AddAssemblyReferenceCommandFactory>()
             .Bind<ICommandRunner>("REPL Add package reference runner").To<AddNuGetReferenceCommandRunner>();
 
         DI.Setup()
