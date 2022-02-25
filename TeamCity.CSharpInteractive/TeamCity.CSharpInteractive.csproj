@@ -28,7 +28,7 @@
     <ItemGroup>
         <CompilerVisibleProperty Include="PureDINamespace" />
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.31">
+        <PackageReference Include="Pure.DI" Version="1.1.32">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -37,9 +37,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.0.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.1.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-        <PackageReference Include="NuGet.Build.Tasks" Version="6.0.0" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="6.1.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" PrivateAssets="all" GeneratePathProperty="true" IncludeAssets="All" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -48,7 +48,7 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
         </AssemblyAttribute>
-        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.26" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
+        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.27" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
     </ItemGroup>
 
     <PropertyGroup>

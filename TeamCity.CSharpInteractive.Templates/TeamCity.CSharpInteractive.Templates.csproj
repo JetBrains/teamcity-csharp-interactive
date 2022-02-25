@@ -20,6 +20,5 @@
         <Content Include="content\**">
             <PackagePath>content</PackagePath>
         </Content>
-        <PackageReference Include="TeamCity.Dotnet.Integration" Version="1.0.26" PrivateAssets="all" IncludeAssets="build"/>
     </ItemGroup>
 </Project>

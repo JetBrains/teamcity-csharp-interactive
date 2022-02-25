@@ -25,8 +25,7 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>TeamCity.CSharpInteractive.Tests</_Parameter1>
         </AssemblyAttribute>
-        <PackageReference Include="NuGet.Versioning" Version="6.0.0" />
+        <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
-        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.26" PrivateAssets="all" IncludeAssets="build" />
     </ItemGroup>
 </Project>
