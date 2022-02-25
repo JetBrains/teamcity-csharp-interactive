@@ -190,7 +190,7 @@ try
 
     if (!string.IsNullOrWhiteSpace(apiKey) && packageVersion.Release != "dev" && templatePackageVersion.Release != "dev")
     {
-        var push = new DotNetNuGetPush().WithApiKey(apiKey);
+        var push = new DotNetNuGetPush().WithApiKey(apiKey).WithSources("https://api.nuget.org/v3/index.json");
         foreach (var package in packages.Where(i => i.Publish))
         {
             Assertion.Succeed(push.WithPackage(package.Package).Run(), $"Pushing {Path.GetFileName(package.Package)}");
