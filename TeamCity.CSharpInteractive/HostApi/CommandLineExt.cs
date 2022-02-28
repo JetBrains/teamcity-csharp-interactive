@@ -2,6 +2,9 @@
 // ReSharper disable UnusedType.Global
 namespace HostApi;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public static class CommandLineExt
 {
     public static int? Run(this ICommandLine commandLine, Action<Output>? handler = default, TimeSpan timeout = default) => 

@@ -439,7 +439,7 @@ public class ScriptRunTests
         var workingDirectory = DotNetScript.GetWorkingDirectory();
         // ReSharper disable once UnusedVariable
         var scriptAbc = DotNetScript.Create("abc.csx", workingDirectory, Enumerable.Empty<string>(), "Console.WriteLine(GetCurrentFileName());", "string GetCurrentFileName([System.Runtime.CompilerServices.CallerFilePath] string fileName = null) => fileName;");
-        var script = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"abc.csx\"").WithVars(TestTool.DefaultVars);
+        var script = DotNetScript.Create("script.csx", workingDirectory, Enumerable.Empty<string>(), "#load \"abc.csx\"", "Console.WriteLine(GetCurrentFileName());").WithVars(TestTool.DefaultVars);
 
         // When
         var result = TestTool.Run(script);
@@ -447,7 +447,8 @@ public class ScriptRunTests
         // Then
         result.ExitCode.ShouldBe(0, result.ToString());
         result.StdErr.ShouldBeEmpty(result.ToString());
-        result.StdOut.Count.ShouldBe(InitialLinesCount + 1, result.ToString());
+        result.StdOut.Count.ShouldBe(InitialLinesCount + 2, result.ToString());
         result.StdOut.Any(i => i.EndsWith("abc.csx")).ShouldBeTrue(result.ToString());
+        result.StdOut.Any(i => i.EndsWith("script.csx")).ShouldBeTrue(result.ToString());
     }
 }

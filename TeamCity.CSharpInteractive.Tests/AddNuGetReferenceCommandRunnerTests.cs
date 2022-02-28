@@ -1,61 +1,25 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
-using HostApi;
 using NuGet.Versioning;
+using Xunit;
 
 public class AddNuGetReferenceCommandRunnerTests
 {
-    private readonly Mock<ILog<AddNuGetReferenceCommandRunner>> _log;
-    private readonly Mock<INuGetEnvironment> _nugetEnv;
-    private readonly Mock<INuGetRestoreService> _nugetRestoreService;
-    private readonly Mock<INuGetAssetsReader> _nugetAssetsReader;
-    private readonly Mock<ICleaner> _cleaner;
-    private readonly Mock<IReferenceRegistry> _referenceRegistry;
-    private readonly AddNuGetReferenceCommand _command;
-    private readonly Mock<IDisposable> _trackToken;
-    private static readonly string[] Sources = {"src"};
-    private static readonly string[] FallbackFolders = {"fallback"};
-    private const string PackagesPath = "packages";
+    private readonly Mock<ILog<AddNuGetReferenceCommandRunner>> _log = new();
+    private readonly Mock<INuGetReferenceResolver> _nuGetReferenceResolver = new();
+    private readonly Mock<IReferenceRegistry> _referenceRegistry = new();
+    private readonly ReferencingAssembly _referencingAssembly1 = new("Abc1", "Abc1.dll");
+    private readonly ReferencingAssembly _referencingAssembly2 = new("Abc2", "Abc2.dll");
+    private readonly AddNuGetReferenceCommand _command = new("Abc", new VersionRange(new NuGetVersion(1, 2, 3)));
 
     public AddNuGetReferenceCommandRunnerTests()
     {
-        _command = new AddNuGetReferenceCommand("Abc", new VersionRange(new NuGetVersion(1, 2, 3)));
-
-        _log = new Mock<ILog<AddNuGetReferenceCommandRunner>>();
-        _log.Setup(i => i.Info(It.IsAny<Text[]>()));
-
-        _nugetEnv = new Mock<INuGetEnvironment>();
-        _nugetEnv.SetupGet(i => i.Sources).Returns(Sources);
-        _nugetEnv.SetupGet(i => i.FallbackFolders).Returns(FallbackFolders);
-        _nugetEnv.SetupGet(i => i.PackagesPath).Returns(PackagesPath);
-
-        _nugetRestoreService = new Mock<INuGetRestoreService>();
-        var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        var settings = new NuGetRestoreSettings(
-            _command.PackageId,
-            Sources,
-            FallbackFolders,
-            _command.VersionRange,
-            default,
-            PackagesPath);
-        _nugetRestoreService.Setup(i => i.TryRestore(settings, out projectAssetsJson)).Returns(true);
-
-        ReferencingAssembly referencingAssembly1 = new("Abc1", "Abc1.dll");
-        ReferencingAssembly referencingAssembly2 = new("Abc2", "Abc2.dll");
-
-        _nugetAssetsReader = new Mock<INuGetAssetsReader>();
-        _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(new[] {referencingAssembly1, referencingAssembly2});
-
-        _trackToken = new Mock<IDisposable>();
-        _cleaner = new Mock<ICleaner>();
-        _cleaner.Setup(i => i.Track("TMP")).Returns(_trackToken.Object);
-
         _referenceRegistry = new Mock<IReferenceRegistry>();
-        var referencingAssembly1Description = referencingAssembly1.Name;
-        _referenceRegistry.Setup(i => i.TryRegisterAssembly(referencingAssembly1.FilePath, out referencingAssembly1Description)).Returns(true);
+        var referencingAssembly1Description = _referencingAssembly1.Name;
+        _referenceRegistry.Setup(i => i.TryRegisterAssembly(_referencingAssembly1.FilePath, out referencingAssembly1Description)).Returns(true);
 
-        var referencingAssembly2Description = referencingAssembly2.Name;
-        _referenceRegistry.Setup(i => i.TryRegisterAssembly(referencingAssembly2.FilePath, out referencingAssembly2Description)).Returns(true);
+        var referencingAssembly2Description = _referencingAssembly2.Name;
+        _referenceRegistry.Setup(i => i.TryRegisterAssembly(_referencingAssembly2.FilePath, out referencingAssembly2Description)).Returns(true);
     }
 
     [Fact]
@@ -71,86 +35,58 @@ public class AddNuGetReferenceCommandRunnerTests
         // Then
         result.ShouldBe(new CommandResult(command, default));
     }
-
+    
     [Fact]
-    public void ShouldRestore()
+    public void ShouldReturnFailWhenCannotResolveAssemblies()
     {
         // Given
         var runner = CreateInstance();
+        IReadOnlyCollection<ReferencingAssembly> assemblies = Array.Empty<ReferencingAssembly>();
+        _nuGetReferenceResolver.Setup(i => i.TryResolveAssemblies(_command.PackageId, _command.VersionRange, out assemblies)).Returns(false);
 
         // When
         var result = runner.TryRun(_command);
 
         // Then
-        result.Command.ShouldBe(_command);
-        result.Success.ShouldBe(true);
-        _trackToken.Verify(i => i.Dispose());
+        result.ShouldBe(new CommandResult(_command, false));
     }
-
+    
     [Fact]
-    public void ShouldFailWhenRestoreFail()
+    public void ShouldRegisterAssemblies()
     {
         // Given
         var runner = CreateInstance();
+        IReadOnlyCollection<ReferencingAssembly> assemblies = new []{_referencingAssembly1, _referencingAssembly2};
+        _nuGetReferenceResolver.Setup(i => i.TryResolveAssemblies(_command.PackageId, _command.VersionRange, out assemblies)).Returns(true);
+        var description = string.Empty;
+        _referenceRegistry.Setup(i => i.TryRegisterAssembly(_referencingAssembly1.FilePath, out description)).Returns(true);
+        _referenceRegistry.Setup(i => i.TryRegisterAssembly(_referencingAssembly2.FilePath, out description)).Returns(true);
 
         // When
-        var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        var settings = new NuGetRestoreSettings(
-            _command.PackageId,
-            Sources,
-            FallbackFolders,
-            _command.VersionRange,
-            default,
-            PackagesPath);
-        _nugetRestoreService.Setup(i => i.TryRestore(settings, out projectAssetsJson)).Returns(false);
         var result = runner.TryRun(_command);
 
         // Then
-        result.Command.ShouldBe(_command);
-        result.Success.ShouldBe(false);
+        result.ShouldBe(new CommandResult(_command, true));
     }
-
+    
     [Fact]
-    public void ShouldRestoreWhenHasNoAssemblies()
+    public void ShouldReturnFailWhenSomeAssemblyWasNotRegistered()
     {
         // Given
         var runner = CreateInstance();
+        IReadOnlyCollection<ReferencingAssembly> assemblies = new []{_referencingAssembly1, _referencingAssembly2};
+        _nuGetReferenceResolver.Setup(i => i.TryResolveAssemblies(_command.PackageId, _command.VersionRange, out assemblies)).Returns(true);
+        var description = string.Empty;
+        _referenceRegistry.Setup(i => i.TryRegisterAssembly(_referencingAssembly1.FilePath, out description)).Returns(true);
+        _referenceRegistry.Setup(i => i.TryRegisterAssembly(_referencingAssembly2.FilePath, out description)).Returns(false);
 
         // When
-        var projectAssetsJson = Path.Combine("TMP", "project.assets.json");
-        _nugetAssetsReader.Setup(i => i.ReadReferencingAssemblies(projectAssetsJson)).Returns(Enumerable.Empty<ReferencingAssembly>());
         var result = runner.TryRun(_command);
 
         // Then
-        result.Command.ShouldBe(_command);
-        result.Success.ShouldBe(true);
-        _trackToken.Verify(i => i.Dispose());
-    }
-
-    [Fact]
-    public void ShouldFailWhenCannotAddRef()
-    {
-        // Given
-        var runner = CreateInstance();
-
-        // When
-        var referencingAssembly2Description = "Error";
-        _referenceRegistry.Setup(i => i.TryRegisterAssembly("Abc2.dll", out referencingAssembly2Description)).Returns(false);
-
-        var result = runner.TryRun(_command);
-
-        // Then
-        result.Command.ShouldBe(_command);
-        result.Success.ShouldBe(false);
-        _trackToken.Verify(i => i.Dispose());
+        result.ShouldBe(new CommandResult(_command, false));
     }
 
     private AddNuGetReferenceCommandRunner CreateInstance() =>
-        new(
-            _log.Object,
-            _nugetEnv.Object,
-            _nugetRestoreService.Object,
-            _nugetAssetsReader.Object,
-            _cleaner.Object,
-            _referenceRegistry.Object);
+        new(_log.Object, _nuGetReferenceResolver.Object, _referenceRegistry.Object);
 }

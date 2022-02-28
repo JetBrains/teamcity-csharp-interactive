@@ -10,8 +10,7 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
     private readonly IEnvironment _environment;
     private readonly ICommandLineParser _commandLineParser;
     private readonly ICodeSource _consoleCodeSource;
-    private readonly ICodeSource _hostIntegrationCodeSource;
-    private readonly IFileCodeSourceFactory _fileCodeSourceFactory;
+    private readonly Func<string, ICodeSource> _fileCodeSourceFactory;
     private bool _isLoaded;
     private VerbosityLevel _verbosityLevel = VerbosityLevel.Normal;
     private InteractionMode _interactionMode = InteractionMode.Interactive;
@@ -27,14 +26,12 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
         IEnvironment environment,
         ICommandLineParser commandLineParser,
         ICodeSource consoleCodeSource,
-        [Tag("HostIntegration")] ICodeSource hostIntegrationCodeSource,
-        IFileCodeSourceFactory fileCodeSourceFactory)
+        [Tag(typeof(LoadFileCodeSource))] Func<string, ICodeSource> fileCodeSourceFactory)
     {
         _runningMode = runningMode;
         _environment = environment;
         _commandLineParser = commandLineParser;
         _consoleCodeSource = consoleCodeSource;
-        _hostIntegrationCodeSource = hostIntegrationCodeSource;
         _fileCodeSourceFactory = fileCodeSourceFactory;
     }
 
@@ -149,17 +146,13 @@ internal class Settings : ISettings, ISettingSetter<VerbosityLevel>
                 _showHelpAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Help);
                 _showVersionAndExit = args.Any(i => i.ArgumentType == CommandLineArgumentType.Version);
                 _scriptArguments = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptArgument).Select(i => i.Value).ToImmutableArray();
-                _codeSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory.Create(i.Value));
-                if (_runningMode != RunningMode.Application)
-                {
-                    _codeSources = new[] {_hostIntegrationCodeSource}.Concat(_codeSources);
-                }
+                _codeSources = args.Where(i => i.ArgumentType == CommandLineArgumentType.ScriptFile).Select(i => _fileCodeSourceFactory(i.Value));
             }
             else
             {
                 _interactionMode = InteractionMode.Interactive;
                 _verbosityLevel = VerbosityLevel.Quiet;
-                _codeSources = new[] {_hostIntegrationCodeSource, _consoleCodeSource};
+                _codeSources = new[] {_consoleCodeSource};
             }
         }
     }

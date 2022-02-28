@@ -1,20 +1,14 @@
 namespace TeamCity.CSharpInteractive;
 
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 
-internal class MetadataResolverOptionsFactory:  IScriptOptionsFactory
+internal class MetadataResolverOptionsFactory: IScriptOptionsFactory
 {
-    private readonly IEnvironment _environment;
+    private readonly Func<MetadataReferenceResolver> _metadataResolverFactory;
 
-    public MetadataResolverOptionsFactory(IEnvironment environment) =>
-        _environment = environment;
+    public MetadataResolverOptionsFactory(Func<MetadataReferenceResolver> metadataResolverFactory) => _metadataResolverFactory = metadataResolverFactory;
 
     public ScriptOptions Create(ScriptOptions baseOptions) =>
-        baseOptions.WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(GetSearchPaths()).WithBaseDirectory(Path.GetFullPath(_environment.GetPath(SpecialFolder.Script))));
-    
-    private IEnumerable<string> GetSearchPaths()
-    {
-        yield return Path.GetFullPath(_environment.GetPath(SpecialFolder.Script));
-        yield return Path.GetFullPath(_environment.GetPath(SpecialFolder.Working));
-    }
+        baseOptions.WithMetadataResolver(_metadataResolverFactory());
 }

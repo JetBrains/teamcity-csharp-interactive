@@ -1,7 +1,9 @@
 namespace HostApi;
 
+using System.Diagnostics.CodeAnalysis;
 using NuGet.Versioning;
 
+[ExcludeFromCodeCoverage]
 public static class NuGetExt
 {
     public static IEnumerable<NuGetPackage> Restore(this INuGet nuGet, string packageId, string? versionRange = default, string? targetFrameworkMoniker = default, string? packagesPath = default)

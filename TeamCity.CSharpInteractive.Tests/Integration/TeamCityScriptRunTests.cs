@@ -2,7 +2,7 @@ namespace TeamCity.CSharpInteractive.Tests.Integration;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class ScriptRunTeamCityScriptRunTestsTests
+public class ScriptRunTeamCityScriptRunTests
 {
     private const int InitialMessagesCount = 3;
 
@@ -126,6 +126,6 @@ public class ScriptRunTeamCityScriptRunTestsTests
         result.ExitCode.ShouldBe(1);
         result.StdErr.ShouldBeEmpty();
         var messages = result.StdOut.ParseMessages();
-        messages.ShouldContainBuildProblem(i => i.Contains("Script is uncompleted."), i => i == "CSI007");
+        messages.ShouldContainBuildProblem(i => i.Contains("; expected"), i => i.Contains("CS1002"));
     }
 }

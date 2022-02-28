@@ -18,5 +18,7 @@ internal class FileSystem : IFileSystem
 
     public IEnumerable<string> ReadAllLines(string file) => File.ReadAllLines(file);
 
+    public void WriteAllLines(string file, IEnumerable<string> lines) => File.WriteAllLines(file, lines);
+
     public IStreamReader OpenReader(string file) => new StreamReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
 }

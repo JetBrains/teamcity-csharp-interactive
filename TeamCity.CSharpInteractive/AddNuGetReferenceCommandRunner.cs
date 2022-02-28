@@ -6,25 +6,16 @@ using HostApi;
 internal class AddNuGetReferenceCommandRunner : ICommandRunner
 {
     private readonly ILog<AddNuGetReferenceCommandRunner> _log;
-    private readonly INuGetEnvironment _nugetEnvironment;
-    private readonly INuGetRestoreService _nugetRestoreService;
-    private readonly INuGetAssetsReader _nugetAssetsReader;
-    private readonly ICleaner _cleaner;
+    private readonly INuGetReferenceResolver _nuGetReferenceResolver;
     private readonly IReferenceRegistry _referenceRegistry;
 
     public AddNuGetReferenceCommandRunner(
         ILog<AddNuGetReferenceCommandRunner> log,
-        INuGetEnvironment nugetEnvironment,
-        INuGetRestoreService nugetRestoreService,
-        INuGetAssetsReader nugetAssetsReader,
-        ICleaner cleaner,
+        INuGetReferenceResolver nuGetReferenceResolver,
         IReferenceRegistry referenceRegistry)
     {
         _log = log;
-        _nugetEnvironment = nugetEnvironment;
-        _nugetRestoreService = nugetRestoreService;
-        _nugetAssetsReader = nugetAssetsReader;
-        _cleaner = cleaner;
+        _nuGetReferenceResolver = nuGetReferenceResolver;
         _referenceRegistry = referenceRegistry;
     }
 
@@ -35,46 +26,22 @@ internal class AddNuGetReferenceCommandRunner : ICommandRunner
             return new CommandResult(command, default);
         }
 
-        var packageName = $"{addPackageReferenceCommand.PackageId} {addPackageReferenceCommand.VersionRange}".Trim();
-        var success = true;
-        _log.Info(new[] {new Text($"Restoring package {packageName}.", Color.Highlighted)});
-        var restoreResult = _nugetRestoreService.TryRestore(
-            new NuGetRestoreSettings(
-                addPackageReferenceCommand.PackageId,
-                _nugetEnvironment.Sources,
-                _nugetEnvironment.FallbackFolders,
-                addPackageReferenceCommand.VersionRange,
-                default,
-                _nugetEnvironment.PackagesPath
-            ),
-            out var projectAssetsJson);
-
-        if (!restoreResult)
+        if (!_nuGetReferenceResolver.TryResolveAssemblies(addPackageReferenceCommand.PackageId, addPackageReferenceCommand.VersionRange, out var assemblies))
         {
             return new CommandResult(command, false);
         }
 
-        var output = Path.GetDirectoryName(projectAssetsJson);
-        var outputPathToken = Disposable.Empty;
-        if (!string.IsNullOrWhiteSpace(output))
+        var success = true;
+        foreach (var assembly in assemblies)
         {
-            outputPathToken = _cleaner.Track(output);
-        }
-
-        using (outputPathToken)
-        {
-            _log.Info(new Text("Assemblies referenced:", Color.Highlighted));
-            foreach (var assembly in _nugetAssetsReader.ReadReferencingAssemblies(projectAssetsJson))
+            if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
             {
-                if (_referenceRegistry.TryRegisterAssembly(assembly.FilePath, out var description))
-                {
-                    _log.Info(Text.Tab, new Text(assembly.Name, Color.Highlighted));
-                }
-                else
-                {
-                    _log.Error(ErrorId.NuGet, $"Cannot add the reference \"{assembly.Name}\": {description}");
-                    success = false;
-                }
+                _log.Info(Text.Tab, new Text(assembly.Name, Color.Highlighted));
+            }
+            else
+            {
+                _log.Error(ErrorId.NuGet, $"Cannot add the reference \"{assembly.Name}\": {description}");
+                success = false;
             }
         }
 

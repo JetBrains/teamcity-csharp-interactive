@@ -69,9 +69,20 @@ internal static partial class Composer
             .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()
             .Bind<ICodeSource>().To<ConsoleSource>()
-            .Bind<ICodeSource>("HostIntegration").To<HostIntegrationCodeSource>()
-            .Bind<FileCodeSource>().To<FileCodeSource>()
-            .Bind<IFileCodeSourceFactory>().To<FileCodeSourceFactory>()
+            .Bind<LoadFileCodeSource>().To<LoadFileCodeSource>()
+            .Bind<Func<string, ICodeSource>>(typeof(LoadFileCodeSource)).To(ctx => new Func<string, ICodeSource>(name =>
+            {
+                var source = ctx.Resolve<LoadFileCodeSource>();
+                source.Name = name;
+                return source;
+            }))
+            .Bind<LineCodeSource>().To<LineCodeSource>()
+            .Bind<Func<string, ICodeSource>>(typeof(LineCodeSource)).To(ctx => new Func<string, ICodeSource>(line =>
+            {
+                var source = ctx.Resolve<LineCodeSource>();
+                source.Line = line;
+                return source;
+            }))
             .Bind<IScriptRunner>().Tags(InteractionMode.Interactive).To<InteractiveRunner>()
             .Bind<IScriptRunner>().Tags(InteractionMode.NonInteractive).To<ScriptRunner>()
             .Bind<IScriptRunner>().As(Lifetime.Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IScriptRunner>(InteractionMode.Interactive) : ctx.Resolve<IScriptRunner>(InteractionMode.NonInteractive))
@@ -119,6 +130,11 @@ internal static partial class Composer
             .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
             .Bind<IProcessResultHandler>().To<ProcessResultHandler>()
             .Bind<IRuntimeExplorer>().To<RuntimeExplorer>()
+            .Bind<INuGetReferenceResolver>().To<NuGetReferenceResolver>()
+            .Bind<SourceReferenceResolver>().As(Lifetime.Transient).To<SourceResolver>()
+            .Bind<MetadataReferenceResolver>().As(Lifetime.Transient).To<MetadataResolver>()
+            .Bind<IScriptContentReplacer>().To<ScriptContentReplacer>()
+            .Bind<ITextReplacer>().To<TextReplacer>()
 
             // Script options factory
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))
@@ -132,6 +148,7 @@ internal static partial class Composer
             .Bind<IScriptOptionsFactory>(typeof(ReferencesScriptOptionsFactory)).Bind<IReferenceRegistry>().To<ReferencesScriptOptionsFactory>()
             .Bind<IScriptOptionsFactory>(typeof(SourceFileScriptOptionsFactory)).To<SourceFileScriptOptionsFactory>()
             .Bind<IScriptOptionsFactory>(typeof(MetadataResolverOptionsFactory)).To<MetadataResolverOptionsFactory>()
+            .Bind<IScriptOptionsFactory>(typeof(ImportsOptionsFactory)).To<ImportsOptionsFactory>()
             .Bind<ICommandFactory<string>>("REPL Set a C# language version parser").To<SettingCommandFactory<LanguageVersion>>()
             .Bind<ICommandRunner>("REPL Set a C# language version").To<SettingCommandRunner<LanguageVersion>>()
             .Bind<ISettingDescription>(typeof(LanguageVersion)).To<LanguageVersionSettingDescription>()

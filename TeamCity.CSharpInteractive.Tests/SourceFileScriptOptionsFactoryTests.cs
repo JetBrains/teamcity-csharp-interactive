@@ -6,25 +6,24 @@ using Xunit;
 
 public class SourceFileScriptOptionsFactoryTests
 {
-    private readonly Mock<IEnvironment> _environment = new();
+    private readonly Mock<Func<SourceReferenceResolver>> _sourceReferenceResolverFactory = new();
 
     [Fact]
     public void ShouldSetupSourceFileResolver()
     {
         // Given
         var factory = CreateInstance();
-        _environment.Setup(i => i.GetPath(SpecialFolder.Script)).Returns("ScriptDir");
-        _environment.Setup(i => i.GetPath(SpecialFolder.Working)).Returns("WorkingDir");
+        var resolver = Mock.Of<SourceReferenceResolver>();
+        _sourceReferenceResolverFactory.Setup(i => i()).Returns(resolver);
 
         // When
         var options = factory.Create(ScriptOptions.Default);
-        var resolver = (SourceFileResolver)options.SourceResolver;
+        var actualResolver = options.SourceResolver;
 
         // Then
-        resolver.SearchPaths.ShouldBe(new []{Path.GetFullPath("ScriptDir"), Path.GetFullPath("WorkingDir")});
-        resolver.BaseDirectory.ShouldBe(Path.GetFullPath("ScriptDir"));
+        actualResolver.ShouldBe(resolver);
     }
 
     private SourceFileScriptOptionsFactory CreateInstance() =>
-        new(_environment.Object);
+        new(_sourceReferenceResolverFactory.Object);
 }
