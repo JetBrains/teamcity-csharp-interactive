@@ -24,7 +24,7 @@
         <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive\TeamCity.CSharpInteractive.Tool.csproj" />
-        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.27" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
+        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.28" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
     </ItemGroup>
 
     <PropertyGroup>

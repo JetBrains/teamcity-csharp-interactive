@@ -48,7 +48,7 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
         </AssemblyAttribute>
-        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.27" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
+        <PackageReference Include="TeamCity.DotNet.Integration" Version="1.0.28" PrivateAssets="all" GeneratePathProperty="true" ExcludeAssets="All" IncludeAssets="build" />
     </ItemGroup>
 
     <PropertyGroup>
