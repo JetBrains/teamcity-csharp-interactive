@@ -28,7 +28,7 @@
     <ItemGroup>
         <CompilerVisibleProperty Include="PureDINamespace" />
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.33">
+        <PackageReference Include="Pure.DI" Version="1.1.34">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
