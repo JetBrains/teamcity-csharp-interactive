@@ -103,7 +103,7 @@ public record MSBuild(
                 ("-version", DisplayVersion)
             )
             .AddProps("-restoreProperty", RestoreProps.ToArray())
-            .AddProps("/p", Props.ToArray())
+            .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
     
     public override string ToString() => (ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath)).GetShortName(ShortName, Project);

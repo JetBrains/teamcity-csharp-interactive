@@ -91,7 +91,7 @@ public record DotNetBuild(
                 ("--no-self-contained", NoSelfContained),
                 ("--force", Force)
             )
-            .AddProps("/p", Props.ToArray())
+            .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
 
     public override string ToString() => "dotnet build".GetShortName(ShortName, Project);

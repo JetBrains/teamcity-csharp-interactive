@@ -86,7 +86,7 @@ public record DotNetRestore(
                 ("--locked-mode", LockedMode),
                 ("--force-evaluate", ForceEvaluate)
             )
-            .AddProps("/p", Props.ToArray())
+            .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
 
     public override string ToString() => "dotnet restore".GetShortName(ShortName, Project);

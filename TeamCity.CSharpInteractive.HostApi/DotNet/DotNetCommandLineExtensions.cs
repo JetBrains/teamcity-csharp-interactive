@@ -33,7 +33,7 @@ internal static class DotNetCommandLineExtensions
             ? cmd
                 .AddArgs("/noconsolelogger")
                 .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetMSBuildLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
-                .AddProps("/p",
+                .AddProps("-p",
                     ("VSTestLogger", "logger://teamcity"),
                     ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""),
                     ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= DotNetVerbosity.Normal ? verbosity.Value : DotNetVerbosity.Normal) : DotNetVerbosity.Normal).ToString().ToLowerInvariant()))

@@ -122,7 +122,7 @@ public record DotNetTest(
                 ("--nologo", NoLogo),
                 ("--no-restore", NoRestore)
             )
-            .AddProps("/p", Props.ToArray())
+            .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
 
         var runSettings = RunSettings.Select(i => $"{i.name}={i.value}").ToArray();

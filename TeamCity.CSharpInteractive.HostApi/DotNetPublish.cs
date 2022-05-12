@@ -95,7 +95,7 @@ public record DotNetPublish(
                 ("--no-restore", NoRestore),
                 ("--force", Force)
             )
-            .AddProps("/p", Props.ToArray())
+            .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
 
     public override string ToString() => "dotnet publish".GetShortName(ShortName, Project);
