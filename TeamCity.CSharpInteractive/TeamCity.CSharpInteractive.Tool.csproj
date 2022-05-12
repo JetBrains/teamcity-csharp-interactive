@@ -37,7 +37,7 @@
     <ItemGroup>
         <CompilerVisibleProperty Include="PureDINamespace" />
         <CompilerVisibleProperty Include="ImmutypeAPI" />
-        <PackageReference Include="Pure.DI" Version="1.1.34">
+        <PackageReference Include="Pure.DI" Version="1.1.35">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -48,7 +48,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.1.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-        <PackageReference Include="NuGet.Build.Tasks" Version="6.1.0" />
+        <PackageReference Include="NuGet.Build.Tasks" Version="6.2.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
         <ProjectReference Include="..\TeamCity.CSharpInteractive.HostApi\TeamCity.CSharpInteractive.HostApi.csproj" PrivateAssets="all" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
