@@ -19,6 +19,14 @@
   "sourceName": "Company.ConsoleApplication1",
   "preferNameDirectory": true,
   "symbols": {
+    "TargetFrameworkOverride": {
+      "type": "parameter",
+      "description": "Overrides the target framework",
+      "replaces": "TargetFrameworkOverride",
+      "datatype": "string",
+      "defaultValue": "",
+      "displayName": "Target framework override"
+    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "HostIdentifier"

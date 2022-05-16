@@ -6,6 +6,7 @@ const string solutionFile = "TeamCity.CSharpInteractive.sln";
 const string packageId = "TeamCity.CSharpInteractive";
 const string toolPackageId = "TeamCity.csi";
 const string templatesPackageId = "TeamCity.CSharpInteractive.Templates";
+var frameworks = new[] {"net6.0", "net7.0"};
 
 var currentDir = Environment.CurrentDirectory;
 if (!File.Exists(solutionFile))
@@ -83,7 +84,7 @@ Assertion.Succeed(
 
 foreach (var package in packages)
 {
-    var path = Path.Combine(Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile), ".nuget", "packages", package.Id, package.Version.ToString());
+    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages", package.Id, package.Version.ToString());
     if (Directory.Exists(path))
     {
         Directory.Delete(path, true);
@@ -170,46 +171,50 @@ var installTemplates = new DotNetCustom("new", "-i", $"{templatesPackageId}::{te
 
 Assertion.Succeed(installTemplates.Run(), installTemplates.ShortName);
 
-var buildProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()[..8]);
-Directory.CreateDirectory(buildProjectDir);
-try
+foreach (var framework in frameworks)
 {
-    var sampleProjectDir = Path.Combine("Samples", "DemoProject", "MySampleLib", "MySampleLib.Tests");
-    Assertion.Succeed(new DotNetCustom("new", "build", $"--package-version={packageVersion}").WithWorkingDirectory(buildProjectDir).Run(), "Creating a new sample project");
-    Assertion.Succeed(new DotNetBuild().WithProject(buildProjectDir).AddSources(Path.Combine(outputDir, "TeamCity.CSharpInteractive")).WithShortName("Building the sample project").Build());
-    Assertion.Succeed(new DotNetRun().WithProject(buildProjectDir).WithNoBuild(true).WithWorkingDirectory(sampleProjectDir).Run(), "Running a build for the sample project");
-    Assertion.Succeed(new CommandLine("dotnet", "csi", Path.Combine(buildProjectDir, "Program.csx")).WithWorkingDirectory(sampleProjectDir).Run(), "Running a build as a C# script for the sample project");
-
-    Info("Publishing artifacts.");
-    var teamCityWriter = GetService<ITeamCityWriter>();
-
-    foreach (var package in packages)
+    var buildProjectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()[..8]);
+    Directory.CreateDirectory(buildProjectDir);
+    var sampleProjectName = $"sample project for {framework}";
+    try
     {
-        if (!File.Exists(package.Package))
-        {
-            Error($"NuGet package {package.Package} does not exist.");
-            return 1;
-        }
-
-        teamCityWriter.PublishArtifact($"{package.Package} => .");
+        var sampleProjectDir = Path.Combine("Samples", "DemoProject", "MySampleLib", "MySampleLib.Tests");
+        Assertion.Succeed(new DotNetCustom("new", "build", $"--package-version={packageVersion}", "-T", framework).WithWorkingDirectory(buildProjectDir).Run(), $"Creating a new {sampleProjectName}");
+        Assertion.Succeed(new DotNetBuild().WithProject(buildProjectDir).AddSources(Path.Combine(outputDir, "TeamCity.CSharpInteractive")).WithShortName($"Building the {sampleProjectName}").Build());
+        Assertion.Succeed(new DotNetRun().WithProject(buildProjectDir).WithNoBuild(true).WithWorkingDirectory(sampleProjectDir).Run(), $"Running a build for the {sampleProjectName}");
+        Assertion.Succeed(new CommandLine("dotnet", "csi", Path.Combine(buildProjectDir, "Program.csx")).WithWorkingDirectory(sampleProjectDir).Run(), $"Running a build as a C# script for the {sampleProjectName}");
     }
-
-    if (!string.IsNullOrWhiteSpace(apiKey) && packageVersion.Release != "dev" && templatePackageVersion.Release != "dev")
+    finally
     {
-        var push = new DotNetNuGetPush().WithApiKey(apiKey).WithSources("https://api.nuget.org/v3/index.json");
-        foreach (var package in packages.Where(i => i.Publish))
-        {
-            Assertion.Succeed(push.WithPackage(package.Package).Run(), $"Pushing {Path.GetFileName(package.Package)}");
-        }
-    }
-    else
-    {
-        Info("Pushing NuGet packages were skipped.");
+        Directory.Delete(buildProjectDir, true);
     }
 }
-finally
+
+Info("Publishing artifacts.");
+var teamCityWriter = GetService<ITeamCityWriter>();
+
+foreach (var package in packages)
 {
-    Directory.Delete(buildProjectDir, true);
+    if (!File.Exists(package.Package))
+    {
+        Error($"NuGet package {package.Package} does not exist.");
+        return 1;
+    }
+
+    teamCityWriter.PublishArtifact($"{package.Package} => .");
+}
+
+if (!string.IsNullOrWhiteSpace(apiKey) && packageVersion.Release != "dev" && templatePackageVersion.Release != "dev")
+{
+    var push = new DotNetNuGetPush().WithApiKey(apiKey).WithSources("https://api.nuget.org/v3/index.json");
+    foreach (var package in packages.Where(i => i.Publish))
+    {
+        Assertion.Succeed(push.WithPackage(package.Package).Run(), $"Pushing {Path.GetFileName(package.Package)}");
+    }
+}
+else
+{
+    Info("Pushing NuGet packages were skipped.");
 }
 
 WriteLine("To use the csi tool:", Color.Highlighted);
