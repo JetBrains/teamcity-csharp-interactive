@@ -92,6 +92,12 @@ foreach (var package in packages)
 
 var buildProps = new[] {("version", packageVersion.ToString())};
 Assertion.Succeed(
+    new DotNetClean()
+        .WithProject(solutionFile)
+        .WithConfiguration(configuration)
+        .Build());
+
+Assertion.Succeed(
     new DotNetBuild()
         .WithProject(solutionFile)
         .WithConfiguration(configuration)
@@ -169,10 +175,10 @@ Directory.CreateDirectory(buildProjectDir);
 try
 {
     var sampleProjectDir = Path.Combine("Samples", "DemoProject", "MySampleLib", "MySampleLib.Tests");
-    Assertion.Succeed(new DotNetCustom("new", "build", $"--package-version={packageVersion}").WithWorkingDirectory(buildProjectDir).Run(), "Creating new build project");
-    Assertion.Succeed(new DotNetBuild().WithProject(buildProjectDir).AddSources(Path.Combine(outputDir, "TeamCity.CSharpInteractive")).WithShortName("Building a build project").Build());
-    Assertion.Succeed(new DotNetRun().WithProject(buildProjectDir).WithNoBuild(true).WithWorkingDirectory(sampleProjectDir).Run(), "Running a build as a console application");
-    Assertion.Succeed(new CommandLine("dotnet", "csi", Path.Combine(buildProjectDir, "Program.csx")).WithWorkingDirectory(sampleProjectDir).Run(), "Running a build as a C# script");
+    Assertion.Succeed(new DotNetCustom("new", "build", $"--package-version={packageVersion}").WithWorkingDirectory(buildProjectDir).Run(), "Creating a new sample project");
+    Assertion.Succeed(new DotNetBuild().WithProject(buildProjectDir).AddSources(Path.Combine(outputDir, "TeamCity.CSharpInteractive")).WithShortName("Building the sample project").Build());
+    Assertion.Succeed(new DotNetRun().WithProject(buildProjectDir).WithNoBuild(true).WithWorkingDirectory(sampleProjectDir).Run(), "Running a build for the sample project");
+    Assertion.Succeed(new CommandLine("dotnet", "csi", Path.Combine(buildProjectDir, "Program.csx")).WithWorkingDirectory(sampleProjectDir).Run(), "Running a build as a C# script for the sample project");
 
     Info("Publishing artifacts.");
     var teamCityWriter = GetService<ITeamCityWriter>();

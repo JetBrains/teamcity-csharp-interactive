@@ -1,7 +1,8 @@
 <!--suppress MsbuildTargetFrameworkTagInspection -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework />
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <NoWarn>NU1605;NU5118;NU5100;NU5131</NoWarn>
         <IsPackable>true</IsPackable>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
@@ -17,7 +18,7 @@
     <PropertyGroup>
         <PackageId>TeamCity.CSharpInteractive</PackageId>
         <IncludeAssets>All</IncludeAssets>
-        <Title>TeamCity C# script host</Title>
+        <Title>TeamCity C# script library</Title>
         <PackageIcon>_common\icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <Description>$(Company) $(Title) $(Version) $(TargetFramework)</Description>
@@ -37,7 +38,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.1.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.2.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.2.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />

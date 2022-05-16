@@ -3,7 +3,8 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        <NoWarn>NU1605;NU5118</NoWarn>
+        <NoWarn>NU1605;NU5118;NU5100</NoWarn>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>

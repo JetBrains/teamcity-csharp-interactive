@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <AssemblyName>dotnet-csi</AssemblyName>
         <IsPackable>true</IsPackable>
         <RootNamespace>TeamCity.CSharpInteractive</RootNamespace>
@@ -46,7 +46,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.1.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.2.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.2.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
@@ -86,13 +86,25 @@
         </Content>
 
         <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any\msbuild</PackagePath>
+            <PackagePath>tools\net6.0\any\msbuild</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
         </Content>
 
         <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*" Visible="false">
-            <PackagePath>tools\$(TargetFramework)\any\vstest</PackagePath>
+            <PackagePath>tools\net6.0\any\vstest</PackagePath>
+            <Pack>true</Pack>
+            <Visible>false</Visible>
+        </Content>
+
+        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\msbuild15\*.*" Visible="false">
+            <PackagePath>tools\net7.0\any\msbuild</PackagePath>
+            <Pack>true</Pack>
+            <Visible>false</Visible>
+        </Content>
+
+        <Content Include="$(PKGTeamCity_DotNet_Integration)\build\_common\vstest15\*.*" Visible="false">
+            <PackagePath>tools\net7.0\any\vstest</PackagePath>
             <Pack>true</Pack>
             <Visible>false</Visible>
         </Content>
