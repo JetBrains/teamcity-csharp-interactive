@@ -22,7 +22,7 @@ public class DotNetPublishScenario : BaseScenario
         // ## using HostApi;
 
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force", "-f", "net6.0").Build();
         result.ExitCode.ShouldBe(0);
 
         // Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"

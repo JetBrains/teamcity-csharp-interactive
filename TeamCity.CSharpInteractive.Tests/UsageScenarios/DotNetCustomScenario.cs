@@ -4,6 +4,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using HostApi;
+using NuGet.Versioning;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
@@ -21,9 +22,9 @@ public class DotNetCustomScenario : BaseScenario
         // ## using HostApi;
 
         // Gets the dotnet version, running a command like: "dotnet --version"
-        Version? version = default;
+        NuGetVersion? version = default;
         var result = new DotNetCustom("--version")
-            .Build(message => Version.TryParse(message.Text, out version));
+            .Build(message => NuGetVersion.TryParse(message.Text, out version));
 
         result.ExitCode.ShouldBe(0);
         version.ShouldNotBeNull();
