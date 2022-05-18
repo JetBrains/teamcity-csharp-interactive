@@ -64,7 +64,7 @@ public record DotNetBuild(
     { }
 
     public IStartInfo GetStartInfo(IHost host) =>
-        new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
+        host.CreateCommandLine(ExecutablePath)
             .WithShortName(ToString())
             .WithArgs("build")
             .AddNotEmptyArgs(Project)

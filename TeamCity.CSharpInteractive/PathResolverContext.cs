@@ -12,6 +12,8 @@ internal class PathResolverContext : IPathResolverContext, IVirtualContext
 
     public PathResolverContext(IHost host) => _host = host;
 
+    public bool IsActive => _currentResolver != EmptyResolver.Shared;
+
     public IDisposable Register(IPathResolver resolver)
     {
         var prevResolver = _prevResolver;

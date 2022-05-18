@@ -716,11 +716,8 @@ IEnumerable<NuGetPackage> packages = GetService<INuGet>().Restore(settings);
 // Adds the namespace "HostApi" to use .NET build API and Docker API
 using HostApi;
 
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
 // Creates a base docker command line
-var baseDockerCmd = new DockerRun()
+var dockerRun = new DockerRun()
     .WithAutoRemove(true)
     .WithImage("mcr.microsoft.com/dotnet/sdk")
     .WithPlatform("linux")
@@ -728,18 +725,15 @@ var baseDockerCmd = new DockerRun()
     .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
 
 // Creates a new library project in a docker container
-var result = baseDockerCmd.WithCommandLine(
-        new DotNetCustom("new", "classlib", "-n", "MyLib", "--force")
-        .WithExecutablePath("dotnet"))
+var result = dockerRun
+    .WithCommandLine(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"))
     .Build();
 
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project in a docker container
-result = baseDockerCmd.WithCommandLine(
-        new DotNetBuild()
-        .WithProject("MyLib/MyLib.csproj")
-        .WithExecutablePath("dotnet"))
+result = dockerRun
+    .WithCommandLine(new DotNetBuild().WithProject("MyLib/MyLib.csproj"))
     .Build();
 
 // The "result" variable provides details about a build

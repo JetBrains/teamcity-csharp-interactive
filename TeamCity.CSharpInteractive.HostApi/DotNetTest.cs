@@ -86,7 +86,7 @@ public record DotNetTest(
     public IStartInfo GetStartInfo(IHost host)
     {
         var blameHangTimeout = BlameHangTimeout?.TotalMilliseconds;
-        var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
+        var cmd = host.CreateCommandLine(ExecutablePath)
             .WithShortName(ToString())
             .WithArgs("test")
             .AddNotEmptyArgs(Project)

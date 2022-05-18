@@ -55,7 +55,7 @@ var test = new DotNetTest()
     .WithNoBuild(true)
     .WithConfiguration(configuration);
 
-var testInContainer = new DockerRun(test.WithExecutablePath("dotnet"), $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}")
+var testInContainer = new DockerRun(test, $"mcr.microsoft.com/dotnet/sdk:{requiredSdkVersion}")
     .WithPlatform("linux")
     .AddVolumes((Environment.CurrentDirectory, "/project"))
     .WithContainerWorkingDirectory("/project");

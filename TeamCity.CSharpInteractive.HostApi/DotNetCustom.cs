@@ -23,7 +23,7 @@ public record DotNetCustom(
     { }
     
     public IStartInfo GetStartInfo(IHost host) =>
-        new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
+        host.CreateCommandLine(ExecutablePath)
             .WithShortName(ToString())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())

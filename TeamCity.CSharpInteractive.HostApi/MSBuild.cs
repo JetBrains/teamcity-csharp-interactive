@@ -71,7 +71,7 @@ public record MSBuild(
     { }
 
     public IStartInfo GetStartInfo(IHost host) =>
-        new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? host.GetService<IDotNetSettings>().DotNetExecutablePath : ExecutablePath)
+        host.CreateCommandLine(ExecutablePath)
             .WithShortName(ToString())
             .WithArgs(ExecutablePath == string.Empty ? new[] {"msbuild"} : Array.Empty<string>())
             .AddArgs(new[] {Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())

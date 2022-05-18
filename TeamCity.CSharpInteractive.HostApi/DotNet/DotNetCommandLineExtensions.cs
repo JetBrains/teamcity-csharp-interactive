@@ -9,6 +9,21 @@ using Cmd;
 
 internal static class DotNetCommandLineExtensions
 {
+    public static CommandLine CreateCommandLine(this IHost host, string executablePath) => new(host.GetExecutablePath(executablePath));
+
+    private static string GetExecutablePath(this IHost host, string executablePath)
+    {
+        if (!string.IsNullOrWhiteSpace(executablePath))
+        {
+            return executablePath;
+        }
+
+        executablePath = host.GetService<IDotNetSettings>().DotNetExecutablePath;
+        return host.GetService<IVirtualContext>().IsActive
+            ? Path.GetFileNameWithoutExtension(executablePath)
+            : executablePath;
+    }
+    
     public static string GetShortName(this string baseName, string shortName, string path)
     {
         if (!string.IsNullOrWhiteSpace(shortName))
