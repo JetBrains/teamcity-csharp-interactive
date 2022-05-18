@@ -36,7 +36,7 @@ new DockerCustom("info").WithShortName("Defining a docker container type")
 
 if (!dockerLinuxTests)
 {
-    Warning("The docker Linux container is not available.");
+    Warning("The docker Linux container is not available. Integration tests are skipped.");
 }
 
 var packageVersion = new[]
@@ -45,10 +45,7 @@ var packageVersion = new[]
     Version.GetNext(new NuGetRestoreSettings(packageId), defaultVersion)
 }.Max()!;
 
-var templatePackageVersion = Version.GetNext(new NuGetRestoreSettings(templatesPackageId), defaultVersion);
-
-WriteLine($"Tool and package version: {packageVersion}", Color.Highlighted);
-WriteLine($"Template version: {templatePackageVersion}", Color.Highlighted);
+var templatePackageVersion = Version.GetNext(new NuGetRestoreSettings(templatesPackageId), new NuGetVersion(1, 0, 0));
 
 var packages = new[]
 {
@@ -221,6 +218,8 @@ WriteLine("To use the csi tool:", Color.Highlighted);
 WriteLine("    dotnet csi /?", Color.Highlighted);
 WriteLine("To create a build project from the template:", Color.Highlighted);
 WriteLine($"    dotnet new build --package-version={packageVersion}", Color.Highlighted);
+WriteLine($"Tool and package version: {packageVersion}", Color.Highlighted);
+WriteLine($"Template version: {templatePackageVersion}", Color.Highlighted);
 
 return 0;
 
