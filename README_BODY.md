@@ -8,7 +8,7 @@ command-line tool on Windows, Linux, or macOS.
 
 ## Prerequisites
 
-The tool requires [.NET 6 runtime](https://dotnet.microsoft.com/download/dotnet/6.0).
+The tool requires .NET 6+ runtime.
 
 ## Download and Install TeamCity.csi
 
