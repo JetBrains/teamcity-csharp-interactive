@@ -113,6 +113,7 @@ related issues.
   - [Run a project](#run-a-project)
   - [Test a project](#test-a-project)
   - [Test an assembly](#test-an-assembly)
+  - [Shuts down build servers](#shuts-down-build-servers)
 - NuGet API
   - [Restore NuGet a package of newest version](#restore-nuget-a-package-of-newest-version)
   - [Restore a NuGet package by a version range for the specified .NET and path](#restore-a-nuget-package-by-a-version-range-for-the-specified-.net-and-path)
@@ -669,6 +670,22 @@ result = new MSBuild()
 // The "result" variable provides details about a build
 result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
 result.ExitCode.ShouldBe(0);
+```
+
+
+
+### Shuts down build servers
+
+
+
+``` CSharp
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
+
+// Shuts down all build servers that are started from dotnet.
+var exitCode = new DotNetBuildServerShutdown().Run();
+
+exitCode.ShouldBe(0);
 ```
 
 

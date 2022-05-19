@@ -24,7 +24,7 @@ internal static class DotNetCommandLineExtensions
             : executablePath;
     }
     
-    public static string GetShortName(this string baseName, string shortName, string path)
+    public static string GetShortName(this string baseName, string shortName, string path = "")
     {
         if (!string.IsNullOrWhiteSpace(shortName))
         {
