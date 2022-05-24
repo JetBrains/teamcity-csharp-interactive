@@ -21,7 +21,7 @@ public class DotNetRunScenario : BaseScenario
         // ## using HostApi;
 
         // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
-        var result = new DotNetCustom("new", "console", "-n", "MyApp", "--force").Build();
+        var result = new DotNetNew("console", "-n", "MyApp", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Runs the console project using a command like: "dotnet run" from the directory "MyApp"

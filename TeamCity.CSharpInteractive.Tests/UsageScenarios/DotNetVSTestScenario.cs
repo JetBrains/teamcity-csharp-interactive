@@ -22,7 +22,7 @@ public class DotNetVSTestScenario : BaseScenario
         // ## using HostApi;
 
         // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-        var result = new DotNetCustom("new", "mstest", "-n", "MyTests", "--force").Build();
+        var result = new DotNetNew("mstest", "-n", "MyTests", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"

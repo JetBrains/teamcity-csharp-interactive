@@ -23,7 +23,7 @@ public class MSBuildScenario : BaseScenario
         // ## using HostApi;
 
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+        var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
