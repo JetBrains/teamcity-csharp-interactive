@@ -30,7 +30,7 @@ public record DotNetRestore(
     bool? UseCurrentRuntime = default,
     // Disables restoring multiple projects in parallel.
     bool? DisableParallel = default,
-    // The NuGet configuration file (nuget.config) to use. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used. For more information, see Common NuGet Configurations.
+    // The NuGet configuration file (nuget.config) to use. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used.
     string ConfigFile = "",
     // Specifies to not cache HTTP requests.
     bool? NoCache = default,

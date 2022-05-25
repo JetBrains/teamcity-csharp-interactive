@@ -34,6 +34,7 @@
   - [Pack a project](#pack-a-project)
   - [Publish a project](#publish-a-project)
   - [Restore a project](#restore-a-project)
+  - [Restore local tools](#restore-local-tools)
   - [Run a custom .NET command](#run-a-custom-.net-command)
   - [Run a project](#run-a-project)
   - [Test a project](#test-a-project)
@@ -379,7 +380,7 @@ build.Build();
 using HostApi;
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
@@ -401,7 +402,7 @@ result.ExitCode.ShouldBe(0);
 using HostApi;
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
@@ -445,7 +446,7 @@ version.ShouldNotBeNull();
 using HostApi;
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Creates a NuGet package of version 1.2.3 for the project, running a command like: "dotnet pack /p:version=1.2.3" from the directory "MyLib"
@@ -468,7 +469,7 @@ result.ExitCode.ShouldBe(0);
 using HostApi;
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force", "-f", "net6.0").Build();
+var result = new DotNetNew("classlib", "-n", "MyLib", "--force", "-f", "net6.0").Build();
 result.ExitCode.ShouldBe(0);
 
 // Publish the project, running a command like: "dotnet publish --framework net6.0" from the directory "MyLib"
@@ -487,7 +488,7 @@ result.ExitCode.ShouldBe(0);
 using HostApi;
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Restore the project, running a command like: "dotnet restore" from the directory "MyLib"
@@ -506,7 +507,7 @@ result.ExitCode.ShouldBe(0);
 using HostApi;
 
 // Creates a new console project, running a command like: "dotnet new console -n MyApp --force"
-var result = new DotNetCustom("new", "console", "-n", "MyApp", "--force").Build();
+var result = new DotNetNew("console", "-n", "MyApp", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Runs the console project using a command like: "dotnet run" from the directory "MyApp"
@@ -529,7 +530,7 @@ stdOut.ShouldBe(new[] {"Hello, World!"});
 using HostApi;
 
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-var result = new DotNetCustom("new", "mstest", "-n", "MyTests", "--force").Build();
+var result = new DotNetNew("mstest", "-n", "MyTests", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Runs tests via a command like: "dotnet test" from the directory "MyTests"
@@ -538,6 +539,28 @@ result = new DotNetTest().WithWorkingDirectory("MyTests").Build();
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
+```
+
+
+
+### Restore local tools
+
+
+
+``` CSharp
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
+
+var projectDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()[..4]);
+Directory.CreateDirectory(projectDir);
+    
+// Creates a local tool manifest 
+var exitCode = new DotNetNew("tool-manifest").WithWorkingDirectory(projectDir).Run();
+exitCode.ShouldBe(0);
+
+// Restore local tools
+exitCode = new DotNetToolRestore().WithWorkingDirectory(projectDir).Run();
+exitCode.ShouldBe(0);
 ```
 
 
@@ -551,7 +574,7 @@ result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 using HostApi;
 
 // Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
-var result = new DotNetCustom("new", "mstest", "-n", "MyTests", "--force").Build();
+var result = new DotNetNew("mstest", "-n", "MyTests", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
@@ -580,7 +603,7 @@ result.ExitCode.ShouldBe(0);
 using HostApi;
 
 // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-var result = new DotNetCustom("new", "classlib", "-n", "MyLib", "--force").Build();
+var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
 result.ExitCode.ShouldBe(0);
 
 // Builds the library project, running a command like: "dotnet msbuild /t:Build -restore /p:configuration=Release -verbosity=detailed" from the directory "MyLib"
