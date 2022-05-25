@@ -40,7 +40,7 @@ public record DotNetBuildServerShutdown(
             .AddArgs(Args.ToArray());
 
     public override string ToString() => "dotnet build-server shutdown".GetShortName(ShortName);
-
+    
     private IEnumerable<string> GetServerArg() =>
         Servers.Select(server => server switch
         {

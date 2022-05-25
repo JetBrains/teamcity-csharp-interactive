@@ -13,7 +13,7 @@ internal class BuildRunner : IBuildRunner
     private readonly IProcessRunner _processRunner;
     private readonly IHost _host;
     private readonly ITeamCityContext _teamCityContext;
-    private readonly Func<IBuildContext> _resultFactory;
+    private readonly Func<IBuildContext> _buildContextFactory;
     private readonly IBuildOutputProcessor _buildOutputProcessor;
     private readonly Func<IProcessMonitor> _monitorFactory;
     private readonly IBuildMessagesProcessor _defaultBuildMessagesProcessor;
@@ -24,7 +24,7 @@ internal class BuildRunner : IBuildRunner
         IProcessRunner processRunner,
         IHost host,
         ITeamCityContext teamCityContext,
-        Func<IBuildContext> resultFactory,
+        Func<IBuildContext> buildContextFactory,
         IBuildOutputProcessor buildOutputProcessor,
         Func<IProcessMonitor> monitorFactory,
         [Tag("default")] IBuildMessagesProcessor defaultBuildMessagesProcessor,
@@ -34,7 +34,7 @@ internal class BuildRunner : IBuildRunner
         _processRunner = processRunner;
         _host = host;
         _teamCityContext = teamCityContext;
-        _resultFactory = resultFactory;
+        _buildContextFactory = buildContextFactory;
         _buildOutputProcessor = buildOutputProcessor;
         _monitorFactory = monitorFactory;
         _defaultBuildMessagesProcessor = defaultBuildMessagesProcessor;
@@ -44,22 +44,22 @@ internal class BuildRunner : IBuildRunner
 
     public IBuildResult Run(ICommandLine commandLine, Action<BuildMessage>? handler = default, TimeSpan timeout = default)
     {
-        var buildResult = _resultFactory();
+        var buildContext = _buildContextFactory();
         var startInfo = CreateStartInfo(commandLine);
-        var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
+        var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildContext));
         var result = _processRunner.Run(processInfo, timeout);
         _processResultHandler.Handle(result, handler);
-        return buildResult.Create(startInfo, result.ExitCode);
+        return buildContext.Create(startInfo, result.ExitCode);
     }
 
     public async Task<IBuildResult> RunAsync(ICommandLine commandLine, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default)
     {
-        var buildResult = _resultFactory();
+        var buildContext = _buildContextFactory();
         var startInfo = CreateStartInfo(commandLine);
-        var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildResult));
+        var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildContext));
         var result = await _processRunner.RunAsync(processInfo, cancellationToken);
         _processResultHandler.Handle(result, handler);
-        return buildResult.Create(startInfo, result.ExitCode);
+        return buildContext.Create(startInfo, result.ExitCode);
     }
 
     private IStartInfo CreateStartInfo(ICommandLine commandLine)
@@ -75,9 +75,9 @@ internal class BuildRunner : IBuildRunner
         }
     }
 
-    private void Handle(Action<BuildMessage>? handler, in Output output, IBuildContext context)
+    private void Handle(Action<BuildMessage>? handler, in Output output, IBuildContext buildContext)
     {
-        var messages = _buildOutputProcessor.Convert(output, context);
+        var messages = _buildOutputProcessor.Convert(output, buildContext);
         if (handler != default)
         {
             _customBuildMessagesProcessor.ProcessMessages(output, messages, handler);

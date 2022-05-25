@@ -12,7 +12,7 @@ internal static class DotNetScript
 
     public static CommandLine Create() =>
         new(
-            CSharpInteractive.Composer.Resolve<IDotNetEnvironment>().Path,
+            Composer.Resolve<IDotNetEnvironment>().Path,
             Path.Combine(Path.GetDirectoryName(typeof(DotNetScript).Assembly.Location)!, "dotnet-csi.dll"));
 
     public static CommandLine Create(string scriptName, string? workingDirectory, IEnumerable<string> args, params string[] lines)
@@ -25,8 +25,8 @@ internal static class DotNetScript
 
     public static string GetWorkingDirectory()
     {
-        var uniqueNameGenerator = CSharpInteractive.Composer.Resolve<IUniqueNameGenerator>();
-        var environment = CSharpInteractive.Composer.Resolve<IEnvironment>();
+        var uniqueNameGenerator = Composer.Resolve<IUniqueNameGenerator>();
+        var environment = Composer.Resolve<IEnvironment>();
         var tempDirectory = environment.GetPath(SpecialFolder.Temp);
         return Path.Combine(tempDirectory, uniqueNameGenerator.Generate());
     }

@@ -34,14 +34,14 @@ public class DockerDotNetBuildScenario : BaseScenario
             .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
 
         // Creates a new library project in a docker container
-        var result = dockerRun
+        var exitCode = dockerRun
             .WithCommandLine(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"))
-            .Build();
+            .Run();
 
-        result.ExitCode.ShouldBe(0);
+        exitCode.ShouldBe(0);
 
         // Builds the library project in a docker container
-        result = dockerRun
+        var result = dockerRun
             .WithCommandLine(new DotNetBuild().WithProject("MyLib/MyLib.csproj"))
             .Build();
 

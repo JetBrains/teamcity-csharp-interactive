@@ -24,10 +24,8 @@ public class CommandLineWithTimeoutScenario : BaseScenario
         // Adds the namespace "HostApi" to use Command Line API
         // ## using HostApi;
 
-        int? exitCode = GetService<ICommandLineRunner>().Run(
-            new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
-            default,
-            TimeSpan.FromMilliseconds(1));
+        int? exitCode = new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120")
+            .Run(default, TimeSpan.FromMilliseconds(1));
 
         exitCode.HasValue.ShouldBeFalse();
         // }

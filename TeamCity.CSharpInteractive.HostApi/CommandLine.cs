@@ -32,6 +32,10 @@ public record CommandLine(
         : this(executablePath, string.Empty, args, ImmutableArray<(string name, string value)>.Empty)
     { }
 
+    internal CommandLine(IStartInfo startInfo)
+        : this(startInfo.ExecutablePath, startInfo.WorkingDirectory, startInfo.Args, startInfo.Vars, startInfo.ShortName)
+    { }
+
     public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : Path.GetFileNameWithoutExtension(ExecutablePath);
 
     public IStartInfo GetStartInfo(IHost host) => this;
@@ -54,7 +58,23 @@ public record CommandLine(
 
         return sb.ToString();
     }
+    
+    public static CommandLine operator +(CommandLine target, string arg) => target.AddArgs(arg);
+    
+    public static CommandLine operator -(CommandLine target, string arg) => target.RemoveArgs(arg);
+    
+    public static CommandLine operator +(CommandLine target, IEnumerable<string> args) => target.AddArgs(args);
 
+    public static CommandLine operator -(CommandLine target, IEnumerable<string> args) => target.RemoveArgs(args);
+    
+    public static CommandLine operator +(CommandLine target, (string name, string value) var) => target.AddVars(var);
+    
+    public static CommandLine operator -(CommandLine target, (string name, string value) var) => target.RemoveVars(var);
+    
+    public static CommandLine operator +(CommandLine target, IEnumerable<(string name, string value)> vars) => target.AddVars(vars);
+    
+    public static CommandLine operator -(CommandLine target, IEnumerable<(string name, string value)> vars) => target.RemoveVars(vars);
+    
     private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
 
     internal class StartInfoDebugView

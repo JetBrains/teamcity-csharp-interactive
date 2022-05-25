@@ -9,7 +9,7 @@ using Cmd;
 
 internal static class DotNetCommandLineExtensions
 {
-    public static CommandLine CreateCommandLine(this IHost host, string executablePath) => new(host.GetExecutablePath(executablePath));
+    internal static CommandLine CreateCommandLine(this IHost host, string executablePath) => new(host.GetExecutablePath(executablePath));
 
     private static string GetExecutablePath(this IHost host, string executablePath)
     {
@@ -40,7 +40,7 @@ internal static class DotNetCommandLineExtensions
         return $"{baseName} {Path.GetFileName(path)}";
     }
 
-    public static CommandLine AddMSBuildIntegration(this CommandLine cmd, IHost host, DotNetVerbosity? verbosity)
+    public static CommandLine AddMSBuildLoggers(this CommandLine cmd, IHost host, DotNetVerbosity? verbosity = default)
     {
         var virtualContext = host.GetService<IVirtualContext>();
         var settings = host.GetService<IDotNetSettings>();
@@ -56,7 +56,7 @@ internal static class DotNetCommandLineExtensions
             : cmd;
     }
 
-    public static CommandLine AddVSTestIntegration(this CommandLine cmd, IHost host, DotNetVerbosity? verbosity)
+    public static CommandLine AddVSTestLoggers(this CommandLine cmd, IHost host, DotNetVerbosity? verbosity = default)
     {
         var virtualContext = host.GetService<IVirtualContext>();
         var settings = host.GetService<IDotNetSettings>();

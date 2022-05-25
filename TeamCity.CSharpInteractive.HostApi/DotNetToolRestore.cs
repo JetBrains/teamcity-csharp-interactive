@@ -46,7 +46,7 @@ public record DotNetToolRestore(
             .WithArgs("tool", "restore")
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
+            .AddMSBuildLoggers(host, Verbosity)
             .AddArgs(AdditionalSources.Select(i => ("--add-source", (string?)i)).ToArray())
             .AddArgs(
                 ("--configfile", ConfigFile),

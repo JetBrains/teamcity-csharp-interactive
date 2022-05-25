@@ -71,7 +71,7 @@ public record VSTest(
             .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddVSTestIntegration(host, Verbosity)
+            .AddVSTestLoggers(host, Verbosity)
             .AddArgs(Loggers.Select(i => ("--logger", (string?)i)).ToArray())
             .AddArgs(
                 ("--Tests", Tests),

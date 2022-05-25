@@ -49,7 +49,7 @@ public record DotNetClean(
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
+            .AddMSBuildLoggers(host, Verbosity)
             .AddArgs(
                 ("--output", Output),
                 ("--framework", Framework),

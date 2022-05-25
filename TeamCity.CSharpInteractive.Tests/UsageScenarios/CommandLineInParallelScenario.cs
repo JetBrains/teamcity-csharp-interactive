@@ -24,7 +24,7 @@ public class CommandLineInParallelScenario : BaseScenario
         // Adds the namespace "HostApi" to use Command Line API
         // ## using HostApi;
 
-        Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/c", "DIR"));
+        Task<int?> task = new CommandLine("cmd", "/c", "DIR").RunAsync();
         int? exitCode = new CommandLine("cmd", "/c", "SET").Run();
         task.Wait();
         // }

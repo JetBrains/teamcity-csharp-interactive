@@ -63,7 +63,7 @@ public record DotNetPack(
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
+            .AddMSBuildLoggers(host, Verbosity)
             .AddArgs(
                 ("--output", Output),
                 ("--version-suffix", VersionSuffix),

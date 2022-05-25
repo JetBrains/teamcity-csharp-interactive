@@ -102,7 +102,6 @@ related issues.
   - [Build a project in a docker container](#build-a-project-in-a-docker-container)
   - [Running in docker](#running-in-docker)
 - .NET build API
-  - [.NET Scenarios](#.net-scenarios)
   - [Build a project](#build-a-project)
   - [Build a project using MSBuild](#build-a-project-using-msbuild)
   - [Clean a project](#clean-a-project)
@@ -112,6 +111,7 @@ related issues.
   - [Restore local tools](#restore-local-tools)
   - [Run a custom .NET command](#run-a-custom-.net-command)
   - [Run a project](#run-a-project)
+  - [Run tests under dotCover](#run-tests-under-dotcover)
   - [Test a project](#test-a-project)
   - [Test an assembly](#test-an-assembly)
   - [Shuts down build servers](#shuts-down-build-servers)
@@ -289,25 +289,31 @@ Trace("Some trace info");
 using HostApi;
 
 // Creates a simple command line from just the name of the executable 
-new CommandLine("whoami");
+var cmd = new CommandLine("whoami");
 
 // Creates a command line with multiple command line arguments 
-new CommandLine("cmd", "/c", "echo", "Hello");
+cmd = new CommandLine("cmd", "/c", "echo", "Hello");
 
 // Same as previous statement
-new CommandLine("cmd", "/c")
+cmd = new CommandLine("cmd", "/c")
     .AddArgs("echo", "Hello");
 
+// Same as previous statement
+cmd = new CommandLine("cmd") + "/c" + "echo" + "Hello";
+
 // Builds a command line with multiple environment variables
-new CommandLine("cmd", "/c", "echo", "Hello")
+cmd = new CommandLine("cmd", "/c", "echo", "Hello")
     .AddVars(("Var1", "val1"), ("var2", "Val2"));
 
+// Same as previous statement
+cmd = new CommandLine("cmd") + "/c" + "echo" + "Hello" + ("Var1", "val1") + ("var2", "Val2");
+
 // Builds a command line to run from a specific working directory 
-new CommandLine("cmd", "/c", "echo", "Hello")
+cmd = new CommandLine("cmd", "/c", "echo", "Hello")
     .WithWorkingDirectory("MyDyrectory");
 
 // Builds a command line and replaces all command line arguments
-new CommandLine("cmd", "/c", "echo", "Hello")
+cmd = new CommandLine("cmd", "/c", "echo", "Hello")
     .WithArgs("/c", "echo", "Hello !!!");
 ```
 
@@ -321,11 +327,22 @@ new CommandLine("cmd", "/c", "echo", "Hello")
 // Adds the namespace "HostApi" to use Command Line API
 using HostApi;
 
-int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
+var exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
+exitCode.ShouldBe(0);
 
 // or the same thing using the extension method
 exitCode = new CommandLine("cmd", "/c", "DIR").Run();
+exitCode.ShouldBe(0);
 
+// using operator '+'
+var cmd = new CommandLine("cmd") + "/c" + "DIR";
+exitCode = cmd.Run();
+exitCode.ShouldBe(0);
+
+// with environment variables
+cmd = new CommandLine("cmd") + "/c" + "DIR" + ("MyEnvVar", "Some Value");
+exitCode = cmd.Run();
+exitCode.ShouldBe(0);
 ```
 
 
@@ -355,8 +372,7 @@ exitCode = await new CommandLine("cmd", "/c", "DIR").RunAsync();
 using HostApi;
 
 var lines = new List<string>();
-int? exitCode = new CommandLine("cmd")
-    .AddArgs("/c", "SET")
+int? exitCode = new CommandLine("cmd", "/c", "SET")
     .AddVars(("MyEnv", "MyVal"))
     .Run(output => lines.Add(output.Line));
 
@@ -373,7 +389,7 @@ lines.ShouldContain("MyEnv=MyVal");
 // Adds the namespace "HostApi" to use Command Line API
 using HostApi;
 
-Task<int?> task = GetService<ICommandLineRunner>().RunAsync(new CommandLine("cmd", "/c", "DIR"));
+Task<int?> task = new CommandLine("cmd", "/c", "DIR").RunAsync();
 int? exitCode = new CommandLine("cmd", "/c", "SET").Run();
 task.Wait();
 ```
@@ -389,10 +405,8 @@ The cancellation will kill a related process.
 using HostApi;
 
 var cancellationTokenSource = new CancellationTokenSource();
-Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
-    new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
-    default,
-    cancellationTokenSource.Token);
+Task<int?> task = new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120")
+    .RunAsync(default, cancellationTokenSource.Token);
 
 cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
 task.IsCompleted.ShouldBeFalse();
@@ -408,40 +422,10 @@ If timeout expired a process will be killed.
 // Adds the namespace "HostApi" to use Command Line API
 using HostApi;
 
-int? exitCode = GetService<ICommandLineRunner>().Run(
-    new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
-    default,
-    TimeSpan.FromMilliseconds(1));
+int? exitCode = new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120")
+    .Run(default, TimeSpan.FromMilliseconds(1));
 
 exitCode.HasValue.ShouldBeFalse();
-```
-
-
-
-### .NET Scenarios
-
-
-
-``` CSharp
-// Adds the namespace "HostApi" to use .NET build API
-using HostApi;
-
-var clean = new DotNetClean();
-
-var restore = new DotNetRestore()
-    .WithWorkingDirectory("MyLib");
-
-var build = new DotNetBuild()
-    .WithConfiguration("Release");
-
-// Resolves a build service
-var buildRunner = GetService<IBuildRunner>();
-
-// runs using a runner
-buildRunner.Run(restore);
-
-// or using the extension method
-build.Build();
 ```
 
 
@@ -503,10 +487,10 @@ using HostApi;
 
 // Gets the dotnet version, running a command like: "dotnet --version"
 NuGetVersion? version = default;
-var result = new DotNetCustom("--version")
-    .Build(message => NuGetVersion.TryParse(message.Text, out version));
+var exitCode = new DotNetCustom("--version")
+    .Run(message => NuGetVersion.TryParse(message.Line, out version));
 
-result.ExitCode.ShouldBe(0);
+exitCode.ShouldBe(0);
 version.ShouldNotBeNull();
 ```
 
@@ -614,6 +598,52 @@ result = new DotNetTest().WithWorkingDirectory("MyTests").Build();
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
+```
+
+
+
+### Run tests under dotCover
+
+
+
+``` CSharp
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
+
+// Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
+var exitCode = new DotNetNew("mstest", "-n", "MyTests", "--force").Run();
+exitCode.ShouldBe(0);
+
+exitCode = new DotNetNew("tool-manifest")
+    .WithWorkingDirectory("MyTests")
+    .Run();
+exitCode.ShouldBe(0);
+
+exitCode = new DotNetCustom("tool",  "install", "--local", "JetBrains.dotCover.GlobalTool")
+    .WithWorkingDirectory("MyTests")
+    .Run();
+exitCode.ShouldBe(0);
+
+var result =
+    // Creates a test command
+    new DotNetTest().WithWorkingDirectory("MyTests")
+    // Modifies the test command by putting "dotCover" in front of all arguments to have something like "dotnet dotcover test ..."
+    .Customize(cmd => cmd.WithArgs("dotcover").AddArgs(cmd.Args))
+    // Runs tests via a command like: "dotnet test" from the directory "MyTests"
+    .Build();
+
+// The "result" variable provides details about a build
+result.ExitCode.ShouldBe(0);
+result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
+
+// Generates a JSON code coverage report.
+exitCode = new DotNetCustom("dotCover", "report", "--source=dotCover.Output.dcvr", "--reportType=JSON")
+    .WithWorkingDirectory("MyTests")
+    .Run();
+exitCode.ShouldBe(0);
+
+// Check for a dotCover report
+File.Exists(Path.Combine("MyTests", "dotCover.Output.json")).ShouldBeTrue();
 ```
 
 
@@ -765,14 +795,14 @@ var dockerRun = new DockerRun()
     .AddVolumes((Environment.CurrentDirectory, "/MyProjects"));
 
 // Creates a new library project in a docker container
-var result = dockerRun
+var exitCode = dockerRun
     .WithCommandLine(new DotNetCustom("new", "classlib", "-n", "MyLib", "--force"))
-    .Build();
+    .Run();
 
-result.ExitCode.ShouldBe(0);
+exitCode.ShouldBe(0);
 
 // Builds the library project in a docker container
-result = dockerRun
+var result = dockerRun
     .WithCommandLine(new DotNetBuild().WithProject("MyLib/MyLib.csproj"))
     .Build();
 

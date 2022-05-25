@@ -1,4 +1,6 @@
 using HostApi;
+// ReSharper disable CheckNamespace
+// ReSharper disable ArrangeTypeModifiers
 
 interface IBuild
 {

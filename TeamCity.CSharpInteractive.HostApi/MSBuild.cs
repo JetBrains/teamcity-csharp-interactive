@@ -77,7 +77,7 @@ public record MSBuild(
             .AddArgs(new[] {Project}.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
+            .AddMSBuildLoggers(host, Verbosity)
             .AddMSBuildArgs(
                 ("-target", Target),
                 ("-maxCpuCount", MaxCpuCount?.ToString()),

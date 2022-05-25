@@ -12,13 +12,13 @@ using Docker;
 using Immutype;
 
 /// <summary>
-/// Docker runs processes in isolated containers. A container is a process which runs on a host. The host may be local or remote. When an operator executes docker run, the container process that runs is isolated in that it has its own file system, its own networking, and its own isolated process tree separate from the host.
+/// Docker runs a command in isolated containers. A container is a process which runs on a host. The host may be local or remote. When an operator executes docker run, the container process that runs is isolated in that it has its own file system, its own networking, and its own isolated process tree separate from the host.
 /// </summary>
 [Target]
 public record DockerRun(
-    // Process to run in container
+    // Command to run in container.
     ICommandLine CommandLine,
-    // Docker image
+    // Docker image.
     string Image,
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
@@ -95,9 +95,9 @@ public record DockerRun(
         using var pathResolverToken = host.GetService<IPathResolverContext>().Register(pathResolver);
         var settings = host.GetService<IDockerSettings>();
 
-        var processInfo = CommandLine.GetStartInfo(host);
+        var startInfo = CommandLine.GetStartInfo(host);
         var cmd = new CommandLine(string.IsNullOrWhiteSpace(ExecutablePath) ? settings.DockerExecutablePath : ExecutablePath)
-            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{processInfo.ShortName} in the docker container {Image}")
+            .WithShortName(!string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{startInfo.ShortName} in the docker container {Image}")
             .WithWorkingDirectory(WorkingDirectory)
             .WithArgs("run")
             .AddBooleanArgs(
@@ -122,7 +122,7 @@ public record DockerRun(
                 ("--workdir", ContainerWorkingDirectory),
                 ("--env-file", EnvFile))
             .AddArgs(Args.ToArray())
-            .AddValues("-e", "=", processInfo.Vars.ToArray());
+            .AddValues("-e", "=", startInfo.Vars.ToArray());
 
         var additionalVolums = directoryMap.Select(i => (i.Key, i.Value));
         return cmd
@@ -130,13 +130,13 @@ public record DockerRun(
             .AddValues("-v", ":", Volumes.ToArray())
             .AddArgs(Options.ToArray())
             .AddArgs(Image)
-            .AddArgs(processInfo.ExecutablePath)
-            .AddArgs(processInfo.Args.ToArray())
+            .AddArgs(startInfo.ExecutablePath)
+            .AddArgs(startInfo.Args.ToArray())
             .WithVars(Vars.ToArray());
     }
     
     public override string ToString() => !string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{CommandLine} in the docker container {Image}";
-
+    
     private class PathResolver : IPathResolver
     {
         private readonly string _platform;

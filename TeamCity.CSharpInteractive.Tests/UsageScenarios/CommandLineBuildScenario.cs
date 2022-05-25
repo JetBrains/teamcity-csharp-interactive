@@ -1,6 +1,7 @@
 // ReSharper disable StringLiteralTypo
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+// ReSharper disable NotAccessedVariable
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System;
@@ -24,25 +25,31 @@ public class CommandLineBuildScenario : BaseScenario
         // ## using HostApi;
 
         // Creates a simple command line from just the name of the executable 
-        new CommandLine("whoami");
+        var cmd = new CommandLine("whoami");
 
         // Creates a command line with multiple command line arguments 
-        new CommandLine("cmd", "/c", "echo", "Hello");
+        cmd = new CommandLine("cmd", "/c", "echo", "Hello");
 
         // Same as previous statement
-        new CommandLine("cmd", "/c")
+        cmd = new CommandLine("cmd", "/c")
             .AddArgs("echo", "Hello");
-
+        
+        // Same as previous statement
+        cmd = new CommandLine("cmd") + "/c" + "echo" + "Hello";
+        
         // Builds a command line with multiple environment variables
-        new CommandLine("cmd", "/c", "echo", "Hello")
+        cmd = new CommandLine("cmd", "/c", "echo", "Hello")
             .AddVars(("Var1", "val1"), ("var2", "Val2"));
+        
+        // Same as previous statement
+        cmd = new CommandLine("cmd") + "/c" + "echo" + "Hello" + ("Var1", "val1") + ("var2", "Val2");
 
         // Builds a command line to run from a specific working directory 
-        new CommandLine("cmd", "/c", "echo", "Hello")
+        cmd = new CommandLine("cmd", "/c", "echo", "Hello")
             .WithWorkingDirectory("MyDyrectory");
 
         // Builds a command line and replaces all command line arguments
-        new CommandLine("cmd", "/c", "echo", "Hello")
+        cmd = new CommandLine("cmd", "/c", "echo", "Hello")
             .WithArgs("/c", "echo", "Hello !!!");
         // }
     }

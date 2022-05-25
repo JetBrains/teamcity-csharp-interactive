@@ -1,5 +1,7 @@
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
+// ReSharper disable CheckNamespace
+// ReSharper disable ArrangeTypeModifiers
 
 interface ICreateImage
 {
@@ -12,16 +14,13 @@ class CreateImage : ICreateImage
     private readonly IBuild _build;
     private readonly ICommandLineRunner _runner;
     private readonly ITeamCityWriter _teamCityWriter;
-    private readonly IProperties _properties;
 
     public CreateImage(
-        IProperties properties,
         Settings settings,
         IBuild build,
         ICommandLineRunner runner,
         ITeamCityWriter teamCityWriter)
     {
-        _properties = properties;
         _settings = settings;
         _build = build;
         _runner = runner;

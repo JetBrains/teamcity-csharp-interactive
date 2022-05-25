@@ -2,7 +2,6 @@
 namespace TeamCity.CSharpInteractive;
 
 using HostApi;
-using NuGet.Versioning;
 
 internal class NuGetService : INuGet
 {

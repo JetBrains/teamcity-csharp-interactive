@@ -70,7 +70,7 @@ public record DotNetBuild(
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
+            .AddMSBuildLoggers(host, Verbosity)
             .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
             .AddArgs(
                 ("--output", Output),
@@ -93,6 +93,6 @@ public record DotNetBuild(
             )
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
-
+    
     public override string ToString() => "dotnet build".GetShortName(ShortName, Project);
 }

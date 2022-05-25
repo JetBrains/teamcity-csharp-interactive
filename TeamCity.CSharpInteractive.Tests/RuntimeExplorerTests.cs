@@ -28,7 +28,7 @@ public class RuntimeExplorerTests
         _fileSystem.Setup(i => i.EnumerateFileSystemEntries("Runtime", "Abc.dll", SearchOption.TopDirectoryOnly)).Returns(Array.Empty<string>());
 
         // When
-        explorer.TryFindRuntimeAssembly(Path.Combine("Bin", "Abc.dll"), out var runtimePath).ShouldBeFalse();
+        explorer.TryFindRuntimeAssembly(Path.Combine("Bin", "Abc.dll"), out _).ShouldBeFalse();
 
         // Then
     }
@@ -42,7 +42,7 @@ public class RuntimeExplorerTests
         var explorer = CreateInstance(runtime);
 
         // When
-        explorer.TryFindRuntimeAssembly(Path.Combine("Bin", "Abc.dll"), out var runtimePath).ShouldBeFalse();
+        explorer.TryFindRuntimeAssembly(Path.Combine("Bin", "Abc.dll"), out _).ShouldBeFalse();
 
         // Then
         _fileSystem.Verify(i => i.EnumerateFileSystemEntries(It.IsAny<string>(), It.IsAny<string>(), SearchOption.TopDirectoryOnly), Times.Never);

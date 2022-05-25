@@ -19,7 +19,7 @@ public record DotNetCustom(
     string ExecutablePath = "",
     // Specifies the working directory for the tool to be started.
     string WorkingDirectory = "",
-    // Specifies a short name for this operation.
+    // Specifies whether the ability to use build loggers is supported. The default is set to true.
     string ShortName = "")
     : ICommandLine
 {

@@ -24,8 +24,7 @@ public class CommandLineOutputScenario : BaseScenario
         // ## using HostApi;
 
         var lines = new List<string>();
-        int? exitCode = new CommandLine("cmd")
-            .AddArgs("/c", "SET")
+        int? exitCode = new CommandLine("cmd", "/c", "SET")
             .AddVars(("MyEnv", "MyVal"))
             .Run(output => lines.Add(output.Line));
 

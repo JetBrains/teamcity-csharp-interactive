@@ -1,10 +1,23 @@
+// ReSharper disable MemberCanBeProtected.Global
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System.Collections;
 using HostApi;
+using Environment = System.Environment;
 
-public class BaseScenario : IHost
+public class BaseScenario : IHost, IDisposable
 {
+    private readonly string _tempDir;
+    private readonly string _prevCurDir;
+
+    public BaseScenario()
+    {
+        _tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()[..4]);
+        Directory.CreateDirectory(_tempDir);
+        _prevCurDir = Environment.CurrentDirectory;
+        Environment.CurrentDirectory = _tempDir;
+    }
+
     // ReSharper disable once MemberCanBeProtected.Global
     public IHost Host => this;
 
@@ -51,5 +64,28 @@ public class BaseScenario : IHost
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public bool TryGetValue(string key, out string value) => _dict.TryGetValue(key, out value!);
+    }
+
+    void IDisposable.Dispose()
+    {
+        try
+        {
+            new DotNetBuildServerShutdown().Run();
+        }
+        catch
+        {
+            // ignored
+        }
+        
+        try
+        {
+            Directory.Delete(_tempDir, true);
+        }
+        catch
+        {
+            // ignored
+        }
+        
+        Environment.CurrentDirectory = _prevCurDir;
     }
 }

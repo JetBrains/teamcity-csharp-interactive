@@ -25,10 +25,8 @@ public class CommandLineAsyncCancellation : BaseScenario
         // ## using HostApi;
 
         var cancellationTokenSource = new CancellationTokenSource();
-        Task<int?> task = GetService<ICommandLineRunner>().RunAsync(
-            new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120"),
-            default,
-            cancellationTokenSource.Token);
+        Task<int?> task = new CommandLine("cmd", "/c", "TIMEOUT", "/T", "120")
+            .RunAsync(default, cancellationTokenSource.Token);
 
         cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(100));
         task.IsCompleted.ShouldBeFalse();

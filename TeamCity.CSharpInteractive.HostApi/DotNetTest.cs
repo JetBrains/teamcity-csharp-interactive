@@ -92,7 +92,7 @@ public record DotNetTest(
             .AddNotEmptyArgs(Project)
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddMSBuildIntegration(host, Verbosity)
+            .AddMSBuildLoggers(host, Verbosity)
             .AddArgs(Loggers.Select(i => ("--logger", (string?)i)).ToArray())
             .AddArgs(
                 ("--settings", Settings),

@@ -23,10 +23,10 @@ public class DotNetCustomScenario : BaseScenario
 
         // Gets the dotnet version, running a command like: "dotnet --version"
         NuGetVersion? version = default;
-        var result = new DotNetCustom("--version")
-            .Build(message => NuGetVersion.TryParse(message.Text, out version));
+        var exitCode = new DotNetCustom("--version")
+            .Run(message => NuGetVersion.TryParse(message.Line, out version));
 
-        result.ExitCode.ShouldBe(0);
+        exitCode.ShouldBe(0);
         version.ShouldNotBeNull();
         // }
     }

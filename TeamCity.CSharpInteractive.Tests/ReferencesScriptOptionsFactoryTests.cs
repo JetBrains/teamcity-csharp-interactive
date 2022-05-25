@@ -33,7 +33,7 @@ public class ReferencesScriptOptionsFactoryTests
         _runtimeExplorer.Setup(i => i.TryFindRuntimeAssembly(someLocation, out runtimeLocation)).Returns(true);
 
         // When
-        factory.TryRegisterAssembly(someLocation, out var description).ShouldBeTrue();
+        factory.TryRegisterAssembly(someLocation, out _).ShouldBeTrue();
         var options = factory.Create(ScriptOptions.Default);
 
         // Then

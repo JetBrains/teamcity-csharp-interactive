@@ -23,13 +23,22 @@ public class CommandLineScenario : BaseScenario
         // Adds the namespace "HostApi" to use Command Line API
         // ## using HostApi;
 
-        int? exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
+        var exitCode = GetService<ICommandLineRunner>().Run(new CommandLine("cmd", "/c", "DIR"));
+        exitCode.ShouldBe(0);
         
         // or the same thing using the extension method
         exitCode = new CommandLine("cmd", "/c", "DIR").Run();
-
+        exitCode.ShouldBe(0);
+        
+        // using operator '+'
+        var cmd = new CommandLine("cmd") + "/c" + "DIR";
+        exitCode = cmd.Run();
+        exitCode.ShouldBe(0);
+        
+        // with environment variables
+        cmd = new CommandLine("cmd") + "/c" + "DIR" + ("MyEnvVar", "Some Value");
+        exitCode = cmd.Run();
+        exitCode.ShouldBe(0);
         // }
-
-        exitCode.HasValue.ShouldBeTrue();
     }
 }

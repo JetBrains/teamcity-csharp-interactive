@@ -1,5 +1,7 @@
 using HostApi;
 using NuGet.Versioning;
+// ReSharper disable ArrangeTypeModifiers
+// ReSharper disable CheckNamespace
 
 static class Version
 {
