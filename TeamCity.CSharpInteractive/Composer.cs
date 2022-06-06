@@ -38,6 +38,7 @@ internal static partial class Composer
             .Bind<RunningMode>().To(_ => RunningMode.Application)
 #endif
             .Bind<Assembly>().To(_ => typeof(Composer).Assembly)
+            .Bind<LanguageVersion>().To(_ => new CSharpParseOptions().LanguageVersion)
             .Bind<string>("RuntimePath").To(_ => Path.GetDirectoryName(typeof(object).Assembly.Location) ?? string.Empty)
             .Bind<string>("TargetFrameworkMoniker").To(ctx => ctx.Resolve<Assembly?>()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ?? string.Empty)
             .Bind<Process>().To(_ => Process.GetCurrentProcess())

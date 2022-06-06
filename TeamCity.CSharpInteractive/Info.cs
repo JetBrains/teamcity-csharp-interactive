@@ -4,6 +4,7 @@ namespace TeamCity.CSharpInteractive;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using HostApi;
+using Microsoft.CodeAnalysis.CSharp;
 
 [ExcludeFromCodeCoverage]
 internal class Info : IInfo
@@ -18,13 +19,14 @@ internal class Info : IInfo
 
     public Info(
         Assembly? assembly,
+        LanguageVersion languageVersion,
         IStdOut stdOut,
         ISettings settings,
         IPresenter<IEnumerable<ITraceSource>> tracePresenter,
         IEnumerable<ITraceSource> traceSources,
         IEnumerable<ISettingDescription> settingDescriptions)
     {
-        _description = assembly?.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description ?? string.Empty;
+        _description = string.Format(assembly?.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description ?? "C# {0} script runner", languageVersion.ToDisplayString());
         _version = assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
         _stdOut = stdOut;
         _settings = settings;
@@ -64,7 +66,7 @@ internal class Info : IInfo
             where setting.IsVisible
             select new[]
             {
-                Text.Tab, new Text($"#{setting.Key.PadRight(12, ' ')}", Color.Header),
+                Text.Tab, new Text($"#{setting.Key,-12}", Color.Header),
                 new Text($"{setting.Description} {string.Join(", ", Enum.GetValues(setting.SettingType).OfType<Enum>().Select(i => i.ToString()))}, e.g. "),
                 new Text($"#{setting.Key} {Enum.GetValues(setting.SettingType).OfType<Enum>().LastOrDefault()}", Color.Highlighted),
                 new Text("."),

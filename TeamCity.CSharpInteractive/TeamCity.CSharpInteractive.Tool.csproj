@@ -21,7 +21,7 @@
         <IncludeAssets>All</IncludeAssets>
         <PackageId>TeamCity.csi</PackageId>
         <IncludeAssets>All</IncludeAssets>
-        <Title>TeamCity C# script runner</Title>
+        <Title>TeamCity C# {0} script runner</Title>
         <PackageIcon>_common\icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <Description>$(Company) $(Title) $(Version) $(TargetFramework)</Description>
