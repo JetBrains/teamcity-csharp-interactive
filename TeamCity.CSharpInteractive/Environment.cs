@@ -107,8 +107,20 @@ internal class Environment:
 
     private string GetBinDirectory() => Path.GetDirectoryName(typeof(Environment).Assembly.Location) ?? GetScriptDirectory();
 
-    private string GetScriptDirectory() => 
-        TryGetCurrentSource(out var source) 
-            ? Path.GetDirectoryName(source.Name) ?? GetWorkingDirectory()
-            : GetWorkingDirectory();
+    private string GetScriptDirectory()
+    {
+        var script = string.Empty;
+        if (TryGetCurrentSource(out var source))
+        {
+            script = source.Name;
+        }
+
+        if (string.IsNullOrWhiteSpace(script))
+        {
+            return GetWorkingDirectory();
+        }
+
+        var scriptDirectory = Path.GetDirectoryName(script);
+        return !string.IsNullOrWhiteSpace(scriptDirectory) ? scriptDirectory : script;
+    }
 }

@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 internal readonly record struct ErrorId(string Id)
 {
     public static readonly ErrorId Unhandled = new("CSI000");
-    public static readonly ErrorId File = new("CSI001");
+    public static readonly ErrorId CannotFind = new("CSI001");
     public static readonly ErrorId NuGet = new("CSI002");
     public static readonly ErrorId CannotParsePackageVersion = new("CSI003");
 

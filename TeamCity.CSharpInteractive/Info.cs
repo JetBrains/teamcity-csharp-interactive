@@ -88,10 +88,10 @@ internal class Info : IInfo
     public void ShowHelp() =>
         _stdOut.WriteLine(
             Text.NewLine,
-            new Text("Usage: dotnet csi [options] [script-file.csx] [script-arguments]"), Text.NewLine,
+            new Text("Usage: dotnet csi [options] [script file or directory containing single script file] [script-arguments]"), Text.NewLine,
             Text.Tab, new Text("script arguments are accessible in scripts via a global list called "), new Text("Args", Color.Highlighted), Text.NewLine,
             Text.NewLine,
-            new Text("Executes \"script-file.csx\" if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
+            new Text("Executes a script file if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
             Text.NewLine,
             new Text("Options:"), Text.NewLine,
             Text.Tab, new Text("--help                           ", Color.Header), new Text("Display this usage message (alternative forms: /? -h /h /help)."), Text.NewLine,
