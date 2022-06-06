@@ -11,7 +11,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/JetBrains/teamcity-csharp-interactive</PackageProjectUrl>
         <Company>JetBrains</Company>
-        <Copyright>$(Company) 2021</Copyright>
+        <Copyright>$(Company) 2022</Copyright>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/JetBrains/teamcity-csharp-interactive</RepositoryUrl>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>

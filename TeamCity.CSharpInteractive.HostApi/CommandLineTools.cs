@@ -1,6 +1,6 @@
 namespace HostApi;
 
-public static class CommandLineComposer
+public static class CommandLineTools
 {
     public static ICommandLine Customize(this ICommandLine baseCommandLine, Func<CommandLine, ICommandLine> customizer) => 
         new CustomCommandLine(baseCommandLine, customizer);
