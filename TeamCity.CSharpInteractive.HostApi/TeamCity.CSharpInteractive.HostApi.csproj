@@ -1,11 +1,10 @@
 <!--suppress MsbuildTargetFrameworkTagInspection -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
         <IsPackable>false</IsPackable>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+        <TargetFrameworks>$(Frameworks)</TargetFrameworks>
         <RootNamespace>HostApi</RootNamespace>
+        <ImmutypeAPI>True</ImmutypeAPI>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Immutype" Version="1.0.13">

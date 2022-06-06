@@ -1,13 +1,11 @@
 ﻿<Project>
     <PropertyGroup>
+        <Frameworks>net6.0;net7.0</Frameworks>
+        <TargetFramework>net6.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        <NoWarn>NU1605;NU5118;NU5100</NoWarn>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <PropertyGroup>
+        <NoWarn>NU1605;NU5118;NU5100;NU5131</NoWarn>
         <Version>1.0.0-dev</Version>
         <Authors>NikolayP</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -16,6 +14,14 @@
         <Copyright>$(Company) 2021</Copyright>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/JetBrains/teamcity-csharp-interactive</RepositoryUrl>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>obj/Generated</CompilerGeneratedFilesOutputPath>
+        <ImmutypeAPI>False</ImmutypeAPI>
     </PropertyGroup>
+
+    <ItemGroup>
+        <CompilerVisibleProperty Include="PureDINamespace" />
+        <CompilerVisibleProperty Include="ImmutypeAPI" />
+    </ItemGroup>
 </Project>
 

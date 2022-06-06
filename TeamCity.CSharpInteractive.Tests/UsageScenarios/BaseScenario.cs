@@ -70,15 +70,6 @@ public class BaseScenario : IHost, IDisposable
     {
         try
         {
-            new DotNetBuildServerShutdown().Run();
-        }
-        catch
-        {
-            // ignored
-        }
-        
-        try
-        {
             Directory.Delete(_tempDir, true);
         }
         catch

@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <TargetFrameworks>$(Frameworks)</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.3" />

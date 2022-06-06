@@ -15,11 +15,10 @@ if (!File.Exists(solutionFile))
     return 1;
 }
 
-var underTeamCity = Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != default;
 var configuration = Property.Get("configuration", "Release");
 var apiKey = Property.Get("apiKey", "");
-var integrationTests = bool.Parse(Property.Get("integrationTests", underTeamCity.ToString()));
-var defaultVersion = NuGetVersion.Parse(Property.Get("version", "1.0.0-dev", underTeamCity));
+var integrationTests = bool.Parse(Property.Get("integrationTests", Tools.UnderTeamCity.ToString()));
+var defaultVersion = NuGetVersion.Parse(Property.Get("version", "1.0.0-dev", Tools.UnderTeamCity));
 var outputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive", "bin", configuration);
 var templateOutputDir = Path.Combine(currentDir, "TeamCity.CSharpInteractive.Templates", "bin", configuration);
 
@@ -106,19 +105,8 @@ var test = new DotNetTest()
     .WithProject(solutionFile)
     .WithConfiguration(configuration)
     .WithNoBuild(true)
-    .WithProps(buildProps);
-
-if (!integrationTests)
-{
-    test = test.WithFilter("Integration!=true");
-    Warning("Integration tests were skipped.");
-}
-
-if (!dockerLinuxTests)
-{
-    test = test.WithFilter(string.Join('&', test.Filter, "Integration!=true"));
-    Warning("Docker tests were skipped.");
-}
+    .WithProps(buildProps)
+    .WithFilter("Integration!=true&Docker!=true");
 
 Assertion.Succeed(test.Build());
 
@@ -214,13 +202,19 @@ else
     Info("Pushing NuGet packages were skipped.");
 }
 
+if (integrationTests || dockerLinuxTests)
+{
+    var logicOp = integrationTests && dockerLinuxTests ? "|" : "&";
+    var filter = $"Integration={integrationTests}{logicOp}Docker={dockerLinuxTests}";
+    Assertion.Succeed(test.WithFilter(filter).Build());
+}
+
 WriteLine("To use the csi tool:", Color.Highlighted);
 WriteLine("    dotnet csi /?", Color.Highlighted);
 WriteLine("To create a build project from the template:", Color.Highlighted);
 WriteLine($"    dotnet new build --package-version={packageVersion}", Color.Highlighted);
 WriteLine($"Tool and package version: {packageVersion}", Color.Highlighted);
 WriteLine($"Template version: {templatePackageVersion}", Color.Highlighted);
-
 return 0;
 
 record PackageInfo(string Id, string Project, string Package, NuGetVersion Version, bool Publish);

@@ -3,6 +3,11 @@ using NuGet.Versioning;
 // ReSharper disable ArrangeTypeModifiers
 // ReSharper disable CheckNamespace
 
+static class Tools
+{
+    public static bool UnderTeamCity => Environment.GetEnvironmentVariable("TEAMCITY_VERSION") != default;
+}
+
 static class Version
 {
     public static NuGetVersion GetNext(NuGetRestoreSettings settings, NuGetVersion defaultVersion)
@@ -56,7 +61,7 @@ static class Assertion
         }
 
         Error($"{shortName} failed.");
-        Environment.Exit(1);
+        Exit();
         return false;
     }
 
@@ -86,7 +91,7 @@ static class Assertion
     {
         if (!CheckBuildResult(result))
         {
-            Environment.Exit(1);
+            Exit();
         }
     }
 
@@ -97,7 +102,7 @@ static class Assertion
             return true;
         }
 
-        Environment.Exit(1);
+        Exit();
         return true;
     }
 
@@ -108,7 +113,46 @@ static class Assertion
             return true;
         }
 
-        Environment.Exit(1);
+        Exit();
         return true;
+    }
+
+    private static void Exit()
+    {
+        if (!Tools.UnderTeamCity)
+        {
+            var foregroundColor = Console.ForegroundColor;
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                var timeout = TimeSpan.FromSeconds(10);
+                var period = TimeSpan.FromMilliseconds(10);
+                while (timeout > period)
+                {
+                    if (Console.KeyAvailable)
+                    {
+                        if (Console.ReadKey(true).Key == ConsoleKey.Y)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    Thread.Sleep(period);
+                    timeout -= period;
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.Write($"Continue this build? {(int)timeout.TotalSeconds:00} y/n");
+                }
+            }
+            finally
+            {
+                Console.ForegroundColor = foregroundColor;
+            }
+        }
+        
+        Environment.Exit(1);
     }
 }

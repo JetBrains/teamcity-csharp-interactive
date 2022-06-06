@@ -2,24 +2,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <TargetFrameworks>$(Frameworks)</TargetFrameworks>
         <AssemblyName>dotnet-csi</AssemblyName>
         <IsPackable>true</IsPackable>
         <RootNamespace>TeamCity.CSharpInteractive</RootNamespace>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)GeneratedForTool</CompilerGeneratedFilesOutputPath>
-        <ImmutypeAPI>False</ImmutypeAPI>
         <DefineConstants>$(DefineConstants);TOOL</DefineConstants>
         <ProjectOutputPath>$(configuration)/$(MSBuildThisFileName)</ProjectOutputPath>
         <OutputPath>bin/$(ProjectOutputPath)</OutputPath>
         <IntermediateOutputPath>obj/$(ProjectOutputPath)/</IntermediateOutputPath>
         <PureDINamespace>TeamCity.CSharpInteractive</PureDINamespace>
+        <CompilerGeneratedFilesOutputPath>$(CompilerGeneratedFilesOutputPath)/$(MSBuildThisFileName)</CompilerGeneratedFilesOutputPath>
     </PropertyGroup>
-
-    <ItemGroup>
-        <CompilerVisibleProperty Include="PureDINamespace" />
-    </ItemGroup>
-
+    
     <PropertyGroup>
         <PackageType>DotNetCliTool</PackageType>
         <PackAsTool>true</PackAsTool>
@@ -47,8 +41,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.2.0" />
-        <CompilerVisibleProperty Include="PureDINamespace" />
-        <CompilerVisibleProperty Include="ImmutypeAPI" />
         <PackageReference Include="Pure.DI" Version="1.1.37">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
