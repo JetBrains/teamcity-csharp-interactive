@@ -6,21 +6,6 @@ public class CommandLineParserTests
 
     public CommandLineParserTests() => _fileSystem = new Mock<IFileSystem>();
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    internal void ShouldParseArguments(string[] arguments, CommandLineArgumentType defaultArgType, CommandLineArgument[] expectedArguments)
-    {
-        // Given
-        var parser = CreateInstance();
-        _fileSystem.Setup(i => i.ReadAllLines("rspFile")).Returns(new[] {"-S", "Src2", "/Source", "Src3"});
-
-        // When
-        var actualArguments = parser.Parse(arguments, defaultArgType);
-
-        // Then
-        actualArguments.ShouldBe(expectedArguments);
-    }
-
     public static IEnumerable<object?[]> Data => new List<object?[]>
     {
         // help
@@ -210,6 +195,19 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src2")
             }
         },
+        
+        new object[]
+        {
+            new[] {"--source", "Src1", "--", "ScriptFile", "Src2", "-p:Abc=Xyz"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src1"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptFile, "ScriptFile"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src2"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "-p:Abc=Xyz")
+            }
+        },
 
         // when Tool
         new object[]
@@ -273,8 +271,73 @@ public class CommandLineParserTests
             {
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "", "Key1")
             }
-        }
+        },
+        
+        new object[]
+        {
+            new[] {"--Property:Key1=Val1"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"--Property: Key1  = Val1  "},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, " Val1  ", " Key1  ")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"/Property:Key1=Val1"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"-p:Key1=Val1"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"/P:Key1=Val1"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
+            }
+        },
     };
+    
+    [Theory]
+    [MemberData(nameof(Data))]
+    internal void ShouldParseArguments(string[] arguments, CommandLineArgumentType defaultArgType, CommandLineArgument[] expectedArguments)
+    {
+        // Given
+        var parser = CreateInstance();
+        _fileSystem.Setup(i => i.ReadAllLines("rspFile")).Returns(new[] {"-S", "Src2", "/Source", "Src3"});
+
+        // When
+        var actualArguments = parser.Parse(arguments, defaultArgType).ToList();
+
+        // Then
+        actualArguments.ShouldBe(expectedArguments);
+    }
 
     private CommandLineParser CreateInstance() =>
         new(_fileSystem.Object);

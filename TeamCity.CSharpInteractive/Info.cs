@@ -88,7 +88,7 @@ internal class Info : IInfo
     public void ShowHelp() =>
         _stdOut.WriteLine(
             Text.NewLine,
-            new Text("Usage: dotnet csi [options] [script file or directory containing single script file] [script-arguments]"), Text.NewLine,
+            new Text("Usage: dotnet csi [options] [--] [script file or directory containing single script file] [script-arguments]"), Text.NewLine,
             Text.Tab, new Text("script arguments are accessible in scripts via a global list called "), new Text("Args", Color.Highlighted), Text.NewLine,
             Text.NewLine,
             new Text("Executes a script file if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
@@ -98,6 +98,7 @@ internal class Info : IInfo
             Text.Tab, new Text("--version                        ", Color.Header), new Text("Display the version and exit (alternative form: /version)."), Text.NewLine,
             Text.Tab, new Text("--source <NuGet package source>  ", Color.Header), new Text("NuGet package source (URL, UNC/folder path) to use (alternative forms: -s /source /s)."), Text.NewLine,
             Text.Tab, new Text("--property <key=value>           ", Color.Header), new Text("Define a key=value pair for the global dictionary called "), new Text("Props", Color.Highlighted), new Text(" accessible in scripts (alternative forms: -p /property /p)."), Text.NewLine,
+            Text.Tab, new Text("--property:<key=value>           ", Color.Header), new Text("Define a key=value pair in MSBuild style for the global dictionary called "), new Text("Props", Color.Highlighted), new Text(" accessible in scripts (alternative forms: -p:<key=value> /property:<key=value> /p:<key=value>)."), Text.NewLine,
             Text.Tab, new Text("@<file>                          ", Color.Header), new Text("Read response file for more options."), Text.NewLine,
             Text.Tab, new Text("--                               ", Color.Header), new Text("Indicates that the remaining arguments should not be treated as options."), Text.NewLine
         );
