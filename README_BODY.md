@@ -10,22 +10,6 @@ command-line tool on Windows, Linux, or macOS.
 
 The tool requires .NET 6+ runtime.
 
-## Download and Install TeamCity.csi
-
-TeamCity.csi is available as a [NuGet package](https://www.nuget.org/packages/TeamCity.csi/).
-
-Install the tool on your OS:
-
-```Shell
-dotnet tool install TeamCity.csi -g --version <version>
-```
-
-Uninstall the tool:
-
-```Shell
-dotnet tool uninstall TeamCity.csi -g
-```
-
 ## Use Inside TeamCity
 
 Currently, the tool can be used as a TeamCity build runner provided in terms of TeamCity
@@ -34,7 +18,18 @@ more details.
 
 ## Use Outside TeamCity
 
-You can use this tool independently of TeamCity, to run tasks in C# from the command line on any supported OS.
+After installing tool you can use this tool independently of TeamCity, to run C# scripts from the command line. TeamCity.csi is available as a [NuGet package](https://www.nuget.org/packages/TeamCity.csi/). Before installing TeamCity.csi as a local tool dot not forget to create .NET local tool manifest file if it is not exist. Install the tool and add to the local tool manifest:
+
+```Shell
+dotnet new tool-manifest
+dotnet tool install TeamCity.csi --version <version>
+```
+
+Or install the tool for the current user:
+
+```Shell
+dotnet tool install TeamCity.csi -g --version <version>
+```
 
 Launch the tool in the interactive mode:
 
@@ -48,25 +43,31 @@ Run a specified script with a given argument:
 dotnet csi script-file.csx
 ```
 
+Run a single script located in the _MyDirectory_ directory:
+
+```Shell
+dotnet csi MyDirectory
+```
+
 Usage:
 
 ```Shell
-dotnet csi [options] [script-file.csx] [script-arguments]
+dotnet csi [options] [--] [script file or directory containing single script file] [script-arguments]
 ```
 
 Script arguments are accessible in scripts via a global list called _Args_.
 
 Supported arguments:
 
-| Option | Description | Alternative form |
-| -------- | ------------| ---------------- |
-| `--help` | Show how to use the command. | `/?`, `-h`, `/h`, `/help` |
-| `--version` | Display the tool version. | `/version` |
-| `--source` | Specify the NuGet package source to use. Supported formats: URL, or a UNC directory path. | `-s`, `/s`, `/source` |
-| `--property <key=value>` | Define a _key=value_ pair for the global dictionary called _
-Props_, which is accessible in scripts. | `-p`, `/property`, `/p` |
-| `@file` | Read the response file for more options. | |
-| `--` | Indicates that the remaining arguments should not be treated as options. | |
+| Option | Description                                                                                                          | Alternative form |
+| -------- |----------------------------------------------------------------------------------------------------------------------| ---------------- |
+| `--help` | Show how to use the command.                                                                                         | `/?`, `-h`, `/h`, `/help` |
+| `--version` | Display the tool version.                                                                                            | `/version` |
+| `--source` | Specify the NuGet package source to use. Supported formats: URL, or a UNC directory path.                            | `-s`, `/s`, `/source` |
+| `--property <key=value>` | Define a _key=value_ pair for the global dictionary called _Props_, which is accessible in scripts.                  | `-p`, `/property`, `/p` |
+| `--property:<key=value>` | Define a _key=value_ pair in MSBuild style for the global dictionary called _Props_, which is accessible in scripts. | `-p:<key=value>`, `/property:<key=value>`, `/p:<key=value>` |
+| `@file` | Read the response file for more options.                                                                             | |
+| `--` | Indicates that the remaining arguments should not be treated as options.                                             | |
 
 ## Report and Track Issues
 
