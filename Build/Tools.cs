@@ -2,6 +2,7 @@ using HostApi;
 using NuGet.Versioning;
 // ReSharper disable ArrangeTypeModifiers
 // ReSharper disable CheckNamespace
+// ReSharper disable ConvertIfStatementToReturnStatement
 
 static class Tools
 {
@@ -21,9 +22,24 @@ static class Version
             .Where(i => i.Name == settings.PackageId)
             .Select(i => i.NuGetVersion)
             .Select(i => defaultVersion.Release != string.Empty
-                ? new NuGetVersion(i.Major, i.Minor, i.Patch, defaultVersion.Release)
+                ? new NuGetVersion(i.Major, i.Minor, i.Patch, GetNextRelease(i, defaultVersion.Release))
                 : new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
             .Max() ?? defaultVersion;
+    }
+
+    private static string GetNextRelease(SemanticVersion curVersion, string release)
+    {
+        if (!curVersion.Release.ToLowerInvariant().StartsWith(release.ToLowerInvariant()))
+        {
+            return release;
+        }
+
+        if (int.TryParse(string.Concat(curVersion.Release.Where(char.IsNumber)), out var num))
+        {
+            return $"{string.Concat(curVersion.Release.Where(i => !char.IsNumber(i)))}{num + 1}";
+        }
+
+        return release;
     }
 }
 

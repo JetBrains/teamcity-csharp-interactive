@@ -121,6 +121,20 @@ public class CommandLineParserTests
                 new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src4")
             }
         },
+        
+        // not @file when starting from @@
+        new object[]
+        {
+            new[] {"--source", "Src1", "@@rspFile", "/S", "Src4"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.NuGetSource, "Src1"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptFile, "@@rspFile"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "/S"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptArgument, "Src4")
+            }
+        },
 
         // Script
         new object[]

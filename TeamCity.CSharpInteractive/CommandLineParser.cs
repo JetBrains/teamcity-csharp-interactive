@@ -59,7 +59,7 @@ internal class CommandLineParser : ICommandLineParser
                 }
                 else
                 {
-                    if (argument.StartsWith('@'))
+                    if (argument.StartsWith('@') && !argument.StartsWith("@@"))
                     {
                         enumerators.Insert(0, _fileSystem.ReadAllLines(argument[1..]).GetEnumerator());
                         continue;
