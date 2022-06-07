@@ -69,6 +69,33 @@ Supported arguments:
 | `@file` | Read the response file for more options.                                                                             | |
 | `--` | Indicates that the remaining arguments should not be treated as options.                                             | |
 
+## Command line sample
+
+```Shell
+echo Creates a new solution "MySolution" in the current directory.
+dotnet new sln -n MySolution
+
+echo Creates a sample project "MyLib" and adds it to the solution "MySolution".
+dotnet new classlib -n MyLib
+dotnet sln add MyLib
+
+echo Installs template "build".
+dotnet new install TeamCity.CSharpInteractive.Templates
+
+echo Creates a sample build project "Build" using the template "build" and adds it to the solution "MySolution".
+dotnet new build -n Build
+dotnet sln add Build
+
+echo Creates a local manifest file for the solution "MySolution" and installs the .NET tool TeamCity.csi locally.
+dotnet new tool-manifest
+dotnet tool install TeamCity.csi
+
+echo Runs a script from the "Build" project to build solution "MySolution" from the solution directory.
+dotnet csi Build
+```
+
+You can modify, debug and run the project "Build" as a ordinary .NET console application and run it as a C# script using ```dotnet csi Build``` from the command line.
+
 ## Report and Track Issues
 
 Please use our YouTrack
