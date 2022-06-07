@@ -1,6 +1,8 @@
 // ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InvertIf
 namespace TeamCity.CSharpInteractive;
 
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 internal class Statistics : IStatistics
@@ -9,9 +11,27 @@ internal class Statistics : IStatistics
     private readonly List<string> _errors = new();
     private readonly List<string> _warnings = new();
 
-    public IReadOnlyCollection<string> Errors => _errors;
+    public IReadOnlyCollection<string> Errors
+    {
+        get
+        {
+            lock (_errors)
+            {
+                return new ReadOnlyCollection<string>(_errors);   
+            }
+        }
+    }
 
-    public IReadOnlyCollection<string> Warnings => _warnings;
+    public IReadOnlyCollection<string> Warnings
+    {
+        get
+        {
+            lock (_warnings)
+            {
+                return new ReadOnlyCollection<string>(_warnings);   
+            }
+        }
+    }
 
     public TimeSpan TimeElapsed => _stopwatch.Elapsed;
 
@@ -26,7 +46,10 @@ internal class Statistics : IStatistics
         error = error.Trim();
         if (!string.IsNullOrWhiteSpace(error))
         {
-            _errors.Add(error);
+            lock (_errors)
+            {
+                _errors.Add(error);   
+            }
         }
     }
 
@@ -35,7 +58,10 @@ internal class Statistics : IStatistics
         warning = warning.Trim();
         if (!string.IsNullOrWhiteSpace(warning))
         {
-            _warnings.Add(warning);
+            lock (_warnings)
+            {
+                _warnings.Add(warning);   
+            }
         }
     }
 }

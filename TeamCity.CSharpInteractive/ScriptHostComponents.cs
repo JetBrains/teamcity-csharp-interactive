@@ -7,7 +7,6 @@ using HostApi;
 internal readonly record struct ScriptHostComponents(
     IHost Host,
     IStatistics Statistics,
-    IPresenter<Summary> SummaryPresenter,
     ILog<ScriptHostComponents> Log,
     IInfo Info,
     IExitTracker ExitTracker);

@@ -23,7 +23,7 @@ public static class Host
     {
         Components.Info.ShowHeader();
         FinishToken = Disposable.Create(Components.ExitTracker.Track(), Components.Statistics.Start());
-        AppDomain.CurrentDomain.DomainUnload += (_, _) => Finish();
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => Finish();
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
     }
 
@@ -32,7 +32,7 @@ public static class Host
         try
         {
             FinishToken.Dispose();
-            Components.SummaryPresenter.Show(Summary.Empty);
+            Composer.FinalDispose();
         }
         catch (Exception ex)
         {

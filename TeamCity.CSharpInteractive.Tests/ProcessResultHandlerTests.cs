@@ -7,6 +7,7 @@ public class ProcessResultHandlerTests
 {
     private readonly Mock<ILog<ProcessResultHandler>> _log = new();
     private readonly Mock<IStartInfo> _startInfo = new();
+    private readonly Mock<IExitTracker> _exitTracker = new();
     private readonly Text[] _description = {new("Abc")};
     private readonly Action<object> _handler = Mock.Of<Action<object>>();
     
@@ -51,6 +52,20 @@ public class ProcessResultHandlerTests
     }
     
     [Fact]
+    public void ShouldNotLogWarningWhenCanceledAndTerminating()
+    {
+        // Given
+        var handler = CreateInstance();
+
+        // When
+        _exitTracker.SetupGet(i => i.IsTerminating).Returns(true);
+        handler.Handle(new ProcessResult(_startInfo.Object, ProcessState.Canceled, 12, _description), default(Action<object>));
+
+        // Then
+        _log.Verify(i => i.Warning(_description), Times.Never);
+    }
+    
+    [Fact]
     public void ShouldLogErrorWhenFailedAndHasNoHandler()
     {
         // Given
@@ -78,5 +93,5 @@ public class ProcessResultHandlerTests
     }
 
     private ProcessResultHandler CreateInstance() =>
-        new(_log.Object);
+        new(_log.Object, _exitTracker.Object);
 }

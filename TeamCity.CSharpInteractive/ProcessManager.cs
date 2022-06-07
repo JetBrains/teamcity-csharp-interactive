@@ -13,6 +13,7 @@ internal class ProcessManager : IProcessManager
     private readonly ILog<ProcessManager> _log;
     private readonly IProcessOutputWriter _processOutputWriter;
     private readonly IStartInfoFactory _startInfoFactory;
+    private readonly IExitTracker _exitTracker;
     private readonly Process _process;
     private int _disposed;
     private IStartInfo? _startInfo;
@@ -21,11 +22,13 @@ internal class ProcessManager : IProcessManager
     public ProcessManager(
         ILog<ProcessManager> log,
         IProcessOutputWriter processOutputWriter,
-        IStartInfoFactory startInfoFactory)
+        IStartInfoFactory startInfoFactory,
+        IExitTracker exitTracker)
     {
         _log = log;
         _processOutputWriter = processOutputWriter;
         _startInfoFactory = startInfoFactory;
+        _exitTracker = exitTracker;
         _process = new Process {EnableRaisingEvents = true};
         _process.OutputDataReceived += ProcessOnOutputDataReceived;
         _process.ErrorDataReceived += ProcessOnErrorDataReceived;
@@ -85,6 +88,10 @@ internal class ProcessManager : IProcessManager
             _log.Trace(() => new[] {new Text($"{_description} is terminating.")}, _description);
             _process.Kill();
             _log.Trace(() => new[] {new Text($"{_description} was terminated.")}, _description);
+            if (_exitTracker.IsTerminating)
+            {
+                _log.Warning($"{_description} was forcibly stopped. Try to wait for completion or cancel this process on one's own to avoid this warning.");
+            }
         }
         catch (Exception ex)
         {

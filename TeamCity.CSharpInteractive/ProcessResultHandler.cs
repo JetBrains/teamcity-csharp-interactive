@@ -6,11 +6,23 @@ using HostApi;
 internal class ProcessResultHandler : IProcessResultHandler
 {
     private readonly ILog<ProcessResultHandler> _log;
+    private readonly IExitTracker _exitTracker;
 
-    public ProcessResultHandler(ILog<ProcessResultHandler> log) => _log = log;
+    public ProcessResultHandler(
+        ILog<ProcessResultHandler> log,
+        IExitTracker exitTracker)
+    {
+        _log = log;
+        _exitTracker = exitTracker;
+    }
 
     public void Handle<T>(ProcessResult result, Action<T>? handler)
     {
+        if (_exitTracker.IsTerminating)
+        {
+            return;
+        }
+
         var description = result.Description;
         if (result.Error != default)
         {
