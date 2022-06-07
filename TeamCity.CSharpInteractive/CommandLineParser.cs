@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 internal class CommandLineParser : ICommandLineParser
 {
-    private static readonly Regex PropertyRegex = new Regex(@"^(--property|-p|/property|/p):(\s*\w+\s*=\s*\w+\s*)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private static readonly Regex PropertyRegex = new(@"^(--property|-p|/property|/p):(.+)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private readonly IFileSystem _fileSystem;
 
     public CommandLineParser(IFileSystem fileSystem) =>
@@ -65,7 +65,7 @@ internal class CommandLineParser : ICommandLineParser
                         continue;
                     }
 
-                    switch (argument.ToLowerInvariant())
+                    switch (argument.ToLowerInvariant().Trim())
                     {
                         case "--help":
                         case "/help":

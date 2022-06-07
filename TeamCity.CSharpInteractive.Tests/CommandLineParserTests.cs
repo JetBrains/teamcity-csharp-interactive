@@ -15,6 +15,13 @@ public class CommandLineParserTests
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
+        
+        new object[]
+        {
+            new[] {"--help "},
+            CommandLineArgumentType.ScriptFile,
+            new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
+        },
 
         new object[]
         {
@@ -280,6 +287,26 @@ public class CommandLineParserTests
             new[]
             {
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"--Property:Key12ab.,+-~#=Val12ab.,+-~#"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty,"Val12ab.,+-~#", "Key12ab.,+-~#")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"--Property:Key12ab.,+-~#=Val12a=b.,+-~#"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty,"Val12a=b.,+-~#", "Key12ab.,+-~#")
             }
         },
         
