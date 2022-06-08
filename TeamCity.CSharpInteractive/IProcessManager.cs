@@ -14,9 +14,9 @@ internal interface IProcessManager : IDisposable
 
     bool Start(IStartInfo info, out Exception? error);
 
-    void WaitForExit();
-
     bool WaitForExit(TimeSpan timeout);
+
+    Task WaitForExitAsync(CancellationToken cancellationToken);
 
     bool Kill();
 }

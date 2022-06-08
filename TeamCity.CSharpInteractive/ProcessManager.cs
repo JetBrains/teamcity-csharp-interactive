@@ -77,9 +77,19 @@ internal class ProcessManager : IProcessManager
         return true;
     }
 
-    public void WaitForExit() => _process.WaitForExit();
+    public Task WaitForExitAsync(CancellationToken cancellationToken) =>
+        _process.WaitForExitAsync(cancellationToken);
+    
+    public bool WaitForExit(TimeSpan timeout)
+    {
+        if (timeout != TimeSpan.Zero)
+        {
+            return _process.WaitForExit((int)timeout.TotalMilliseconds);
+        }
 
-    public bool WaitForExit(TimeSpan timeout) => _process.WaitForExit((int)timeout.TotalMilliseconds);
+        _process.WaitForExit();
+        return true;
+    }
 
     public bool Kill()
     {
@@ -106,7 +116,11 @@ internal class ProcessManager : IProcessManager
 
     private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e) => ProcessOutput(e, true);
 
-    private void ProcessOnExited(object? sender, EventArgs e) => OnExit?.Invoke();
+    private void ProcessOnExited(object? sender, EventArgs e)
+    {
+        _process.WaitForExit();
+        OnExit?.Invoke();
+    }
 
     private void ProcessOutput(DataReceivedEventArgs e, bool isError)
     {
@@ -138,6 +152,8 @@ internal class ProcessManager : IProcessManager
                 return;
             }
 
+            OnOutput = default;
+            OnExit = default;
             _process.Exited -= ProcessOnExited;
             _process.OutputDataReceived -= ProcessOnOutputDataReceived;
             _process.ErrorDataReceived -= ProcessOnErrorDataReceived;

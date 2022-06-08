@@ -3,104 +3,108 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using HostApi;
 
 internal class ProcessRunner : IProcessRunner
 {
     private readonly Func<IProcessManager> _processManagerFactory;
-    private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public ProcessRunner(
-        Func<IProcessManager> processManagerFactory,
-        CancellationTokenSource cancellationTokenSource)
-    {
+    public ProcessRunner(Func<IProcessManager> processManagerFactory) =>
         _processManagerFactory = processManagerFactory;
-        _cancellationTokenSource = cancellationTokenSource;
-    }
 
     public ProcessResult Run(ProcessInfo processInfo, TimeSpan timeout)
     {
-        var (startInfo, monitor, handler) = processInfo;
-        using var processManager = _processManagerFactory();
-        if (handler != default)
+        var processManager = _processManagerFactory();
+        var process = new Process(processInfo, processManager);
+        if (!process.TryStart(out var processResult))
         {
-            processManager.OnOutput += handler;
+            return processResult;
         }
 
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-        if (!processManager.Start(startInfo, out var error))
-        {
-            stopwatch.Stop();
-            return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed, default, error);
-        }
+        var finished = processManager.WaitForExit(timeout);
 
-        monitor.Started(startInfo, processManager.Id);
-        var finished = true;
-        if (timeout == TimeSpan.Zero)
-        {
-            processManager.WaitForExit();
-        }
-        else
-        {
-            finished = processManager.WaitForExit(timeout);
-        }
-
-        if (finished)
-        {
-            stopwatch.Stop();
-            return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Finished, processManager.ExitCode);
-        }
-
-        processManager.Kill();
-        stopwatch.Stop();
-        return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
+        return process.Finish(finished);
     }
 
     public async Task<ProcessResult> RunAsync(ProcessInfo processInfo, CancellationToken cancellationToken)
     {
-        var (startInfo, monitor, handler) = processInfo;
-        if (cancellationToken == default || cancellationToken == CancellationToken.None)
+        var processManager =  _processManagerFactory();
+        var process = new Process(processInfo, processManager);
+        if (!process.TryStart(out var processResult))
         {
-            cancellationToken = _cancellationTokenSource.Token;
+            return processResult;
         }
+        
+        await processManager.WaitForExitAsync(cancellationToken);
+        var finished = !cancellationToken.IsCancellationRequested;
 
-        var processManager = _processManagerFactory();
-        if (handler != default)
+        return process.Finish(finished);
+    }
+
+    private class Process
+    {
+        public Process(ProcessInfo processInfo, IProcessManager processManager)
         {
-            processManager.OnOutput += handler;
+            ProcessInfo = processInfo;
+            ProcessManager = processManager;
+            Stopwatch = new Stopwatch();
         }
+        
+        private IProcessManager ProcessManager { get; }
+        
+        private ProcessInfo ProcessInfo { get; }
+        
+        private Stopwatch Stopwatch { get; }
 
-        var completionSource = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        // ReSharper disable once AccessToDisposedClosure
-        processManager.OnExit += () => completionSource.TrySetResult(processManager.ExitCode);
-        var stopwatch = new Stopwatch();
-        if (!processManager.Start(startInfo, out var error))
-        {
-            stopwatch.Stop();
-            var result = monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, ProcessState.Failed, default, error);
-            processManager.Dispose();
-            return result;
-        }
+        private IStartInfo StartInfo => ProcessInfo.StartInfo;
 
-        monitor.Started(startInfo, processManager.Id);
-        void Cancel()
+        private IProcessMonitor Monitor => ProcessInfo.Monitor;
+
+        private Action<Output>? Handler => ProcessInfo.Handler;
+        
+        public bool TryStart([MaybeNullWhen(true)] out ProcessResult processResult)
         {
-            if (processManager.Kill())
+            if (Handler != default)
             {
-                completionSource.TrySetCanceled(cancellationToken);
+                ProcessManager.OnOutput += Handler;
             }
 
-            processManager.Dispose();
-        }
-
-        await using (cancellationToken.Register(Cancel, false))
-        {
-            using (processManager)
+            Stopwatch.Start();
+            if (!ProcessManager.Start(StartInfo, out var error))
             {
-                var exitCode = await completionSource.Task.ConfigureAwait(false);
-                stopwatch.Stop();
-                return monitor.Finished(startInfo, stopwatch.ElapsedMilliseconds, cancellationToken.IsCancellationRequested ? ProcessState.Canceled : ProcessState.Finished, exitCode);
+                Stopwatch.Stop();
+                {
+                    processResult = Monitor.Finished(StartInfo, Stopwatch.ElapsedMilliseconds, ProcessState.Failed, default, error);
+                    if (Handler != default)
+                    {
+                        ProcessManager.OnOutput -= Handler;
+                    }
+                    return false;
+                }
             }
+
+            Monitor.Started(StartInfo, ProcessManager.Id);
+            processResult = default;
+            return true;
+        }
+    
+        public ProcessResult Finish(bool finished)
+        {
+            if (Handler != default)
+            {
+                ProcessManager.OnOutput -= Handler;
+            }
+
+            if (finished)
+            {
+                Stopwatch.Stop();
+                return Monitor.Finished(StartInfo, Stopwatch.ElapsedMilliseconds, ProcessState.Finished, ProcessManager.ExitCode);
+            }
+
+            ProcessManager.Kill();
+            Stopwatch.Stop();
+            return Monitor.Finished(StartInfo, Stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
         }
     }
 }
