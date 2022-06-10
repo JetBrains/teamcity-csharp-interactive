@@ -13,4 +13,5 @@
 // #load "MyClass.cs"
 
 #load "Tools.cs"
+#load "ServiceMessages.cs"
 #load "Program.cs"

@@ -71,6 +71,12 @@ var packages = new[]
 };
 
 Assertion.Succeed(
+    new DotNetToolRestore()
+        .Run(),
+    "Restore tools"
+);
+
+Assertion.Succeed(
     new DotNetClean()
         .WithProject(solutionFile)
         .WithVerbosity(DotNetVerbosity.Quiet)
@@ -101,14 +107,50 @@ Assertion.Succeed(
         .WithProps(buildProps)
         .Build());
 
-var test = new DotNetTest()
-    .WithProject(solutionFile)
-    .WithConfiguration(configuration)
-    .WithNoBuild(true)
-    .WithProps(buildProps)
-    .WithFilter("Integration!=true&Docker!=true");
+var reportDir = Path.Combine(currentDir, ".reports");
+var test = 
+    new DotNetTest()
+        .WithProject(solutionFile)
+        .WithConfiguration(configuration)
+        .WithNoBuild(true)
+        .WithProps(buildProps)
+        .WithFilter("Integration!=true&Docker!=true");
 
-Assertion.Succeed(test.Build());
+var dotCoverSnapshot = Path.Combine(reportDir, "dotCover.dcvr");
+if (File.Exists(dotCoverSnapshot))
+{
+    File.Delete(dotCoverSnapshot);
+}
+
+Assertion.Succeed(
+    test
+        .Customize(cmd => 
+            cmd.WithArgs("dotcover")
+            + cmd.Args
+            + $"--dcOutput={dotCoverSnapshot}"
+            + "--dcFilters=+:module=TeamCity.CSharpInteractive.HostApi;+:module=dotnet-csi"
+            + "--dcAttributeFilters=System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage")
+        .Build());
+
+var teamCityWriter = GetService<ITeamCityWriter>();
+if (Tools.UnderTeamCity)
+{
+    teamCityWriter.WriteRawMessage(new DotNetCoverageServiceMessage());
+    teamCityWriter.WriteRawMessage(new ImportDataDotCoverReportServiceMessage(dotCoverSnapshot));
+}
+else
+{
+    var dotCoverReport = Path.Combine(reportDir, "dotCover.html");
+    if (File.Exists(dotCoverReport))
+    {
+        File.Delete(dotCoverReport);
+    }
+    
+    Assertion.Succeed(
+        new DotNetCustom("dotCover", "report", $"--source={dotCoverSnapshot}", $"--output={dotCoverReport}", "--reportType=HTML")
+            .Run(),
+        "Generating the code coverage report");
+}
 
 foreach (var package in packages)
 {
@@ -176,8 +218,6 @@ foreach (var framework in frameworks)
 }
 
 Info("Publishing artifacts.");
-var teamCityWriter = GetService<ITeamCityWriter>();
-
 foreach (var package in packages)
 {
     if (!File.Exists(package.Package))

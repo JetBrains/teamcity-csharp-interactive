@@ -47,13 +47,13 @@ public class DotNetTestWithDotCoverScenario : BaseScenario
         result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
         
         // Generates a JSON code coverage report.
-        exitCode = new DotNetCustom("dotCover", "report", "--source=dotCover.Output.dcvr", "--reportType=JSON")
+        exitCode = new DotNetCustom("dotCover", "report", "--source=dotCover.Output.dcvr", "--reportType=HTML")
             .WithWorkingDirectory("MyTests")
             .Run();
         exitCode.ShouldBe(0);
         
         // Check for a dotCover report
-        File.Exists(Path.Combine("MyTests", "dotCover.Output.json")).ShouldBeTrue();
+        File.Exists(Path.Combine("MyTests", "dotCover.Output.html")).ShouldBeTrue();
         // }
     }
 }
