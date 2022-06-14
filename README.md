@@ -642,21 +642,29 @@ using HostApi;
 var exitCode = new DotNetNew("mstest", "-n", "MyTests", "--force").Run();
 exitCode.ShouldBe(0);
 
-exitCode = new DotNetNew("tool-manifest")
-    .WithWorkingDirectory("MyTests")
-    .Run();
+// Creates the tool manifest and installs the dotCover tool locally
+// It is better to run the following 2 commands manually
+// and commit these changes to a source control
+exitCode = new DotNetNew("tool-manifest").Run();
 exitCode.ShouldBe(0);
 
-exitCode = new DotNetCustom("tool",  "install", "--local", "JetBrains.dotCover.GlobalTool")
-    .WithWorkingDirectory("MyTests")
-    .Run();
+exitCode = new DotNetCustom("tool",  "install", "--local", "JetBrains.dotCover.GlobalTool").Run();
 exitCode.ShouldBe(0);
 
+var dotCoverSnapshot = Path.Combine("MyTests", "dotCover.dcvr");
+var dotCoverReport = Path.Combine("MyTests", "dotCover.html");
 var result =
     // Creates a test command
-    new DotNetTest().WithWorkingDirectory("MyTests")
-    // Modifies the test command by putting "dotCover" in front of all arguments to have something like "dotnet dotcover test ..."
-    .Customize(cmd => cmd.WithArgs("dotcover").AddArgs(cmd.Args))
+    new DotNetTest().WithProject("MyTests")
+    // Modifies the test command by putting "dotCover" in front of all arguments
+    // to have something like "dotnet dotcover test ..."
+    // and adding few specific arguments to the end
+    .Customize(cmd => 
+        cmd.WithArgs("dotcover")
+        + cmd.Args
+        + $"--dcOutput={dotCoverSnapshot}"
+        + "--dcFilters=+:module=TeamCity.CSharpInteractive.HostApi;+:module=dotnet-csi"
+        + "--dcAttributeFilters=System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage")
     // Runs tests via a command like: "dotnet test" from the directory "MyTests"
     .Build();
 
@@ -664,14 +672,12 @@ var result =
 result.ExitCode.ShouldBe(0);
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 
-// Generates a JSON code coverage report.
-exitCode = new DotNetCustom("dotCover", "report", "--source=dotCover.Output.dcvr", "--reportType=JSON")
-    .WithWorkingDirectory("MyTests")
-    .Run();
+// Generates a HTML code coverage report.
+exitCode = new DotNetCustom("dotCover", "report", $"--source={dotCoverSnapshot}", $"--output={dotCoverReport}", "--reportType=HTML").Run();
 exitCode.ShouldBe(0);
 
 // Check for a dotCover report
-File.Exists(Path.Combine("MyTests", "dotCover.Output.json")).ShouldBeTrue();
+File.Exists(dotCoverReport).ShouldBeTrue();
 ```
 
 
