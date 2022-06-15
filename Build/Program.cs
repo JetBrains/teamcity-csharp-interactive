@@ -1,4 +1,6 @@
-﻿using HostApi;
+﻿using System.IO.Compression;
+using System.Xml;
+using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 using NuGet.Versioning;
 
@@ -108,6 +110,11 @@ Assertion.Succeed(
         .Build());
 
 var reportDir = Path.Combine(currentDir, ".reports");
+if (Directory.Exists(reportDir))
+{
+    Directory.Delete(reportDir, true);
+}
+
 var test = 
     new DotNetTest()
         .WithProject(solutionFile)
@@ -117,40 +124,47 @@ var test =
         .WithFilter("Integration!=true&Docker!=true");
 
 var dotCoverSnapshot = Path.Combine(reportDir, "dotCover.dcvr");
-if (File.Exists(dotCoverSnapshot))
-{
-    File.Delete(dotCoverSnapshot);
-}
-
 Assertion.Succeed(
     test
         .Customize(cmd => 
             cmd.WithArgs("dotcover")
-            + cmd.Args
-            + $"--dcOutput={dotCoverSnapshot}"
-            + "--dcFilters=+:module=TeamCity.CSharpInteractive.HostApi;+:module=dotnet-csi"
-            + "--dcAttributeFilters=System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage")
+                .AddArgs(cmd.Args)
+                .AddArgs(
+                    $"--dcOutput={dotCoverSnapshot}",
+                    "--dcFilters=+:module=TeamCity.CSharpInteractive.HostApi;+:module=dotnet-csi",
+                    "--dcAttributeFilters=System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))
         .Build());
 
-var teamCityWriter = GetService<ITeamCityWriter>();
-if (Tools.UnderTeamCity)
+var dotCoverReportDir = Path.Combine(reportDir, "html");
+var dotCoverReportHtml = Path.Combine(dotCoverReportDir, "index.html");
+var dotCoverReportXml = Path.Combine(reportDir, "dotCover.xml");
+Assertion.Succeed(new DotNetCustom("dotCover", "report", $"--source={dotCoverSnapshot}", $"--output={dotCoverReportHtml};{dotCoverReportXml}", "--reportType=HTML,TeamCityXml").Run(), "Generating the code coverage reports");
+var dotCoverReportDoc = new XmlDocument();
+dotCoverReportDoc.Load(dotCoverReportXml);
+var coveragePercentageValue = dotCoverReportDoc.SelectNodes("Root")?.Item(0)?.Attributes?["CoveragePercent"]?.Value;
+if (int.TryParse(coveragePercentageValue, out var coveragePercentage))
 {
-    teamCityWriter.WriteRawMessage(new DotNetCoverageServiceMessage());
-    teamCityWriter.WriteRawMessage(new ImportDataDotCoverReportServiceMessage(dotCoverSnapshot));
+    switch (coveragePercentage)
+    {
+        case < 80:
+            Error($"The coverage percentage {coveragePercentage} is too low. See {dotCoverReportHtml} for details.");
+            Assertion.Exit();
+            break;
+
+        case < 85:
+            Warning($"The coverage percentage {coveragePercentage} is too low. See {dotCoverReportHtml} for details.");
+            break;
+    }
 }
 else
 {
-    var dotCoverReport = Path.Combine(reportDir, "dotCover.html");
-    if (File.Exists(dotCoverReport))
-    {
-        File.Delete(dotCoverReport);
-    }
-    
-    Assertion.Succeed(
-        new DotNetCustom("dotCover", "report", $"--source={dotCoverSnapshot}", $"--output={dotCoverReport}", "--reportType=HTML")
-            .Run(),
-        "Generating the code coverage report");
+    Warning("Coverage percentage was not found.");
 }
+
+var dotCoverReportZip = Path.Combine(reportDir, "dotCover.zip");
+ZipFile.CreateFromDirectory(dotCoverReportDir, dotCoverReportZip);
+var teamCityWriter = GetService<ITeamCityWriter>();
+teamCityWriter.PublishArtifact($"{dotCoverReportZip} => .");
 
 foreach (var package in packages)
 {
@@ -255,6 +269,7 @@ WriteLine("To create a build project from the template:", Color.Highlighted);
 WriteLine($"    dotnet new build --package-version={packageVersion}", Color.Highlighted);
 WriteLine($"Tool and package version: {packageVersion}", Color.Highlighted);
 WriteLine($"Template version: {templatePackageVersion}", Color.Highlighted);
+WriteLine($"The coverage percentage: {coveragePercentage}", Color.Highlighted);
 return 0;
 
 record PackageInfo(string Id, string Project, string Package, NuGetVersion Version, bool Publish);

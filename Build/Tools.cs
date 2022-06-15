@@ -133,7 +133,7 @@ static class Assertion
         return true;
     }
 
-    private static void Exit()
+    public static void Exit()
     {
         if (!Tools.UnderTeamCity)
         {
