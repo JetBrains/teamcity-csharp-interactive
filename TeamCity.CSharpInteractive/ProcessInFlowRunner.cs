@@ -50,7 +50,7 @@ internal class ProcessInFlowRunner : IProcessRunner
     private IDisposable CreateFlow() =>
         _teamCitySettings.IsUnderTeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
 
-    [DebuggerTypeProxy(typeof(CommandLine.StartInfoDebugView))]
+    [DebuggerTypeProxy(typeof(CommandLine.CommandLineDebugView))]
     private class StartInfoInFlow : IStartInfo
     {
         private readonly IStartInfo _baseStartIfo;

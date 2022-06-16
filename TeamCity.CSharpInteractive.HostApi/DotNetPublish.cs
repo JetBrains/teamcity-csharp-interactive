@@ -10,7 +10,7 @@ using Immutype;
 /// The dotnet publish command compiles the application, reads through its dependencies specified in the project file, and publishes the resulting set of files to a directory.
 /// </summary>
 [Target]
-public record DotNetPublish(
+public partial record DotNetPublish(
     // MSBuild options for setting properties.
     IEnumerable<(string name, string value)> Props,
     // Specifies the set of command line arguments to use when starting the tool.
@@ -60,7 +60,6 @@ public record DotNetPublish(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetPublish(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())

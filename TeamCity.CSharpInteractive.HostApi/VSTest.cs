@@ -10,7 +10,7 @@ using Immutype;
 /// The dotnet vstest command runs the VSTest.Console command-line application to run automated unit tests.
 /// </summary>
 [Target]
-public record VSTest(
+public partial record VSTest(
     IEnumerable<string> TestFileNames,
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
@@ -57,7 +57,6 @@ public record VSTest(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public VSTest(params string[] args)
         : this(Enumerable.Empty<string>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())

@@ -10,7 +10,7 @@ using Immutype;
 /// The dotnet test command is used to execute unit tests in a given solution. The dotnet test command builds the solution and runs a test host application for each test project in the solution. The test host executes tests in the given project using a test framework, for example: MSTest, NUnit, or xUnit, and reports the success or failure of each test. If all tests are successful, the test runner returns 0 as an exit code; otherwise if any test fails, it returns 1.
 /// </summary>
 [Target]
-public record DotNetTest(
+public partial record DotNetTest(
     // MSBuild options for setting properties.
     IEnumerable<(string name, string value)> Props,
     // Specifies the set of command line arguments to use when starting the tool.
@@ -77,7 +77,6 @@ public record DotNetTest(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetTest(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())

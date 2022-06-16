@@ -10,7 +10,7 @@ using Immutype;
 /// The dotnet custom command is used to execute any dotnet commands with any arguments. 
 /// </summary>
 [Target]
-public record DotNetCustom(
+public partial record DotNetCustom(
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
     // Specifies the set of environment variables that apply to this process and its child processes.
@@ -21,7 +21,6 @@ public record DotNetCustom(
     string WorkingDirectory = "",
     // Specifies whether the ability to use build loggers is supported. The default is set to true.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetCustom(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>())

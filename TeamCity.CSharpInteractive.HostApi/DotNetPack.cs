@@ -9,7 +9,7 @@ using Immutype;
 /// The dotnet pack command builds the project and creates NuGet packages. The result of this command is a NuGet package (that is, a .nupkg file).
 /// </summary>
 [Target]
-public record DotNetPack(
+public partial record DotNetPack(
     // MSBuild options for setting properties.
     IEnumerable<(string name, string value)> Props,
     // Specifies the set of command line arguments to use when starting the tool.
@@ -50,7 +50,6 @@ public record DotNetPack(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetPack(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())

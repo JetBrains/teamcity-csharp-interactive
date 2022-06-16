@@ -9,7 +9,7 @@ using Immutype;
 /// The dotnet tool restore command finds the tool manifest file that is in scope for the current directory and installs the tools that are listed in it.
 /// </summary>
 [Target]
-public record DotNetToolRestore(
+public partial record DotNetToolRestore(
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
     // Specifies the set of environment variables that apply to this process and its child processes.
@@ -34,7 +34,6 @@ public record DotNetToolRestore(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetToolRestore(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>())

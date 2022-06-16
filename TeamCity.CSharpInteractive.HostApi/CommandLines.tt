@@ -1,0 +1,52 @@
+﻿// ReSharper disable InconsistentNaming
+namespace HostApi;
+    
+<#
+var commandLineTypes = new[]
+{
+    "CommandLine",
+    
+    // Dotnet
+    "DotNetBuild",
+    "DotNetBuildServerShutdown",
+    "DotNetClean",
+    "DotNetCustom",
+    "DotNetNew",
+    "DotNetNuGetPush",
+    "DotNetPack",
+    "DotNetPublish",
+    "DotNetRestore",
+    "DotNetRun",
+    "DotNetTest",
+    "DotNetToolRestore",
+    "MSBuild",
+    "VSTest",
+    
+    // Docker
+    "DockerCustom",
+    "DockerRun"
+};
+#>
+<#
+foreach(var type in commandLineTypes)
+{#>
+public partial record <#=type#>: ICommandLine
+{
+    public static <#=type#> operator +(<#=type#> command, string arg) => command.AddArgs(arg);
+    
+    public static <#=type#> operator -(<#=type#> command, string arg) => command.RemoveArgs(arg);
+    
+    public static <#=type#> operator +(<#=type#> command, IEnumerable<string> args) => command.AddArgs(args);
+
+    public static <#=type#> operator -(<#=type#> command, IEnumerable<string> args) => command.RemoveArgs(args);
+    
+    public static <#=type#> operator +(<#=type#> command, (string name, string value) var) => command.AddVars(var);
+    
+    public static <#=type#> operator -(<#=type#> command, (string name, string value) var) => command.RemoveVars(var);
+    
+    public static <#=type#> operator +(<#=type#> command, IEnumerable<(string name, string value)> vars) => command.AddVars(vars);
+    
+    public static <#=type#> operator -(<#=type#> command, IEnumerable<(string name, string value)> vars) => command.RemoveVars(vars);
+}
+
+<#}#>

@@ -11,7 +11,7 @@ using Immutype;
 /// The dotnet build server command is used to shut down build servers that are started from dotnet. 
 /// </summary>
 [Target]
-public record DotNetBuildServerShutdown(
+public partial record DotNetBuildServerShutdown(
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
     // Specifies the set of environment variables that apply to this process and its child processes.
@@ -24,7 +24,6 @@ public record DotNetBuildServerShutdown(
     string WorkingDirectory = "",
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetBuildServerShutdown(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<DotNetBuildServer>())

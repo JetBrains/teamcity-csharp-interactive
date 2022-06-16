@@ -10,7 +10,7 @@ using Immutype;
 /// The docker custom command is used to execute any docker commands with any arguments.
 /// </summary>
 [Target]
-public record DockerCustom(
+public partial record DockerCustom(
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
     // Specifies the set of environment variables that apply to this process and its child processes.
@@ -21,7 +21,6 @@ public record DockerCustom(
     string WorkingDirectory = "",
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DockerCustom(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>())

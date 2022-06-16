@@ -50,7 +50,7 @@ internal static class DotNetCommandLineExtensions
                 .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetMSBuildLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
                 .AddProps("-p",
                     ("VSTestLogger", "logger://teamcity"),
-                    ("VSTestTestAdapterPath", $"\".;{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""),
+                    ("VSTestTestAdapterPath", $"\"%3B;{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""),
                     ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= DotNetVerbosity.Normal ? verbosity.Value : DotNetVerbosity.Normal) : DotNetVerbosity.Normal).ToString().ToLowerInvariant()))
                 .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
             : cmd;

@@ -8,7 +8,7 @@ using DotNet;
 using Immutype;
 
 [Target]
-public record MSBuild(
+public partial record MSBuild(
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
     // Set or override these project-level properties.
@@ -64,7 +64,6 @@ public record MSBuild(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public MSBuild()
         : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>())

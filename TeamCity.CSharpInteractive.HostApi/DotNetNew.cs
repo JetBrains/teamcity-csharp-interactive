@@ -10,7 +10,7 @@ using Immutype;
 /// The 'dotnet new' command creates a .NET project based on a template. 
 /// </summary>
 [Target]
-public record DotNetNew(
+public partial record DotNetNew(
     // Specifies the set of command line arguments to use when starting the tool.
     IEnumerable<string> Args,
     // Specifies the set of environment variables that apply to this process and its child processes.
@@ -23,7 +23,6 @@ public record DotNetNew(
     string WorkingDirectory = "",
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetNew(string templateName, params string[] args)
         : this(args, Enumerable.Empty<(string, string)>(), templateName)

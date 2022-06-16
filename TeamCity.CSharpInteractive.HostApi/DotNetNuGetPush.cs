@@ -6,7 +6,7 @@ using DotNet;
 using Immutype;
 
 [Target]
-public record DotNetNuGetPush(
+public partial record DotNetNuGetPush(
     IEnumerable<string> Args,
     IEnumerable<(string name, string value)> Vars,
     IEnumerable<string> Sources,
@@ -23,7 +23,6 @@ public record DotNetNuGetPush(
     bool? NoServiceEndpoint = default,
     bool? SkipDuplicate = default,
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetNuGetPush(params string[] args)
         : this(args, Enumerable.Empty<(string, string)>(), Enumerable.Empty<string>(), Enumerable.Empty<string>())

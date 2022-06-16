@@ -15,7 +15,7 @@ using Immutype;
 /// Docker runs a command in isolated containers. A container is a process which runs on a host. The host may be local or remote. When an operator executes docker run, the container process that runs is isolated in that it has its own file system, its own networking, and its own isolated process tree separate from the host.
 /// </summary>
 [Target]
-public record DockerRun(
+public partial record DockerRun(
     // Command to run in container.
     ICommandLine CommandLine,
     // Docker image.
@@ -70,7 +70,6 @@ public record DockerRun(
     string EnvFile = "",
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DockerRun(string image = "") : this(new CommandLine(string.Empty), image)
     { }

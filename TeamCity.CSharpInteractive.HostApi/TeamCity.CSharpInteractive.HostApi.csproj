@@ -27,4 +27,24 @@
         <PackageReference Include="NuGet.Versioning" Version="6.2.0" />
         <PackageReference Include="TeamCity.ServiceMessages" Version="3.0.13" />
     </ItemGroup>
+
+    <ItemGroup>
+        <None Update="CommandLines.tt">
+            <LastGenOutput>CommandLines.cs</LastGenOutput>
+            <Generator>TextTemplatingFileGenerator</Generator>
+        </None>
+
+        <Compile Update="CommandLines.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>CommandLines.tt</DependentUpon>
+        </Compile>
+
+        <Compile Update="CommandLines.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>CommandLines.tt</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
 </Project>

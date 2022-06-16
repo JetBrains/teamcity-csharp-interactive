@@ -9,7 +9,7 @@ using Immutype;
 /// The dotnet clean command cleans the output of the previous build. It's implemented as an MSBuild target, so the project is evaluated when the command is run. Only the outputs created during the build are cleaned. Both intermediate (obj) and final output (bin) folders are cleaned.
 /// </summary>
 [Target]
-public record DotNetClean(
+public partial record DotNetClean(
     // MSBuild options for setting properties.
     IEnumerable<(string name, string value)> Props,
     // Specifies the set of command line arguments to use when starting the tool.
@@ -36,7 +36,6 @@ public record DotNetClean(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetClean(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())

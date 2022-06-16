@@ -10,7 +10,7 @@ using Immutype;
 /// The dotnet run command provides a convenient option to run your application from the source code with one command. It's useful for fast iterative development from the command line. The command depends on the dotnet build command to build the code. Any requirements for the build, such as that the project must be restored first, apply to dotnet run as well.
 /// </summary>
 [Target]
-public record DotNetRun(
+public partial record DotNetRun(
     // MSBuild options for setting properties.
     IEnumerable<(string name, string value)> Props,
     // Specifies the set of command line arguments to use when starting the application.
@@ -49,7 +49,6 @@ public record DotNetRun(
     DotNetVerbosity? Verbosity = default,
     // Specifies a short name for this operation.
     string ShortName = "")
-    : ICommandLine
 {
     public DotNetRun(params string[] args)
         : this(Enumerable.Empty<(string, string)>(), args, Enumerable.Empty<(string, string)>())

@@ -12,8 +12,8 @@ using Immutype;
 /// Runs an arbitrary executable with arguments and environment variables from the working directory.
 /// </summary>
 [Target]
-[DebuggerTypeProxy(typeof(StartInfoDebugView))]
-public record CommandLine(
+[DebuggerTypeProxy(typeof(CommandLineDebugView))]
+public partial record CommandLine(
     // Specifies the application executable path.
     string ExecutablePath,
     // Specifies the working directory for the application to be started.
@@ -24,7 +24,7 @@ public record CommandLine(
     IEnumerable<(string name, string value)> Vars,
     // Specifies a short name for this command line.
     string ShortName = "")
-    : ICommandLine, IStartInfo
+    : IStartInfo
 {
     private readonly string _shortName = ShortName;
 
@@ -39,7 +39,7 @@ public record CommandLine(
     public string ShortName => !string.IsNullOrWhiteSpace(_shortName) ? _shortName : Path.GetFileNameWithoutExtension(ExecutablePath);
 
     public IStartInfo GetStartInfo(IHost host) => this;
-
+    
     public override string ToString()
     {
         var sb = new StringBuilder();
@@ -58,30 +58,14 @@ public record CommandLine(
 
         return sb.ToString();
     }
-    
-    public static CommandLine operator +(CommandLine target, string arg) => target.AddArgs(arg);
-    
-    public static CommandLine operator -(CommandLine target, string arg) => target.RemoveArgs(arg);
-    
-    public static CommandLine operator +(CommandLine target, IEnumerable<string> args) => target.AddArgs(args);
 
-    public static CommandLine operator -(CommandLine target, IEnumerable<string> args) => target.RemoveArgs(args);
-    
-    public static CommandLine operator +(CommandLine target, (string name, string value) var) => target.AddVars(var);
-    
-    public static CommandLine operator -(CommandLine target, (string name, string value) var) => target.RemoveVars(var);
-    
-    public static CommandLine operator +(CommandLine target, IEnumerable<(string name, string value)> vars) => target.AddVars(vars);
-    
-    public static CommandLine operator -(CommandLine target, IEnumerable<(string name, string value)> vars) => target.RemoveVars(vars);
-    
     private static string Escape(string text) => !text.TrimStart().StartsWith("\"") && text.Contains(' ') ? $"\"{text}\"" : text;
 
-    internal class StartInfoDebugView
+    internal class CommandLineDebugView
     {
         private readonly IStartInfo _startInfo;
 
-        public StartInfoDebugView(IStartInfo startInfo) => _startInfo = startInfo;
+        public CommandLineDebugView(IStartInfo startInfo) => _startInfo = startInfo;
 
         public string ShortName => _startInfo.ShortName;
 
