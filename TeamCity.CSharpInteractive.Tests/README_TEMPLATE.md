@@ -548,22 +548,24 @@ exitCode.ShouldBe(0);
 exitCode = new DotNetCustom("tool",  "install", "--local", "JetBrains.dotCover.GlobalTool").Run();
 exitCode.ShouldBe(0);
 
+// Creates a test command
+var test = new DotNetTest().WithProject("MyTests");
+
 var dotCoverSnapshot = Path.Combine("MyTests", "dotCover.dcvr");
 var dotCoverReport = Path.Combine("MyTests", "dotCover.html");
-var result =
-    // Creates a test command
-    new DotNetTest().WithProject("MyTests")
-    // Modifies the test command by putting "dotCover" in front of all arguments
-    // to have something like "dotnet dotcover test ..."
-    // and adding few specific arguments to the end
-    .Customize(cmd => 
-        cmd.WithArgs("dotcover")
-        + cmd.Args
-        + $"--dcOutput={dotCoverSnapshot}"
-        + "--dcFilters=+:module=TeamCity.CSharpInteractive.HostApi;+:module=dotnet-csi"
-        + "--dcAttributeFilters=System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage")
-    // Runs tests via a command like: "dotnet test" from the directory "MyTests"
-    .Build();
+// Modifies the test command by putting "dotCover" in front of all arguments
+// to have something like "dotnet dotcover test ..."
+// and adding few specific arguments to the end
+var testUnderDotCover = test.Customize(cmd =>
+    cmd.ClearArgs()
+    + "dotcover"
+    + cmd.Args
+    + $"--dcOutput={dotCoverSnapshot}"
+    + "--dcFilters=+:module=TeamCity.CSharpInteractive.HostApi;+:module=dotnet-csi"
+    + "--dcAttributeFilters=System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage");
+    
+// Runs tests under dotCover via a command like: "dotnet dotcover test ..."
+var result = testUnderDotCover.Build();
 
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
