@@ -30,19 +30,18 @@
 
     <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.2.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-preview.4.22229.4" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.3.0-1.final" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-preview.5.22301.12" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.2.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Client" Version="4.2.0" />
-        <PackageReference Include="NuGet.Build.Tasks" Version="6.2.0" />
-        <PackageReference Include="Pure.DI" Version="1.1.40">
+        <PackageReference Include="NuGet.Build.Tasks" Version="6.2.1" />
+        <PackageReference Include="Pure.DI" Version="1.1.41">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
