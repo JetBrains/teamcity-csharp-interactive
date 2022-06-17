@@ -15,7 +15,16 @@ public partial record MSBuild(
     IEnumerable<(string name, string value)> Props,
     // Specifies the set of environment variables that apply to this process and its child processes.
     IEnumerable<(string name, string value)> Vars,
+    // Set or override these project-level properties only during restore and do not use properties specified with the -property argument. name is the property name, and value is the property value.
     IEnumerable<(string name, string value)> RestoreProps,
+    // List of input cache files that MSBuild will read build results from. Setting this also turns on isolated builds.
+    IEnumerable<string> InputResultsCaches,
+    // List of extensions to ignore when determining which project file to build. Use a semicolon or a comma to separate multiple extensions.
+    IEnumerable<string> IgnoreProjectExtensions,
+    // List of warning codes to treats as errors. Use a semicolon or a comma to separate multiple warning codes. To treat all warnings as errors use the switch with no values.
+    IEnumerable<string>  WarnAsError,
+    // List of warning codes to treats as low importance messages. Use a semicolon or a comma to separate multiple warning codes.
+    IEnumerable<string> WarnAsMessage,
     // Overrides the tool executable path.
     string ExecutablePath = "",
     // Specifies the working directory for the tool to be started.
@@ -28,12 +37,6 @@ public partial record MSBuild(
     int? MaxCpuCount = default,
     // The version of the MSBuild Toolset (tasks, targets, etc.) to use during build. This version will override the versions specified by individual projects.
     string ToolsVersion = "",
-    // List of warning codes to treats as errors. Use a semicolon or a comma to separate multiple warning codes. To treat all warnings as errors use the switch with no values.
-    string WarnAsError = "",
-    // List of warning codes to treats as low importance messages. Use a semicolon or a comma to separate multiple warning codes.
-    string WarnAsMessage = "",
-    // List of extensions to ignore when determining which project file to build. Use a semicolon or a comma to separate multiple extensions.
-    string IgnoreProjectExtensions = "",
     // Enables or Disables the reuse of MSBuild nodes.
     bool? NodeReuse = default,
     // Creates a single, aggregated project file by inlining all the files that would be imported during a build, with their boundaries marked. This can be useful for figuring out what files are being imported and from where, and what they will contribute to the build. By default the output is written to the console window. If the path to an output file is provided that will be used instead.
@@ -46,8 +49,6 @@ public partial record MSBuild(
     string ProfileEvaluation = "",
     // Causes MSBuild to build each project in isolation. This is a more restrictive mode of MSBuild as it requires that the project graph be statically discoverable at evaluation time, but can improve scheduling and reduce memory overhead when building a large set of projects.
     bool? IsolateProjects = default,
-    // Semicolon separated list of input cache files that MSBuild will read build results from. Setting this also turns on isolated builds.
-    string InputResultsCaches = "",
     // Output cache file where MSBuild will write the contents of its build result caches at the end of the build. Setting this also turns on isolated builds.
     string OutputResultsCache = "",
     // Causes MSBuild to construct and build a project graph. Constructing a graph involves identifying project references to form dependencies. Building that graph involves attempting to build project references prior to the projects that reference them, differing from traditional MSBuild scheduling.
@@ -66,7 +67,15 @@ public partial record MSBuild(
     string ShortName = "")
 {
     public MSBuild()
-        : this(Enumerable.Empty<string>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>(), Enumerable.Empty<(string, string)>())
+        : this(
+            Enumerable.Empty<string>(),
+            Enumerable.Empty<(string, string)>(),
+            Enumerable.Empty<(string, string)>(),
+            Enumerable.Empty<(string, string)>(),
+            Enumerable.Empty<string>(),
+            Enumerable.Empty<string>(),
+            Enumerable.Empty<string>(),
+            Enumerable.Empty<string>())
     { }
 
     public IStartInfo GetStartInfo(IHost host) =>
@@ -82,15 +91,15 @@ public partial record MSBuild(
                 ("-maxCpuCount", MaxCpuCount?.ToString()),
                 ("-toolsVersion", ToolsVersion),
                 ("-verbosity", Verbosity?.ToString().ToLower()),
-                ("-warnAsError", WarnAsError),
-                ("-warnAsMessage", WarnAsMessage),
-                ("-ignoreProjectExtensions", IgnoreProjectExtensions),
+                ("-warnAsError", JoinWithSemicolons(WarnAsError)),
+                ("-warnAsMessage", JoinWithSemicolons(WarnAsMessage)),
+                ("-ignoreProjectExtensions", JoinWithSemicolons(IgnoreProjectExtensions)),
                 ("-nodeReuse", NodeReuse?.ToString()),
                 ("-preprocess", Preprocess),
                 ("-restore", Restore?.ToString()),
                 ("-profileEvaluation", ProfileEvaluation),
                 ("-isolateProjects", IsolateProjects?.ToString()),
-                ("-inputResultsCaches", InputResultsCaches),
+                ("-inputResultsCaches", JoinWithSemicolons(InputResultsCaches)),
                 ("-outputResultsCache", OutputResultsCache),
                 ("-graphBuild", GraphBuild?.ToString()),
                 ("-lowPriority", LowPriority?.ToString())
@@ -106,4 +115,7 @@ public partial record MSBuild(
             .AddArgs(Args.ToArray());
     
     public override string ToString() => (ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath)).GetShortName(ShortName, Project);
+
+    private string JoinWithSemicolons(IEnumerable<string> arg) => 
+        string.Join(';', InputResultsCaches.Where(i => !string.IsNullOrWhiteSpace(i)).Select(i => i.Trim()));
 }
