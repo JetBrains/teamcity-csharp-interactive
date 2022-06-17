@@ -22,7 +22,7 @@ After installing tool you can use this tool independently of TeamCity, to run C#
 
 ```Shell
 dotnet new tool-manifest
-dotnet tool install TeamCity.csi --version <version>
+dotnet tool install TeamCity.csi
 ```
 
 Or install the tool for the current user:
@@ -72,33 +72,6 @@ Supported arguments:
 | @file                   | Read the response file for more options.                                                                                                                        |                                                                                               |
 
 ```using HostApi;``` directive in a script allows you to use host API types without specifying the fully qualified namespace of these types.
-
-## Command line sample
-
-```Shell
-echo Creates a new solution "MySolution" in the current directory.
-dotnet new sln -n MySolution
-
-echo Creates a sample project "MyLib" and adds it to the solution "MySolution".
-dotnet new classlib -n MyLib
-dotnet sln add MyLib
-
-echo Installs template "build".
-dotnet new install TeamCity.CSharpInteractive.Templates
-
-echo Creates a sample build project "Build" using the template "build" and adds it to the solution "MySolution".
-dotnet new build -n Build
-dotnet sln add Build
-
-echo Creates a local manifest file for the solution "MySolution" and installs the .NET tool TeamCity.csi locally.
-dotnet new tool-manifest
-dotnet tool install TeamCity.csi
-
-echo Runs a script from the "Build" project to build solution "MySolution" from the solution directory.
-dotnet csi Build
-```
-
-You can modify, debug and run the project "Build" as a ordinary .NET console application and run it as a C# script using ```dotnet csi Build``` from the command line.
 
 ## Report and Track Issues
 
