@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 internal class CommandLineParser : ICommandLineParser
 {
     private static readonly Regex PropertyRegex = new(@"^(--property|-p|/property|/p):(.+)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private static readonly char[] PropertiesSeparators = {';', ','};
     private readonly IFileSystem _fileSystem;
 
     public CommandLineParser(IFileSystem fileSystem) =>
@@ -48,9 +49,9 @@ internal class CommandLineParser : ICommandLineParser
                             continue;
 
                         case CommandLineArgumentType.ScriptProperty:
-                            if (TryCreatePropertyArgument(argument, out var commandLineArgument))
+                            foreach (var propertyArgument in CreatePropertyArguments(argument))
                             {
-                                yield return commandLineArgument;
+                                yield return propertyArgument;
                             }
                             
                             argumentType = null;
@@ -88,6 +89,7 @@ internal class CommandLineParser : ICommandLineParser
                             continue;
 
                         case "--property":
+                        case "-property":
                         case "/property":
                         case "-p":
                         case "/p":
@@ -104,12 +106,13 @@ internal class CommandLineParser : ICommandLineParser
                                 var propertyMatch = PropertyRegex.Match(argument);
                                 if (propertyMatch.Success)
                                 {
-                                    if (TryCreatePropertyArgument(propertyMatch.Groups[2].Value, out var commandLineArgument))
+                                    foreach (var propertyArgument in CreatePropertyArguments(propertyMatch.Groups[2].Value))
                                     {
-                                        yield return commandLineArgument;
-                                        argumentType = null;
-                                        continue;
+                                        yield return propertyArgument;
                                     }
+                                    
+                                    argumentType = null;
+                                    continue;
                                 }
                             }
 
@@ -126,16 +129,10 @@ internal class CommandLineParser : ICommandLineParser
         }
     }
 
-    private static bool TryCreatePropertyArgument(string argument, out CommandLineArgument commandLineArgument)
-    {
-        var parts = argument.Split('=', 2);
-        if (parts.Length > 0)
-        {
-            commandLineArgument = new CommandLineArgument(CommandLineArgumentType.ScriptProperty, parts.Length > 1 ? parts[1] : string.Empty, parts[0]);
-            return true;
-        }
-
-        commandLineArgument = default;
-        return false;
-    }
+    private static IEnumerable<CommandLineArgument> CreatePropertyArguments(string argument) =>
+        from arg in argument.Split(PropertiesSeparators, StringSplitOptions.RemoveEmptyEntries) 
+        select arg.Split('=', 2)
+        into parts
+        where parts.Length > 0 
+        select new CommandLineArgument(CommandLineArgumentType.ScriptProperty, parts.Length > 1 ? parts[1] : string.Empty, parts[0]);
 }

@@ -87,23 +87,121 @@ internal class Info : IInfo
 
     public void ShowHelp() =>
         _stdOut.WriteLine(
-            Text.NewLine,
-            new Text("Usage: dotnet csi [options] [--] [script file or directory containing single script file] [script-arguments]"), Text.NewLine,
-            Text.Tab, new Text("script arguments are accessible in scripts via a global list called "), new Text("Args", Color.Highlighted), Text.NewLine,
-            Text.NewLine,
-            new Text("Executes a script file if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."), Text.NewLine,
-            Text.NewLine,
-            new Text("Options:"), Text.NewLine,
-            Text.Tab, new Text("--help                           ", Color.Header), new Text("Display this usage message (alternative forms: /? -h /h /help)."), Text.NewLine,
-            Text.Tab, new Text("--version                        ", Color.Header), new Text("Display the version and exit (alternative form: /version)."), Text.NewLine,
-            Text.Tab, new Text("--source <NuGet package source>  ", Color.Header), new Text("NuGet package source (URL, UNC/folder path) to use (alternative forms: -s /source /s)."), Text.NewLine,
-            Text.Tab, new Text("--property <key=value>           ", Color.Header), new Text("Define a key=value pair for the global dictionary called "), new Text("Props", Color.Highlighted), new Text(" accessible in scripts (alternative forms: -p /property /p)."), Text.NewLine,
-            Text.Tab, new Text("--property:<key=value>           ", Color.Header), new Text("Define a key=value pair in MSBuild style for the global dictionary called "), new Text("Props", Color.Highlighted), new Text(" accessible in scripts (alternative forms: -p:<key=value> /property:<key=value> /p:<key=value>)."), Text.NewLine,
-            Text.Tab, new Text("@<file>                          ", Color.Header), new Text("Read response file for more options."), Text.NewLine,
-            Text.Tab, new Text("--                               ", Color.Header), new Text("Indicates that the remaining arguments should not be treated as options."), Text.NewLine
+            new []
+            {
+                new[]
+                {
+                    Text.NewLine,
+                    new("Usage:", Color.Header),
+                    new(" dotnet csi [options] [--] [script] [script arguments]"), Text.NewLine,
+                    Text.NewLine,
+                    new("Executes a script if specified, otherwise launches an interactive REPL (Read Eval Print Loop)."),
+                    Text.NewLine,
+                    Text.NewLine
+                },
+                Option(
+                    "script",
+                    new Text("The path to the script file to run."),
+                    Text.NewLine, Text.Tab,
+                    new Text("If no such file is found, the command will treat it as a directory"),
+                    Text.NewLine, Text.Tab,
+                    new Text("and look for a single script file inside that directory.")),
+                Option(
+                    "script arguments",
+                    new Text("Script arguments are accessible in a script via the global list "),
+                    new Text("Args[index]", Color.Details),
+                    new Text(" by an argument index.")),
+                Option("--", new Text("Indicates that the remaining arguments should not be treated as options.")),
+                Option(
+                    "--help",
+                    new Text("Display this usage message (alternative forms: /? -h /h /help).")),
+                Option("--version", new Text("Display the version and exit (alternative form: /version).")),
+                Option("--source <NuGet package source>", new Text("NuGet package source (URL, UNC/folder path) to use (alternative forms: -s /source /s),"),
+                    Text.NewLine, Text.Tab,
+                    new Text("for example: "),
+                    new Text("--source https://api.nuget.org/v3/index.json", Color.Details)),
+                Option("--property <key=value>[;<keyN=valueN>]", 
+                    new Text("Define a key-value pair(s) for the script properties "),
+                    new Text("(*1)", Color.Highlighted),
+                    new Text(" accessible in scripts."),
+                    Text.NewLine, Text.Tab,
+                    new Text("Alternative forms:"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("-property"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("-p"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("/property"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("/p"),
+                    Text.NewLine, Text.Tab,
+                    new Text("Specify each property separately, or use a semicolon or comma to separate multiple properties,"),
+                    Text.NewLine, Text.Tab,
+                    new Text("as the following example shows: "),
+                    new Text("--property key1=val1;key2=val2", Color.Details)),
+                Option("--property:<key=value>[;<keyN=valueN>]",
+                    new Text("Define a key-value pair(s) in MSBuild style for the script properties "),
+                    new Text("(*1)", Color.Highlighted),
+                    new Text(" accessible in scripts."),
+                    Text.NewLine, Text.Tab,
+                    new Text("Alternative forms:"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("-property:<key=value>"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("-p:<key=value>"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("/property:<key=value>"),
+                    Text.NewLine, Text.Tab, Text.Tab,
+                    new Text("/p:<key=value>"),
+                    Text.NewLine, Text.Tab,
+                    new Text("Specify each property separately, or use a semicolon or comma to separate multiple properties,"),
+                    Text.NewLine, Text.Tab,
+                    new Text("as the following example shows: "),
+                    new Text("--property:key1=val1;key2=val2", Color.Details)),
+                Option("@<file>", new Text("Read response file for more options as the following example shows: "),
+                    new Text("@OptionsDir/MyOptions.rsp", Color.Details)),
+                new[]
+                {
+                    new("Notes:", Color.Header),
+                    Text.NewLine,
+                    Text.Tab,
+                    new("- "),
+                    new("*1", Color.Highlighted),
+                    new(" script properties are accessible a script via the global dictionary "),
+                    new("Props[\"name\"]", Color.Details),
+                    new(" by a property name"),
+                    Text.NewLine,
+                    Text.Tab,
+                    new("- "),
+                    new("using HostApi;", Color.Details),
+                    new Text(" directive in a script allows you to use host API types"),
+                    Text.NewLine,
+                    Text.Tab,
+                    new Text("  without specifying the fully qualified namespace of these types")
+                }
+            }.SelectMany(i => i).ToArray()
         );
 
     public void ShowVersion() => _stdOut.WriteLine(new Text(_version));
 
     public void ShowFooter() => _tracePresenter.Show(_traceSources);
+
+    private static Text[] Option(string option, params Text[] description)
+    {
+        return new []
+        {
+            new []
+            {
+                new Text(option, Color.Header),
+                Text.NewLine,
+                Text.Tab
+            },
+            description,
+            new []
+            {
+            Text.NewLine,
+            Text.NewLine,
+            }
+        }.SelectMany(i => i).ToArray();
+    }
 }

@@ -246,6 +246,18 @@ public class CommandLineParserTests
         // script properties
         new object[]
         {
+            new[] {"-p", "Key1=Val1;Key2=Val2;Key3=Val3"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val2", "Key2"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val3", "Key3")
+            }
+        },
+        
+        new object[]
+        {
             new[] {"-p", "Key1=Val1"},
             CommandLineArgumentType.ScriptFile,
             new[]
@@ -261,6 +273,18 @@ public class CommandLineParserTests
             new[]
             {
                 new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1")
+            }
+        },
+        
+        new object[]
+        {
+            new[] {"--Property:Key1=Val1,Key2=Val2,Key3=Val3"},
+            CommandLineArgumentType.ScriptFile,
+            new[]
+            {
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val1", "Key1"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val2", "Key2"),
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty, "Val3", "Key3")
             }
         },
 
@@ -306,21 +330,21 @@ public class CommandLineParserTests
         
         new object[]
         {
-            new[] {"--Property:Key12ab.,+-~#=Val12ab.,+-~#"},
+            new[] {"--Property:Key12ab.+-~#=Val12ab.+-~#"},
             CommandLineArgumentType.ScriptFile,
             new[]
             {
-                new CommandLineArgument(CommandLineArgumentType.ScriptProperty,"Val12ab.,+-~#", "Key12ab.,+-~#")
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty,"Val12ab.+-~#", "Key12ab.+-~#")
             }
         },
         
         new object[]
         {
-            new[] {"--Property:Key12ab.,+-~#=Val12a=b.,+-~#"},
+            new[] {"--Property:Key12ab.+-~#=Val12a=b.+-~#"},
             CommandLineArgumentType.ScriptFile,
             new[]
             {
-                new CommandLineArgument(CommandLineArgumentType.ScriptProperty,"Val12a=b.,+-~#", "Key12ab.,+-~#")
+                new CommandLineArgument(CommandLineArgumentType.ScriptProperty,"Val12a=b.+-~#", "Key12ab.+-~#")
             }
         },
         

@@ -52,22 +52,26 @@ dotnet csi MyDirectory
 Usage:
 
 ```Shell
-dotnet csi [options] [--] [script file or directory containing single script file] [script-arguments]
+dotnet csi [options] [--] [script] [script arguments]
 ```
 
-Script arguments are accessible in scripts via a global list called _Args_.
+Executes a script if specified, otherwise launches an interactive REPL (Read Eval Print Loop).
 
 Supported arguments:
 
-| Option | Description                                                                                                          | Alternative form |
-| -------- |----------------------------------------------------------------------------------------------------------------------| ---------------- |
-| `--help` | Show how to use the command.                                                                                         | `/?`, `-h`, `/h`, `/help` |
-| `--version` | Display the tool version.                                                                                            | `/version` |
-| `--source` | Specify the NuGet package source to use. Supported formats: URL, or a UNC directory path.                            | `-s`, `/s`, `/source` |
-| `--property <key=value>` | Define a _key=value_ pair for the global dictionary called _Props_, which is accessible in scripts.                  | `-p`, `/property`, `/p` |
-| `--property:<key=value>` | Define a _key=value_ pair in MSBuild style for the global dictionary called _Props_, which is accessible in scripts. | `-p:<key=value>`, `/property:<key=value>`, `/p:<key=value>` |
-| `@file` | Read the response file for more options.                                                                             | |
-| `--` | Indicates that the remaining arguments should not be treated as options.                                             | |
+| Option                  | Description                                                                                                                                                     | Alternative form                                                                              |
+|:------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| script                  | The path to the script file to run. If no such file is found, the command will treat it as a directory and look for a single script file inside that directory. |                                                                                               |
+| script arguments        | Script arguments are accessible in a script via the global list Args[index] by an argument index.                                                               |                                                                                               |
+| --                      | Indicates that the remaining arguments should not be treated as options.                                                                                        |                                                                                               |
+| --help                  | Show how to use the command.                                                                                                                                    | `/?`, `-h`, `/h`, `/help`                                                                     |
+| --version               | Display the tool version.                                                                                                                                       | `/version`                                                                                    |
+| --source                | Specify the NuGet package source to use. Supported formats: URL, or a UNC directory path.                                                                       | `-s`, `/s`, `/source`                                                                         |
+| --property <key=value>  | Define a key-value pair(s) for the script properties called _Props_, which is accessible in scripts.                                                            | `-p`, `/property`, `/p`                                                                       |
+| --property:<key=value>  | Define a key-value pair(s) in MSBuild style for the script properties called _Props_, which is accessible in scripts.                                           | `-p:<key=value>`, `/property:<key=value>`, `/p:<key=value>`, `--property:key1=val1;key2=val2` |
+| @file                   | Read the response file for more options.                                                                                                                        |                                                                                               |
+
+```using HostApi;``` directive in a script allows you to use host API types without specifying the fully qualified namespace of these types.
 
 ## Command line sample
 
