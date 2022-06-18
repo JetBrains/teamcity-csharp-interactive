@@ -10,7 +10,7 @@ if (!Props.TryGetValue("version", out var packageVersion))
     Info("Evaluate next NuGet package version.");
     packageVersion =
         GetService<INuGet>()
-            .Restore(packageId, "*")
+            .Restore(new NuGetRestoreSettings(packageId).WithVersionRange(VersionRange.Parse("*")))
             .Where(i => i.Name == packageId)
             .Select(i => i.NuGetVersion)
             .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))

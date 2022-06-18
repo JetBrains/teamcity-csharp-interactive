@@ -1,7 +1,7 @@
 <!--suppress MsbuildTargetFrameworkTagInspection -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework/>
+        <TargetFramework />
         <TargetFrameworks>$(Frameworks)</TargetFrameworks>
         <IsPackable>true</IsPackable>
         <DefineConstants>$(DefineConstants);APPLICATION</DefineConstants>

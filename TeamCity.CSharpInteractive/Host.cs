@@ -6,8 +6,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using HostApi;
+using NuGet.Versioning;
 using TeamCity.CSharpInteractive;
-using Environment = System.Environment;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("Design", "CA1050:Declare types in namespaces")]
@@ -53,7 +53,7 @@ public static class Host
         {
             Components.Log.Error(ErrorId.Exception, new[] {new Text(e.ExceptionObject.ToString() ?? "Unhandled exception.")});
             Finish();
-            Environment.Exit(1);
+            System.Environment.Exit(1);
         }
         catch
         {
@@ -80,4 +80,24 @@ public static class Host
 
     [Pure]
     public static T GetService<T>() => CurHost.GetService<T>();
+    
+    public static int? Run(this ICommandLine commandLine, Action<Output>? handler = default, TimeSpan timeout = default) => 
+        Components.CommandLineRunner.Run(commandLine, handler, timeout);
+
+    public static Task<int?> RunAsync(this ICommandLine commandLine, Action<Output>? handler = default, CancellationToken cancellationToken = default) =>
+        Components.CommandLineRunner.RunAsync(commandLine, handler, cancellationToken);
+    
+    public static IBuildResult Build(this ICommandLine commandLine, Action<BuildMessage>? handler = default, TimeSpan timeout = default) => 
+        Components.BuildRunner.Run(commandLine, handler, timeout);
+
+    public static Task<IBuildResult> BuildAsync(this ICommandLine commandLine, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default) =>
+        Components.BuildRunner.RunAsync(commandLine, handler, cancellationToken);
+    
+    [Obsolete]
+    public static IEnumerable<NuGetPackage> Restore(this INuGet nuGet, string packageId, string? versionRange = default, string? targetFrameworkMoniker = default, string? packagesPath = default) =>
+        nuGet.Restore(
+            new NuGetRestoreSettings(packageId)
+                .WithVersionRange(versionRange != default ? VersionRange.Parse(versionRange) : default)
+                .WithTargetFrameworkMoniker(targetFrameworkMoniker)
+                .WithPackagesPath(packagesPath));
 }

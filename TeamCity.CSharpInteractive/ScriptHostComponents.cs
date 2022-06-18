@@ -9,4 +9,6 @@ internal readonly record struct ScriptHostComponents(
     IStatistics Statistics,
     ILog<ScriptHostComponents> Log,
     IInfo Info,
-    IExitTracker ExitTracker);
+    IExitTracker ExitTracker,
+    ICommandLineRunner CommandLineRunner,
+    IBuildRunner BuildRunner);
