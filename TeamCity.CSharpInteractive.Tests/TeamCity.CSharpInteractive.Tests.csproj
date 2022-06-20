@@ -7,7 +7,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
         <PackageReference Include="Moq" Version="4.18.1" />
-        <PackageReference Include="Pure.DI" Version="1.1.41">
+        <PackageReference Include="Pure.DI" Version="1.1.43">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
