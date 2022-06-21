@@ -27,6 +27,5 @@ public class HelpTests
         result.ExitCode.ShouldBe(0);
         result.StdErr.ShouldBeEmpty();
         result.StdOut.Any(i => i.StartsWith("Usage:")).ShouldBeTrue();
-        result.StdOut.Any(i => i.StartsWith("Options:")).ShouldBeTrue();
     }
 }
