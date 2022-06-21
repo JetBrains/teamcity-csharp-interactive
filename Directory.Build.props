@@ -5,7 +5,7 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        <NoWarn>NU1605;NU5118;NU5100;NU5131</NoWarn>
+        <NoWarn>NU1605;NU5118;NU5100;NU5131;NU5104</NoWarn>
         <Version>1.0.0-dev</Version>
         <Authors>NikolayP;JetBrains</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
