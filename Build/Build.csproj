@@ -4,6 +4,6 @@
         <TargetFrameworks>$(Frameworks)</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.4-beta7" />
+        <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.4" />
     </ItemGroup>
 </Project>
