@@ -47,7 +47,7 @@
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="NuGet.Build.Tasks" Version="6.2.1" />
         <PackageReference Include="PrettyPrompt" Version="3.0.6" />
-        <PackageReference Include="Pure.DI" Version="1.1.42">
+        <PackageReference Include="Pure.DI" Version="1.1.43">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
