@@ -3,6 +3,8 @@ namespace TeamCity.CSharpInteractive;
 internal interface IFileSystem
 {
     void DeleteDirectory(string path, bool recursive);
+    
+    void CreateDirectory(string path);
 
     bool IsPathRooted(string path);
 

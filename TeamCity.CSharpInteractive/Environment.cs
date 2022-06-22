@@ -10,7 +10,13 @@ internal class Environment:
     IScriptContext,
     IErrorContext
 {
+    private readonly IFileSystem _fileSystem;
     private readonly LinkedList<ICodeSource> _sources = new();
+
+    public Environment(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+    }
 
     public Platform OperatingSystemPlatform => RuntimeEnvironment.OperatingSystemPlatform;
 
@@ -30,6 +36,7 @@ internal class Environment:
                     SpecialFolder.ProgramFiles => System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
                     SpecialFolder.Script => GetScriptDirectory(),
                     SpecialFolder.Working => GetWorkingDirectory(),
+                    SpecialFolder.Data => GetApplicationDataDirectory(),
                     _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                 };
 
@@ -44,6 +51,7 @@ internal class Environment:
                     SpecialFolder.ProgramFiles => "usr/local/share",
                     SpecialFolder.Script => GetScriptDirectory(),
                     SpecialFolder.Working => GetWorkingDirectory(),
+                    SpecialFolder.Data => GetApplicationDataDirectory(),
                     _ => throw new ArgumentOutOfRangeException(nameof(specialFolder), specialFolder, null)
                 };
 
@@ -122,5 +130,16 @@ internal class Environment:
 
         var scriptDirectory = Path.GetDirectoryName(script);
         return !string.IsNullOrWhiteSpace(scriptDirectory) ? scriptDirectory : script;
+    }
+    
+    private string GetApplicationDataDirectory()
+    {
+        var applicationDataDirectory = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "TeamCity.CSharpInteractive");
+        if (!_fileSystem.IsDirectoryExist(applicationDataDirectory))
+        {
+            _fileSystem.CreateDirectory(applicationDataDirectory);
+        }
+
+        return applicationDataDirectory;
     }
 }

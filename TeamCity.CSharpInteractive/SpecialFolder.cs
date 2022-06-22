@@ -16,5 +16,8 @@ internal enum SpecialFolder
     Script,
 
     // Working directory of process
-    Working
+    Working,
+    
+    // Data
+    Data
 }
