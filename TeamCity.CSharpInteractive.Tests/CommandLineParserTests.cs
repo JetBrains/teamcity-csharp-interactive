@@ -2,9 +2,13 @@ namespace TeamCity.CSharpInteractive.Tests;
 
 public class CommandLineParserTests
 {
-    private readonly Mock<IFileSystem> _fileSystem;
+    private readonly Mock<IFileSystem> _fileSystem = new();
+    private readonly Mock<IMSBuildArgumentsTool> _msBuildArgumentsTool = new();
 
-    public CommandLineParserTests() => _fileSystem = new Mock<IFileSystem>();
+    public CommandLineParserTests()
+    {
+        _msBuildArgumentsTool.Setup(i => i.Unescape(It.IsAny<string>())).Returns<string>(str => str.Replace("###", "help"));
+    }
 
     public static IEnumerable<object?[]> Data => new List<object?[]>
     {
@@ -12,6 +16,14 @@ public class CommandLineParserTests
         new object[]
         {
             new[] {"--help"},
+            CommandLineArgumentType.ScriptFile,
+            new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
+        },
+        
+        // Unescape
+        new object[]
+        {
+            new[] {"--###"},
             CommandLineArgumentType.ScriptFile,
             new[] {new CommandLineArgument(CommandLineArgumentType.Help)}
         },
@@ -405,5 +417,5 @@ public class CommandLineParserTests
     }
 
     private CommandLineParser CreateInstance() =>
-        new(_fileSystem.Object);
+        new(_fileSystem.Object, _msBuildArgumentsTool.Object);
 }

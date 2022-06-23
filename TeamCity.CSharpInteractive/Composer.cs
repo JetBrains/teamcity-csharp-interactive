@@ -67,6 +67,7 @@ internal static partial class Composer
             .Bind<INuGetEnvironment>().Bind<ITraceSource>(typeof(NuGetEnvironment)).To<NuGetEnvironment>()
             .Bind<ISettings>().Bind<ISettingSetter<VerbosityLevel>>().Bind<Settings>().To<Settings>()
             .Bind<ISettingDescription>().Tags(typeof(VerbosityLevel)).To<VerbosityLevelSettingDescription>()
+            .Bind<IMSBuildArgumentsTool>().To<MSBuildArgumentsTool>()
             .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()
             .Bind<ICodeSource>().To<ConsoleSource>()

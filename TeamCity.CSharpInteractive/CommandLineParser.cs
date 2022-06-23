@@ -8,9 +8,15 @@ internal class CommandLineParser : ICommandLineParser
     private static readonly Regex PropertyRegex = new(@"^(--property|-p|/property|/p):(.+)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private static readonly char[] PropertiesSeparators = {';', ','};
     private readonly IFileSystem _fileSystem;
+    private readonly IMSBuildArgumentsTool _msBuildArgumentsTool;
 
-    public CommandLineParser(IFileSystem fileSystem) =>
+    public CommandLineParser(
+        IFileSystem fileSystem,
+        IMSBuildArgumentsTool msBuildArgumentsTool)
+    {
         _fileSystem = fileSystem;
+        _msBuildArgumentsTool = msBuildArgumentsTool;
+    }
 
     public IEnumerable<CommandLineArgument> Parse(IEnumerable<string> arguments, CommandLineArgumentType defaultArgType)
     {
@@ -28,7 +34,7 @@ internal class CommandLineParser : ICommandLineParser
                     continue;
                 }
 
-                var argument = enumerator.Current;
+                var argument = _msBuildArgumentsTool.Unescape(enumerator.Current);
                 if (argumentType != null)
                 {
                     // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
