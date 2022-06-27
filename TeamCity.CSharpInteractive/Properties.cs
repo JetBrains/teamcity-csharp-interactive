@@ -2,6 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using HostApi;
 
 internal class Properties : IProperties
@@ -62,7 +63,7 @@ internal class Properties : IProperties
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public bool TryGetValue(string key, out string value)
+    public bool TryGetValue(string key, [MaybeNullWhen(false)] out string value)
     {
         lock (_props)
         {

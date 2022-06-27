@@ -5,7 +5,7 @@ using NuGet.Versioning;
 if (!Props.TryGetValue("configuration", out var configuration)) configuration = "Release";
 
 const string packageId = "MySampleLib";
-if (!Props.TryGetValue("version", out var packageVersion))
+if (!Props.TryGetValue<SemanticVersion>("version", out var packageVersion))
 {
     Info("Evaluate next NuGet package version.");
     packageVersion =
@@ -15,11 +15,10 @@ if (!Props.TryGetValue("version", out var packageVersion))
             .Select(i => i.NuGetVersion)
             .Select(i => new NuGetVersion(i.Major, i.Minor, i.Patch + 1))
             .DefaultIfEmpty(new NuGetVersion(1, 0, 0))
-            .Max()!
-            .ToString();
+            .Max()!;
 }
 
-var props = new[] {("Version", packageVersion)};
+var props = new[] {("Version", packageVersion.ToString())};
 
 var requiredSdkVersion = new Version(6, 0);
 Version? sdkVersion = default;

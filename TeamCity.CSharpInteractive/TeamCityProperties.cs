@@ -2,6 +2,7 @@
 namespace TeamCity.CSharpInteractive;
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using HostApi;
 using JetBrains.TeamCity.ServiceMessages.Write.Special;
 
@@ -34,5 +35,5 @@ internal class TeamCityProperties : IProperties
 
     IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_props).GetEnumerator();
 
-    public bool TryGetValue(string key, out string value) => _props.TryGetValue(key, out value);
+    public bool TryGetValue(string key, [MaybeNullWhen(false)] out string value) => _props.TryGetValue(key, out value);
 }

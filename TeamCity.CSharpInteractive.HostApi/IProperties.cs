@@ -1,5 +1,6 @@
 namespace HostApi;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 public interface IProperties : IEnumerable<KeyValuePair<string, string>>
@@ -9,5 +10,5 @@ public interface IProperties : IEnumerable<KeyValuePair<string, string>>
 
     string this[string key] { get; set; }
 
-    bool TryGetValue(string key, out string value);
+    bool TryGetValue(string key, [MaybeNullWhen(false)] out string value);
 }

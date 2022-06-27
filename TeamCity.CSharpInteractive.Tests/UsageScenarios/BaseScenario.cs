@@ -2,6 +2,7 @@
 namespace TeamCity.CSharpInteractive.Tests.UsageScenarios;
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using HostApi;
 using Environment = System.Environment;
 
@@ -63,7 +64,7 @@ public class BaseScenario : IHost, IDisposable
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public bool TryGetValue(string key, out string value) => _dict.TryGetValue(key, out value!);
+        public bool TryGetValue(string key, [MaybeNullWhen(false)] out string value) => _dict.TryGetValue(key, out value!);
     }
 
     void IDisposable.Dispose()

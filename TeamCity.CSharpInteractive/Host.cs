@@ -3,6 +3,8 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable CheckNamespace
+
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using HostApi;
@@ -100,4 +102,36 @@ public static class Host
                 .WithVersionRange(versionRange != default ? VersionRange.Parse(versionRange) : default)
                 .WithTargetFrameworkMoniker(targetFrameworkMoniker)
                 .WithPackagesPath(packagesPath));
+
+    public static bool TryGetValue<T>(this IProperties properties, string key, [MaybeNullWhen(false)] out T value)
+    {
+        if (properties.TryGetValue(key, out var valStr))
+        {
+            if (typeof(T) == typeof(string))
+            {
+                value = (T)(object)valStr;
+                return true;
+            }
+            
+            var converter = TypeDescriptor.GetConverter(typeof(T));
+            if (converter.CanConvertFrom(typeof(string)))
+            {
+                var nullableValue = converter.ConvertFrom(valStr);
+                if (!Equals(nullableValue, null))
+                {
+                    try
+                    {
+                        value = (T)nullableValue;
+                        return true;
+                    }
+                    catch (InvalidCastException)
+                    {
+                    }
+                }
+            }
+        }
+
+        value = default;
+        return false;
+    }
 }
