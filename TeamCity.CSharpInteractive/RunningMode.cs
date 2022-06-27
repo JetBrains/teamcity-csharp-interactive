@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-public enum RunningMode
+internal enum RunningMode
 {
     Tool,
     Application

@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-public interface IStreamReader : IDisposable
+internal interface IStreamReader : IDisposable
 {
     int Read(Memory<byte> buffer);
 
