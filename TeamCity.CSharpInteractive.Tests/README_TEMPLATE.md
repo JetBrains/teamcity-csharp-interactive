@@ -213,21 +213,28 @@ Trace("Some trace info");
 // Adds the namespace "Script.Cmd" to use Command Line API
 using HostApi;
 
-// Creates a simple command line from just the name of the executable 
-var cmd = new CommandLine("whoami");
+// Creates and run a simple command line 
+"whoami".AsCommandLine().Run();
 
-// Creates a command line with multiple command line arguments 
-cmd = new CommandLine("cmd", "/c", "echo", "Hello");
+// Creates and run a simple command line 
+new CommandLine("whoami").Run();
+
+// Creates and run a command line with arguments 
+new CommandLine("cmd", "/c", "echo", "Hello").Run();
 
 // Same as previous statement
-cmd = new CommandLine("cmd", "/c")
-    .AddArgs("echo", "Hello");
+new CommandLine("cmd", "/c")
+    .AddArgs("echo", "Hello")
+    .Run();
 
-// Same as previous statement
-cmd = new CommandLine("cmd") + "/c" + "echo" + "Hello";
+(new CommandLine("cmd") + "/c" + "echo" + "Hello").Run();
 
-// Builds a command line with multiple environment variables
-cmd = new CommandLine("cmd", "/c", "echo", "Hello")
+("cmd".AsCommandLine("/c", "echo", "Hello")).Run();
+
+("cmd".AsCommandLine() + "/c" + "echo" + "Hello").Run();
+
+// Just builds a command line with multiple environment variables
+var cmd = new CommandLine("cmd", "/c", "echo", "Hello")
     .AddVars(("Var1", "val1"), ("var2", "Val2"));
 
 // Same as previous statement

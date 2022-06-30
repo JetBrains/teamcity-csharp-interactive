@@ -18,17 +18,24 @@ more details.
 
 ## Use Outside TeamCity
 
-After installing tool you can use this tool independently of TeamCity, to run C# scripts from the command line. TeamCity.csi is available as a [NuGet package](https://www.nuget.org/packages/TeamCity.csi/). Before installing TeamCity.csi as a local tool dot not forget to create .NET local tool manifest file if it is not exist. Install the tool and add to the local tool manifest:
+After installing tool you can use this tool independently of TeamCity, to run C# scripts from the command line. TeamCity.csi is available as a [NuGet package](https://www.nuget.org/packages/TeamCity.csi/).
+
+Before installing TeamCity.csi as a local tool dot not forget to create .NET local tool manifest file if it is not exist:
 
 ```Shell
 dotnet new tool-manifest
+```
+
+Install the tool and add to the local tool manifest:
+
+```Shell
 dotnet tool install TeamCity.csi
 ```
 
 Or install the tool for the current user:
 
 ```Shell
-dotnet tool install TeamCity.csi -g --version <version>
+dotnet tool install TeamCity.csi -g
 ```
 
 Launch the tool in the interactive mode:
@@ -40,13 +47,13 @@ dotnet csi
 Run a specified script with a given argument:
 
 ```Shell
-dotnet csi script-file.csx
+dotnet csi Samples/Scripts/hello.csx World 
 ```
 
 Run a single script located in the _MyDirectory_ directory:
 
 ```Shell
-dotnet csi MyDirectory
+dotnet csi Samples/Build
 ```
 
 Usage:
@@ -293,21 +300,28 @@ Trace("Some trace info");
 // Adds the namespace "Script.Cmd" to use Command Line API
 using HostApi;
 
-// Creates a simple command line from just the name of the executable 
-var cmd = new CommandLine("whoami");
+// Creates and run a simple command line 
+"whoami".AsCommandLine().Run();
 
-// Creates a command line with multiple command line arguments 
-cmd = new CommandLine("cmd", "/c", "echo", "Hello");
+// Creates and run a simple command line 
+new CommandLine("whoami").Run();
+
+// Creates and run a command line with arguments 
+new CommandLine("cmd", "/c", "echo", "Hello").Run();
 
 // Same as previous statement
-cmd = new CommandLine("cmd", "/c")
-    .AddArgs("echo", "Hello");
+new CommandLine("cmd", "/c")
+    .AddArgs("echo", "Hello")
+    .Run();
 
-// Same as previous statement
-cmd = new CommandLine("cmd") + "/c" + "echo" + "Hello";
+(new CommandLine("cmd") + "/c" + "echo" + "Hello").Run();
 
-// Builds a command line with multiple environment variables
-cmd = new CommandLine("cmd", "/c", "echo", "Hello")
+("cmd".AsCommandLine("/c", "echo", "Hello")).Run();
+
+("cmd".AsCommandLine() + "/c" + "echo" + "Hello").Run();
+
+// Just builds a command line with multiple environment variables
+var cmd = new CommandLine("cmd", "/c", "echo", "Hello")
     .AddVars(("Var1", "val1"), ("var2", "Val2"));
 
 // Same as previous statement
