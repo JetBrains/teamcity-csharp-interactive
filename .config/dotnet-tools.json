@@ -7,6 +7,12 @@
       "commands": [
         "dotnet-dotcover"
       ]
+    },
+    "teamcity.csi": {
+      "version": "1.0.4",
+      "commands": [
+        "dotnet-csi"
+      ]
     }
   }
 }
