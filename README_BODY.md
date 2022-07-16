@@ -94,7 +94,7 @@ Create a console project "Build" containing a script from the template *__build_
 dotnet new build -o ./Build
 ```
 
-This projects contains the script *__./Build/Program.csx__*. To run this script from the command line from the directory *__Build__*
+This projects contains the script *__./Build/Program.csx__*. To run this script from the command line from the directory *__Build__*:
 
 ```shell
 dotnet csi Build
@@ -106,7 +106,7 @@ To run this script as a console application:
 dotnet run --project Build
 ```
 
-Open the *__./Build/Build.csproj__* in IDE and debug the scrip.
+Open the *__./Build/Build.csproj__* in IDE and debug the script.
 
 ## Report and Track Issues
 
