@@ -8,7 +8,7 @@ command-line tool on Windows, Linux, or macOS.
 
 ## Prerequisites
 
-The tool requires .NET 6+ runtime.
+The tool requires [.NET 6+ runtime](https://dotnet.microsoft.com/en-us/download).
 
 ## Use Inside TeamCity
 
@@ -79,6 +79,34 @@ Supported arguments:
 | @file                   | Read the response file for more options.                                                                                                                        |                                                                                               |
 
 ```using HostApi;``` directive in a script allows you to use host API types without specifying the fully qualified namespace of these types.
+
+## Debug scripts easy!
+
+Install the C# script template [TeamCity.CSharpInteractive.Templates](https://www.nuget.org/packages/TeamCity.CSharpInteractive.Templates)
+
+```shell
+dotnet new -i TeamCity.CSharpInteractive.Templates
+```
+
+Create a console project "Build" containing a script from the template *__build__*
+
+```shell
+dotnet new build -o ./Build
+```
+
+This projects contains the script *__./Build/Program.csx__*. To run this script from the command line from the directory *__Build__*
+
+```shell
+dotnet csi Build
+```
+
+To run this script as a console application:
+
+```shell
+dotnet run --project Build
+```
+
+Open the *__./Build/Build.csproj__* in IDE and debug the scrip.
 
 ## Report and Track Issues
 
