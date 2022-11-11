@@ -71,14 +71,12 @@ internal static partial class Composer
             .Bind<ICommandLineParser>().To<CommandLineParser>()
             .Bind<IInfo>().To<Info>()
             .Bind<ICodeSource>().To<ConsoleSource>()
-            .Bind<LoadFileCodeSource>().To<LoadFileCodeSource>()
             .Bind<Func<string, ICodeSource>>(typeof(LoadFileCodeSource)).To(ctx => new Func<string, ICodeSource>(name =>
             {
                 var source = ctx.Resolve<LoadFileCodeSource>();
                 source.Name = name;
                 return source;
             }))
-            .Bind<LineCodeSource>().To<LineCodeSource>()
             .Bind<Func<string, ICodeSource>>(typeof(LineCodeSource)).To(ctx => new Func<string, ICodeSource>(line =>
             {
                 var source = ctx.Resolve<LineCodeSource>();
@@ -124,7 +122,7 @@ internal static partial class Composer
             .Bind<IBuildOutputProcessor>().To<BuildOutputProcessor>()
             .Bind<IBuildMessagesProcessor>("default").To<DefaultBuildMessagesProcessor>()
             .Bind<IBuildMessagesProcessor>("custom").To<CustomMessagesProcessor>()
-            .Bind<ScriptHostComponents>().To<ScriptHostComponents>()
+            .Root<ScriptHostComponents>()
             .Bind<IPresenter<Summary>>().To<SummaryPresenter>()
             .Bind<IExitCodeParser>().To<ExitCodeParser>()
             .Bind<IProcessRunner>("base").To<ProcessRunner>()

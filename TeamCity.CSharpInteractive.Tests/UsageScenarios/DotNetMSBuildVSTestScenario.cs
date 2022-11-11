@@ -8,7 +8,7 @@ using HostApi;
 
 [CollectionDefinition("Integration", DisableParallelization = true)]
 [Trait("Integration", "true")]
-public class DotNetVSTestScenario : BaseScenario
+public class DotNetMSBuildVSTestScenario : BaseScenario
 {
     [Fact]
     public void Run()
@@ -16,7 +16,7 @@ public class DotNetVSTestScenario : BaseScenario
         // $visible=true
         // $tag=11 .NET build API
         // $priority=01
-        // $description=Test an assembly
+        // $description=Test a project using the MSBuild VSTest target
         // {
         // Adds the namespace "HostApi" to use .NET build API
         // ## using HostApi;
@@ -25,15 +25,10 @@ public class DotNetVSTestScenario : BaseScenario
         var result = new DotNetNew("mstest", "-n", "MyTests", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
-        // Builds the test project, running a command like: "dotnet build -c Release" from the directory "MyTests"
-        result = new DotNetBuild().WithWorkingDirectory("MyTests").WithConfiguration("Release").WithOutput("MyOutput").Build();
-        result.ExitCode.ShouldBe(0);
-
-        // Runs tests via a command like: "dotnet vstest" from the directory "MyTests"
-        result = new VSTest()
-            .AddTestFileNames(Path.Combine("MyOutput", "MyTests.dll"))
-            .WithWorkingDirectory("MyTests")
-            .Build();
+        // Runs tests via a command like: "dotnet msbuild /t:VSTest" from the directory "MyTests"
+        result = new MSBuild()
+            .WithTarget("VSTest")
+            .WithWorkingDirectory("MyTests").Build();
 
         // The "result" variable provides details about a build
         result.ExitCode.ShouldBe(0);

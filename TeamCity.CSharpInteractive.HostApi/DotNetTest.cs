@@ -3,6 +3,7 @@
 // ReSharper disable InconsistentNaming
 namespace HostApi;
 
+using Cmd;
 using DotNet;
 using Immutype;
 
@@ -85,6 +86,8 @@ public partial record DotNetTest(
     public IStartInfo GetStartInfo(IHost host)
     {
         var blameHangTimeout = BlameHangTimeout?.TotalMilliseconds;
+        var virtualContext = host.GetService<IVirtualContext>();
+        var settings = host.GetService<IDotNetSettings>();
         var cmd = host.CreateCommandLine(ExecutablePath)
             .WithShortName(ToString())
             .WithArgs("test")
@@ -92,11 +95,14 @@ public partial record DotNetTest(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
-            .AddArgs(Loggers.Select(i => ("--logger", (string?)i)).ToArray())
+            .AddArgs(
+                Loggers.Select(i => ("--logger", (string?)i))
+                    .Concat(new []{("--logger", (string?)"logger://teamcity")})
+                    .ToArray())
             .AddArgs(
                 ("--settings", Settings),
                 ("--filter", Filter),
-                ("--test-adapter-path", TestAdapterPath),
+                ("--test-adapter-path", $"\"TestAdapterPath;%3B;{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""),
                 ("--configuration", Configuration),
                 ("--framework", Framework),
                 ("--runtime", Runtime),
