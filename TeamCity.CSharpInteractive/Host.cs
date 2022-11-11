@@ -27,6 +27,12 @@ public static class Components
 
     static Host()
     {
+        if (AppDomain.CurrentDomain.GetAssemblies().Any(i => string.Equals("dotnet-csi", i.GetName().Name, StringComparison.InvariantCultureIgnoreCase)))
+        {
+            FinishToken = Disposable.Empty;
+            return;
+        }
+
         HostComponents.Info.ShowHeader();
         FinishToken = Disposable.Create(HostComponents.ExitTracker.Track(), HostComponents.Statistics.Start());
         AppDomain.CurrentDomain.ProcessExit += (_, _) => Finish();
