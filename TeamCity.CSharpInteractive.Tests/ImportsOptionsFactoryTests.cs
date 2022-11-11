@@ -15,9 +15,10 @@ public class ImportsOptionsFactoryTests
         var options = factory.Create(ScriptOptions.Default);
 
         // Then
-        options.Imports.ShouldBe(new []{"Host"});
+        options.Imports.Length.ShouldBe(1);
+        (options.Imports.Contains("Host") || options.Imports.Contains("Components")).ShouldBeTrue();
     }
 
-    private ImportsOptionsFactory CreateInstance() =>
+    private static ImportsOptionsFactory CreateInstance() =>
         new();
 }

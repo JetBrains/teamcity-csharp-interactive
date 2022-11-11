@@ -13,18 +13,22 @@ using TeamCity.CSharpInteractive;
 
 [ExcludeFromCodeCoverage]
 [SuppressMessage("Design", "CA1050:Declare types in namespaces")]
+#if APPLICATION
 public static class Host
+#else
+public static class Components
+#endif
 {
-    private static readonly ScriptHostComponents Components = Composer.ResolveScriptHostComponents();
-    private static readonly IHost CurHost = Components.Host;
+    private static readonly ScriptHostComponents HostComponents = Composer.ResolveScriptHostComponents();
+    private static readonly IHost CurHost = HostComponents.Host;
 
 #if APPLICATION
     private static readonly IDisposable FinishToken;
 
     static Host()
     {
-        Components.Info.ShowHeader();
-        FinishToken = Disposable.Create(Components.ExitTracker.Track(), Components.Statistics.Start());
+        HostComponents.Info.ShowHeader();
+        FinishToken = Disposable.Create(HostComponents.ExitTracker.Track(), HostComponents.Statistics.Start());
         AppDomain.CurrentDomain.ProcessExit += (_, _) => Finish();
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
     }
@@ -40,7 +44,7 @@ public static class Host
         {
             try
             {
-                Components.Log.Error(ErrorId.Unhandled, ex.Message);
+                HostComponents.Log.Error(ErrorId.Unhandled, ex.Message);
             }
             catch (Exception)
             {
@@ -53,7 +57,7 @@ public static class Host
     {
         try
         {
-            Components.Log.Error(ErrorId.Exception, new[] {new Text(e.ExceptionObject.ToString() ?? "Unhandled exception.")});
+            HostComponents.Log.Error(ErrorId.Exception, new[] {new Text(e.ExceptionObject.ToString() ?? "Unhandled exception.")});
             Finish();
             System.Environment.Exit(1);
         }
@@ -84,16 +88,16 @@ public static class Host
     public static T GetService<T>() => CurHost.GetService<T>();
     
     public static int? Run(this ICommandLine commandLine, Action<Output>? handler = default, TimeSpan timeout = default) => 
-        Components.CommandLineRunner.Run(commandLine, handler, timeout);
+        HostComponents.CommandLineRunner.Run(commandLine, handler, timeout);
 
     public static Task<int?> RunAsync(this ICommandLine commandLine, Action<Output>? handler = default, CancellationToken cancellationToken = default) =>
-        Components.CommandLineRunner.RunAsync(commandLine, handler, cancellationToken);
+        HostComponents.CommandLineRunner.RunAsync(commandLine, handler, cancellationToken);
     
     public static IBuildResult Build(this ICommandLine commandLine, Action<BuildMessage>? handler = default, TimeSpan timeout = default) => 
-        Components.BuildRunner.Run(commandLine, handler, timeout);
+        HostComponents.BuildRunner.Run(commandLine, handler, timeout);
 
     public static Task<IBuildResult> BuildAsync(this ICommandLine commandLine, Action<BuildMessage>? handler = default, CancellationToken cancellationToken = default) =>
-        Components.BuildRunner.RunAsync(commandLine, handler, cancellationToken);
+        HostComponents.BuildRunner.RunAsync(commandLine, handler, cancellationToken);
     
     [Obsolete]
     public static IEnumerable<NuGetPackage> Restore(this INuGet nuGet, string packageId, string? versionRange = default, string? targetFrameworkMoniker = default, string? packagesPath = default) =>
