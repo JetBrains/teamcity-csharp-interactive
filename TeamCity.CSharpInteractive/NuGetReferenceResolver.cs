@@ -57,10 +57,10 @@ internal class NuGetReferenceResolver : INuGetReferenceResolver
 
         using (outputPathToken)
         {
-            _log.Info(new Text("Assemblies referenced:", Color.Highlighted));
+            _log.Trace(() => new Text("Assemblies referenced:"));
             foreach (var assembly in _nugetAssetsReader.ReadReferencingAssemblies(projectAssetsJson))
             {
-                _log.Info(Text.Tab, new Text(assembly.Name, Color.Highlighted));
+                _log.Trace(() => new []{ Text.Tab, new Text(assembly.Name) });
                 result.Add(assembly);
             }
         }
