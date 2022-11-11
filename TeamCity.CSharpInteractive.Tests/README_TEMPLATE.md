@@ -38,6 +38,7 @@
   - [Run a project](#run-a-project)
   - [Run tests under dotCover](#run-tests-under-dotcover)
   - [Test a project](#test-a-project)
+  - [Test a project using the MSBuild VSTest target](#test-a-project-using-the-msbuild-vstest-target)
   - [Test an assembly](#test-an-assembly)
   - [Shuts down build servers](#shuts-down-build-servers)
 - NuGet API
@@ -428,6 +429,31 @@ version.ShouldNotBeNull();
 
 
 
+### Test a project using the MSBuild VSTest target
+
+
+
+``` CSharp
+// Adds the namespace "HostApi" to use .NET build API
+using HostApi;
+
+// Creates a new test project, running a command like: "dotnet new mstest -n MyTests --force"
+var result = new DotNetNew("mstest", "-n", "MyTests", "--force").Build();
+result.ExitCode.ShouldBe(0);
+
+// Runs tests via a command like: "dotnet msbuild /t:VSTest" from the directory "MyTests"
+result = new MSBuild()
+    .WithTarget("VSTest")
+    .WithWorkingDirectory("MyTests").Build();
+
+// The "result" variable provides details about a build
+result.ExitCode.ShouldBe(0);
+result.Summary.Tests.ShouldBe(1);
+result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
+```
+
+
+
 ### Pack a project
 
 
@@ -529,6 +555,7 @@ result = new DotNetTest().WithWorkingDirectory("MyTests").Build();
 
 // The "result" variable provides details about a build
 result.ExitCode.ShouldBe(0);
+result.Summary.Tests.ShouldBe(1);
 result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 ```
 
@@ -633,8 +660,9 @@ result = new VSTest()
     .Build();
 
 // The "result" variable provides details about a build
-result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 result.ExitCode.ShouldBe(0);
+result.Summary.Tests.ShouldBe(1);
+result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
 ```
 
 

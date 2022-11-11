@@ -29,6 +29,7 @@ public class DotNetTestScenario : BaseScenario
 
         // The "result" variable provides details about a build
         result.ExitCode.ShouldBe(0);
+        result.Summary.Tests.ShouldBe(1);
         result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
         // }
     }

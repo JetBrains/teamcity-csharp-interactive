@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>$(Frameworks)</TargetFrameworks>
+	<TargetFrameworks>$(Frameworks)</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="TeamCity.CSharpInteractive" Version="1.0.4" />
