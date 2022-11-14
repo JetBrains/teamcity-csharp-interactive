@@ -22,7 +22,7 @@ public class DotNetBuildScenario : BaseScenario
         // ## using HostApi;
 
         // Creates a new library project, running a command like: "dotnet new classlib -n MyLib --force"
-        var result = new DotNetNew("classlib", "-n", "MyLib", "--force").Build();
+        var result = new DotNetNew("xunit", "-n", "MyLib", "--force").Build();
         result.ExitCode.ShouldBe(0);
 
         // Builds the library project, running a command like: "dotnet build" from the directory "MyLib"
@@ -31,6 +31,12 @@ public class DotNetBuildScenario : BaseScenario
         // The "result" variable provides details about a build
         result.Errors.Any(message => message.State == BuildMessageState.StdError).ShouldBeFalse();
         result.ExitCode.ShouldBe(0);
+        
+        // Runs tests in docker
+        result = new DotNetTest().WithWorkingDirectory("MyLib").Build();
+        result.ExitCode.ShouldBe(0);
+        result.Summary.Tests.ShouldBe(1);
+        result.Tests.Count(test => test.State == TestState.Passed).ShouldBe(1);
         // }
     }
 }
