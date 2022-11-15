@@ -48,7 +48,7 @@ public class DotNetEnvironmentTests
     {
         // Given
         _environment.SetupGet(i => i.OperatingSystemPlatform).Returns(platform);
-        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOTNET_HOME")).Returns(new[] {"Abc", "Xyz"});
+        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOTNET_ROOT", "DOTNET_HOME")).Returns(new[] {"Abc", "Xyz"});
 
         // When
         var instance = CreateInstance(".NETCoreApp,Version=v3.1", "Abc");
@@ -67,7 +67,7 @@ public class DotNetEnvironmentTests
     {
         // Given
         _environment.SetupGet(i => i.OperatingSystemPlatform).Returns(platform);
-        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOTNET_HOME")).Throws<Exception>();
+        _fileExplorer.Setup(i => i.FindFiles(defaultPath, "DOTNET_ROOT", "DOTNET_HOME")).Throws<Exception>();
 
         // When
         var instance = CreateInstance(".NETCoreApp,Version=v3.1", "Abc");

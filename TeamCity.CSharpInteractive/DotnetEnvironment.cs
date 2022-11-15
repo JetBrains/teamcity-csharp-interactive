@@ -32,10 +32,11 @@ internal class DotNetEnvironment : IDotNetEnvironment, ITraceSource
             {
                 if (System.IO.Path.GetFileName(_moduleFile).Equals(executable, StringComparison.InvariantCultureIgnoreCase))
                 {
+                    System.Console.WriteLine($"From module {_moduleFile}");
                     return _moduleFile;
                 }
 
-                return _fileExplorer.FindFiles(executable, "DOTNET_HOME").FirstOrDefault() ?? executable;
+                return _fileExplorer.FindFiles(executable, "DOTNET_ROOT", "DOTNET_HOME").FirstOrDefault() ?? executable;
             }
             catch
             {
