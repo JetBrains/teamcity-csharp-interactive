@@ -5,7 +5,7 @@ using JetBrains.TeamCity.ServiceMessages;
 
 public class DefaultBuildMessagesProcessorTests
 {
-    private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
+    private readonly Mock<ICISettings> _teamCitySettings = new();
     private readonly Mock<IProcessOutputWriter> _processOutputWriter = new();
     private readonly Mock<IBuildMessageLogWriter> _buildMessageLogWriter = new();
     private readonly Mock<IStartInfo> _startInfo = new();
@@ -21,7 +21,7 @@ public class DefaultBuildMessagesProcessorTests
             new(BuildMessageState.ServiceMessage, Mock.Of<IServiceMessage?>())
         };
 
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.TeamCity);
         var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 
@@ -41,7 +41,7 @@ public class DefaultBuildMessagesProcessorTests
         var msg1 = new BuildMessage(BuildMessageState.StdOut, default, "Msg1");
         var msg2 = new BuildMessage(BuildMessageState.ServiceMessage, Mock.Of<IServiceMessage?>());
 
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(false);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.Unknown);
         var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 
@@ -63,7 +63,7 @@ public class DefaultBuildMessagesProcessorTests
         var msg1 = new BuildMessage(BuildMessageState.StdOut, default, "Msg1");
         var msg2 = new BuildMessage(BuildMessageState.StdError, default, "Error");
 
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.TeamCity);
         var nextHandler = new Mock<Action<BuildMessage>>();
         var processor = CreateInstance();
 

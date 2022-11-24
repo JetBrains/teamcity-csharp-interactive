@@ -7,14 +7,14 @@ public class ProcessInFlowRunnerTests
 {
     private readonly Mock<IProcessRunner> _baseProcessRunner = new();
     private readonly Mock<IStartInfo> _startInfo = new();
-    private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
+    private readonly Mock<ICISettings> _teamCitySettings = new();
     private readonly Mock<ITeamCityWriter> _teamCityWriter = new();
     private readonly Mock<ITeamCityWriter> _blockWriter = new();
     private readonly Mock<IFlowContext> _flowContext = new();
     private readonly Mock<IProcessMonitor> _monitor = new();
     private readonly ProcessResult _processResult;
     private static readonly (string name, string value)[] InitialVars = {("Var1", "Val 1")};
-    private static readonly (string name, string value)[] ModifiedVars = new (string name, string value)[] {(TeamCitySettings.FlowIdEnvironmentVariableName, "FlowId123")}.Concat(InitialVars).ToArray();
+    private static readonly (string name, string value)[] ModifiedVars = new (string name, string value)[] {(CISettings.TeamCityFlowIdEnvironmentVariableName, "FlowId123")}.Concat(InitialVars).ToArray();
 
     public ProcessInFlowRunnerTests()
     {
@@ -28,7 +28,7 @@ public class ProcessInFlowRunnerTests
     public void ShouldRunInFlow()
     {
         // Given
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.TeamCity);
         _baseProcessRunner.Setup(i => i.Run(It.Is<ProcessInfo>(processRun => processRun.StartInfo.Vars.SequenceEqual(ModifiedVars)), TimeSpan.FromDays(1))).Returns(_processResult);
         var runner = CreateInstance();
 
@@ -45,7 +45,7 @@ public class ProcessInFlowRunnerTests
     public void ShouldRunWithoutFlowWhenNotUnderTeamCity()
     {
         // Given
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(false);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.Unknown);
         _baseProcessRunner.Setup(i => i.Run(new ProcessInfo(_startInfo.Object, _monitor.Object, Handler), TimeSpan.FromDays(1))).Returns(_processResult);
         var runner = CreateInstance();
 
@@ -64,7 +64,7 @@ public class ProcessInFlowRunnerTests
         // Given
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(true);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.TeamCity);
         _baseProcessRunner.Setup(i => i.RunAsync(It.Is<ProcessInfo>(processRun => processRun.StartInfo.Vars.SequenceEqual(ModifiedVars)), token)).Returns(Task.FromResult(_processResult));
         var runner = CreateInstance();
 
@@ -84,7 +84,7 @@ public class ProcessInFlowRunnerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
         var processRun = new ProcessInfo(_startInfo.Object, _monitor.Object, Handler);
-        _teamCitySettings.SetupGet(i => i.IsUnderTeamCity).Returns(false);
+        _teamCitySettings.SetupGet(i => i.CIType).Returns(CIType.Unknown);
         _baseProcessRunner.Setup(i => i.RunAsync(processRun, token)).Returns(Task.FromResult(_processResult));
         var runner = CreateInstance();
 

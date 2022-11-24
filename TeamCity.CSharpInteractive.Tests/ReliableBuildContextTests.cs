@@ -6,7 +6,7 @@ using JetBrains.TeamCity.ServiceMessages.Write;
 
 public class ReliableBuildContextTests
 {
-    private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
+    private readonly Mock<ICISettings> _teamCitySettings = new();
     private readonly Mock<IFileSystem> _fileSystem = new();
     private readonly Mock<IMessagesReader> _messagesReader = new();
     private readonly Mock<IBuildContext> _baseBuildResult = new();

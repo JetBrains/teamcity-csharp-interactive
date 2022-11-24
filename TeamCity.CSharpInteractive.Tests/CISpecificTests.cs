@@ -1,8 +1,9 @@
+// ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive.Tests;
 
-public class TeamCitySpecificTests
+public class CISpecificTests
 {
-    private readonly Mock<ITeamCitySettings> _settings = new();
+    private readonly Mock<ICISettings> _settings = new();
 
     [Theory]
     [InlineData(true, 2)]
@@ -13,12 +14,12 @@ public class TeamCitySpecificTests
         var instance = CreateInstance();
 
         // When
-        _settings.SetupGet(i => i.IsUnderTeamCity).Returns(isUnderTeamCity);
+        _settings.SetupGet(i => i.CIType).Returns(isUnderTeamCity ? CIType.TeamCity : CIType.Unknown);
 
         // Then
         instance.Instance.ShouldBe(expectedResult);
     }
 
-    private TeamCitySpecific<int> CreateInstance() =>
-        new(_settings.Object, () => 1, () => 2);
+    private CISpecific<int> CreateInstance() =>
+        new(_settings.Object, () => 1, () => 2, () => 3);
 }

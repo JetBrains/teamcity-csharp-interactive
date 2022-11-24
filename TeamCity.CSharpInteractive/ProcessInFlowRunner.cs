@@ -8,18 +8,18 @@ using JetBrains.TeamCity.ServiceMessages.Write.Special;
 internal class ProcessInFlowRunner : IProcessRunner
 {
     private readonly IProcessRunner _baseProcessRunner;
-    private readonly ITeamCitySettings _teamCitySettings;
+    private readonly ICISettings _ciSettings;
     private readonly ITeamCityWriter _teamCityWriter;
     private readonly IFlowContext _flowContext;
 
     public ProcessInFlowRunner(
         [Tag("base")] IProcessRunner baseProcessRunner,
-        ITeamCitySettings teamCitySettings,
+        ICISettings ciSettings,
         ITeamCityWriter teamCityWriter,
         IFlowContext flowContext)
     {
         _baseProcessRunner = baseProcessRunner;
-        _teamCitySettings = teamCitySettings;
+        _ciSettings = ciSettings;
         _teamCityWriter = teamCityWriter;
         _flowContext = flowContext;
     }
@@ -43,12 +43,12 @@ internal class ProcessInFlowRunner : IProcessRunner
     }
 
     private IStartInfo WrapInFlow(IStartInfo startInfo) =>
-        _teamCitySettings.IsUnderTeamCity
+        _ciSettings.CIType == CIType.TeamCity
             ? new StartInfoInFlow(startInfo, _flowContext.CurrentFlowId)
             : startInfo;
 
     private IDisposable CreateFlow() =>
-        _teamCitySettings.IsUnderTeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
+        _ciSettings.CIType == CIType.TeamCity ? _teamCityWriter.OpenFlow() : Disposable.Empty;
 
     [DebuggerTypeProxy(typeof(CommandLine.CommandLineDebugView))]
     private class StartInfoInFlow : IStartInfo
@@ -71,7 +71,7 @@ internal class ProcessInFlowRunner : IProcessRunner
         public IEnumerable<string> Args => _baseStartIfo.Args;
 
         public IEnumerable<(string name, string value)> Vars =>
-            new[] {(TeamCitySettings.FlowIdEnvironmentVariableName, _flowId)}
+            new[] {(FlowIdEnvironmentVariableName: CISettings.TeamCityFlowIdEnvironmentVariableName, _flowId)}
                 .Concat(_baseStartIfo.Vars);
 
         public override string? ToString() => _baseStartIfo.ToString();

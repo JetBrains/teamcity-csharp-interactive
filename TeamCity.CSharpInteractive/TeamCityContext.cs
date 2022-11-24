@@ -9,17 +9,17 @@ internal class TeamCityContext :
 {
     private readonly IEnvironment _environment;
     private readonly IDotNetEnvironment _dotnetEnvironment;
-    private readonly ITeamCitySettings _teamCitySettings;
+    private readonly ICISettings _ciSettings;
     [ThreadStatic] private static bool _teamCityIntegration;
 
     public TeamCityContext(
         IEnvironment environment,
         IDotNetEnvironment dotnetEnvironment,
-        ITeamCitySettings teamCitySettings)
+        ICISettings ciSettings)
     {
         _environment = environment;
         _dotnetEnvironment = dotnetEnvironment;
-        _teamCitySettings = teamCitySettings;
+        _ciSettings = ciSettings;
     }
 
     public bool TeamCityIntegration
@@ -35,5 +35,5 @@ internal class TeamCityContext :
 
     public string DotNetVSTestLoggerDirectory => Path.Combine(_environment.GetPath(SpecialFolder.Bin), "vstest");
 
-    public string TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath;
+    public string TeamCityMessagesPath => _ciSettings.ServiceMessagesPath;
 }

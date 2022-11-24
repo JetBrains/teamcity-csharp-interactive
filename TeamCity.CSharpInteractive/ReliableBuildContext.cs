@@ -7,19 +7,19 @@ using JetBrains.TeamCity.ServiceMessages;
 
 internal class ReliableBuildContext : IBuildContext
 {
-    private readonly ITeamCitySettings _teamCitySettings;
+    private readonly ICISettings _ciSettings;
     private readonly IFileSystem _fileSystem;
     private readonly IMessagesReader _messagesReader;
     private readonly IBuildContext _baseBuildContext;
     private readonly Dictionary<string, Output> _sources = new();
 
     public ReliableBuildContext(
-        ITeamCitySettings teamCitySettings,
+        ICISettings ciSettings,
         IFileSystem fileSystem,
         IMessagesReader messagesReader,
         [Tag("base")] IBuildContext baseBuildContext)
     {
-        _teamCitySettings = teamCitySettings;
+        _ciSettings = ciSettings;
         _fileSystem = fileSystem;
         _messagesReader = messagesReader;
         _baseBuildContext = baseBuildContext;
@@ -44,7 +44,7 @@ internal class ReliableBuildContext : IBuildContext
     {
         var items =
             from source in _sources
-            let indicesFile = Path.Combine(_teamCitySettings.ServiceMessagesPath, source.Key)
+            let indicesFile = Path.Combine(_ciSettings.ServiceMessagesPath, source.Key)
             where _fileSystem.IsFileExist(indicesFile)
             let messagesFile = indicesFile + ".msg"
             where _fileSystem.IsFileExist(messagesFile)

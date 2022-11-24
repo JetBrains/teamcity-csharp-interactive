@@ -1,9 +1,10 @@
 // ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive;
 
-internal interface ITeamCitySettings
+internal interface ICISettings
 {
-    bool IsUnderTeamCity { get; }
+    CIType CIType { get; }
 
     string Version { get; }
 

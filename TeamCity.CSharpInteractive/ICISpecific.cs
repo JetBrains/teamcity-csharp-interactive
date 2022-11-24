@@ -1,6 +1,6 @@
 namespace TeamCity.CSharpInteractive;
 
-internal interface ITeamCitySpecific<out T>
+internal interface ICISpecific<out T>
 {
     T Instance { get; }
 }

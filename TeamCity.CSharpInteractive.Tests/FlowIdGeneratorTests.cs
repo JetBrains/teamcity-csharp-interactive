@@ -2,10 +2,10 @@ namespace TeamCity.CSharpInteractive.Tests;
 
 public class FlowIdGeneratorTests
 {
-    private readonly Mock<ITeamCitySettings> _teamCitySettings;
+    private readonly Mock<ICISettings> _teamCitySettings;
 
     public FlowIdGeneratorTests() =>
-        _teamCitySettings = new Mock<ITeamCitySettings>();
+        _teamCitySettings = new Mock<ICISettings>();
 
     [Fact]
     public void ShouldProvideRootFlowIdWhenItIsSpecified()

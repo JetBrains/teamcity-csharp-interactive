@@ -9,8 +9,8 @@ internal class FlowIdGenerator : IFlowIdGenerator, IFlowContext
     private string _nextFlowId;
     [ThreadStatic] private static string? _currentFlowId;
 
-    public FlowIdGenerator(ITeamCitySettings teamCitySettings) =>
-        _nextFlowId = teamCitySettings.FlowId;
+    public FlowIdGenerator(ICISettings ciSettings) =>
+        _nextFlowId = ciSettings.FlowId;
 
     public string CurrentFlowId
     {

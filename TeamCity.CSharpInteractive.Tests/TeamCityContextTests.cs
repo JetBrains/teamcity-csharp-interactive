@@ -5,7 +5,7 @@ public class TeamCityContextTests
 {
     private readonly Mock<IEnvironment> _environment = new();
     private readonly Mock<IDotNetEnvironment> _dotnetEnvironment = new();
-    private readonly Mock<ITeamCitySettings> _teamCitySettings = new();
+    private readonly Mock<ICISettings> _teamCitySettings = new();
 
     [Fact]
     public void ShouldGetDotNetExecutablePath()

@@ -1,1 +1,1 @@
-dotnet run -f net7.0 --project Build -- -p integrationTests=true -p version=1.0.5-beta1
+%DOTNET_ROOT%/dotnet.exe run -f net7.0 --project Build -- -p integrationTests=true -p version=1.0.5-beta

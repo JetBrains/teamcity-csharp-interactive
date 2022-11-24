@@ -1,11 +1,12 @@
+// ReSharper disable InconsistentNaming
 namespace TeamCity.CSharpInteractive.Tests;
 
-public class TeamCitySettingsTests
+public class CISettingsTests
 {
     private readonly Mock<IHostEnvironment> _hostEnvironment;
     private readonly Mock<IEnvironment> _environment;
 
-    public TeamCitySettingsTests()
+    public CISettingsTests()
     {
         _hostEnvironment = new Mock<IHostEnvironment>();
         _environment = new Mock<IEnvironment>();
@@ -24,7 +25,7 @@ public class TeamCitySettingsTests
     [InlineData("  ", null, false)]
     [InlineData(null, "  ", false)]
     [InlineData(null, null, false)]
-    public void ShouldProvideIsUnderTeamCity(string? projectName, string? version, bool expectedFlowId)
+    public void ShouldProvideIsUnderTeamCity(string? projectName, string? version, bool expectedIsUnderTeamCity)
     {
         // Given
         var settings = CreateInstance();
@@ -32,10 +33,10 @@ public class TeamCitySettingsTests
         _hostEnvironment.Setup(i => i.GetEnvironmentVariable("TEAMCITY_VERSION")).Returns(version);
 
         // When
-        var actualIsUnderTeamCity = settings.IsUnderTeamCity;
+        var actualIsUnderTeamCity = settings.CIType;
 
         // Then
-        actualIsUnderTeamCity.ShouldBe(expectedFlowId);
+        actualIsUnderTeamCity.ShouldBe(expectedIsUnderTeamCity ? CIType.TeamCity: CIType.Unknown);
     }
 
     [Theory]
@@ -55,5 +56,5 @@ public class TeamCitySettingsTests
         actualFlowId.ShouldBe(expectedFlowId);
     }
 
-    private TeamCitySettings CreateInstance() => new(_hostEnvironment.Object, _environment.Object);
+    private CISettings CreateInstance() => new(_hostEnvironment.Object, _environment.Object);
 }
