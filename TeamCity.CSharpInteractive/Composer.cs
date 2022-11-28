@@ -134,9 +134,10 @@ internal static partial class Composer
             .Bind<SourceReferenceResolver>().As(Lifetime.Transient).To<SourceResolver>()
             .Bind<MetadataReferenceResolver>().As(Lifetime.Transient).To<MetadataResolver>()
             .Bind<IScriptContentReplacer>().To<ScriptContentReplacer>()
-            .Bind<ITextReplacer>().To<TextReplacer>()
+            .Bind<ITextReplacer>().To<TextReplacer>();
 
-            // Script options factory
+        // Script options factory
+        DI.Setup()
             .Bind<ISettingGetter<LanguageVersion>>().Bind<ISettingSetter<LanguageVersion>>().To(_ => new Setting<LanguageVersion>(LanguageVersion.Default))
             .Bind<ISettingGetter<OptimizationLevel>>().Bind<ISettingSetter<OptimizationLevel>>().To(_ => new Setting<OptimizationLevel>(OptimizationLevel.Release))
             .Bind<ISettingGetter<WarningLevel>>().Bind<ISettingSetter<WarningLevel>>().To(_ => new Setting<WarningLevel>((WarningLevel)ScriptOptions.Default.WarningLevel))
