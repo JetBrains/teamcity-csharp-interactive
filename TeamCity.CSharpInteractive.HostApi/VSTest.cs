@@ -3,6 +3,7 @@
 // ReSharper disable UnusedMember.Global
 namespace HostApi;
 
+using Cmd;
 using DotNet;
 using Immutype;
 
@@ -64,26 +65,29 @@ public partial record VSTest(
 
     public IStartInfo GetStartInfo(IHost host)
     {
+        var virtualContext = host.GetService<IVirtualContext>();
+        var settings = host.GetService<IDotNetSettings>();
         var cmd = host.CreateCommandLine(ExecutablePath)
             .WithShortName(ToString())
             .WithArgs("vstest")
             .AddArgs(TestFileNames.Where(i => !string.IsNullOrWhiteSpace(i)).ToArray())
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
-            .AddVSTestLoggers(host, Verbosity)
-            .AddArgs(Loggers.Select(i => ("--logger", (string?)i)).ToArray())
-            .AddArgs(
+            .AddMSBuildArgs(
+                ("--Logger", "logger://teamcity"),
+                ("--Logger", $"console;verbosity={(Verbosity.HasValue ? (Verbosity.Value >= DotNetVerbosity.Normal ? Verbosity.Value : DotNetVerbosity.Normal) : DotNetVerbosity.Normal).ToString().ToLowerInvariant()}"),
+                ("--TestAdapterPath", $"{string.Join(';', new[]{TestAdapterPath, virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}.Where(i => !string.IsNullOrWhiteSpace(i)))}"),
                 ("--Tests", Tests),
                 ("--TestCaseFilter", TestCaseFilter),
                 ("--Framework", Framework),
                 ("--Platform", Platform?.ToString()),
                 ("--Settings", Settings),
-                ("--TestAdapterPath", TestAdapterPath),
                 ("--Diag", Diag),
                 ("--ParentProcessId", ParentProcessId?.ToString()),
                 ("--Port", Port?.ToString()),
-                ("--Collect", Collect)
-            )
+                ("--Collect", Collect))
+            .AddMSBuildArgs(Loggers.Select(i => ("--logger", (string?)i)).ToArray())
+            .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
             .AddBooleanArgs(
                 ("--ListTests", ListTests),
                 ("--Parallel", Parallel),

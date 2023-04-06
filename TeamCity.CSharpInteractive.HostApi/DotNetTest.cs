@@ -97,12 +97,13 @@ public partial record DotNetTest(
             .AddMSBuildLoggers(host, Verbosity)
             .AddArgs(
                 Loggers.Select(i => ("--logger", (string?)i))
+                    .Concat(new[] {("--logger", (string?)"logger://teamcity")})
                     .Concat(new []{("--logger", (string?)"logger://teamcity")})
                     .ToArray())
             .AddArgs(
                 ("--settings", Settings),
                 ("--filter", Filter),
-                ("--test-adapter-path", $"\"TestAdapterPath;%3B;{virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}\""),
+                ("--test-adapter-path", $"{string.Join(';', new[]{TestAdapterPath, virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}.Where(i => !string.IsNullOrWhiteSpace(i)))}"),
                 ("--configuration", Configuration),
                 ("--framework", Framework),
                 ("--runtime", Runtime),
