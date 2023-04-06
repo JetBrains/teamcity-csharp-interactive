@@ -98,7 +98,6 @@ public partial record DotNetTest(
             .AddArgs(
                 Loggers.Select(i => ("--logger", (string?)i))
                     .Concat(new[] {("--logger", (string?)"logger://teamcity")})
-                    .Concat(new []{("--logger", (string?)"logger://teamcity")})
                     .ToArray())
             .AddArgs(
                 ("--settings", Settings),
