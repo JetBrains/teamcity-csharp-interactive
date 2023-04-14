@@ -40,7 +40,7 @@ internal class Environment:
                 return specialFolder switch
                 {
                     SpecialFolder.Bin => GetBinDirectory(),
-                    SpecialFolder.Temp => Path.GetFullPath(System.Environment.GetEnvironmentVariable("TMP") ?? Path.GetTempPath()),
+                    SpecialFolder.Temp => Path.GetFullPath(System.Environment.GetEnvironmentVariable("TMPDIR") ?? Path.GetTempPath()),
                     SpecialFolder.ProgramFiles => "usr/local/share",
                     SpecialFolder.Script => GetScriptDirectory(),
                     SpecialFolder.Working => GetWorkingDirectory(),

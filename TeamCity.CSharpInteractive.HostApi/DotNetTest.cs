@@ -102,7 +102,11 @@ public partial record DotNetTest(
             .AddArgs(
                 ("--settings", Settings),
                 ("--filter", Filter),
-                ("--test-adapter-path", $"{string.Join(';', new[]{TestAdapterPath, virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)}.Where(i => !string.IsNullOrWhiteSpace(i)))}"),
+                ("--test-adapter-path", $"{string.Join(';', new[]
+                    {
+                        TestAdapterPath, 
+                        virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)
+                    }.Where(i => !string.IsNullOrWhiteSpace(i)))}"),
                 ("--configuration", Configuration),
                 ("--framework", Framework),
                 ("--runtime", Runtime),

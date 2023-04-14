@@ -26,7 +26,7 @@ public class LoadFileCodeSourceTests
         var expectedResult = source.ToArray();
 
         // Then
-        expectedResult.ShouldBe(new[] {"#load \"wd\\zx\\Abc\""});
+        expectedResult.ShouldBe(new[] {$"#load \"{fullPath}\""});
         _workingDirectoryContext.Verify(i => i.CreateScope(source));
         _workingDirectoryToken.Verify(i => i.Dispose());
     }

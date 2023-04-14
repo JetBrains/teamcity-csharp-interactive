@@ -57,7 +57,9 @@ internal static partial class Composer
             .Bind<IStdErr>().To(ctx => ctx.Resolve<ITeamCitySpecific<IStdErr>>().Instance)
             .Bind<ILog<TT>>("Default").To<Log<TT>>()
             .Bind<ILog<TT>>("TeamCity").To<TeamCityLog<TT>>()
-            .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySpecific<ILog<TT>>>().Instance)
+            .Bind<ILog<TT>>().To(ctx => ctx.Resolve<ITeamCitySpecific<ILog<TT>>>().Instance);
+
+        DI.Setup()
             .Bind<IFileSystem>().To<FileSystem>()
             .Bind<IEnvironment>().Bind<IScriptContext>().Bind<IErrorContext>().Bind<ITraceSource>(typeof(Environment)).To<Environment>()
             .Bind<ITeamCitySettings>().To<TeamCitySettings>()
@@ -88,7 +90,9 @@ internal static partial class Composer
             .Bind<IScriptRunner>().As(Lifetime.Transient).To(ctx => ctx.Resolve<ISettings>().InteractionMode == InteractionMode.Interactive ? ctx.Resolve<IScriptRunner>(InteractionMode.Interactive) : ctx.Resolve<IScriptRunner>(InteractionMode.NonInteractive))
             .Bind<ICommandSource>().To<CommandSource>()
             .Bind<IStringService>().To<StringService>()
-            .Bind<IStatistics>().To<Statistics>()
+            .Bind<IStatistics>().To<Statistics>();
+
+        DI.Setup()
             .Bind<IPresenter<IEnumerable<ITraceSource>>>().To<TracePresenter>()
             .Bind<IPresenter<IStatistics>>().To<StatisticsPresenter>()
             .Bind<IPresenter<CompilationDiagnostics>>().To<DiagnosticsPresenter>()
@@ -109,7 +113,9 @@ internal static partial class Composer
             .Bind<IDockerSettings>().To<DockerSettings>()
             .Bind<IBuildContext>("base").As(Lifetime.Transient).To<BuildContext>()
             .Bind<IBuildContext>().As(Lifetime.Transient).To<ReliableBuildContext>()
-            .Bind<ITextToColorStrings>().To<TextToColorStrings>()
+            .Bind<ITextToColorStrings>().To<TextToColorStrings>();
+            
+        DI.Setup()
             .Bind<IFileExplorer>().To<FileExplorer>()
             .Bind<IProcessOutputWriter>().To<ProcessOutputWriter>()
             .Bind<IBuildMessageLogWriter>().To<BuildMessageLogWriter>()
