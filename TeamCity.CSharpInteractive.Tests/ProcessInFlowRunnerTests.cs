@@ -18,7 +18,7 @@ public class ProcessInFlowRunnerTests
 
     public ProcessInFlowRunnerTests()
     {
-        _processResult = new ProcessResult(_startInfo.Object, ProcessState.Finished, 33, Array.Empty<Text>(), 12);
+        _processResult = new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 33, Array.Empty<Text>(), 12);
         _flowContext.SetupGet(i => i.CurrentFlowId).Returns("FlowId123");
         _startInfo.SetupGet(i => i.Vars).Returns(InitialVars);
         _teamCityWriter.Setup(i => i.OpenFlow()).Returns(_blockWriter.Object);

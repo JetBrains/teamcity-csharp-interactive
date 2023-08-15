@@ -5,6 +5,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet build command builds the project and its dependencies into a set of binaries. The binaries include the project's code in Intermediate Language (IL) files with a .dll extension. Depending on the project type and settings, other files may be included.
@@ -70,6 +71,7 @@ public partial record DotNetBuild(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
             .AddArgs(
                 ("--output", Output),
@@ -92,6 +94,11 @@ public partial record DotNetBuild(
             )
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
-    
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdOutServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
+
     public override string ToString() => "dotnet build".GetShortName(ShortName, Project);
 }

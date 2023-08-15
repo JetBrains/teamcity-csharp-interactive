@@ -9,5 +9,9 @@ internal interface ITeamCitySettings
 
     string FlowId { get; }
 
-    string ServiceMessagesPath { get; }
+    string? ServiceMessagesBackupPathEnvValue { get; }
+
+    string? TestReportFilesPathEnvValue { get; }
+
+    string? FallbackToStdOutTestReportingEnvValue { get; }
 }

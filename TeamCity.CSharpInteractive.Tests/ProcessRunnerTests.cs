@@ -12,7 +12,7 @@ public class ProcessRunnerTests
 
     public ProcessRunnerTests()
     {
-        _processResult = new ProcessResult(_startInfo.Object, ProcessState.Finished, 12, new []{new Text("Abc")});
+        _processResult = new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 12, new []{new Text("Abc")});
     }
 
     [Fact]

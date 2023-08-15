@@ -11,5 +11,9 @@ internal interface IDotNetSettings
 
     string DotNetVSTestLoggerDirectory { get; }
 
-    string TeamCityMessagesPath { get; }
+    string? TeamCityServiceMessagesBackupPathEnvValue { get; }
+
+    string? TeamCityTestReportFilesPathEnvValue { get; }
+
+    string? TeamCityFallbackToStdOutTestReportingEnvValue { get; }
 }

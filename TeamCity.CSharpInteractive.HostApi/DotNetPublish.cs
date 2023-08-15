@@ -5,6 +5,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet publish command compiles the application, reads through its dependencies specified in the project file, and publishes the resulting set of files to a directory.
@@ -73,6 +74,7 @@ public partial record DotNetPublish(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
             .AddArgs(
                 ("--output", Output),
@@ -96,6 +98,11 @@ public partial record DotNetPublish(
             )
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdOutServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
 
     public override string ToString() => "dotnet publish".GetShortName(ShortName, Project);
 }

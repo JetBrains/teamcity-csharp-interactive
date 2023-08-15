@@ -134,6 +134,7 @@ internal static partial class Composer
             .Bind<IProcessRunner>("base").To<ProcessRunner>()
             .Bind<IProcessRunner>().To<ProcessInFlowRunner>()
             .Bind<IDotNetSettings>().Bind<ITeamCityContext>().To<TeamCityContext>()
+            .Bind<IDotNetTestReportingService>().To<DotNetTestReportingService>()
             .Bind<IProcessResultHandler>().To<ProcessResultHandler>()
             .Bind<IRuntimeExplorer>().To<RuntimeExplorer>()
             .Bind<INuGetReferenceResolver>().To<NuGetReferenceResolver>()

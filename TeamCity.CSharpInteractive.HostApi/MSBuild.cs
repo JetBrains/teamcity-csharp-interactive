@@ -6,6 +6,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 [Target]
 public partial record MSBuild(
@@ -86,6 +87,7 @@ public partial record MSBuild(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddMSBuildArgs(
                 ("-target", Target),
                 ("-maxCpuCount", MaxCpuCount?.ToString()),
@@ -113,7 +115,12 @@ public partial record MSBuild(
             .AddProps("-restoreProperty", RestoreProps.ToArray())
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
-    
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdOutServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
+
     public override string ToString() => (ExecutablePath == string.Empty ? "dotnet msbuild" : Path.GetFileNameWithoutExtension(ExecutablePath)).GetShortName(ShortName, Project);
 
     private string JoinWithSemicolons(IEnumerable<string> arg) => 

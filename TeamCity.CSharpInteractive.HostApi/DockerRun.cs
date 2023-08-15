@@ -10,6 +10,7 @@ namespace HostApi;
 using Cmd;
 using Docker;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// Docker runs a command in isolated containers. A container is a process which runs on a host. The host may be local or remote. When an operator executes docker run, the container process that runs is isolated in that it has its own file system, its own networking, and its own isolated process tree separate from the host.
@@ -133,6 +134,10 @@ public partial record DockerRun(
             .AddArgs(startInfo.Args.ToArray())
             .WithVars(Vars.ToArray());
     }
+
+    public void PreRun(IHost host) => CommandLine.PreRun(host);
+
+    public IEnumerable<IServiceMessage> GetNonStdOutServiceMessages(IHost host) => CommandLine.GetNonStdOutServiceMessages(host);
     
     public override string ToString() => !string.IsNullOrWhiteSpace(ShortName) ? ShortName : $"{CommandLine} in the docker container {Image}";
     

@@ -12,7 +12,7 @@ public class CommandLineRunnerTests
 
     public CommandLineRunnerTests()
     {
-        _processResult = new ProcessResult(_startInfo.Object, ProcessState.Finished, 12, Array.Empty<Text>(), 33);
+        _processResult = new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 12, Array.Empty<Text>(), 33);
     }
 
     [Fact]
@@ -33,6 +33,27 @@ public class CommandLineRunnerTests
     }
 
     [Fact]
+    public void ShouldInvokePreRunMethodBeforeRunningCommand()
+    {
+        // Given
+        var commandLineMock = new Mock<ICommandLine>(MockBehavior.Strict);
+        var sequence = new MockSequence();
+        commandLineMock.InSequence(sequence).Setup(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.InSequence(sequence).Setup(x => x.GetStartInfo(It.IsAny<IHost>())).Returns(_startInfo.Object);
+
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), It.IsAny<TimeSpan>())).Returns(_processResult);
+
+        var cmdService = CreateInstance();
+
+        // When
+        cmdService.Run(commandLineMock.Object, Handler, TimeSpan.FromSeconds(1));
+
+        // Then
+        commandLineMock.Verify(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.Verify(x => x.GetStartInfo(It.IsAny<IHost>()));
+    }
+
+    [Fact]
     public async Task ShouldRunProcessAsync()
     {
         // Given
@@ -49,6 +70,27 @@ public class CommandLineRunnerTests
         // Then
         exitCode.ShouldBe(33);
         _processResultHandler.Verify(i => i.Handle<Output>(_processResult, Handler));
+    }
+
+    [Fact]
+    public async Task ShouldInvokePreRunMethodBeforeRunningCommandAsync()
+    {
+        // Given
+        var commandLineMock = new Mock<ICommandLine>(MockBehavior.Strict);
+        var sequence = new MockSequence();
+        commandLineMock.InSequence(sequence).Setup(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.InSequence(sequence).Setup(x => x.GetStartInfo(It.IsAny<IHost>())).Returns(_startInfo.Object);
+
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessInfo>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(_processResult));
+
+        var cmdService = CreateInstance();
+
+        // When
+        await cmdService.RunAsync(commandLineMock.Object, Handler);
+
+        // Then
+        commandLineMock.Verify(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.Verify(x => x.GetStartInfo(It.IsAny<IHost>()));
     }
 
     private static void Handler(Output obj) { }

@@ -4,6 +4,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet tool restore command finds the tool manifest file that is in scope for the current directory and installs the tools that are listed in it.
@@ -46,6 +47,7 @@ public partial record DotNetToolRestore(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddArgs(AdditionalSources.Select(i => ("--add-source", (string?)i)).ToArray())
             .AddArgs(
                 ("--configfile", ConfigFile),
@@ -57,6 +59,11 @@ public partial record DotNetToolRestore(
                 ("--ignore-failed-sources", IgnoreFailedSources)
             )
             .AddArgs(Args.ToArray());
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdOutServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
 
     public override string ToString() => "dotnet tool restore".GetShortName(ShortName, ToolManifest);
 }

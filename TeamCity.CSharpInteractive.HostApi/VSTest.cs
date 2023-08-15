@@ -6,6 +6,7 @@ namespace HostApi;
 using Cmd;
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet vstest command runs the VSTest.Console command-line application to run automated unit tests.
@@ -87,7 +88,7 @@ public partial record VSTest(
                 ("--Port", Port?.ToString()),
                 ("--Collect", Collect))
             .AddMSBuildArgs(Loggers.Select(i => ("--logger", (string?)i)).ToArray())
-            .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
+            .AddTeamCityEnvironmentVariables(host)
             .AddBooleanArgs(
                 ("--ListTests", ListTests),
                 ("--Parallel", Parallel),
@@ -109,6 +110,11 @@ public partial record VSTest(
 
         return cmd;
     }
-    
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdOutServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
+
     public override string ToString() => (string.IsNullOrWhiteSpace(ShortName) ? "dotnet vstest" : ShortName).GetShortName(ShortName, string.Empty);
 }

@@ -24,6 +24,7 @@ internal class CommandLineRunner : ICommandLineRunner
 
     public int? Run(ICommandLine commandLine, Action<Output>? handler = default, TimeSpan timeout = default)
     {
+        commandLine.PreRun(_host);
         var result = _processRunner.Run(new ProcessInfo(commandLine.GetStartInfo(_host), _monitorFactory(), handler), timeout);
         _processResultHandler.Handle(result, handler);
         return result.ExitCode;
@@ -31,6 +32,7 @@ internal class CommandLineRunner : ICommandLineRunner
 
     public async Task<int?> RunAsync(ICommandLine commandLine, Action<Output>? handler = default, CancellationToken cancellationToken = default)
     {
+        commandLine.PreRun(_host);
         var result = await _processRunner.RunAsync(new ProcessInfo(commandLine.GetStartInfo(_host), _monitorFactory(), handler), cancellationToken);
         _processResultHandler.Handle(result, handler);
         return result.ExitCode;

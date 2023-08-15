@@ -44,16 +44,33 @@ internal static class DotNetCommandLineExtensions
     {
         var virtualContext = host.GetService<IVirtualContext>();
         var settings = host.GetService<IDotNetSettings>();
-        return settings.LoggersAreRequired
-            ? cmd
-                .AddArgs("/noconsolelogger")
-                .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetMSBuildLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
-                .AddProps("-p",
-                    ("VSTestLogger", "logger://teamcity"),
-                    ("VSTestTestAdapterPath", virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)),
-                    ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= DotNetVerbosity.Normal ? verbosity.Value : DotNetVerbosity.Normal) : DotNetVerbosity.Normal).ToString().ToLowerInvariant()))
-                .AddVars(("TEAMCITY_SERVICE_MESSAGES_PATH", virtualContext.Resolve(settings.TeamCityMessagesPath)))
-            : cmd;
+
+        if (settings.LoggersAreRequired == false)
+        {
+            return cmd;
+        }
+
+        return cmd
+            .AddArgs("/noconsolelogger")
+            .AddMSBuildArgs(("/l", $"TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,{virtualContext.Resolve(settings.DotNetMSBuildLoggerDirectory)}/TeamCity.MSBuild.Logger.dll;TeamCity;plain"))
+            .AddProps("-p",
+                ("VSTestLogger", "logger://teamcity"),
+                ("VSTestTestAdapterPath", virtualContext.Resolve(settings.DotNetVSTestLoggerDirectory)),
+                ("VSTestVerbosity", (verbosity.HasValue ? (verbosity.Value >= DotNetVerbosity.Normal ? verbosity.Value : DotNetVerbosity.Normal) : DotNetVerbosity.Normal).ToString().ToLowerInvariant()));
+    }
+
+    public static CommandLine AddTeamCityEnvironmentVariables(this CommandLine cmd, IHost host)
+    {
+        var virtualContext = host.GetService<IVirtualContext>();
+        var settings = host.GetService<IDotNetSettings>();
+        string? ResolvePath(string? s) => s == null ? null : virtualContext.Resolve(s);
+
+        return cmd
+            .AddNonEmptyVars(
+                ("TEAMCITY_SERVICE_MESSAGES_PATH", ResolvePath(settings.TeamCityServiceMessagesBackupPathEnvValue)),
+                ("TEAMCITY_TEST_REPORT_FILES_PATH", ResolvePath(settings.TeamCityTestReportFilesPathEnvValue)),
+                ("TEAMCITY_FALLBACK_TO_STDOUT_TEST_REPORTING", settings.TeamCityFallbackToStdOutTestReportingEnvValue)
+            );
     }
 
     public static CommandLine AddNotEmptyArgs(this CommandLine cmd, params string[] args) =>
@@ -84,4 +101,14 @@ internal static class DotNetCommandLineExtensions
     public static CommandLine AddProps(this CommandLine cmd, string propertyName, params (string name, string value)[] props) =>
         cmd.AddArgs(props.Select(i => $"{propertyName}:{i.name}={i.value}")
             .ToArray());
+
+    public static CommandLine AddNonEmptyVars(this CommandLine cmd, params (string name, string? value)[] vars)
+    {
+        var nonEmptyVars = vars
+            .Where(x => !string.IsNullOrWhiteSpace(x.value))
+            .Select(x => (x.name, x.value!))
+            .ToArray();
+
+        return cmd.AddVars(nonEmptyVars);
+    }
 }

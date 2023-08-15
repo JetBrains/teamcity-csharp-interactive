@@ -47,16 +47,16 @@ public class TeamCityContextTests
     }
 
     [Fact]
-    public void ShouldGetTeamCityMessagesPath()
+    public void ShouldGetTeamCityServiceMessagesBackupPathEnvValue()
     {
         // Given
         var resolver = CreateInstance();
 
         // When
-        _teamCitySettings.SetupGet(i => i.ServiceMessagesPath).Returns("Tmp");
+        _teamCitySettings.SetupGet(i => i.ServiceMessagesBackupPathEnvValue).Returns("Tmp");
 
         // Then
-        resolver.TeamCityMessagesPath.ShouldBe("Tmp");
+        resolver.TeamCityServiceMessagesBackupPathEnvValue.ShouldBe("Tmp");
     }
 
     private TeamCityContext CreateInstance() =>

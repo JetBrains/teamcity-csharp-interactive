@@ -35,5 +35,9 @@ internal class TeamCityContext :
 
     public string DotNetVSTestLoggerDirectory => Path.Combine(_environment.GetPath(SpecialFolder.Bin), "vstest");
 
-    public string TeamCityMessagesPath => _teamCitySettings.ServiceMessagesPath;
+    public string? TeamCityServiceMessagesBackupPathEnvValue => _teamCitySettings.ServiceMessagesBackupPathEnvValue;
+
+    public string? TeamCityTestReportFilesPathEnvValue => _teamCitySettings.TestReportFilesPathEnvValue;
+
+    public string? TeamCityFallbackToStdOutTestReportingEnvValue => _teamCitySettings.FallbackToStdOutTestReportingEnvValue;
 }
