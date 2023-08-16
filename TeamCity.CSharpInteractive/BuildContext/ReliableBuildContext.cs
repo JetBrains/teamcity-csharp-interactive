@@ -47,10 +47,7 @@ internal class ReliableBuildContext : IBuildContext
 
     public IBuildResult Create(IStartInfo startInfo, int? exitCode)
     {
-        var fallbackToStdOutTestReporting =
-            string.Equals(_teamCitySettings.FallbackToStdOutTestReportingEnvValue, "true", StringComparison.InvariantCultureIgnoreCase);
-
-        if (fallbackToStdOutTestReporting == false || _teamCitySettings.ServiceMessagesBackupPathEnvValue == null)
+        if (_teamCitySettings.ServiceMessagesBackupPathEnvValue == null)
         {
             return _baseBuildContext.Create(startInfo, exitCode);
         }
