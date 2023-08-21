@@ -12,7 +12,7 @@ public class CommandLineRunnerTests
 
     public CommandLineRunnerTests()
     {
-        _processResult = new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 12, Array.Empty<Text>(), 33);
+        _processResult = ProcessResult.RanToCompletion(_startInfo.Object, 0, 12, 33);
     }
 
     [Fact]

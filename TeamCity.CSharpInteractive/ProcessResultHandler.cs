@@ -23,7 +23,7 @@ internal class ProcessResultHandler : IProcessResultHandler
             return;
         }
 
-        var description = result.Description;
+        var description = ProcessResultDescriptionHelper.GetProcessResultDescription(result).ToArray();
         if (result.Error != default)
         {
             description = description + Text.Space + new Text(result.Error.Message);
@@ -33,15 +33,15 @@ internal class ProcessResultHandler : IProcessResultHandler
         {
             switch (result.State)
             {
-                case ProcessState.Failed:
+                case ProcessState.FailedToStart:
                     _log.Error(ErrorId.Process, description.WithDefaultColor(Color.Default));
                     break;
 
-                case ProcessState.Canceled:
+                case ProcessState.CancelledByTimeout:
                     _log.Warning(description.WithDefaultColor(Color.Default));
                     break;
 
-                case ProcessState.Finished:
+                case ProcessState.RanToCompletion:
                 default:
                     _log.Info(description);
                     break;

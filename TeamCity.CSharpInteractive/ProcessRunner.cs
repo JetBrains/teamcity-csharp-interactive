@@ -75,7 +75,7 @@ internal class ProcessRunner : IProcessRunner
             {
                 Stopwatch.Stop();
                 {
-                    processResult = Monitor.Finished(StartInfo, Stopwatch.ElapsedMilliseconds, ProcessState.Failed, default, error);
+                    processResult = ProcessResult.FailedToStart(StartInfo, Stopwatch.ElapsedMilliseconds, error);
                     if (Handler != default)
                     {
                         ProcessManager.OnOutput -= Handler;
@@ -99,12 +99,12 @@ internal class ProcessRunner : IProcessRunner
             if (finished)
             {
                 Stopwatch.Stop();
-                return Monitor.Finished(StartInfo, Stopwatch.ElapsedMilliseconds, ProcessState.Finished, ProcessManager.ExitCode);
+                return ProcessResult.RanToCompletion(StartInfo, ProcessManager.Id, Stopwatch.ElapsedMilliseconds, ProcessManager.ExitCode);
             }
 
             ProcessManager.Kill();
             Stopwatch.Stop();
-            return Monitor.Finished(StartInfo, Stopwatch.ElapsedMilliseconds, ProcessState.Canceled);
+            return ProcessResult.CancelledByTimeout(StartInfo, ProcessManager.Id, Stopwatch.ElapsedMilliseconds);
         }
     }
 }

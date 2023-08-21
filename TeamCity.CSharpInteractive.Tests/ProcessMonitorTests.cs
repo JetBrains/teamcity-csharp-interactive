@@ -54,66 +54,6 @@ public class ProcessMonitorTests
         _log.Verify(i => i.Error(It.IsAny<ErrorId>(), It.IsAny<Text[]>()), Times.Never);
     }
 
-    [Theory]
-    [InlineData(ProcessState.Finished, "finished", Color.Highlighted)]
-    internal void ShouldCreateResultWhenFinishedWithSuccess(ProcessState state, string stateDescription, Color color)
-    {
-        // Given
-        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
-        var monitor = CreateInstance();
-        monitor.Started(_startInfo.Object, 99);
-
-        // When
-        var result = monitor.Finished(_startInfo.Object, 22, state, 33);
-
-        // Then
-        result.Description.ShouldBe(new Text[] {new("99 \"Abc xyz\" process ", color), new(stateDescription, color), new(" (in 22 ms)"), new(" with exit code 33"), new(".")});
-    }
-
-    [Fact]
-    public void ShouldCreateResultWhenFailed()
-    {
-        // Given
-        var monitor = CreateInstance();
-        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
-        monitor.Started(_startInfo.Object, 99);
-
-        // When
-        var result = monitor.Finished(_startInfo.Object, 22, ProcessState.Failed, 33);
-
-        // Then
-        result.Description.ShouldBe(new Text[] {new("99 \"Abc xyz\" process ", Color.Highlighted), new("failed", Color.Highlighted), new(" (in 22 ms)"), new(" with exit code 33"), new(".")});
-    }
-
-    [Fact]
-    public void ShouldCreateResultWhenFailedToStart()
-    {
-        // Given
-        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
-        var monitor = CreateInstance();
-
-        // When
-        var result = monitor.Finished(_startInfo.Object, 22, ProcessState.Failed);
-
-        // Then
-        result.Description.ShouldBe(new Text[] {new("\"Abc xyz\" process ", Color.Highlighted), new("failed to start", Color.Highlighted), new(" (in 22 ms)"), new(".")});
-    }
-
-    [Fact]
-    public void ShouldCreateResultWhenCanceled()
-    {
-        // Given
-        _startInfo.SetupGet(i => i.ShortName).Returns("Abc xyz");
-        var monitor = CreateInstance();
-        monitor.Started(_startInfo.Object, 99);
-
-        // When
-        var result = monitor.Finished(_startInfo.Object, 22, ProcessState.Canceled);
-
-        // Then
-        result.Description.ShouldBe(new Text[] {new("99 \"Abc xyz\" process ", Color.Highlighted), new("canceled", Color.Highlighted), new(" (in 22 ms)"), new(".")});
-    }
-
     private ProcessMonitor CreateInstance() =>
         new(_log.Object, _environment.Object);
 }

@@ -52,10 +52,14 @@ internal class BuildRunner : IBuildRunner
         var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildContext));
         var result = _processRunner.Run(processInfo, timeout);
 
-        foreach (var serviceMessage in commandLine.GetNonStdOutServiceMessages(_host))
+        if (result.State != ProcessState.FailedToStart)
         {
-            buildContext.ProcessMessage(result.StartInfo, result.ProcessId ?? -1, serviceMessage);
+            foreach (var serviceMessage in commandLine.GetNonStdOutServiceMessages(_host))
+            {
+                buildContext.ProcessMessage(result.StartInfo, result.ProcessId!.Value, serviceMessage);
+            }
         }
+
         _processResultHandler.Handle(result, handler);
         return buildContext.Create(startInfo, result.ExitCode);
     }
@@ -70,10 +74,14 @@ internal class BuildRunner : IBuildRunner
         var processInfo = new ProcessInfo(startInfo, _monitorFactory(), output => Handle(handler, output, buildContext));
         var result = await _processRunner.RunAsync(processInfo, cancellationToken);
 
-        foreach (var serviceMessage in commandLine.GetNonStdOutServiceMessages(_host))
+        if (result.State != ProcessState.FailedToStart)
         {
-            buildContext.ProcessMessage(result.StartInfo, result.ProcessId ?? -1, serviceMessage);
+            foreach (var serviceMessage in commandLine.GetNonStdOutServiceMessages(_host))
+            {
+                buildContext.ProcessMessage(result.StartInfo, result.ProcessId!.Value, serviceMessage);
+            }
         }
+
         _processResultHandler.Handle(result, handler);
         return buildContext.Create(startInfo, result.ExitCode);
     }

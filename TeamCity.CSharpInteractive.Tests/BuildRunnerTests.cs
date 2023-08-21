@@ -22,7 +22,7 @@ public class BuildRunnerTests
 
     public BuildRunnerTests()
     {
-        _processResult = new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 33, Array.Empty<Text>());
+        _processResult = ProcessResult.RanToCompletion(_startInfo.Object, 99, 12, 33);
         var buildResult = new BuildResult(_startInfo.Object).WithExitCode(33);
         _process.Setup(i => i.GetStartInfo(_host.Object)).Returns(_startInfo.Object);
         _resultFactory = () => _buildResult.Object;

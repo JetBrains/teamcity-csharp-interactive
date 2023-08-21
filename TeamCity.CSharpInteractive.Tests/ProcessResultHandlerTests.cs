@@ -8,34 +8,32 @@ public class ProcessResultHandlerTests
     private readonly Mock<ILog<ProcessResultHandler>> _log = new();
     private readonly Mock<IStartInfo> _startInfo = new();
     private readonly Mock<IExitTracker> _exitTracker = new();
-    private readonly Text[] _description = {new("Abc")};
     private readonly Action<object> _handler = Mock.Of<Action<object>>();
     
-    [Theory]
-    [InlineData(ProcessState.Finished)]
-    internal void ShouldLogInfoWhenFinishedAndHasHandler(ProcessState state)
+    [Fact]
+    internal void ShouldLogInfoWhenRanToCompletionAndHasHandler()
     {
         // Given
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, 0, state, 12, _description), _handler);
+        handler.Handle(ProcessResult.RanToCompletion(_startInfo.Object, 0, 12, 0), _handler);
 
         // Then
-        _log.Verify(i => i.Info(_description));
+        _log.Verify(i => i.Info(It.IsAny<Text[]>()));
     }
 
     [Fact]
-    public void ShouldLogInfoWhenFinishedAndHasNoHandler()
+    public void ShouldLogInfoWhenRanToCompletionAndHasNoHandler()
     {
         // Given
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 12, _description), default(Action<object>));
+        handler.Handle(ProcessResult.RanToCompletion(_startInfo.Object, 0, 12, 0), _handler);
 
         // Then
-        _log.Verify(i => i.Info(_description));
+        _log.Verify(i => i.Info(It.IsAny<Text[]>()));
     }
 
     [Fact]
@@ -45,51 +43,51 @@ public class ProcessResultHandlerTests
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Canceled, 12, _description), default(Action<object>));
+        handler.Handle(ProcessResult.CancelledByTimeout(_startInfo.Object, 0, 12), default(Action<object>));
 
         // Then
-        _log.Verify(i => i.Warning(_description));
+        _log.Verify(i => i.Warning(It.IsAny<Text[]>()));
     }
     
     [Fact]
-    public void ShouldNotLogWarningWhenCanceledAndTerminating()
+    public void ShouldNotLogWarningWhenCancelledByTimeoutAndTerminating()
     {
         // Given
         var handler = CreateInstance();
 
         // When
         _exitTracker.SetupGet(i => i.IsTerminating).Returns(true);
-        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Canceled, 12, _description), default(Action<object>));
+        handler.Handle(ProcessResult.CancelledByTimeout(_startInfo.Object, 0, 12), default(Action<object>));
 
         // Then
-        _log.Verify(i => i.Warning(_description), Times.Never);
+        _log.Verify(i => i.Warning(It.IsAny<Text[]>()), Times.Never);
     }
     
     [Fact]
-    public void ShouldLogErrorWhenFailedAndHasNoHandler()
+    public void ShouldLogErrorWhenFailedToStartAndHasNoHandler()
     {
         // Given
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Failed, 12, _description), default(Action<object>));
+        handler.Handle(ProcessResult.FailedToStart(_startInfo.Object, 0, null), default(Action<object>));
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, _description));
+        _log.Verify(i => i.Error(ErrorId.Process, It.IsAny<Text[]>()));
     }
     
     [Fact]
-    public void ShouldLogErrorWhenFailedAndHasNoHandlerAndHasError()
+    public void ShouldLogErrorWhenFailedToStartAndHasNoHandlerAndHasError()
     {
         // Given
         var handler = CreateInstance();
         var error = new Exception("Some error.");
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Failed, 12, _description, default, error), default(Action<object>));
+        handler.Handle(ProcessResult.FailedToStart(_startInfo.Object, 0, error), default(Action<object>));
 
         // Then
-        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.Length == 3)));
+        _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(x => x.Last().Value == error.Message)));
     }
 
     private ProcessResultHandler CreateInstance() =>
