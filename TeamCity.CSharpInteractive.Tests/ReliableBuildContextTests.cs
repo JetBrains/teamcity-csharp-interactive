@@ -20,7 +20,7 @@ public class ReliableBuildContextTests
         var result = CreateInstance();
         var message = new ServiceMessage("some message");
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
-        _baseBuildResult.Setup(i => i.ProcessMessage(output, message)).Returns(messages);
+        _baseBuildResult.Setup(i => i.ProcessMessage(_startInfo.Object, 11, message)).Returns(messages);
 
         // When
         result.ProcessMessage(output, message).ShouldBe(messages);
@@ -38,7 +38,8 @@ public class ReliableBuildContextTests
         var output = new Output(_startInfo.Object, false, string.Empty, 11);
         _baseBuildResult.Setup(i => i.ProcessMessage(output, It.IsAny<IServiceMessage>())).Returns(messages);
         _baseBuildResult.Setup(i => i.Create(_startInfo.Object, 33)).Returns(buildResult);
-        _teamCitySettings.SetupGet(i => i.ServiceMessagesPath).Returns("Messages");
+        _teamCitySettings.SetupGet(i => i.FallbackToStdOutTestReportingEnvValue).Returns("true");
+        _teamCitySettings.SetupGet(i => i.ServiceMessagesBackupPathEnvValue).Returns("Messages");
 
         var message1 = new ServiceMessage("some message") {{"source", "Abc"}};
         _fileSystem.Setup(i => i.IsFileExist(Path.Combine("Messages", "Abc"))).Returns(true);
@@ -76,9 +77,9 @@ public class ReliableBuildContextTests
         // Then
         actualBuildResult.ShouldBe(buildResult);
         _baseBuildResult.Verify(i => i.Create(_startInfo.Object, 33));
-        _baseBuildResult.Verify(i => i.ProcessMessage(output, msg1));
-        _baseBuildResult.Verify(i => i.ProcessMessage(output, msg11));
-        _baseBuildResult.Verify(i => i.ProcessMessage(output, msg2));
+        _baseBuildResult.Verify(i => i.ProcessMessage(output.StartInfo, output.ProcessId, msg1));
+        _baseBuildResult.Verify(i => i.ProcessMessage(output.StartInfo, output.ProcessId, msg11));
+        _baseBuildResult.Verify(i => i.ProcessMessage(output.StartInfo, output.ProcessId, msg2));
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Fff"), Path.Combine("Messages", "Fff.msg")), Times.Never);
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Bbb"), Path.Combine("Messages", "Bbb.msg")), Times.Never);
         _messagesReader.Verify(i => i.Read(Path.Combine("Messages", "Ccc"), Path.Combine("Messages", "Ccc.msg")), Times.Never);

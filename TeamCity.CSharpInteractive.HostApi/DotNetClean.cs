@@ -4,6 +4,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet clean command cleans the output of the previous build. It's implemented as an MSBuild target, so the project is evaluated when the command is run. Only the outputs created during the build are cleaned. Both intermediate (obj) and final output (bin) folders are cleaned.
@@ -49,6 +50,7 @@ public partial record DotNetClean(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddArgs(
                 ("--output", Output),
                 ("--framework", Framework),
@@ -61,6 +63,11 @@ public partial record DotNetClean(
             )
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdStreamsServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
 
     public override string ToString() => "dotnet clean".GetShortName(ShortName, Project);
 }

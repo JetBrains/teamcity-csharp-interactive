@@ -1,5 +1,7 @@
 namespace HostApi;
 
+using JetBrains.TeamCity.ServiceMessages;
+
 public static class CommandLineTools
 {
     public static CommandLine AsCommandLine(this string executable, params string[] args) => new(executable, args);
@@ -20,5 +22,9 @@ public static class CommandLineTools
 
         public IStartInfo GetStartInfo(IHost host) =>
             _customizer(new CommandLine(_baseCommandLine.GetStartInfo(host))).GetStartInfo(host);
+
+        public void PreRun(IHost host) => _baseCommandLine.PreRun(host);
+
+        public IEnumerable<IServiceMessage> GetNonStdStreamsServiceMessages(IHost host) => _baseCommandLine.GetNonStdStreamsServiceMessages(host);
     }
 }

@@ -4,6 +4,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet restore command uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file. In most cases, you don't need to explicitly use the dotnet restore command.
@@ -67,6 +68,7 @@ public partial record DotNetRestore(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddArgs(Sources.Select(i => ("--source", (string?)i)).ToArray())
             .AddArgs(
                 ("--packages", Packages),
@@ -87,6 +89,11 @@ public partial record DotNetRestore(
             )
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdStreamsServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
 
     public override string ToString() => "dotnet restore".GetShortName(ShortName, Project);
 }

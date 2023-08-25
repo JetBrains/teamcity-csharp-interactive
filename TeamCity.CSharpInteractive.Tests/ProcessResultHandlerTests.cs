@@ -19,7 +19,7 @@ public class ProcessResultHandlerTests
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, state, 12, _description), _handler);
+        handler.Handle(new ProcessResult(_startInfo.Object, 0, state, 12, _description), _handler);
 
         // Then
         _log.Verify(i => i.Info(_description));
@@ -32,7 +32,7 @@ public class ProcessResultHandlerTests
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, ProcessState.Finished, 12, _description), default(Action<object>));
+        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 12, _description), default(Action<object>));
 
         // Then
         _log.Verify(i => i.Info(_description));
@@ -45,7 +45,7 @@ public class ProcessResultHandlerTests
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, ProcessState.Canceled, 12, _description), default(Action<object>));
+        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Canceled, 12, _description), default(Action<object>));
 
         // Then
         _log.Verify(i => i.Warning(_description));
@@ -59,7 +59,7 @@ public class ProcessResultHandlerTests
 
         // When
         _exitTracker.SetupGet(i => i.IsTerminating).Returns(true);
-        handler.Handle(new ProcessResult(_startInfo.Object, ProcessState.Canceled, 12, _description), default(Action<object>));
+        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Canceled, 12, _description), default(Action<object>));
 
         // Then
         _log.Verify(i => i.Warning(_description), Times.Never);
@@ -72,7 +72,7 @@ public class ProcessResultHandlerTests
         var handler = CreateInstance();
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, ProcessState.Failed, 12, _description), default(Action<object>));
+        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Failed, 12, _description), default(Action<object>));
 
         // Then
         _log.Verify(i => i.Error(ErrorId.Process, _description));
@@ -86,7 +86,7 @@ public class ProcessResultHandlerTests
         var error = new Exception("Some error.");
 
         // When
-        handler.Handle(new ProcessResult(_startInfo.Object, ProcessState.Failed, 12, _description, default, error), default(Action<object>));
+        handler.Handle(new ProcessResult(_startInfo.Object, 0, ProcessState.Failed, 12, _description, default, error), default(Action<object>));
 
         // Then
         _log.Verify(i => i.Error(ErrorId.Process, It.Is<Text[]>(text => text.Length == 3)));

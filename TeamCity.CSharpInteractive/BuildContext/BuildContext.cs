@@ -14,12 +14,15 @@ internal class BuildContext : IBuildContext
     private readonly HashSet<TestKey> _testKeys = new();
     private readonly Dictionary<TestKey, TestContext> _currentTests = new();
 
+    public IReadOnlyList<BuildMessage> ProcessMessage(in Output output, IServiceMessage message) =>
+        ProcessMessage(output.StartInfo, output.ProcessId, message);
+
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    public IReadOnlyList<BuildMessage> ProcessMessage(in Output output, IServiceMessage message) => (
+    public IReadOnlyList<BuildMessage> ProcessMessage(IStartInfo startInfo, int processId, IServiceMessage message) => (
         message.Name.ToLowerInvariant() switch
         {
-            "teststdout" => OnStdOut(message, output.StartInfo, output.ProcessId),
-            "teststderr" => OnStdErr(message, output.StartInfo, output.ProcessId),
+            "teststdout" => OnStdOut(message, startInfo, processId),
+            "teststderr" => OnStdErr(message, startInfo, processId),
             "testfinished" => OnTestFinished(message),
             "testignored" => OnTestIgnored(message),
             "testfailed" => OnTestFailed(message),

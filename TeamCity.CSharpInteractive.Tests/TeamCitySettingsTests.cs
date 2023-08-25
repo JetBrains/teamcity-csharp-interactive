@@ -3,12 +3,10 @@ namespace TeamCity.CSharpInteractive.Tests;
 public class TeamCitySettingsTests
 {
     private readonly Mock<IHostEnvironment> _hostEnvironment;
-    private readonly Mock<IEnvironment> _environment;
 
     public TeamCitySettingsTests()
     {
         _hostEnvironment = new Mock<IHostEnvironment>();
-        _environment = new Mock<IEnvironment>();
     }
 
     [Theory]
@@ -55,5 +53,5 @@ public class TeamCitySettingsTests
         actualFlowId.ShouldBe(expectedFlowId);
     }
 
-    private TeamCitySettings CreateInstance() => new(_hostEnvironment.Object, _environment.Object);
+    private TeamCitySettings CreateInstance() => new(_hostEnvironment.Object);
 }

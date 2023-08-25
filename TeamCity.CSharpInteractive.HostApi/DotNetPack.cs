@@ -4,6 +4,7 @@ namespace HostApi;
 
 using DotNet;
 using Immutype;
+using JetBrains.TeamCity.ServiceMessages;
 
 /// <summary>
 /// The dotnet pack command builds the project and creates NuGet packages. The result of this command is a NuGet package (that is, a .nupkg file).
@@ -63,6 +64,7 @@ public partial record DotNetPack(
             .WithWorkingDirectory(WorkingDirectory)
             .WithVars(Vars.ToArray())
             .AddMSBuildLoggers(host, Verbosity)
+            .AddTeamCityEnvironmentVariables(host)
             .AddArgs(
                 ("--output", Output),
                 ("--version-suffix", VersionSuffix),
@@ -82,6 +84,11 @@ public partial record DotNetPack(
             )
             .AddProps("-p", Props.ToArray())
             .AddArgs(Args.ToArray());
+
+    public void PreRun(IHost host) => host.GetService<IDotNetTestReportingService>().SendTestResultsStreamingDataMessageIfNeeded();
+
+    public IEnumerable<IServiceMessage> GetNonStdStreamsServiceMessages(IHost host) =>
+        host.GetService<IDotNetTestReportingService>().GetServiceMessagesFromFilesWithTestReports();
 
     public override string ToString() => "dotnet pack".GetShortName(ShortName, Project);
 }

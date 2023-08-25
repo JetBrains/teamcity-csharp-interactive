@@ -1,6 +1,7 @@
 namespace TeamCity.CSharpInteractive.Tests;
 
 using HostApi;
+using JetBrains.TeamCity.ServiceMessages;
 
 public class BuildRunnerTests
 {
@@ -21,7 +22,7 @@ public class BuildRunnerTests
 
     public BuildRunnerTests()
     {
-        _processResult = new ProcessResult(_startInfo.Object, ProcessState.Finished, 33, Array.Empty<Text>());
+        _processResult = new ProcessResult(_startInfo.Object, 0, ProcessState.Finished, 33, Array.Empty<Text>());
         var buildResult = new BuildResult(_startInfo.Object).WithExitCode(33);
         _process.Setup(i => i.GetStartInfo(_host.Object)).Returns(_startInfo.Object);
         _resultFactory = () => _buildResult.Object;
@@ -88,6 +89,50 @@ public class BuildRunnerTests
     }
 
     [Fact]
+    public void ShouldInvokePreRunMethodBeforeRunningCommand()
+    {
+        // Given
+        var commandLineMock = new Mock<ICommandLine>(MockBehavior.Strict);
+        var sequence = new MockSequence();
+        commandLineMock.InSequence(sequence).Setup(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.InSequence(sequence).Setup(x => x.GetStartInfo(It.IsAny<IHost>())).Returns(_startInfo.Object);
+        commandLineMock.Setup(x => x.GetNonStdStreamsServiceMessages(It.IsAny<IHost>())).Returns(Enumerable.Empty<IServiceMessage>());
+
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), It.IsAny<TimeSpan>())).Returns(_processResult);
+
+        var buildService = CreateInstance();
+
+        // When
+        buildService.Run(commandLineMock.Object);
+
+        // Then
+        commandLineMock.Verify(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.Verify(x => x.GetStartInfo(It.IsAny<IHost>()));
+    }
+
+    [Fact]
+    public void ShouldProcessNonStdStreamsServiceMessagesAfterRunningCommand()
+    {
+        // Given
+        var commandLineMock = new Mock<ICommandLine>(MockBehavior.Strict);
+        var sequence = new MockSequence();
+        commandLineMock.Setup(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.InSequence(sequence).Setup(x => x.GetStartInfo(It.IsAny<IHost>())).Returns(_startInfo.Object);
+        commandLineMock.InSequence(sequence).Setup(x => x.GetNonStdStreamsServiceMessages(It.IsAny<IHost>())).Returns(Enumerable.Empty<IServiceMessage>());
+
+        _processRunner.Setup(i => i.Run(It.IsAny<ProcessInfo>(), It.IsAny<TimeSpan>())).Returns(_processResult);
+
+        var buildService = CreateInstance();
+
+        // When
+        buildService.Run(commandLineMock.Object);
+
+        // Then
+        commandLineMock.Verify(x => x.GetStartInfo(It.IsAny<IHost>()));
+        commandLineMock.Verify(x => x.GetNonStdStreamsServiceMessages(It.IsAny<IHost>()));
+    }
+
+    [Fact]
     public async Task ShouldRunBuildAsync()
     {
         // Given
@@ -104,6 +149,50 @@ public class BuildRunnerTests
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = true);
         _teamCityContext.VerifySet(i => i.TeamCityIntegration = false);
         _processResultHandler.Verify(i => i.Handle(_processResult, handler));
+    }
+
+    [Fact]
+    public async Task ShouldInvokePreRunMethodBeforeRunningCommandAsync()
+    {
+        // Given
+        var commandLineMock = new Mock<ICommandLine>(MockBehavior.Strict);
+        var sequence = new MockSequence();
+        commandLineMock.InSequence(sequence).Setup(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.InSequence(sequence).Setup(x => x.GetStartInfo(It.IsAny<IHost>())).Returns(_startInfo.Object);
+        commandLineMock.Setup(x => x.GetNonStdStreamsServiceMessages(It.IsAny<IHost>())).Returns(Enumerable.Empty<IServiceMessage>());
+
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessInfo>(), It.IsAny<CancellationToken>())).ReturnsAsync(_processResult);
+
+        var buildService = CreateInstance();
+
+        // When
+        await buildService.RunAsync(commandLineMock.Object);
+
+        // Then
+        commandLineMock.Verify(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.Verify(x => x.GetStartInfo(It.IsAny<IHost>()));
+    }
+
+    [Fact]
+    public async Task ShouldProcessNonStdStreamsServiceMessagesAfterRunningCommandAsync()
+    {
+        // Given
+        var commandLineMock = new Mock<ICommandLine>(MockBehavior.Strict);
+        var sequence = new MockSequence();
+        commandLineMock.Setup(x => x.PreRun(It.IsAny<IHost>()));
+        commandLineMock.InSequence(sequence).Setup(x => x.GetStartInfo(It.IsAny<IHost>())).Returns(_startInfo.Object);
+        commandLineMock.InSequence(sequence).Setup(x => x.GetNonStdStreamsServiceMessages(It.IsAny<IHost>())).Returns(Enumerable.Empty<IServiceMessage>());
+
+        _processRunner.Setup(i => i.RunAsync(It.IsAny<ProcessInfo>(), It.IsAny<CancellationToken>())).ReturnsAsync(_processResult);
+
+        var buildService = CreateInstance();
+
+        // When
+        await buildService.RunAsync(commandLineMock.Object);
+
+        // Then
+        commandLineMock.Verify(x => x.GetStartInfo(It.IsAny<IHost>()));
+        commandLineMock.Verify(x => x.GetNonStdStreamsServiceMessages(It.IsAny<IHost>()));
     }
 
     private BuildRunner CreateInstance() =>

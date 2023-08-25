@@ -49,6 +49,7 @@ internal class ProcessMonitor : IProcessMonitor
     public ProcessResult Finished(IStartInfo startInfo, long elapsedMilliseconds, ProcessState state, int? exitCode = default, Exception? error = default) => 
         new(
             startInfo,
+            _processId,
             state,
             elapsedMilliseconds,
             GetFooter(startInfo,exitCode, elapsedMilliseconds, state).ToArray(),
