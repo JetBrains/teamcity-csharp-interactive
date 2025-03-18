@@ -1,6 +1,6 @@
 ﻿<Project>
     <PropertyGroup>
-        <Frameworks>net6.0;net7.0</Frameworks>
+        <Frameworks>net6.0;net7.0;net8.0</Frameworks>
         <TargetFramework>net6.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>latest</LangVersion>

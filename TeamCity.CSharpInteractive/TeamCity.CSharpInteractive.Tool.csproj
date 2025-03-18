@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <UseAppHost>false</UseAppHost>
         <TargetFrameworks>$(Frameworks)</TargetFrameworks>
+        <RollForward>Major</RollForward>
         <AssemblyName>dotnet-csi</AssemblyName>
         <IsPackable>true</IsPackable>
         <RootNamespace>TeamCity.CSharpInteractive</RootNamespace>

@@ -5,6 +5,8 @@
         <layout>
             <executable-files>
                 <include name='tools/net6.0/any/dotnet-csi.dll'/>
+                <include name='tools/net7.0/any/dotnet-csi.dll'/>
+                <include name='tools/net8.0/any/dotnet-csi.dll'/>
             </executable-files>
         </layout>
     </tool-deployment>
